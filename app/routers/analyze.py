@@ -27,6 +27,7 @@ from app.services.deep_review import deep_review
 from app.services import trace_store
 from app.services.tracing import trace
 from app.services.peppercorns import InsufficientPeppercornsError, credit, debit
+from app.services.rate_limit import RateLimitExceeded, enforce_rate_limit
 from app.services.strikes import AccountSuspendedError, assert_active, record_event
 
 logger = logging.getLogger(__name__)
@@ -61,9 +62,19 @@ async def analyze(
             detail=detail,
         )
 
+    # --- 2b. rate limit --------------------------------------------------
+    # A review runs the sandbox and two LLM calls. Unbounded submission is a
+    # cost and CPU exposure even from a well-meaning client with a retry bug.
+    try:
+        await enforce_rate_limit(session, current_user.id, kind="attempt")
+    except RateLimitExceeded as exc:
+        raise HTTPException(status_code=429, detail=str(exc))
+
     # --- 3. debit atomically -------------------------------------------
     try:
-        balance = await debit(session, current_user.id, settings.analyze_cost, reason="analyze")
+        balance = await debit(
+            session, current_user.id, settings.analyze_cost, reason="analyze"
+        )
     except InsufficientPeppercornsError as exc:
         raise HTTPException(status_code=402, detail=str(exc))
     await session.commit()
@@ -75,10 +86,13 @@ async def analyze(
     # One trace per review. Stage spans inside deep_review attach to it, so
     # "which stage was slow / expensive / failing" is answerable afterwards.
     try:
-        async with trace("analyze", user_id=current_user.id,
-                         problem_id=request.problem_id,
-                         language=request.language,
-                         provider=request.provider) as t:
+        async with trace(
+            "analyze",
+            user_id=current_user.id,
+            problem_id=request.problem_id,
+            language=request.language,
+            provider=request.provider,
+        ) as t:
             analysis, evidence = await deep_review(
                 problem_id=request.problem_id,
                 user_code=request.user_code,
@@ -88,7 +102,9 @@ async def analyze(
             execution = evidence.get("curated")
         await trace_store.save(session, t)
     except Exception:
-        logger.exception("Analysis failed; refunding %s peppercorns", settings.analyze_cost)
+        logger.exception(
+            "Analysis failed; refunding %s peppercorns", settings.analyze_cost
+        )
         balance = await credit(
             session, current_user.id, settings.analyze_cost, reason="refund:analyze"
         )
@@ -116,10 +132,14 @@ async def analyze(
     solved = curated_ok and not category and not fuzz.get("counterexamples")
 
     await learning_profile.record_event(
-        session, current_user.id, request.problem_id,
+        session,
+        current_user.id,
+        request.problem_id,
         kind="solved" if solved else "attempt",
-        language=request.language, algorithms=algorithms,
-        error_category=category, detail=detail,
+        language=request.language,
+        algorithms=algorithms,
+        error_category=category,
+        detail=detail,
     )
     await session.commit()
 

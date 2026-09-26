@@ -58,6 +58,10 @@ class Settings(BaseSettings):
     max_strikes: int = 3
     # Submissions per user per hour (execution is expensive)
     submissions_per_hour: int = 30
+    # Mentor turns per hour (separate budget — hints are cheaper than reviews)
+    hints_per_hour: int = 60
+    # A learner returning after this long restarts at hint tier 1
+    hint_tier_reset_hours: int = 12
 
     # Peppercorn economy
     signup_bonus: int = 50

@@ -8,6 +8,7 @@ from app.db.database import get_session
 from app.db.models import User
 from app.models.schemas import RoleUpdate, UserOut
 from app.services import trace_store
+from app.services.peppercorns import credit
 from app.services.strikes import list_events, reinstate
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -18,7 +19,9 @@ async def list_users(
     _: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
 ):
-    rows = (await session.execute(select(User).order_by(User.created_at))).scalars().all()
+    rows = (
+        (await session.execute(select(User).order_by(User.created_at))).scalars().all()
+    )
     return [UserOut.model_validate(u) for u in rows]
 
 
@@ -35,7 +38,9 @@ async def set_role(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     if user.id == admin.id and update.role != "admin":
-        raise HTTPException(status_code=400, detail="You cannot change your own admin role.")
+        raise HTTPException(
+            status_code=400, detail="You cannot change your own admin role."
+        )
 
     user.role = update.role
     await session.commit()
@@ -86,6 +91,7 @@ async def reinstate_user(
 
 # ---------------- observability ----------------
 
+
 @router.get("/traces")
 async def list_traces(
     limit: int = 50,
@@ -97,8 +103,9 @@ async def list_traces(
 ):
     """Recent traces, newest first. Filter by operation name ("analyze",
     "mentor"), status ("error"), or user."""
-    return await trace_store.recent(session, limit=limit, name=name,
-                                    status=status, user_id=user_id)
+    return await trace_store.recent(
+        session, limit=limit, name=name, status=status, user_id=user_id
+    )
 
 
 @router.get("/traces/summary")
@@ -136,3 +143,29 @@ async def prune_traces(
     policy depends on how much history you want to debug against."""
     removed = await trace_store.prune(session, older_than_days)
     return {"deleted": removed, "older_than_days": older_than_days}
+
+
+@router.post("/users/{user_id}/peppercorns", response_model=UserOut)
+async def grant_peppercorns(
+    user_id: str,
+    amount: int,
+    reason: str = "admin_grant",
+    _: User = Depends(require_admin),
+    session: AsyncSession = Depends(get_session),
+):
+    """Credit peppercorns to an account.
+
+    For support situations — comping a user after an outage, correcting a
+    failed refund. Goes through `credit()` rather than setting the balance
+    directly, so the transaction ledger stays reconcilable with the balance.
+    """
+    target = await session.get(User, user_id)
+    if target is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive")
+
+    await credit(session, user_id, amount, reason=f"admin:{reason}")
+    await session.commit()
+    await session.refresh(target)
+    return UserOut.model_validate(target)

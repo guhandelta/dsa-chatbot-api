@@ -1,0 +1,37 @@
+# Web framework
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+
+# LangChain + providers (0.3.x line)
+langchain>=0.3,<0.4
+langchain-core>=0.3,<0.4
+langchain-openai>=0.2
+langchain-anthropic>=0.2
+langchain-google-genai>=2.0
+langchain-chroma>=0.1.4
+langchain-community>=0.3,<0.4
+langchain-text-splitters>=0.3,<0.4
+chromadb>=0.5
+
+# pgvector backend (Supabase / Postgres). Only needed when VECTOR_STORE=pgvector.
+langchain-postgres>=0.0.12
+psycopg[binary]>=3.1
+asyncpg>=0.29
+
+# Config / env
+pydantic-settings>=2.4
+python-dotenv>=1.0
+email-validator>=2.0
+
+# Database (SQLite locally; swap DATABASE_URL for Postgres later)
+alembic>=1.13
+sqlalchemy>=2.0.30
+aiosqlite>=0.20
+greenlet>=3.0
+
+# Auth
+pyjwt>=2.8
+passlib>=1.7.4
+bcrypt==4.0.1
+
+httpx>=0.27

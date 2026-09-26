@@ -7,6 +7,7 @@ associations, not database columns, and counting them produces false drift.
 Run this in CI: a migration that silently diverges from the models is worse
 than no migration at all, because it breaks on first deploy rather than in dev.
 """
+
 import re
 import sys
 from pathlib import Path
@@ -18,13 +19,17 @@ def migration_columns() -> dict[str, set[str]]:
     tables: dict[str, set[str]] = {}
     for path in sorted((ROOT / "alembic" / "versions").glob("*.py")):
         text = path.read_text()
-        for m in re.finditer(r'op\.create_table\(\s*"(\w+)",(.*?)\n    \)', text, re.DOTALL):
+        for m in re.finditer(
+            r'op\.create_table\(\s*"(\w+)",(.*?)\n    \)', text, re.DOTALL
+        ):
             table, body = m.group(1), m.group(2)
             tables.setdefault(table, set()).update(
                 re.findall(r'sa\.Column\(\s*"(\w+)"', body)
             )
         # later revisions may add columns
-        for m in re.finditer(r'op\.add_column\(\s*"(\w+)",\s*sa\.Column\(\s*"(\w+)"', text):
+        for m in re.finditer(
+            r'op\.add_column\(\s*"(\w+)",\s*sa\.Column\(\s*"(\w+)"', text
+        ):
             tables.setdefault(m.group(1), set()).add(m.group(2))
     return tables
 
@@ -64,8 +69,14 @@ def main() -> int:
                 print(f"         migrated but not in models: {sorted(extra)}")
         else:
             print(f"  OK     {table} ({len(o_cols)} columns)")
-    print("\n" + ("DRIFT DETECTED — add a migration." if drift
-                  else "Migrations match the models."))
+    print(
+        "\n"
+        + (
+            "DRIFT DETECTED — add a migration."
+            if drift
+            else "Migrations match the models."
+        )
+    )
     return 1 if drift else 0
 
 

@@ -57,7 +57,7 @@ def get_vectorstore():
             embeddings=embeddings,
             collection_name=COLLECTION_NAME,
             connection=pgvector_connection_string(),
-            use_jsonb=True,   # metadata filters (track, problem_id) need JSONB
+            use_jsonb=True,  # metadata filters (track, problem_id) need JSONB
         )
 
     return Chroma(
@@ -132,15 +132,18 @@ def ingest_documents(docs_path: str | None = None) -> None:
     # add_documents works identically on both backends, unlike the
     # Chroma-specific from_documents() constructor.
     get_vectorstore().add_documents(chunks)
-    print(f"Ingested {len(chunks)} chunks from {len(documents)} problems into ChromaDB.")
+    print(
+        f"Ingested {len(chunks)} chunks from {len(documents)} problems into ChromaDB."
+    )
 
 
 if __name__ == "__main__":
     ingest_documents()
 
 
-def upsert_problem(problem_id: str, markdown: str, track: str = "dsa",
-                   language: str | None = None) -> int:
+def upsert_problem(
+    problem_id: str, markdown: str, track: str = "dsa", language: str | None = None
+) -> int:
     """Add or replace ONE problem in the vector store without rebuilding it.
 
     Deletes any existing chunks for this problem_id first, so re-training an
@@ -159,12 +162,17 @@ def upsert_problem(problem_id: str, markdown: str, track: str = "dsa",
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)
     chunks = splitter.split_documents(
-        [Document(page_content=markdown, metadata={
-            "problem_id": problem_id,
-            "source": f"{problem_id}.md",
-            "track": track,
-            **({"language": language} if language else {}),
-        })]
+        [
+            Document(
+                page_content=markdown,
+                metadata={
+                    "problem_id": problem_id,
+                    "source": f"{problem_id}.md",
+                    "track": track,
+                    **({"language": language} if language else {}),
+                },
+            )
+        ]
     )
     vs.add_documents(chunks)
     return len(chunks)
