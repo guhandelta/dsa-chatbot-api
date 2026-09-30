@@ -71,7 +71,15 @@ def _limits(apply_address_space: bool = True):
     """
     if apply_address_space:
         mem = settings.exec_memory_mb * 1024 * 1024
-        resource.setrlimit(resource.RLIMIT_AS, (mem, mem))
+        try:
+            resource.setrlimit(resource.RLIMIT_AS, (mem, mem))
+        except (ValueError, OSError):
+            # macOS refuses to lower RLIMIT_AS below the address space the
+            # process already has reserved, so raising here would kill every
+            # run on a dev laptop. The memory cap is enforced on Linux (the
+            # production target); locally the wall-clock and CPU limits
+            # still bound runaway code.
+            pass
     resource.setrlimit(resource.RLIMIT_CPU, (settings.exec_timeout_seconds, settings.exec_timeout_seconds))
     resource.setrlimit(resource.RLIMIT_FSIZE, (16 * 1024 * 1024, 16 * 1024 * 1024))
     # NOTE: RLIMIT_NPROC is deliberately NOT set here. It caps processes

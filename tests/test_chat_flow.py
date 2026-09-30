@@ -12,7 +12,7 @@ async def _register(client, email="c@x.com"):
 
 
 async def test_chat_debits_and_persists(client, monkeypatch):
-    async def fake_rag(message, provider, history, language):
+    async def fake_rag(message, provider, history, language, **kwargs):
         return "Here is a hint."
 
     monkeypatch.setattr("app.routers.chat.run_rag_chat", fake_rag)
@@ -62,13 +62,15 @@ async def test_chat_insufficient_balance_returns_402(client, monkeypatch):
 async def test_analyze_debits_five(client, monkeypatch):
     from app.models.schemas import AnalysisResult
 
-    async def fake_analyze(problem_id, user_code, language, provider):
+    # /analyze runs the precision pipeline (deep_review), which returns the
+    # review plus the execution evidence behind it.
+    async def fake_review(problem_id, user_code, language, provider):
         return AnalysisResult(
             mistakes=[], enhancements=[], watchouts=[], interview_tips=[],
             overall_feedback="Looks optimal.",
-        )
+        ), {}
 
-    monkeypatch.setattr("app.routers.analyze.analyze_solution", fake_analyze)
+    monkeypatch.setattr("app.routers.analyze.deep_review", fake_review)
     token = await _register(client, "anlz@x.com")
     headers = {"Authorization": f"Bearer {token}"}
 

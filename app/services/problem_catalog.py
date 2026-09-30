@@ -1,19 +1,16 @@
-# Scans the problem markdown directory and parses each file's H1 metadata.
+# Scans the problem markdown directory and parses each file's metadata
+# (YAML front matter, falling back to the H1).
 # Powers the /problems endpoint (so the frontend can show a dropdown) and
 # full-document retrieval for the analyzer.
 #
-# Expected H1 format:
+# H1 fallback format:
 #   # Two Sum (LC 1) — Easy — Array, Hash Map
-import re
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic import BaseModel
 
 PROBLEMS_DIR = Path(__file__).resolve().parents[2] / "data" / "dsa_problems"
-
-# "# Title (LC n) — Difficulty — Category, Tags"  (em dash separated)
-_H1 = re.compile(r"^#\s+(.*?)\s+—\s+(\w+)\s+—\s+(.*)$")
 
 
 class ProblemMeta(BaseModel):
@@ -28,13 +25,17 @@ def list_problems() -> list[ProblemMeta]:
     """Returns all problems sorted by difficulty then title. Cached; the
     catalog only changes when markdown files are added (and the server
     restarts on edit in dev)."""
+    # Files now open with a YAML front-matter block, so the H1 is no longer
+    # the first line. Reuse the content catalog's parser, which skips the
+    # front matter and prefers its fields over the H1.
+    from app.services.content_catalog import parse_file
+
     out: list[ProblemMeta] = []
     for md in sorted(PROBLEMS_DIR.glob("*.md")):
-        first_line = md.read_text().splitlines()[0] if md.read_text() else ""
-        m = _H1.match(first_line)
-        if m:
-            title, difficulty, category = m.group(1), m.group(2), m.group(3)
-        else:
+        try:
+            meta = parse_file(md)
+            title, difficulty, category = meta.title, meta.difficulty, meta.category
+        except Exception:
             # Fall back gracefully if a file doesn't follow the convention
             title, difficulty, category = md.stem.replace("-", " ").title(), "Unknown", ""
         out.append(

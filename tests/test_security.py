@@ -131,9 +131,9 @@ async def test_benign_submission_never_strikes(client, monkeypatch):
     async def fake(**kwargs):
         from app.models.schemas import AnalysisResult
         return AnalysisResult(mistakes=[], enhancements=[], watchouts=[],
-                              interview_tips=[], overall_feedback="ok")
+                              interview_tips=[], overall_feedback="ok"), {}
 
-    monkeypatch.setattr("app.routers.analyze.analyze_solution", fake)
+    monkeypatch.setattr("app.routers.analyze.deep_review", fake)
     body = await _register(client, "good@x.com")
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.post("/analyze/", headers=h, json={

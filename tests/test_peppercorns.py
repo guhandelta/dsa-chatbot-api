@@ -40,10 +40,12 @@ async def test_debit_reduces_balance(db):
 
 async def test_debit_insufficient_raises_and_leaves_balance(db):
     user = await _make_user(db, 2)
+    user_id = user.id  # read before rollback expires the instance
+    await db.commit()  # otherwise the rollback below discards the user too
     with pytest.raises(InsufficientPeppercornsError):
-        await debit(db, user.id, 5, reason="analyze")
+        await debit(db, user_id, 5, reason="analyze")
     await db.rollback()
-    refreshed = await db.get(User, user.id)
+    refreshed = await db.get(User, user_id)
     assert refreshed.peppercorns == 2  # unchanged
 
 
