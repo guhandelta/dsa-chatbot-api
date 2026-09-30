@@ -36,6 +36,16 @@ class AuthResponse(BaseModel):
     user: UserOut
 
 
+class LearnTrainResponse(BaseModel):
+    status: str = "success"
+    filename: str
+    file_type: str
+    characters_extracted: int
+    chunks_trained: int
+    track: str = "custom"
+    message: str
+
+
 # ---------- Chat ----------
 
 Track = Literal["language", "dsa", "algorithm"]

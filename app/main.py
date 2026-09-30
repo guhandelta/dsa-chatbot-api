@@ -11,6 +11,7 @@ from app.routers import (
     analyze,
     auth,
     chat,
+    learn,
     mentor,
     problems,
     subscriptions,
@@ -38,6 +39,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(learn.router)
 app.include_router(chat.router)
 app.include_router(analyze.router)
 app.include_router(problems.router)

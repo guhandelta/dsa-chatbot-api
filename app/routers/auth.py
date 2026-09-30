@@ -1,4 +1,5 @@
 # /auth endpoints — register, login, and current-user lookup.
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,21 +23,25 @@ from app.models.schemas import (
 )
 from app.services.peppercorns import credit
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-async def register(request: RegisterRequest, session: AsyncSession = Depends(get_session)):
+async def register(
+    request: RegisterRequest,
+    session: AsyncSession = Depends(get_session),
+):
     """Creates an account and grants the signup peppercorn bonus."""
-    email = request.email.lower()
-    existing = await session.execute(select(User).where(User.email == email))
+    email_clean = request.email.strip().lower()
+    existing = await session.execute(select(User).where(User.email == email_clean))
     if existing.scalar_one_or_none() is not None:
         raise HTTPException(status_code=409, detail="An account with this email already exists")
 
-    user = User(email=email, hashed_password=hash_password(request.password), peppercorns=0)
+    user = User(email=email_clean, hashed_password=hash_password(request.password), peppercorns=0)
     _sync_admin_role(user)
     session.add(user)
-    await session.flush()  # assigns user.id
+    await session.flush()
 
     if settings.signup_bonus > 0:
         await credit(session, user.id, settings.signup_bonus, reason="signup_bonus")
@@ -52,7 +57,7 @@ async def register(request: RegisterRequest, session: AsyncSession = Depends(get
 
 @router.post("/login", response_model=AuthResponse)
 async def login(request: LoginRequest, session: AsyncSession = Depends(get_session)):
-    email = request.email.lower()
+    email = request.email.strip().lower()
     result = await session.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
 

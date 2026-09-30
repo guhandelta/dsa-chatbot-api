@@ -1,9 +1,12 @@
 # Centralized settings loaded from .env using pydantic-settings
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=(ENV_PATH if ENV_PATH.exists() else ".env"), extra="ignore")
 
     # API keys for each LLM provider
     openai_api_key: str
@@ -31,6 +34,7 @@ class Settings(BaseSettings):
 
     # Changing this invalidates every stored vector — re-ingest after any change.
     embedding_model: str = "text-embedding-3-small"
+    embedding_provider: str = ""  # "google", "openai", or "" (auto-detect)
 
     # Database — SQLite for local dev, swap for Postgres in production
     database_url: str = "sqlite+aiosqlite:///./dsa_chatbot.db"
@@ -41,7 +45,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
 
     # CORS — comma-separated origins
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"
 
     # Emails auto-promoted to admin on register/login (comma-separated)
     admin_emails: str = ""
@@ -80,6 +84,14 @@ class Settings(BaseSettings):
     tracing_enabled: bool = True
     # Traces older than this are removed by DELETE /admin/traces?older_than_days=
     trace_retention_days: int = 14
+
+
+    @property
+    def resolved_database_url(self) -> str:
+        if self.database_url.startswith("sqlite+aiosqlite:///./"):
+            rel = self.database_url.replace("sqlite+aiosqlite:///./", "")
+            return f"sqlite+aiosqlite:///{ENV_PATH.parent / rel}"
+        return self.database_url
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -26,7 +26,9 @@ target_metadata = Base.metadata
 
 def _sync_url() -> str:
     """Alembic runs DDL synchronously; translate the async driver."""
-    url = settings.database_url
+    # Same path the app uses, so migrations hit the DB the server reads
+    # regardless of which directory alembic is run from.
+    url = settings.resolved_database_url
     return (
         url.replace("+aiosqlite", "")
         .replace("+asyncpg", "+psycopg2")

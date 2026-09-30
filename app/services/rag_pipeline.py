@@ -81,10 +81,13 @@ async def run_rag_chat(
     vectorstore = get_vectorstore()
 
     # Scope retrieval to the active track so a Python-syntax question doesn't
-    # surface graph theory. A focus_id narrows further to one specific item.
-    where: dict = {"track": track}
+    # surface graph theory. Teacher uploads tagged "custom" (POST /learn/train)
+    # are shared reference material and ride along with every track. A
+    # focus_id narrows further to one specific item.
+    track_filter: dict = {"track": {"$in": [track, "custom"]}}
+    where: dict = track_filter
     if focus_id:
-        where = {"$and": [{"track": track}, {"problem_id": focus_id}]}
+        where = {"$and": [track_filter, {"problem_id": focus_id}]}
 
     def _search():
         try:
@@ -97,7 +100,7 @@ async def run_rag_chat(
     docs = await asyncio.to_thread(_search)
     if not docs and focus_id:
         docs = await asyncio.to_thread(
-            lambda: vectorstore.similarity_search(message, k=4, filter={"track": track})
+            lambda: vectorstore.similarity_search(message, k=4, filter=track_filter)
         )
     context = "\n\n---\n\n".join(doc.page_content for doc in docs)
     if not context:
