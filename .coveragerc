@@ -1,0 +1,14 @@
+# SQLAlchemy's async engine runs ORM code inside greenlets; without the
+# greenlet tracer, lines after an awaited DB call show as uncovered.
+[run]
+source = app
+concurrency = greenlet, thread
+omit =
+    app/__init__.py
+
+[report]
+show_missing = true
+skip_empty = true
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:

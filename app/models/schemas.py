@@ -1,4 +1,6 @@
 # Pydantic models for request/response validation
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, Field
 from typing import Literal, Optional
 
@@ -36,14 +38,47 @@ class AuthResponse(BaseModel):
     user: UserOut
 
 
+# ---------- Learn (knowledge-base uploads) ----------
+
+KnowledgeStatus = Literal["pending", "published", "rejected"]
+
+
 class LearnTrainResponse(BaseModel):
     status: str = "success"
+    document_id: str
+    # "published" when indexed now, "pending" when awaiting admin review
+    review_status: KnowledgeStatus
     filename: str
     file_type: str
     characters_extracted: int
     chunks_trained: int
     track: str = "custom"
     message: str
+
+
+class KnowledgeDocumentOut(BaseModel):
+    id: str
+    owner_id: str
+    owner_email: str = ""
+    filename: str
+    file_type: str
+    track: str
+    status: KnowledgeStatus
+    characters: int
+    chunks: int
+    review_note: str = ""
+    created_at: datetime | None = None
+    reviewed_at: datetime | None = None
+
+
+class KnowledgeDocumentDetail(KnowledgeDocumentOut):
+    # First part of the extracted text, so a reviewer can see what would be
+    # injected into learners' prompts before approving it.
+    preview: str
+
+
+class KnowledgeReviewRequest(BaseModel):
+    note: str = Field(default="", max_length=500)
 
 
 # ---------- Chat ----------

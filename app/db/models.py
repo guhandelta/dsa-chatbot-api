@@ -189,3 +189,37 @@ class TraceRecord(Base):
     estimated_cost_usd: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     payload: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class KnowledgeDocument(Base):
+    """A reference document uploaded through /learn.
+
+    Uploaded text reaches every learner's prompt, so it is gated: an admin's
+    upload publishes immediately, a teacher's waits as "pending" until an
+    admin approves it. The extracted text is kept so an admin can review
+    exactly what will be indexed, and so approval can index it later.
+
+    `chunk_ids` holds the vector-store ids written for this document (JSON
+    list). Deleting by id works identically on Chroma and pgvector, unlike
+    metadata filters.
+    """
+
+    __tablename__ = "knowledge_documents"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    owner_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    file_type: Mapped[str] = mapped_column(String(10), nullable=False, default=".txt")
+    track: Mapped[str] = mapped_column(String(20), nullable=False, default="custom")
+    # "pending" | "published" | "rejected"
+    status: Mapped[str] = mapped_column(String(20), index=True, nullable=False, default="pending")
+    text: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    characters: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    chunk_ids: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    review_note: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    reviewed_by: Mapped[str] = mapped_column(String(36), nullable=False, default="")
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
+    )

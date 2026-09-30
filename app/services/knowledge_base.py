@@ -178,12 +178,13 @@ def add_documents_in_batches(
     batch_size: int = 40,
     delay_between_batches: float = 1.0,
     max_retries: int = 6,
-) -> int:
+) -> list[str]:
     """Adds documents to the vector store in rate-limited batches with
     automatic 429 retry / backoff for providers with strict per-minute quotas
-    (such as Google Gemini Free Tier's 100 requests/minute limit)."""
+    (such as Google Gemini Free Tier's 100 requests/minute limit).
+    Returns the ids the store assigned, in order."""
     if not chunks:
-        return 0
+        return []
 
     total_chunks = len(chunks)
     total_batches = (total_chunks + batch_size - 1) // batch_size
@@ -191,13 +192,14 @@ def add_documents_in_batches(
         f"Adding {total_chunks} chunks to vector store in {total_batches} batches of up to {batch_size}..."
     )
 
+    ids: list[str] = []
     for i in range(0, total_chunks, batch_size):
         batch = chunks[i : i + batch_size]
         batch_idx = (i // batch_size) + 1
 
         for attempt in range(1, max_retries + 1):
             try:
-                vectorstore.add_documents(batch)
+                ids.extend(vectorstore.add_documents(batch) or [])
                 logger.info(
                     f"Successfully indexed batch {batch_idx}/{total_batches} ({len(batch)} chunks)"
                 )
@@ -236,7 +238,7 @@ def add_documents_in_batches(
                     )
                     raise exc
 
-    return total_chunks
+    return ids
 
 
 def split_document_for_training(
@@ -363,40 +365,36 @@ def delete_problem(problem_id: str) -> None:
         pass
 
 
-def train_from_document(
+def index_uploaded_document(
+    doc_id: str,
     filename: str,
     text_content: str,
-    user_id: str | None = None,
     track: str = "custom",
-) -> int:
-    """Takes extracted text from an uploaded document (.txt, .md, .pdf, .docx, .doc),
-    splits it into semantic chunks, and indexes it into the vector store so the
-    RAG pipeline can retrieve and use it during chat and mentor sessions.
-    Returns the number of chunks added.
+    user_id: str | None = None,
+) -> list[str]:
+    """Chunks and embeds an uploaded document (see POST /learn/train) so the
+    RAG pipeline can retrieve it. Returns the vector ids written; the caller
+    stores them so the document can be removed later with remove_chunks().
+
+    Chunks are tagged problem_id="upload:<doc_id>" — a namespace curated
+    problem ids can never collide with.
     """
     if not text_content or not text_content.strip():
-        return 0
-
-    # Namespaced so an upload named "two-sum.md" replaces only the uploader's
-    # previous version of that file, never the curated two-sum chunks.
-    doc_id = f"upload:{user_id or 'anon'}:{Path(filename).stem}"
-    vs = get_vectorstore()
-
-    try:
-        vs.delete(where={"problem_id": doc_id})
-    except Exception:
-        pass
-
+        return []
     chunks = split_document_for_training(
         filename=filename,
         text_content=text_content,
-        stem=doc_id,
+        stem=f"upload:{doc_id}",
         track=track,
         user_id=user_id,
     )
-    add_documents_in_batches(vs, chunks)
-    return len(chunks)
+    return add_documents_in_batches(get_vectorstore(), chunks)
 
+
+def remove_chunks(ids: list[str]) -> None:
+    """Deletes vectors by id. Works on both Chroma and pgvector."""
+    if ids:
+        get_vectorstore().delete(ids=ids)
 
 if __name__ == "__main__":
     ingest_documents()

@@ -150,11 +150,37 @@ problem replaces its chunks instead of duplicating them.
 | Role | Can |
 |---|---|
 | student | chat, practice |
-| teacher | + submit/delete training problems |
-| admin | + assign roles (`/admin/users`) |
+| teacher | + submit/delete training problems, upload reference documents for review |
+| admin | + assign roles (`/admin/users`), approve/reject document uploads |
 
 Set `ADMIN_EMAILS` in `.env` to bootstrap the first admin; log out and back in
 to pick up the role. Admins promote teachers from the Admin page.
+
+### Reference documents (`/learn`)
+
+Teachers can also upload notes and handouts (`.txt`, `.md`, `.pdf`, `.docx`,
+`.doc`, up to 10 MB) or paste text, from the **Train** page or the API.
+Uploaded text is retrieved for *every* learner's chat, so it is reviewed:
+
+- An **admin's** upload is indexed and published immediately.
+- A **teacher's** upload is stored as `pending` and only indexed once an
+  admin approves it. Admins can reject with a note, or unpublish later.
+- Re-uploading the same filename replaces your earlier version (and sends a
+  teacher's document back to review).
+
+| Endpoint | Who | Does |
+|---|---|---|
+| `POST /learn/train` | teacher, admin | multipart `file` + `track`, or JSON `{text, filename, track}` |
+| `GET /learn/documents?status=` | teacher (own), admin (all) | list uploads |
+| `GET /learn/documents/{id}` | owner, admin | metadata + text preview |
+| `DELETE /learn/documents/{id}` | owner, admin | remove record and vectors |
+| `POST /learn/documents/{id}/approve` | admin | index and publish |
+| `POST /learn/documents/{id}/reject` | admin | `{note}`; unpublishes if needed |
+
+`track` is `custom` (shared with every track, the default), `dsa`,
+`algorithm`, or `language`. Chunks are stored under
+`problem_id = "upload:<document id>"`, so an upload can never replace a
+curated problem. Run `alembic upgrade head` after pulling this feature.
 
 ### Language coverage
 

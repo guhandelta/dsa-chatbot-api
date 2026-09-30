@@ -286,7 +286,7 @@ def check_wiring() -> None:
 
     main = (ROOT / "app" / "main.py").read_text()
     expected_routers = ["auth", "chat", "analyze", "problems", "tracks",
-                        "training", "admin", "mentor", "subscriptions"]
+                        "training", "admin", "mentor", "subscriptions", "learn"]
     missing = [r for r in expected_routers if f"{r}.router" not in main]
     if missing:
         check("wiring", FAIL, f"routers not registered in main.py: {missing}")
