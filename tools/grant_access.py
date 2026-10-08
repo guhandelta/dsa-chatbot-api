@@ -10,7 +10,7 @@ WHY THIS EXISTS
 Three independent gates control what an account can do, and being an admin
 only clears the first:
 
-  1. role          — admin/teacher unlocks /train and /admin
+  1. role          — admin/instructor unlocks /train and /admin
   2. entitlements  — a per-LANGUAGE subscription unlocks the Socratic mentor
   3. peppercorns   — every chat, review, and mentor turn costs them
 

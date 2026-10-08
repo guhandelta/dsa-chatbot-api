@@ -61,16 +61,16 @@ async def admin(client, monkeypatch):
     return h
 
 
-async def _make_teacher(client, db, email):
+async def _make_instructor(client, db, email):
     h, uid = await _reg(client, email)
-    await db.execute(update(User).where(User.id == uid).values(role="teacher"))
+    await db.execute(update(User).where(User.id == uid).values(role="instructor"))
     await db.commit()
     return h
 
 
 @pytest.fixture
-async def teacher(client, db):
-    return await _make_teacher(client, db, "kb-teacher@x.com")
+async def instructor(client, db):
+    return await _make_instructor(client, db, "kb-instructor@x.com")
 
 
 async def _upload_text(client, headers, text="## Heaps\nA heap is a tree.", filename="heaps.md", track="dsa"):
@@ -90,8 +90,8 @@ async def test_student_cannot_upload_or_list(client, store):
     assert store.docs == {}
 
 
-async def test_status_reports_review_requirement(client, teacher, admin):
-    t = (await client.get("/learn/status", headers=teacher)).json()
+async def test_status_reports_review_requirement(client, instructor, admin):
+    t = (await client.get("/learn/status", headers=instructor)).json()
     a = (await client.get("/learn/status", headers=admin)).json()
     assert t["requires_review"] is True
     assert a["requires_review"] is False
@@ -99,16 +99,16 @@ async def test_status_reports_review_requirement(client, teacher, admin):
     assert "custom" in t["allowed_tracks"]
 
 
-async def test_teacher_cannot_review(client, teacher, store):
-    doc_id = (await _upload_text(client, teacher)).json()["document_id"]
-    assert (await client.post(f"/learn/documents/{doc_id}/approve", headers=teacher)).status_code == 403
-    assert (await client.post(f"/learn/documents/{doc_id}/reject", headers=teacher)).status_code == 403
+async def test_instructor_cannot_review(client, instructor, store):
+    doc_id = (await _upload_text(client, instructor)).json()["document_id"]
+    assert (await client.post(f"/learn/documents/{doc_id}/approve", headers=instructor)).status_code == 403
+    assert (await client.post(f"/learn/documents/{doc_id}/reject", headers=instructor)).status_code == 403
 
 
 # --------------------------------------------------------------- lifecycle
 
-async def test_teacher_upload_is_pending_and_not_indexed(client, teacher, store):
-    r = await _upload_text(client, teacher, track="DSA")
+async def test_instructor_upload_is_pending_and_not_indexed(client, instructor, store):
+    r = await _upload_text(client, instructor, track="DSA")
     assert r.status_code == 200, r.text
     body = r.json()
     assert body["review_status"] == "pending"
@@ -126,8 +126,8 @@ async def test_admin_upload_publishes_immediately(client, admin, store):
     assert all(d.metadata["problem_id"] == ns for d in store.docs.values())
 
 
-async def test_approve_indexes_pending_upload(client, teacher, admin, store):
-    doc_id = (await _upload_text(client, teacher)).json()["document_id"]
+async def test_approve_indexes_pending_upload(client, instructor, admin, store):
+    doc_id = (await _upload_text(client, instructor)).json()["document_id"]
     r = await client.post(f"/learn/documents/{doc_id}/approve", headers=admin)
     assert r.status_code == 200
     assert r.json()["status"] == "published"
@@ -137,8 +137,8 @@ async def test_approve_indexes_pending_upload(client, teacher, admin, store):
     assert again.status_code == 409
 
 
-async def test_reject_pending_records_note(client, teacher, admin, store):
-    doc_id = (await _upload_text(client, teacher)).json()["document_id"]
+async def test_reject_pending_records_note(client, instructor, admin, store):
+    doc_id = (await _upload_text(client, instructor)).json()["document_id"]
     r = await client.post(
         f"/learn/documents/{doc_id}/reject", headers=admin, json={"note": " off-topic "}
     )
@@ -169,12 +169,12 @@ async def test_reupload_replaces_previous_version(client, admin, store, db):
     assert len(rows) == 1
 
 
-async def test_teacher_reupload_of_published_doc_goes_back_to_review(client, teacher, admin, store):
-    doc_id = (await _upload_text(client, teacher, text="## A\nv1")).json()["document_id"]
+async def test_instructor_reupload_of_published_doc_goes_back_to_review(client, instructor, admin, store):
+    doc_id = (await _upload_text(client, instructor, text="## A\nv1")).json()["document_id"]
     await client.post(f"/learn/documents/{doc_id}/approve", headers=admin)
     assert store.docs
 
-    r = (await _upload_text(client, teacher, text="## A\nv2")).json()
+    r = (await _upload_text(client, instructor, text="## A\nv2")).json()
     assert r["review_status"] == "pending"
     assert store.docs == {}  # v1 withdrawn; v2 waits for review
 
@@ -198,22 +198,22 @@ async def test_vector_delete_failure_does_not_block_db_delete(client, admin, sto
 
 # ------------------------------------------------------- listing & access
 
-async def test_listing_is_scoped_by_role(client, db, teacher, admin, store):
-    other = await _make_teacher(client, db, "kb-teacher2@x.com")
-    await _upload_text(client, teacher, filename="mine.md")
+async def test_listing_is_scoped_by_role(client, db, instructor, admin, store):
+    other = await _make_instructor(client, db, "kb-instructor2@x.com")
+    await _upload_text(client, instructor, filename="mine.md")
     await _upload_text(client, other, filename="theirs.md")
 
-    mine = (await client.get("/learn/documents", headers=teacher)).json()
+    mine = (await client.get("/learn/documents", headers=instructor)).json()
     assert [d["filename"] for d in mine] == ["mine.md"]
 
     everything = (await client.get("/learn/documents", headers=admin)).json()
     assert {d["filename"] for d in everything} == {"mine.md", "theirs.md"}
-    assert {d["owner_email"] for d in everything} == {"kb-teacher@x.com", "kb-teacher2@x.com"}
+    assert {d["owner_email"] for d in everything} == {"kb-instructor@x.com", "kb-instructor2@x.com"}
 
 
-async def test_listing_filters_by_status(client, teacher, admin, store):
-    a = (await _upload_text(client, teacher, filename="a.md")).json()["document_id"]
-    await _upload_text(client, teacher, filename="b.md")
+async def test_listing_filters_by_status(client, instructor, admin, store):
+    a = (await _upload_text(client, instructor, filename="a.md")).json()["document_id"]
+    await _upload_text(client, instructor, filename="b.md")
     await client.post(f"/learn/documents/{a}/approve", headers=admin)
 
     pending = (await client.get("/learn/documents?status=pending", headers=admin)).json()
@@ -221,24 +221,24 @@ async def test_listing_filters_by_status(client, teacher, admin, store):
     assert (await client.get("/learn/documents?status=bogus", headers=admin)).status_code == 400
 
 
-async def test_detail_includes_preview_for_owner_and_admin(client, db, teacher, admin, store):
-    doc_id = (await _upload_text(client, teacher, text="## Tries\nprefix trees")).json()["document_id"]
-    for h in (teacher, admin):
+async def test_detail_includes_preview_for_owner_and_admin(client, db, instructor, admin, store):
+    doc_id = (await _upload_text(client, instructor, text="## Tries\nprefix trees")).json()["document_id"]
+    for h in (instructor, admin):
         r = await client.get(f"/learn/documents/{doc_id}", headers=h)
         assert r.status_code == 200
         assert "prefix trees" in r.json()["preview"]
-        assert r.json()["owner_email"] == "kb-teacher@x.com"
+        assert r.json()["owner_email"] == "kb-instructor@x.com"
 
-    stranger = await _make_teacher(client, db, "kb-stranger@x.com")
+    stranger = await _make_instructor(client, db, "kb-stranger@x.com")
     assert (await client.get(f"/learn/documents/{doc_id}", headers=stranger)).status_code == 404
     assert (await client.delete(f"/learn/documents/{doc_id}", headers=stranger)).status_code == 404
 
 
-async def test_owner_can_delete_published_doc(client, teacher, admin, store):
-    doc_id = (await _upload_text(client, teacher)).json()["document_id"]
+async def test_owner_can_delete_published_doc(client, instructor, admin, store):
+    doc_id = (await _upload_text(client, instructor)).json()["document_id"]
     await client.post(f"/learn/documents/{doc_id}/approve", headers=admin)
     assert store.docs
-    r = await client.delete(f"/learn/documents/{doc_id}", headers=teacher)
+    r = await client.delete(f"/learn/documents/{doc_id}", headers=instructor)
     assert r.status_code == 204
     assert store.docs == {}
 
@@ -249,14 +249,14 @@ async def test_unknown_document_404(client, admin, store):
 
 # --------------------------------------------------------------- validation
 
-async def test_unknown_track_rejected(client, teacher, store):
-    r = await _upload_text(client, teacher, track="admin")
+async def test_unknown_track_rejected(client, instructor, store):
+    r = await _upload_text(client, instructor, track="admin")
     assert r.status_code == 400
 
 
-async def test_multipart_markdown_upload(client, teacher, store, db):
+async def test_multipart_markdown_upload(client, instructor, store, db):
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         files={"file": ("notes.md", b"# Notes\nTwo pointers...", "text/markdown")},
         data={"track": "algorithm"},
     )
@@ -267,96 +267,96 @@ async def test_multipart_markdown_upload(client, teacher, store, db):
     assert doc.file_type == ".md"
 
 
-async def test_multipart_text_field_without_file(client, teacher, store):
+async def test_multipart_text_field_without_file(client, instructor, store):
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         data={"text": "pasted", "filename": "pasted.txt"},
     )
     assert r.status_code == 200, r.text
     assert r.json()["filename"] == "pasted.txt"
 
 
-async def test_unsupported_extension_rejected(client, teacher, store):
+async def test_unsupported_extension_rejected(client, instructor, store):
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         files={"file": ("run.exe", b"MZ...", "application/octet-stream")},
     )
     assert r.status_code == 400
 
 
-async def test_empty_extraction_rejected(client, teacher, store):
+async def test_empty_extraction_rejected(client, instructor, store):
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         files={"file": ("blank.txt", b"   \n  ", "text/plain")},
     )
     assert r.status_code == 400
     assert "Could not extract" in r.json()["detail"]
 
 
-async def test_parser_value_error_is_400(client, teacher, store, monkeypatch):
+async def test_parser_value_error_is_400(client, instructor, store, monkeypatch):
     def bad(*_):
         raise ValueError("PDF support requires the 'pypdf' package")
 
     monkeypatch.setattr(learn_router, "extract_text_from_file", bad)
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         files={"file": ("a.pdf", b"%PDF", "application/pdf")},
     )
     assert r.status_code == 400
     assert "pypdf" in r.json()["detail"]
 
 
-async def test_parser_crash_is_400_without_internals(client, teacher, store, monkeypatch):
+async def test_parser_crash_is_400_without_internals(client, instructor, store, monkeypatch):
     def boom(*_):
         raise RuntimeError("secret internal path /srv/x")
 
     monkeypatch.setattr(learn_router, "extract_text_from_file", boom)
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         files={"file": ("a.docx", b"PK", "application/octet-stream")},
     )
     assert r.status_code == 400
     assert "secret" not in r.json()["detail"]
 
 
-async def test_oversized_upload_rejected(client, teacher, store, monkeypatch):
+async def test_oversized_upload_rejected(client, instructor, store, monkeypatch):
     monkeypatch.setattr(learn_router, "MAX_UPLOAD_BYTES", 10)
     r = await client.post(
-        "/learn/train", headers=teacher,
+        "/learn/train", headers=instructor,
         files={"file": ("big.txt", b"x" * 11, "text/plain")},
     )
     assert r.status_code == 413
 
 
-async def test_overlong_text_rejected(client, teacher, store, monkeypatch):
+async def test_overlong_text_rejected(client, instructor, store, monkeypatch):
     monkeypatch.setattr(learn_router, "MAX_TEXT_CHARS", 5)
-    r = await _upload_text(client, teacher, text="123456")
+    r = await _upload_text(client, instructor, text="123456")
     assert r.status_code == 413
 
 
-async def test_empty_request_rejected(client, teacher, store):
-    r = await client.post("/learn/train", headers=teacher, json={"text": "  "})
+async def test_empty_request_rejected(client, instructor, store):
+    r = await client.post("/learn/train", headers=instructor, json={"text": "  "})
     assert r.status_code == 400
 
 
-async def test_non_object_json_rejected(client, teacher, store):
-    r = await client.post("/learn/train", headers=teacher, json=["x"])
+async def test_non_object_json_rejected(client, instructor, store):
+    r = await client.post("/learn/train", headers=instructor, json=["x"])
     assert r.status_code == 400
 
 
-async def test_malformed_json_rejected(client, teacher, store):
+async def test_malformed_json_rejected(client, instructor, store):
     r = await client.post(
         "/learn/train",
-        headers={**teacher, "Content-Type": "application/json"},
+        headers={**instructor, "Content-Type": "application/json"},
         content=b"{not json",
     )
     assert r.status_code == 400
 
 
-async def test_unsupported_content_type_rejected(client, teacher, store):
+async def test_unsupported_content_type_rejected(client, instructor, store):
     r = await client.post(
         "/learn/train",
-        headers={**teacher, "Content-Type": "text/plain"},
+        headers={**instructor, "Content-Type": "text/plain"},
         content=b"raw",
     )
     assert r.status_code == 415

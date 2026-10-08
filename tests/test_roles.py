@@ -1,4 +1,4 @@
-# Role gating: students are locked out of training, admins assign teachers,
+# Role gating: students are locked out of training, admins assign instructors,
 # and ADMIN_EMAILS bootstraps the first admin.
 import pytest
 from sqlalchemy import select
@@ -36,17 +36,17 @@ async def test_student_cannot_list_users(client):
     assert (await client.get("/admin/users", headers=h)).status_code == 403
 
 
-async def test_admin_promotes_student_to_teacher(client, monkeypatch, db):
+async def test_admin_promotes_student_to_instructor(client, monkeypatch, db):
     monkeypatch.setattr(settings, "admin_emails", "boss2@x.com")
     admin = await _reg(client, "boss2@x.com")
     student = await _reg(client, "learner@x.com")
     ah = {"Authorization": f"Bearer {admin['access_token']}"}
 
     r = await client.patch(
-        f"/admin/users/{student['user']['id']}/role", headers=ah, json={"role": "teacher"}
+        f"/admin/users/{student['user']['id']}/role", headers=ah, json={"role": "instructor"}
     )
     assert r.status_code == 200
-    assert r.json()["role"] == "teacher"
+    assert r.json()["role"] == "instructor"
 
     # The promoted user can now reach the training section
     sh = {"Authorization": f"Bearer {student['access_token']}"}
@@ -63,13 +63,13 @@ async def test_admin_cannot_demote_self(client, monkeypatch):
     assert r.status_code == 400
 
 
-async def test_teacher_cannot_manage_roles(client, monkeypatch, db):
+async def test_instructor_cannot_manage_roles(client, monkeypatch, db):
     monkeypatch.setattr(settings, "admin_emails", "boss4@x.com")
     admin = await _reg(client, "boss4@x.com")
-    teacher = await _reg(client, "teach@x.com")
+    instructor = await _reg(client, "teach@x.com")
     ah = {"Authorization": f"Bearer {admin['access_token']}"}
     await client.patch(
-        f"/admin/users/{teacher['user']['id']}/role", headers=ah, json={"role": "teacher"}
+        f"/admin/users/{instructor['user']['id']}/role", headers=ah, json={"role": "instructor"}
     )
-    th = {"Authorization": f"Bearer {teacher['access_token']}"}
+    th = {"Authorization": f"Bearer {instructor['access_token']}"}
     assert (await client.get("/admin/users", headers=th)).status_code == 403

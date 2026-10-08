@@ -25,7 +25,7 @@ class User(Base):
     # Current balance is denormalized for fast reads; the Transaction table
     # is the source-of-truth ledger and every change writes both.
     peppercorns: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    # "student" | "teacher" | "admin" — only teacher/admin may train the bot
+    # "student" | "instructor" | "admin" — only instructor/admin may train the bot
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="student")
     # Chosen once, respected across every track and mode
     preferred_language: Mapped[str] = mapped_column(String(20), nullable=False, default="python")
@@ -94,7 +94,7 @@ class Submission(Base):
     problem_id: Mapped[str] = mapped_column(String(120), index=True, nullable=False)
     # "published" | "needs_review" | "failed"
     status: Mapped[str] = mapped_column(String(30), nullable=False, default="needs_review")
-    raw_input: Mapped[str] = mapped_column(Text, nullable=False)      # what the teacher sent (JSON)
+    raw_input: Mapped[str] = mapped_column(Text, nullable=False)      # what the instructor sent (JSON)
     report_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
     markdown: Mapped[str] = mapped_column(Text, nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
@@ -195,7 +195,7 @@ class KnowledgeDocument(Base):
     """A reference document uploaded through /learn.
 
     Uploaded text reaches every learner's prompt, so it is gated: an admin's
-    upload publishes immediately, a teacher's waits as "pending" until an
+    upload publishes immediately, an instructor's waits as "pending" until an
     admin approves it. The extracted text is kept so an admin can review
     exactly what will be indexed, and so approval can index it later.
 

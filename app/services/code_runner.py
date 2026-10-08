@@ -2,7 +2,7 @@
 
 SECURITY NOTE
 -------------
-This runs code written by teachers/admins. Locally it is confined with an
+This runs code written by instructors/admins. Locally it is confined with an
 OS-level CPU/memory/file-size limit, a wall-clock timeout, a scratch working
 directory, and a stripped environment (so it cannot read your .env or API
 keys). That is adequate for a trusted local dev setup. It is NOT a true

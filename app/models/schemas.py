@@ -157,9 +157,9 @@ class AnalyzeResponse(BaseModel):
     evidence: Optional[dict] = None
 
 
-# ---------- Training (teacher/admin) ----------
+# ---------- Training (instructor/admin) ----------
 
-Role = Literal["student", "teacher", "admin"]
+Role = Literal["student", "instructor", "admin"]
 
 
 class RoleUpdate(BaseModel):

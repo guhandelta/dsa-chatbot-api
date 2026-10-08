@@ -87,7 +87,7 @@ Supabase user id.
 Everything that makes this app's authorization interesting stays in your
 database:
 
-- `role` (student / teacher / admin) and the `require_teacher` / `require_admin` gates
+- `role` (student / instructor / admin) and the `require_instructor` / `require_admin` gates
 - `peppercorns`, the ledger, and every debit/refund path
 - `status`, `strikes`, suspension
 - `subscriptions` and per-language `entitlements.check()`

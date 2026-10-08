@@ -1,11 +1,11 @@
-# /learn endpoints — teachers and admins feed extra reference documents
+# /learn endpoints — instructors and admins feed extra reference documents
 # (.txt, .md, .pdf, .docx, .doc) or pasted notes into the RAG knowledge base.
 #
 # Uploaded material is retrieved for EVERY learner's chat, which makes it a
-# prompt-injection surface. So writing is limited to teachers/admins, and a
-# teacher's upload waits for admin review before it is indexed:
+# prompt-injection surface. So writing is limited to instructors/admins, and an
+# instructor's upload waits for admin review before it is indexed:
 #
-#   teacher uploads ──▶ pending ──approve──▶ published (indexed)
+#   instructor uploads ──▶ pending ──approve──▶ published (indexed)
 #                              └─reject───▶ rejected  (never indexed)
 #   admin uploads   ──────────────────────▶ published
 import asyncio
@@ -22,7 +22,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.datastructures import UploadFile
 
 from app.core.config import settings
-from app.core.security import require_admin, require_teacher
+from app.core.security import require_admin, require_instructor
 from app.db.database import get_session
 from app.db.models import KnowledgeDocument, User
 from app.models.schemas import (
@@ -113,7 +113,7 @@ def _mark_reviewed(doc: KnowledgeDocument, reviewer: User, new_status: str, note
 
 async def _get_visible(session: AsyncSession, doc_id: str, user: User) -> KnowledgeDocument:
     """Owners see their own documents; admins see everything. Anything else
-    is a 404 so ids of other teachers' uploads are not confirmed."""
+    is a 404 so ids of other instructors' uploads are not confirmed."""
     doc = await session.get(KnowledgeDocument, doc_id)
     if doc is None or (user.role != "admin" and doc.owner_id != user.id):
         raise HTTPException(status_code=404, detail="Document not found")
@@ -195,7 +195,7 @@ async def _read_upload(request: Request) -> tuple[str, str, str]:
 
 
 @router.get("/status")
-async def learn_status(current_user: User = Depends(require_teacher)):
+async def learn_status(current_user: User = Depends(require_instructor)):
     """Returns the status of the knowledge base training pipeline and supported formats."""
     return {
         "status": "online",
@@ -211,7 +211,7 @@ async def learn_status(current_user: User = Depends(require_teacher)):
 @router.post("/train", response_model=LearnTrainResponse, status_code=status.HTTP_200_OK)
 async def train_knowledge_base(
     request: Request,
-    current_user: User = Depends(require_teacher),
+    current_user: User = Depends(require_instructor),
     session: AsyncSession = Depends(get_session),
 ):
     """Uploads a document or pasted text for the knowledge base.
@@ -277,10 +277,10 @@ async def train_knowledge_base(
 @router.get("/documents", response_model=list[KnowledgeDocumentOut])
 async def list_documents(
     status_filter: str | None = Query(default=None, alias="status"),
-    current_user: User = Depends(require_teacher),
+    current_user: User = Depends(require_instructor),
     session: AsyncSession = Depends(get_session),
 ):
-    """Teachers see their own uploads; admins see everyone's (the review
+    """Instructors see their own uploads; admins see everyone's (the review
     queue is `?status=pending`)."""
     if status_filter is not None and status_filter not in KNOWLEDGE_STATUSES:
         raise HTTPException(status_code=400, detail=f"Unknown status '{status_filter}'.")
@@ -300,7 +300,7 @@ async def list_documents(
 @router.get("/documents/{doc_id}", response_model=KnowledgeDocumentDetail)
 async def get_document(
     doc_id: str,
-    current_user: User = Depends(require_teacher),
+    current_user: User = Depends(require_instructor),
     session: AsyncSession = Depends(get_session),
 ):
     doc = await _get_visible(session, doc_id, current_user)
@@ -314,7 +314,7 @@ async def get_document(
 @router.delete("/documents/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_document(
     doc_id: str,
-    current_user: User = Depends(require_teacher),
+    current_user: User = Depends(require_instructor),
     session: AsyncSession = Depends(get_session),
 ):
     doc = await _get_visible(session, doc_id, current_user)

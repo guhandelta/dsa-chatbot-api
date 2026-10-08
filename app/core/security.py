@@ -65,12 +65,12 @@ def _sync_admin_role(user: User) -> None:
         user.role = "admin"
 
 
-async def require_teacher(current_user: User = Depends(get_current_user)) -> User:
-    """Training section: teachers and admins only."""
-    if current_user.role not in ("teacher", "admin"):
+async def require_instructor(current_user: User = Depends(get_current_user)) -> User:
+    """Training section: instructors and admins only."""
+    if current_user.role not in ("instructor", "admin"):
         raise HTTPException(
             status_code=403,
-            detail="Training access is limited to teachers and admins.",
+            detail="Training access is limited to instructors and admins.",
         )
     return current_user
 

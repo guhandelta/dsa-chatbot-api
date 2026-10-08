@@ -1,4 +1,4 @@
-# /admin — user & role management. Admins assign the teacher role.
+# /admin — user & role management. Admins assign the instructor role.
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,7 +32,7 @@ async def set_role(
     admin: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
 ):
-    """Promote a student to teacher (or demote). An admin cannot demote
+    """Promote a student to instructor (or demote). An admin cannot demote
     themselves — that could lock the last admin out of the system."""
     user = await session.get(User, user_id)
     if user is None:

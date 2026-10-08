@@ -1,6 +1,6 @@
 """LLM stage of the training pipeline.
 
-Takes whatever a teacher submits (a statement, plus zero or more solutions in
+Takes whatever an instructor submits (a statement, plus zero or more solutions in
 any languages) and produces a complete, canonical problem:
 
   * corrected solutions for all six languages, with every correction recorded
@@ -49,10 +49,10 @@ class SolutionOut(BaseModel):
     )
     corrections: list[str] = Field(
         default_factory=list,
-        description="If the teacher supplied this language and it had bugs, list each "
+        description="If the instructor supplied this language and it had bugs, list each "
         "bug found and how it was fixed. Empty if it was already correct or newly written.",
     )
-    was_supplied: bool = Field(description="True if the teacher provided this language")
+    was_supplied: bool = Field(description="True if the instructor provided this language")
 
 
 class TestCase(BaseModel):
@@ -84,7 +84,7 @@ class EnrichedProblem(BaseModel):
     interview_tips: list[str] = Field(description="Common interviewer follow-ups")
     issues_found: list[str] = Field(
         default_factory=list,
-        description="Problems found in what the teacher submitted: wrong statement, "
+        description="Problems found in what the instructor submitted: wrong statement, "
         "misstated complexity, buggy code, missing constraints. Empty if it was clean.",
     )
     solutions: list[SolutionOut] = Field(
@@ -102,11 +102,11 @@ def _prompt(problem_hint: str, supplied: dict[str, str]) -> str:
             f"### {lang}\n```\n{code}\n```" for lang, code in supplied.items()
         )
     else:
-        supplied_block = "(none — the teacher supplied no code)"
+        supplied_block = "(none — the instructor supplied no code)"
 
     return f"""You are a meticulous DSA curriculum author and code reviewer.
 
-A teacher has submitted the following problem for the knowledge base:
+An instructor has submitted the following problem for the knowledge base:
 
 --- SUBMITTED PROBLEM ---
 {problem_hint}

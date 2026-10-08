@@ -1,4 +1,4 @@
-# /training — teacher & admin only. Submit a problem, get it reviewed,
+# /training — instructor & admin only. Submit a problem, get it reviewed,
 # corrected, completed in all six languages, executed, and auto-published
 # if (and only if) every check passes.
 import json
@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import require_teacher
+from app.core.security import require_instructor
 from app.db.database import get_session
 from app.db.models import Submission, User
 from app.models.schemas import TrainRequest
@@ -22,9 +22,9 @@ router = APIRouter(prefix="/training", tags=["training"])
 
 
 @router.get("/status")
-async def training_status(user: User = Depends(require_teacher)):
-    """What this environment can actually verify — the UI shows this so a
-    teacher knows up front which languages will be executed."""
+async def training_status(user: User = Depends(require_instructor)):
+    """What this environment can actually verify — the UI shows this so an
+    instructor knows up front which languages will be executed."""
     tools = available_languages()
     return {
         "role": user.role,
@@ -40,7 +40,7 @@ async def training_status(user: User = Depends(require_teacher)):
 @router.post("/submit")
 async def submit_problem(
     request: TrainRequest,
-    user: User = Depends(require_teacher),
+    user: User = Depends(require_instructor),
     session: AsyncSession = Depends(get_session),
 ):
     """Runs the full pipeline. Publishing is automatic only when every
@@ -80,10 +80,10 @@ async def submit_problem(
 
 @router.get("/submissions")
 async def list_submissions(
-    user: User = Depends(require_teacher),
+    user: User = Depends(require_instructor),
     session: AsyncSession = Depends(get_session),
 ):
-    """Admins see everything; teachers see their own submissions."""
+    """Admins see everything; instructors see their own submissions."""
     stmt = select(Submission).order_by(Submission.created_at.desc())
     if user.role != "admin":
         stmt = stmt.where(Submission.user_id == user.id)
@@ -101,7 +101,7 @@ async def list_submissions(
 
 
 @router.delete("/problems/{problem_id}")
-async def remove_problem(problem_id: str, user: User = Depends(require_teacher)):
+async def remove_problem(problem_id: str, user: User = Depends(require_instructor)):
     """Removes a problem from the knowledge base (file + vector chunks),
     so it can be retrained from scratch."""
     path = PROBLEMS_DIR / f"{problem_id}.md"
