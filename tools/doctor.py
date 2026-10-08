@@ -231,6 +231,23 @@ def check_content() -> None:
         return
     check("content", PASS, f"{len(files)} content files found")
 
+    # Two files sharing a stem across directories is silently destructive: the
+    # catalog keys content by stem, so the first directory scanned wins and the
+    # other file becomes unreachable. When a concept page shadows a problem,
+    # the problem's test cases and reference solution disappear with it and
+    # /analyze quietly downgrades to review-only.
+    by_stem: dict[str, list[str]] = {}
+    for f in files:
+        by_stem.setdefault(f.stem, []).append(str(f.relative_to(ROOT)))
+    shadowed = {stem: paths for stem, paths in by_stem.items() if len(paths) > 1}
+    if shadowed:
+        for stem, paths in list(shadowed.items())[:5]:
+            check("content", FAIL,
+                  f"'{stem}' exists in {len(paths)} places — one shadows the other: "
+                  + ", ".join(paths))
+    else:
+        check("content", PASS, "no duplicate content ids")
+
     langs = ("Python", "JavaScript", "Java", "C++", "C", "Rust")
     no_tests, bad_json, incomplete = [], [], []
 
