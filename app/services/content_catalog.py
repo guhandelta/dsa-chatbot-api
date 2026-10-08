@@ -38,8 +38,27 @@ from pydantic import BaseModel
 CONTENT_DIR = Path(__file__).resolve().parents[2] / "data" / "content"
 LEGACY_DIR = Path(__file__).resolve().parents[2] / "data" / "dsa_problems"
 
-TRACKS = ("language", "dsa", "algorithm")
+# Internal tracks — how content is stored on disk.
+TRACKS = ("language", "dsa", "algorithm", "design-patterns")
 DIFFICULTIES = ("Easy", "Medium", "Hard")
+
+# Learner-facing sections — how content is presented. `dsa` aggregates the
+# problems and the technique write-ups, because a learner thinks of those as
+# one subject rather than two.
+SECTIONS: dict[str, tuple[str, ...]] = {
+    "language": ("language",),
+    "dsa": ("dsa", "algorithm"),
+    "design-patterns": ("design-patterns",),
+}
+
+# Progression within Language Fundamentals. Held as metadata rather than shown
+# as three named doors: the selector reads it to order the path, the learner
+# never has to classify themselves.
+#   beginner     — syntax, entities, how code is structured in this language
+#   intermediate — data structures, pairings, gotchas and fixes
+#   expert       — advanced language features, and how this language expresses
+#                  (or obviates) the classic design patterns
+LEVELS = ("beginner", "intermediate", "expert")
 
 _H1 = re.compile(r"^#\s+(.*?)\s+—\s+(\w+)\s+—\s+(.*)$")
 _FRONT = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
@@ -55,6 +74,15 @@ class ContentMeta(BaseModel):
     algorithms: list[str] = []           # tags linking problems to algorithms
     source: str = "authored"             # leetcode | hackerrank | authored
     io_mode: str = "function"            # function | stdio
+    # Progression level for Language Fundamentals. None means the item is not
+    # level-scoped — DSA problems are ordered by `difficulty` instead, which is
+    # a separate axis and must not be conflated with this one.
+    level: str | None = None
+    # Design-pattern tags, parallel to `algorithms`. These cross-link a
+    # language idiom page to the pattern it implements, so Expert-level
+    # Language Fundamentals can glimpse a pattern without duplicating the
+    # Design Patterns section.
+    patterns: list[str] = []
     fn_python: str | None = None         # entry point the harness calls
     fn_javascript: str | None = None
     has_tests: bool = False              # executable test cases available
@@ -73,7 +101,7 @@ def _parse_front_matter(text: str) -> tuple[dict, str]:
         key, value = key.strip(), value.strip()
         if not value or value.lower() in ("null", "none", ""):
             continue
-        if key == "algorithms":
+        if key in ("algorithms", "patterns"):
             meta[key] = [v.strip() for v in value.split(",") if v.strip()]
         else:
             meta[key] = value
@@ -102,6 +130,8 @@ def parse_file(path: Path) -> ContentMeta:
         algorithms=front.get("algorithms", []),
         source=front.get("source", "authored"),
         io_mode=front.get("io_mode", "function"),
+        level=front.get("level"),
+        patterns=front.get("patterns", []),
         fn_python=front.get("fn_python"),
         fn_javascript=front.get("fn_javascript"),
         has_tests=bool(front.get("test_cases")),
@@ -137,10 +167,19 @@ def filter_content(
     difficulty: str | None = None,
     algorithm: str | None = None,
     source: str | None = None,
+    level: str | None = None,
+    pattern: str | None = None,
 ) -> list[ContentMeta]:
+    """Filter the catalog.
+
+    `track` accepts either a learner-facing section ("dsa") or an internal
+    track name ("algorithm"), so existing callers keep working unchanged. A
+    section expands to every internal track it contains.
+    """
     items = list_content()
     if track:
-        items = [c for c in items if c.track == track]
+        allowed = SECTIONS.get(track, (track,))
+        items = [c for c in items if c.track in allowed]
     if language:
         # Language-track items are language-specific; dsa/algorithm items have
         # solutions in every language, so they always match.
@@ -151,6 +190,10 @@ def filter_content(
         items = [c for c in items if algorithm in c.algorithms]
     if source:
         items = [c for c in items if c.source == source]
+    if level:
+        items = [c for c in items if c.level == level]
+    if pattern:
+        items = [c for c in items if pattern in c.patterns]
     return items
 
 
@@ -183,32 +226,80 @@ def known_algorithms() -> list[str]:
     return sorted(tags)
 
 
+def known_patterns() -> list[str]:
+    """Every design-pattern tag in use, across all sections. This is what
+    links a language idiom page to its Design Patterns page."""
+    tags: set[str] = set()
+    for c in list_content():
+        tags.update(c.patterns)
+    return sorted(tags)
+
+
 def known_languages() -> list[str]:
     return ["python", "javascript", "java", "cpp", "c", "rust"]
 
 
-def track_summary() -> list[dict]:
-    """Counts per track, for the track-selection screen."""
+def level_summary(language: str | None = None) -> list[dict]:
+    """The three progression levels of Language Fundamentals, with counts.
+
+    Counts are language-scoped because this is the only language-specific
+    section: a Rust learner should never be shown the Python item count.
+    """
+    meta = {
+        "beginner": ("Beginner",
+                     "Syntax, entities, and how code is structured in this language."),
+        "intermediate": ("Intermediate",
+                         "Data structures, when to pair them, and the gotchas that bite."),
+        "expert": ("Expert",
+                   "Advanced language features, and how this language expresses "
+                   "the classic design patterns."),
+    }
+    items = filter_content(track="language", language=language)
+    out = []
+    for level in LEVELS:
+        label, blurb = meta[level]
+        out.append({
+            "level": level,
+            "label": label,
+            "blurb": blurb,
+            "count": len([c for c in items if c.level == level]),
+        })
+    return out
+
+
+def track_summary(language: str | None = None) -> list[dict]:
+    """The three learner-facing sections for the choice screen.
+
+    `dsa` aggregates the internal "dsa" and "algorithm" tracks. Language
+    Fundamentals is counted against the learner's language, since it is the
+    only language-specific section.
+    """
     items = list_content()
     labels = {
         "language": "Language Fundamentals",
-        "dsa": "DSA Problems",
-        "algorithm": "Algorithms",
+        "dsa": "Data Structures & Algorithms",
+        "design-patterns": "Design Patterns",
     }
     blurbs = {
-        "language": "Syntax, built-in data structures, and idioms for your chosen language.",
-        "dsa": "LeetCode and HackerRank problems, solved and reviewed.",
-        "algorithm": "Learn an algorithm as a concept, then apply it at increasing difficulty.",
+        "language": "Syntax, data structures, and idioms for your chosen language.",
+        "dsa": "LeetCode and HackerRank problems, plus the techniques behind them.",
+        "design-patterns": "Choosing the right pattern, the trade-offs, and when not to use one.",
     }
-    return [
-        {
-            "track": t,
-            "label": labels[t],
-            "blurb": blurbs[t],
-            "count": len([c for c in items if c.track == t]),
-        }
-        for t in TRACKS
-    ]
+    out = []
+    for section, internal in SECTIONS.items():
+        scoped = [c for c in items if c.track in internal]
+        if section == "language" and language:
+            scoped = [c for c in scoped if c.language in (None, language)]
+        out.append({
+            "track": section,
+            "label": labels[section],
+            "blurb": blurbs[section],
+            "count": len(scoped),
+            # The UI hides empty sections rather than leading a learner to a
+            # blank page; deciding that here keeps it consistent across clients.
+            "available": len(scoped) > 0,
+        })
+    return out
 
 
 def load_test_cases(content_id: str) -> tuple[list, list, dict, str]:

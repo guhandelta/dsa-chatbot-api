@@ -77,7 +77,12 @@ async def test_tracks_endpoint_lists_three_paths(client):
     res = await client.get("/tracks/", headers=h)
     assert res.status_code == 200
     body = res.json()
-    assert [t["track"] for t in body["tracks"]] == ["language", "dsa", "algorithm"]
+    # Learner-facing SECTIONS, not internal tracks: `algorithm` is folded into
+    # `dsa` because a learner sees problems and the techniques behind them as
+    # one subject rather than two separate destinations.
+    assert [t["track"] for t in body["tracks"]] == [
+        "language", "dsa", "design-patterns",
+    ]
     assert body["modes"] == ["learn", "practice"]
 
 
