@@ -21,6 +21,28 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/training", tags=["training"])
 
 
+@router.get("/registry")
+async def training_registry():
+    """Returns the comprehensive registry of all technologies, languages,
+    frameworks, record counts, vector store status, and recent training events."""
+    from app.services.training_registry import get_training_registry
+    return get_training_registry()
+
+
+@router.get("/registry/history")
+async def training_registry_history(limit: int = 50):
+    """Returns the chronological audit log of training and ingestion events."""
+    from app.services.training_registry import get_training_history
+    return get_training_history(limit=limit)
+
+
+@router.get("/registry/technologies")
+async def trained_technologies():
+    """Returns a clean list of all distinct technologies and frameworks trained."""
+    from app.services.training_registry import get_trained_technologies
+    return get_trained_technologies()
+
+
 @router.get("/status")
 async def training_status(user: User = Depends(require_instructor)):
     """What this environment can actually verify — the UI shows this so an
@@ -110,4 +132,8 @@ async def remove_problem(problem_id: str, user: User = Depends(require_instructo
     path.unlink()
     delete_problem(problem_id)
     list_problems.cache_clear()
+    from app.services.content_catalog import list_content
+    from app.services.curriculum_search import _index
+    list_content.cache_clear()
+    _index.cache_clear()
     return {"deleted": problem_id}

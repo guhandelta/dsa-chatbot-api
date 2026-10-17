@@ -1,0 +1,285 @@
+[
+  {
+    "id": "tr-evt-001-baseline",
+    "timestamp": "2026-10-15T00:00:00Z",
+    "action": "system_bootstrap",
+    "technology": "dsa",
+    "category": "algorithms_and_dsa",
+    "source": "data/content & data/dsa_problems",
+    "record_count": 240,
+    "vectors_count": 240,
+    "status": "completed",
+    "details": {
+      "description": "Authored DSA problem catalog and multi-language solutions."
+    }
+  },
+  {
+    "id": "tr-evt-002-curriculum",
+    "timestamp": "2026-10-15T12:00:00Z",
+    "action": "curriculum_import",
+    "technology": "java-javascript",
+    "category": "core_languages",
+    "source": "Training Data/dsa_mentor_rag_export/dsa_curriculum.jsonl",
+    "record_count": 4280,
+    "vectors_count": 1800,
+    "status": "completed",
+    "details": {
+      "description": "Canonical Java & JavaScript mentor curriculum."
+    }
+  },
+  {
+    "id": "tr-evt-003-reference-lib",
+    "timestamp": "2026-10-16T08:00:00Z",
+    "action": "reference_library_import",
+    "technology": "multi-language",
+    "category": "backend_frameworks",
+    "source": "Training Data/reference_library",
+    "record_count": 13524,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "subjects": [
+        "python",
+        "python-django",
+        "python-fastapi",
+        "python-flask",
+        "c",
+        "cpp",
+        "rust",
+        "ruby",
+        "typescript",
+        "embedded-c",
+        "embedded-python",
+        "spring-boot",
+        "spring-core",
+        "spring-data",
+        "spring-mvc",
+        "spring-security",
+        "spring-testing"
+      ]
+    }
+  },
+  {
+    "id": "tr-evt-004-html-css-train",
+    "timestamp": "2026-10-16T20:54:00Z",
+    "action": "curriculum_training_and_ingest",
+    "technology": "html-css-tailwind",
+    "category": "web_frontend",
+    "source": "Training Data/language/HTML",
+    "record_count": 658,
+    "vectors_count": 658,
+    "status": "completed",
+    "details": {
+      "description": "WHATWG HTML Living Standard element catalogue, Web APIs, CSS 3 architecture, Sass, Bootstrap 5, and Tailwind.",
+      "subjects": [
+        "html",
+        "css",
+        "tailwind"
+      ]
+    }
+  },
+  {
+    "id": "tr-evt-d719723f3ccc",
+    "timestamp": "2026-10-17T01:00:59.613255+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-61/test_import_is_deterministic_d0/source",
+    "record_count": 14,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "python": 2,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 13
+    }
+  },
+  {
+    "id": "tr-evt-e509a4b0042a",
+    "timestamp": "2026-10-17T01:00:59.615272+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-61/test_import_is_deterministic_d0/source",
+    "record_count": 14,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "python": 2,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 13
+    }
+  },
+  {
+    "id": "tr-evt-d470d237d987",
+    "timestamp": "2026-10-17T01:00:59.617782+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-61/test_conflicting_record_ids_ar0/source",
+    "record_count": 12,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 12
+    }
+  },
+  {
+    "id": "tr-evt-f5e6db25d5e1",
+    "timestamp": "2026-10-17T01:01:30.087520+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-62/test_import_is_deterministic_d0/source",
+    "record_count": 14,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "python": 2,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 13
+    }
+  },
+  {
+    "id": "tr-evt-637cec6b2ae6",
+    "timestamp": "2026-10-17T01:01:30.090428+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-62/test_import_is_deterministic_d0/source",
+    "record_count": 14,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "python": 2,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 13
+    }
+  },
+  {
+    "id": "tr-evt-60398f194d36",
+    "timestamp": "2026-10-17T01:01:30.093600+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-62/test_conflicting_record_ids_ar0/source",
+    "record_count": 12,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 12
+    }
+  },
+  {
+    "id": "tr-evt-e19c823ec173",
+    "timestamp": "2026-10-17T01:04:50.705529+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-64/test_import_is_deterministic_d0/source",
+    "record_count": 14,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "python": 2,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 13
+    }
+  },
+  {
+    "id": "tr-evt-4f8a6e64039c",
+    "timestamp": "2026-10-17T01:04:50.708068+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-64/test_import_is_deterministic_d0/source",
+    "record_count": 14,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "python": 2,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 13
+    }
+  },
+  {
+    "id": "tr-evt-f96e5afd5bfc",
+    "timestamp": "2026-10-17T01:04:50.712248+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/private/var/folders/5q/h4vxdj1n0vbd86q5c3kx6bc40000gn/T/pytest-of-guhaprasaanth/pytest-64/test_conflicting_record_ids_ar0/source",
+    "record_count": 12,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2
+      },
+      "retrievable_count": 12
+    }
+  }
+]
