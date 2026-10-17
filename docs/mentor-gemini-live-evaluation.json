@@ -1,0 +1,106 @@
+{
+  "provider": "gemini",
+  "live": true,
+  "model_calls": 8,
+  "output_tokens_per_call": 350,
+  "sdk_retries": 0,
+  "bounded_factory": true,
+  "results": [
+    {
+      "language": "javascript",
+      "tier": 1,
+      "reply": "It makes total sense that comparing every pair slows down on large inputs\u2014checking every combination gets expensive fast.\n\nYou mentioned:\n> *\"I compare every pair\"*\n\nWhen you're looking at any single number in the list, what exact value are you hoping to pair with it to reach the `target`?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "javascript",
+      "tier": 2,
+      "reply": "When you `\"compare every pair\"`, you end up scanning through the array over and over to find that second number. \n\nIf you are standing at a particular number right now, what exact value are you hoping to find in the rest of the array?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "javascript",
+      "tier": 3,
+      "reply": "Which assumption from your earlier reasoning would you need to recheck here?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "javascript",
+      "tier": 4,
+      "reply": "You mentioned, *\"I compare every pair, but the large input takes too long.\"* Checking every pair takes $O(n^2)$ time, so hitting a time limit is completely normal here.\n\nThis problem naturally fits the **hash map (or JavaScript object/Map) lookup** pattern to bring that time down. \n\nIf you use a Map to remember values as you iterate through the array, what specific piece of information would you check the Map for at each number?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 1,
+      "reply": "What property of the input or goal could help you avoid repeated work?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 2,
+      "reply": "When you say \"I compare every pair, but the large input takes too long.\", what does that predict for the smallest valid input?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 3,
+      "reply": "You mentioned, *\"I compare every pair, but the large input takes too long.\"* Comparing every pair gets slow quickly on large inputs, so wanting something faster makes total sense.\n\nEarlier, you considered the idea of \"remembering earlier values\" as you go. \n\nIf you're at a specific number right now, what exact piece of information would you want to have remembered from earlier to know you've found your pair?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 4,
+      "reply": "You mentioned, *\"I compare every pair, but the large input takes too long.\"* That $O(n^2)$ brute-force check is completely normal to start with, but it does hit limits fast.\n\nThis problem naturally fits the **hash map (lookup table)** family of techniques. \n\nThinking about Java's `HashMap`, what would you choose to store as the key and value as you walk through the array?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    }
+  ],
+  "review_rubric": [
+    "responds to the stated assumption",
+    "one useful question",
+    "appropriate tier",
+    "no solution/next-line leakage",
+    "does not label unfinished reasoning successful",
+    "no personality judgements"
+  ]
+}

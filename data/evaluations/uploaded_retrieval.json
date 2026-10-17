@@ -1,0 +1,230 @@
+[
+  {
+    "expected_filename": "DSA Mentor \u2014 JavaScript Linking Chunks.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript linking chunks connect prerequisites, foundation concepts and follow-ups?"
+  },
+  {
+    "expected_filename": "Java Algorithms \u2014 Core Array Patterns.pdf",
+    "language": "java",
+    "track": "algorithm",
+    "question": "How do Java sliding windows, prefix sums and two pointers relate to core array patterns?"
+  },
+  {
+    "expected_filename": "Java Algorithms \u2014 Greedy, Intervals and Graph Search.pdf",
+    "language": "java",
+    "track": "algorithm",
+    "question": "When should Java greedy algorithms, intervals and graph search techniques be considered?"
+  },
+  {
+    "expected_filename": "Java Algorithms \u2014 Recursion, Backtracking and DP.pdf",
+    "language": "java",
+    "track": "algorithm",
+    "question": "How do Java recursion, backtracking and dynamic programming describe states and choices?"
+  },
+  {
+    "expected_filename": "Java Algorithms \u2014 Sorting and Searching.pdf",
+    "language": "java",
+    "track": "algorithm",
+    "question": "What distinguishes Java sorting and searching techniques and their complexity?"
+  },
+  {
+    "expected_filename": "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java arrays and ArrayList differ in fixed length and resizing?"
+  },
+  {
+    "expected_filename": "Java Binary Trees \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "dsa",
+    "question": "How do Java binary trees store nodes and handle traversal and recursion?"
+  },
+  {
+    "expected_filename": "Java Bits and Bit Manipulation \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "dsa",
+    "question": "What should I know about Java bits, bit manipulation and integer representation?"
+  },
+  {
+    "expected_filename": "Java Collections Framework \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How does the Java Collections Framework organize interfaces and implementations?"
+  },
+  {
+    "expected_filename": "Java Graphs \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java graphs represent vertices, edges and traversal?"
+  },
+  {
+    "expected_filename": "Java Linked Lists \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java linked lists store nodes and references, and what does access cost?"
+  },
+  {
+    "expected_filename": "Java Linking Chunks.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java linking chunks connect prerequisites, foundation concepts and follow-ups?"
+  },
+  {
+    "expected_filename": "Java Maps \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java maps represent keys, values and key equality?"
+  },
+  {
+    "expected_filename": "Java Matrices and Grids \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java matrices and grids represent rows, columns and references?"
+  },
+  {
+    "expected_filename": "Java Queues and Deques \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java queues and deques model FIFO and access at both ends?"
+  },
+  {
+    "expected_filename": "Java Segment Trees and Fenwick Trees \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java segment trees and Fenwick trees support range queries?"
+  },
+  {
+    "expected_filename": "Java Sets \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How do Java sets represent unique values and membership?"
+  },
+  {
+    "expected_filename": "Java Stacks \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "What do Java stacks mean by LIFO and which end changes?"
+  },
+  {
+    "expected_filename": "Java Strings \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "What should I understand about Java strings, Unicode and equality?"
+  },
+  {
+    "expected_filename": "Java Union-Find (Disjoint Set) \u2014 Curriculum Blueprint.pdf",
+    "language": "java",
+    "track": "language",
+    "question": "How does Java union-find represent disjoint sets and connectivity?"
+  },
+  {
+    "expected_filename": "JavaScript Algorithms \u2014 Core Array Patterns.pdf",
+    "language": "javascript",
+    "track": "algorithm",
+    "question": "How do JavaScript sliding windows, prefix sums and two pointers relate to core array patterns?"
+  },
+  {
+    "expected_filename": "JavaScript Algorithms \u2014 Greedy, Intervals and Graph Search.pdf",
+    "language": "javascript",
+    "track": "algorithm",
+    "question": "When should JavaScript greedy algorithms, intervals and graph search techniques be considered?"
+  },
+  {
+    "expected_filename": "JavaScript Algorithms \u2014 Recursion, Backtracking and DP.pdf",
+    "language": "javascript",
+    "track": "algorithm",
+    "question": "How do JavaScript recursion, backtracking and dynamic programming describe states and choices?"
+  },
+  {
+    "expected_filename": "JavaScript Algorithms \u2014 Sorting and Searching.pdf",
+    "language": "javascript",
+    "track": "algorithm",
+    "question": "What distinguishes JavaScript sorting and searching techniques and their complexity?"
+  },
+  {
+    "expected_filename": "JavaScript Arrays \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript arrays behave when accessed and resized?"
+  },
+  {
+    "expected_filename": "JavaScript Binary Trees \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript binary trees store nodes and handle traversal and recursion?"
+  },
+  {
+    "expected_filename": "JavaScript Graphs \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript graphs represent vertices, edges and traversal?"
+  },
+  {
+    "expected_filename": "JavaScript Heaps and Priority Queues \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript heaps and priority queues represent priority and ordering?"
+  },
+  {
+    "expected_filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript linked lists store nodes and references, and what does access cost?"
+  },
+  {
+    "expected_filename": "JavaScript Maps \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript maps represent keys, values and key equality?"
+  },
+  {
+    "expected_filename": "JavaScript Matrices and Grids \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript matrices and grids represent rows, columns and references?"
+  },
+  {
+    "expected_filename": "JavaScript Objects \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript objects store properties and handle references and keys?"
+  },
+  {
+    "expected_filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript queues and deques model FIFO and access at both ends?"
+  },
+  {
+    "expected_filename": "JavaScript Sets \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript sets represent unique values and membership?"
+  },
+  {
+    "expected_filename": "JavaScript Stacks \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "What do JavaScript stacks mean by LIFO and which end changes?"
+  },
+  {
+    "expected_filename": "JavaScript Strings \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "What should I understand about JavaScript strings, Unicode and equality?"
+  },
+  {
+    "expected_filename": "JavaScript Tries \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How do JavaScript tries represent prefixes and character paths?"
+  },
+  {
+    "expected_filename": "JavaScript Union-Find (Disjoint Set) \u2014 Curriculum Blueprint.pdf",
+    "language": "javascript",
+    "track": "language",
+    "question": "How does JavaScript union-find represent disjoint sets and connectivity?"
+  }
+]

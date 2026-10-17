@@ -1,0 +1,106 @@
+{
+  "provider": "openai",
+  "live": true,
+  "model_calls": 8,
+  "output_tokens_per_call": 350,
+  "sdk_retries": 0,
+  "bounded_factory": true,
+  "results": [
+    {
+      "language": "javascript",
+      "tier": 1,
+      "reply": "It sounds like you're trying to find a more efficient way to solve the problem. Have you thought about how you might keep track of the numbers you've already seen as you iterate through the array?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "javascript",
+      "tier": 2,
+      "reply": "When you say \"I compare every pair, but the large input takes too long.\", what does that predict for the smallest valid input?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "javascript",
+      "tier": 3,
+      "reply": "You mentioned comparing every pair, which can be quite slow for large inputs. In a previous problem, you thought about remembering earlier values to optimize your approach. How might that idea apply here to help you find the two indices more efficiently?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "javascript",
+      "tier": 4,
+      "reply": "It sounds like you're dealing with a performance issue due to the approach of comparing every pair. This problem can actually be tackled using a hash map, which is a common technique for this type of problem. \n\nHow would you set up a hash map to store the values you've seen so far?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 1,
+      "reply": "It sounds like you're trying to find a solution that is more efficient than comparing every pair. Have you thought about how you might use the properties of the numbers in the array to reduce the number of comparisons you need to make?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 2,
+      "reply": "You mentioned, \"I compare every pair, but the large input takes too long.\" What do you think happens if you keep comparing every pair as the input size increases?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 3,
+      "reply": "You mentioned comparing every pair, which can be quite slow for large inputs. In a previous problem, you thought about remembering earlier values to optimize your approach. How might that idea apply here to help you find the two indices more efficiently?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    },
+    {
+      "language": "java",
+      "tier": 4,
+      "reply": "It sounds like you're dealing with a performance issue due to the approach of comparing every pair. This problem can actually be tackled using a hash map, which is a common technique for this type of problem. \n\nHow would you set up a hash map to help you find the two indices that sum to the target?",
+      "mechanical_checks": {
+        "asks_question": true,
+        "no_fenced_code": true,
+        "one_question": true
+      },
+      "human_review": "pending"
+    }
+  ],
+  "review_rubric": [
+    "responds to the stated assumption",
+    "one useful question",
+    "appropriate tier",
+    "no solution/next-line leakage",
+    "does not label unfinished reasoning successful",
+    "no personality judgements"
+  ]
+}

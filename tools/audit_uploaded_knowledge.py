@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+"""Audit approved local PDF projections without changing text, approvals or vectors.
+
+This verifies mechanical retrieval/source separation; it is not a human review
+of every pedagogical assertion. Run after upload/replacement or projection edits.
+"""
+import asyncio
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from sqlalchemy import select
+from app.db.database import SessionLocal
+from app.db.models import KnowledgeDocument
+from app.services.uploaded_knowledge import project, infer_language, search, PROJECTION_VERSION
+
+
+async def audit():
+    benchmarks = {r['expected_filename']: r for r in json.loads((Path(__file__).resolve().parents[1]/'data/evaluations/uploaded_retrieval.json').read_text())}
+    report = {'projection_version': PROJECTION_VERSION, 'documents': [], 'failures': []}
+    async with SessionLocal() as session:
+        rows = list((await session.scalars(select(KnowledgeDocument).where(KnowledgeDocument.status=='published'))).all())
+        for row in rows:
+            docs = project(row.id, row.filename, row.text, row.track, row.language)
+            language = row.language or infer_language(row.filename)
+            # Expected source is known independently from the ranking result.
+            question = benchmarks.get(row.filename, {}).get('question') or 'Explain ' + row.filename.rsplit('.',1)[0].replace(' — Curriculum Blueprint','')
+            retrieved = await search(session, question, row.track, language)
+            wrong = await search(session, question, row.track, 'javascript' if language=='java' else 'java')
+            found = any(d.metadata['document_id']==row.id for d in retrieved)
+            no_cross_language = all(d.metadata['document_id']!=row.id for d in wrong)
+            safe_meta = all(d.metadata['contains_answer'] is False and d.metadata['language']==language and d.metadata['verified'] is False for d in docs)
+            item = {'document_id':row.id, 'filename':row.filename, 'track':row.track,
+                'language':language, 'original_characters':len(row.text), 'original_sha256':hashlib.sha256(row.text.encode()).hexdigest(),
+                'reference_chunks':len(docs), 'reference_characters':sum(len(d.page_content) for d in docs),
+                'question':question, 'source_found_at_4':found, 'wrong_language_excluded':no_cross_language,
+                'approval_fingerprint':hashlib.sha256(json.dumps([row.status,row.reviewed_by,str(row.reviewed_at),row.review_note]).encode()).hexdigest(),
+                'revision':docs[0].metadata['revision'] if docs else None}
+            report['documents'].append(item)
+            if not (found and no_cross_language and safe_meta):
+                report['failures'].append(row.id)
+    return report
+
+
+if __name__ == '__main__':
+    result = asyncio.run(audit())
+    print(json.dumps(result, indent=2))
+    raise SystemExit(bool(result['failures']))

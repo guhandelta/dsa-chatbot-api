@@ -16,10 +16,10 @@ class FakeStore:
         self.added, self.deleted_ids, self.deleted_where = [], [], []
         self.collection_dropped = False
 
-    def add_documents(self, docs):
+    def add_documents(self, docs, ids=None):
         start = len(self.added)
         self.added.extend(docs)
-        return [f"id{start + i}" for i in range(len(docs))]
+        return ids if ids is not None else [f"id{start + i}" for i in range(len(docs))]
 
     def delete(self, ids=None, where=None):
         if ids is not None:
@@ -198,7 +198,7 @@ def test_plain_text_uses_character_splitter():
 
 def test_index_uploaded_document_namespaces_and_returns_ids(store):
     ids = kb.index_uploaded_document("doc-1", "two-sum.md", "## Notes\nmine", track="custom", user_id="u1")
-    assert ids == ["id0"]
+    assert len(ids) == 1 and len(ids[0]) == 36
     assert store.added[0].metadata["problem_id"] == "upload:doc-1"
     assert store.added[0].metadata["track"] == "custom"
 
@@ -288,7 +288,8 @@ def test_ingest_documents_tags_track_and_replaces_collection(store, tmp_path, ca
     (tmp_path / "two-sum.md").write_text("# Two Sum (LC 1) — Easy — Array\nFind two.\n")
     kb.ingest_documents(str(tmp_path))
 
-    assert store.collection_dropped
+    assert not store.collection_dropped
+    assert {"catalog": "release-v1"} in store.deleted_where
     by_id = {d.metadata["problem_id"]: d for d in store.added}
     assert by_id["py"].metadata["track"] == "language"
     assert by_id["py"].metadata["language"] == "python"
@@ -332,13 +333,14 @@ def test_explicit_deterministic_embeddings(monkeypatch):
     assert isinstance(kb.get_embeddings(), DeterministicFakeEmbedding)
 
 
-def test_no_keys_falls_back_to_deterministic(monkeypatch):
+def test_no_keys_requires_real_provider(monkeypatch):
     from langchain_core.embeddings import DeterministicFakeEmbedding
 
     monkeypatch.setattr(settings, "embedding_provider", "")
     monkeypatch.setattr(settings, "google_api_key", "")
     monkeypatch.setattr(settings, "openai_api_key", "")
-    assert isinstance(kb.get_embeddings(), DeterministicFakeEmbedding)
+    with pytest.raises(RuntimeError, match="embedding provider"):
+        kb.get_embeddings()
 
 
 def test_openai_embeddings_when_selected(monkeypatch):
@@ -378,7 +380,7 @@ def test_google_failure_falls_back_to_openai(monkeypatch):
     assert isinstance(kb.get_embeddings(), OpenAIEmbeddings)
 
 
-def test_openai_failure_falls_back_to_deterministic(monkeypatch):
+def test_openai_failure_does_not_silently_use_fake_embeddings(monkeypatch):
     import langchain_openai
     from langchain_core.embeddings import DeterministicFakeEmbedding
 
@@ -388,7 +390,8 @@ def test_openai_failure_falls_back_to_deterministic(monkeypatch):
     monkeypatch.setattr(langchain_openai, "OpenAIEmbeddings", broken)
     monkeypatch.setattr(settings, "embedding_provider", "openai")
     monkeypatch.setattr(settings, "openai_api_key", "sk-test")
-    assert isinstance(kb.get_embeddings(), DeterministicFakeEmbedding)
+    with pytest.raises(RuntimeError, match="embedding provider"):
+        kb.get_embeddings()
 
 
 def test_vectorstore_backends(monkeypatch):
@@ -427,3 +430,9 @@ def test_vectorstore_backends(monkeypatch):
 def test_pgvector_connection_string(monkeypatch, url, expected):
     monkeypatch.setattr(settings, "vector_database_url", url)
     assert kb.pgvector_connection_string() == expected
+
+
+def test_uploaded_reference_is_answer_safe_and_retrievable():
+    chunks = kb.split_document_for_training('lesson.md', '## Notes\nUseful explanation.\n## Solutions\nSECRET', stem='upload:x', track='custom')
+    assert chunks and all(c.metadata['contains_answer'] is False for c in chunks)
+    assert all('SECRET' not in c.page_content for c in chunks)

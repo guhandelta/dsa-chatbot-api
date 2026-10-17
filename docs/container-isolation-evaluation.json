@@ -1,0 +1,155 @@
+{
+  "backend": "docker",
+  "image": "sha256:f5c5615782bc58561f3e1e5c92576703a1b0f1772391ca3e8c6d2b0bdd8ad1b0",
+  "checks": {
+    "host_file_hidden": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "network_denied": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "root_readonly": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "environment_stripped": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "capabilities_dropped": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "memory_limit": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "process_limit": {
+      "passed": true,
+      "exit_code": 0,
+      "stderr": ""
+    },
+    "output_bounded": {
+      "passed": true,
+      "captured_bytes": 65536
+    },
+    "timeout": {
+      "passed": true,
+      "exit_code": -1,
+      "stderr": "Timed out after 8s (possible infinite loop)"
+    },
+    "six_language_execution": {
+      "passed": true,
+      "results": [
+        {
+          "language": "python",
+          "tier": 1,
+          "status": "passed",
+          "detail": "",
+          "passed_cases": 6,
+          "total_cases": 6,
+          "outputs": [
+            3,
+            0,
+            0,
+            5,
+            -5,
+            300
+          ]
+        },
+        {
+          "language": "javascript",
+          "tier": 1,
+          "status": "passed",
+          "detail": "",
+          "passed_cases": 6,
+          "total_cases": 6,
+          "outputs": [
+            3,
+            0,
+            0,
+            5,
+            -5,
+            300
+          ]
+        },
+        {
+          "language": "c",
+          "tier": 1,
+          "status": "passed",
+          "detail": "executed 6 cases (wide)",
+          "passed_cases": 6,
+          "total_cases": 6,
+          "outputs": [
+            3,
+            0,
+            0,
+            5,
+            -5,
+            300
+          ]
+        },
+        {
+          "language": "cpp",
+          "tier": 1,
+          "status": "passed",
+          "detail": "executed 6 cases (wide)",
+          "passed_cases": 6,
+          "total_cases": 6,
+          "outputs": [
+            3,
+            0,
+            0,
+            5,
+            -5,
+            300
+          ]
+        },
+        {
+          "language": "java",
+          "tier": 1,
+          "status": "passed",
+          "detail": "executed 6 cases (narrow/instance)",
+          "passed_cases": 6,
+          "total_cases": 6,
+          "outputs": [
+            3,
+            0,
+            0,
+            5,
+            -5,
+            300
+          ]
+        },
+        {
+          "language": "rust",
+          "tier": 1,
+          "status": "passed",
+          "detail": "executed 6 cases (wide/bare)",
+          "passed_cases": 6,
+          "total_cases": 6,
+          "outputs": [
+            3,
+            0,
+            0,
+            5,
+            -5,
+            300
+          ]
+        }
+      ]
+    },
+    "container_cleanup": {
+      "passed": true,
+      "new_running_container_count": 0
+    }
+  }
+}

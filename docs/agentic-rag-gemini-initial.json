@@ -1,0 +1,149 @@
+{
+  "created_at": "2026-10-15T19:04:31.621777+00:00",
+  "provider": "gemini",
+  "live": true,
+  "baseline": "one-shot local retrieval over the same approved stores; no vector embeddings",
+  "human_answer_review": "pending",
+  "cases": [
+    {
+      "id": "java-arrays",
+      "question": "Using the approved Java PDF notes, how do arrays and ArrayList differ in fixed length and resizing?",
+      "expected_sources": [
+        "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "standard_local": {
+          "status": "completed",
+          "answer": "According to the materials, standard Java arrays are fixed-length, meaning their size is set upon creation and changing capacity requires copying elements to a new array. In contrast, an ArrayList is resizable, wrapping an underlying array that can dynamically adjust. Given this difference, what trade-offs might you consider when choosing between a fixed array and an ArrayList for storing a collection of items?",
+          "sources": [
+            {
+              "document_id": "8d5aa6ee-66b4-421e-a104-e7ff408b3bbb",
+              "filename": "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf",
+              "revision": "6eef29340921db3eb08656e6b3e91d072aac8fe61e537acef2973da1fa96c4c8",
+              "excerpt": "Java Arrays and ArrayList \u2014 Curriculum\nBlueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java arrays through the same 14 lenses as the JavaScript blueprints, with two Java-\nonly emphases: arrays are fixed-size and typed, so resizing and removal go through\ndifferently in equality, memory and overloads. All code targets Java 17, and every row and\nsnippet is written to stand alone as a RAG chunk, with ready-to-ingest chunks in section\n9.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            },
+            {
+              "document_id": "corpus-java-ref-arrays-overview-p1",
+              "filename": "blueprint",
+              "revision": "a706bf66242a497fb6839c92a6f06b72f778e5ac4d202f5251ab036c3f870d32",
+              "excerpt": "Java \u00b7 Java Arrays and ArrayList \u00b7 Overview\nTeach Java arrays through the same 14 lenses as the JavaScript blueprints, with two Java-only emphases: arrays are fixed-size and typed, so resizing and removal go through `ArrayList` or copying; and primitives and their boxed forms (`int` vs `Integer`) behave differently in equality, memory and overloads. All code targets Java 17, and every row and snippet is written to stand alone as a RAG chunk, with ready-to-ingest chunks in section 9."
+            },
+            {
+              "document_id": "corpus-java-ref-arrays-the-lenses-t1",
+              "filename": "blueprint",
+              "revision": "2de4b9f37fe04a0ba5294f9fb2a154a40a825127d2a86f96478dc5e3070e1a47",
+              "excerpt": "Java \u00b7 Java Arrays and ArrayList \u00b7 The lenses\n#: 1\nLens: Mental model\nQuestion the learner must answer: What is it, and how is it stored?\nJava array and ArrayList specifics to teach: An array is a fixed-length, typed block: `int[]` holds the values themselves, `Integer[]` and `String[]` hold references. `ArrayList<E>` wraps a resizable array of references and cannot hold primitives"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1572,
+          "output_tokens": 485,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 5889,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        },
+        "agentic": {
+          "status": "completed",
+          "answer": "According to the notes, Java arrays are fixed-size, whereas an ArrayList is resizable. If you need to add elements beyond the capacity of a fixed-size array, what approach do you think is required compared to using an ArrayList?",
+          "sources": [
+            {
+              "document_id": "8d5aa6ee-66b4-421e-a104-e7ff408b3bbb",
+              "filename": "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf",
+              "revision": "6eef29340921db3eb08656e6b3e91d072aac8fe61e537acef2973da1fa96c4c8",
+              "excerpt": "Java Arrays and ArrayList \u2014 Curriculum\nBlueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java arrays through the same 14 lenses as the JavaScript blueprints, with two Java-\nonly emphases: arrays are fixed-size and typed, so resizing and removal go through\ndifferently in equality, memory and overloads. All code targets Java 17, and every row and\nsnippet is written to stand alone as a RAG chunk, with ready-to-ingest chunks in section\n9.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 2496,
+          "output_tokens": 967,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 12827,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        }
+      }
+    },
+    {
+      "id": "javascript-queues",
+      "question": "Using the approved JavaScript PDF notes, how do queues and deques represent FIFO and access at both ends?",
+      "expected_sources": [
+        "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "agentic": {
+          "status": "completed",
+          "answer": "According to the notes, a queue represents FIFO (first in, first out) because items join at the back and leave from the front, while a deque extends this by allowing additions and removals at both ends (introducing operations such as pushFront, popBack, and peekBack). Since neither structure is built into JavaScript, both can be represented using an underlying array with a head index, a ring buffer, or a linked list. How does tracking a head index help maintain efficient O(1) removals from the front compared to using JavaScript's native shift method?",
+          "sources": [
+            {
+              "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
+              "filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+              "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74",
+              "excerpt": "JavaScript Queues and Deques \u2014 Curriculum\nBlueprint\nOct 8, 2026  \u00b7  @Guhaprasaanth N\nTeach queues and deques through the same 14 lenses as the other blueprints, with two\nemphases of their own: JavaScript has neither as a built-in, and the obvious tool ( shift )\norder, which is what makes breadth-first search find shortest paths level by level. A\noperation that removes the front item.\n1. The lenses\nThe 14 lenses are the same as in the other blueprints, so queue and deque lessons carry\n# Lens Q"
+            },
+            {
+              "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
+              "filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+              "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74",
+              "excerpt": "# Lens Question the learner\nmust answer\nQueue and deque specifics to\nteach\n4 Mutation What do the operations\nreturn?\nEnqueue adds, dequeue\nremoves and returns the front or\ndeque adds pushFront ,\npopBack , peekBack\n5 Adding and removing At which end, and at\nwhat cost?\nfrom the front is O(n) in general,\nso use a head index, a ring buffer\nor two stacks for O(1)\n6 Iteration In which order, and level\nby level?\none level by snapshotting the\ncurrent size before adding the\nnext level\nindices (as in a mo"
+            }
+          ],
+          "retrieved_expected": [
+            "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "agentic",
+          "searches": 1,
+          "model_calls": 3,
+          "input_tokens": 3146,
+          "output_tokens": 1092,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 13074,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        },
+        "standard_local": {
+          "status": "failed",
+          "error_type": "ProviderFailure",
+          "provider_error_type": "DeadlineExceeded",
+          "http_status": null
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Small PDF-focused pilot, not a general adoption verdict.",
+    "Source coverage does not establish claim correctness or instruction quality.",
+    "Provider usage is reported only when SDK usage metadata is available."
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "created_at": "2026-10-15T19:07:30.547334+00:00",
+  "provider": "gemini",
+  "live": true,
+  "baseline": "one-shot local retrieval over the same approved stores; no vector embeddings",
+  "human_answer_review": "pending",
+  "cases": [
+    {
+      "id": "java-arrays",
+      "question": "Using the approved Java PDF notes, how do arrays and ArrayList differ in fixed length and resizing?",
+      "expected_sources": [
+        "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "standard_local": {
+          "status": "completed",
+          "answer": "According to the notes, a standard Java array is fixed-size, meaning its capacity cannot change after creation, whereas an ArrayList is resizable. If you need a collection that can grow or shrink dynamically as elements are added or removed, how might choosing an ArrayList simplify your code compared to an array?",
+          "sources": [
+            {
+              "document_id": "8d5aa6ee-66b4-421e-a104-e7ff408b3bbb",
+              "filename": "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf",
+              "revision": "6eef29340921db3eb08656e6b3e91d072aac8fe61e537acef2973da1fa96c4c8",
+              "excerpt": "Java Arrays and ArrayList \u2014 Curriculum\nBlueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java arrays through the same 14 lenses as the JavaScript blueprints, with two Java-\nonly emphases: arrays are fixed-size and typed, so resizing and removal go through\ndifferently in equality, memory and overloads. All code targets Java 17, and every row and\nsnippet is written to stand alone as a RAG chunk, with ready-to-ingest chunks in section\n9.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1572,
+          "output_tokens": 798,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 7180,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        },
+        "agentic": {
+          "status": "completed",
+          "answer": "According to the notes, standard Java arrays have a fixed size, whereas an ArrayList is resizable. When you need to store elements whose total count might change dynamically during runtime, why might choosing an ArrayList be more suitable than a standard array?",
+          "sources": [
+            {
+              "document_id": "8d5aa6ee-66b4-421e-a104-e7ff408b3bbb",
+              "filename": "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf",
+              "revision": "6eef29340921db3eb08656e6b3e91d072aac8fe61e537acef2973da1fa96c4c8",
+              "excerpt": "Java Arrays and ArrayList \u2014 Curriculum\nBlueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java arrays through the same 14 lenses as the JavaScript blueprints, with two Java-\nonly emphases: arrays are fixed-size and typed, so resizing and removal go through\ndifferently in equality, memory and overloads. All code targets Java 17, and every row and\nsnippet is written to stand alone as a RAG chunk, with ready-to-ingest chunks in section\n9.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Arrays and ArrayList \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 2863,
+          "output_tokens": 611,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 9056,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        }
+      }
+    },
+    {
+      "id": "javascript-queues",
+      "question": "Using the approved JavaScript PDF notes, how do queues and deques represent FIFO and access at both ends?",
+      "expected_sources": [
+        "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "agentic": {
+          "status": "completed",
+          "answer": "According to the notes, a queue represents FIFO (first in, first out) because items join at the back and leave from the front. A deque extends this behavior by allowing you to add, remove, and peek at both ends (such as via operations like pushFront, popBack, and peekBack). Given that neither structure is built into JavaScript, which underlying representation mentioned in the blueprint would you consider using to keep front removals efficient?",
+          "sources": [
+            {
+              "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
+              "filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+              "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74",
+              "excerpt": "JavaScript Queues and Deques \u2014 Curriculum\nBlueprint\nOct 8, 2026  \u00b7  @Guhaprasaanth N\nTeach queues and deques through the same 14 lenses as the other blueprints, with two\nemphases of their own: JavaScript has neither as a built-in, and the obvious tool ( shift )\norder, which is what makes breadth-first search find shortest paths level by level. A\noperation that removes the front item.\n1. The lenses\nThe 14 lenses are the same as in the other blueprints, so queue and deque lessons carry\n# Lens Q"
+            },
+            {
+              "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
+              "filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+              "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74",
+              "excerpt": "# Lens Question the learner\nmust answer\nQueue and deque specifics to\nteach\n4 Mutation What do the operations\nreturn?\nEnqueue adds, dequeue\nremoves and returns the front or\ndeque adds pushFront ,\npopBack , peekBack\n5 Adding and removing At which end, and at\nwhat cost?\nfrom the front is O(n) in general,\nso use a head index, a ring buffer\nor two stacks for O(1)\n6 Iteration In which order, and level\nby level?\none level by snapshotting the\ncurrent size before adding the\nnext level\nindices (as in a mo"
+            }
+          ],
+          "retrieved_expected": [
+            "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "agentic",
+          "searches": 1,
+          "model_calls": 3,
+          "input_tokens": 2244,
+          "output_tokens": 1070,
+          "usage_complete": true,
+          "fallback": "invalid_plan",
+          "clarification": false,
+          "elapsed_ms": 10159,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        },
+        "standard_local": {
+          "status": "completed",
+          "answer": "According to the notes, a queue embodies FIFO (first in, first out) because items join at the back and leave from the front, while a deque extends this by allowing additions and removals at both ends (such as via pushFront, popBack, and peekBack). How do underlying representations like a ring buffer or a head index help maintain efficient operations at both ends in JavaScript?",
+          "sources": [
+            {
+              "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
+              "filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+              "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74",
+              "excerpt": "JavaScript Queues and Deques \u2014 Curriculum\nBlueprint\nOct 8, 2026  \u00b7  @Guhaprasaanth N\nTeach queues and deques through the same 14 lenses as the other blueprints, with two\nemphases of their own: JavaScript has neither as a built-in, and the obvious tool ( shift )\norder, which is what makes breadth-first search find shortest paths level by level. A\noperation that removes the front item.\n1. The lenses\nThe 14 lenses are the same as in the other blueprints, so queue and deque lessons carry\n# Lens Q"
+            },
+            {
+              "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
+              "filename": "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf",
+              "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74",
+              "excerpt": "# Lens Question the learner\nmust answer\nQueue and deque specifics to\nteach\n4 Mutation What do the operations\nreturn?\nEnqueue adds, dequeue\nremoves and returns the front or\ndeque adds pushFront ,\npopBack , peekBack\n5 Adding and removing At which end, and at\nwhat cost?\nfrom the front is O(n) in general,\nso use a head index, a ring buffer\nor two stacks for O(1)\n6 Iteration In which order, and level\nby level?\none level by snapshotting the\ncurrent size before adding the\nnext level\nindices (as in a mo"
+            }
+          ],
+          "retrieved_expected": [
+            "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "JavaScript Queues and Deques \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1369,
+          "output_tokens": 612,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 6281,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        }
+      }
+    },
+    {
+      "id": "java-maps-sets",
+      "question": "Use the approved Java PDFs to compare maps for key-value lookup with sets for uniqueness. What should I think about for equality?",
+      "expected_sources": [
+        "Java Maps \u2014 Curriculum Blueprint.pdf",
+        "Java Sets \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "standard_local": {
+          "status": "completed",
+          "answer": "In Java, maps use keys for lookup while sets track unique elements, but both adhere to identical equality rules: hash-based collections (such as HashMap and HashSet) determine equality using `equals` and `hashCode`, whereas sorted collections (such as TreeMap and TreeSet) rely on `compareTo` or a comparator. Furthermore, key and element types must match exactly for equality checks to succeed. How might a mismatch between `equals` and `hashCode` impact your ability to retrieve an entry from a HashMap or maintain uniqueness in a HashSet?",
+          "sources": [
+            {
+              "document_id": "91900a50-ca0c-4879-90c6-af73ace9223e",
+              "filename": "Java Maps \u2014 Curriculum Blueprint.pdf",
+              "revision": "654e37e8bce321931d5e0fa83dc7013e81cc2ace79aa49d1b9c06dfa6fb7f5ce",
+              "excerpt": "Java Maps (HashMap, LinkedHashMap,\nTreeMap) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java maps through the same 14 lenses as the JavaScript Map blueprint, with two\nJava-only emphases: keys match by equals  and hashCode , so key types must match\nincluding TreeMap , a sorted map with floor and ceiling queries that JavaScript has no\nbuilt-in equivalent for. All code targets Java 17, and ready-to-ingest chunks are in section\n10.\n1. The lenses\nThe 14 lenses are the same as in "
+            },
+            {
+              "document_id": "7c7e004c-a886-4205-915a-b023e6365c61",
+              "filename": "Java Sets \u2014 Curriculum Blueprint.pdf",
+              "revision": "0164171ef2432eb473c8426ddb1b250cee8cf5331a451e0429be29c8d00fd470",
+              "excerpt": "Java Sets (HashSet, LinkedHashSet, TreeSet,\nBitSet) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java sets through the same 14 lenses as the JavaScript Set blueprint, with two Java-\nonly emphases: elements match by equals  and hashCode , so element types and\nincluding the sorted TreeSet  and the compact BitSet , each suited to different\nproblems. All code targets Java 17, and ready-to-ingest chunks are in section 10.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            },
+            {
+              "document_id": "corpus-java-ref-collections-the-lenses-t7",
+              "filename": "blueprint",
+              "revision": "39e1732b13b36fe11ad1b1aea06f24968bda41a17b23eedc79382f16d7bc55b4",
+              "excerpt": "Java \u00b7 Java Collections Framework \u00b7 The lenses\n#: 7\nLens: Equality\nQuestion the learner must answer: What counts as the same element?\nFramework-wide rule: `equals` and `hashCode` for hash collections, `compareTo` or a comparator for sorted ones\nWhere it matters most: Classes and Records, Maps, Sets"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1749,
+          "output_tokens": 661,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 5588,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        },
+        "agentic": {
+          "status": "completed",
+          "answer": "In Java collections, both map keys and set elements determine matching and uniqueness through equals and hashCode. When storing custom objects in a set or using them as map keys, how do you ensure equals and hashCode behave consistently with each other?",
+          "sources": [
+            {
+              "document_id": "91900a50-ca0c-4879-90c6-af73ace9223e",
+              "filename": "Java Maps \u2014 Curriculum Blueprint.pdf",
+              "revision": "654e37e8bce321931d5e0fa83dc7013e81cc2ace79aa49d1b9c06dfa6fb7f5ce",
+              "excerpt": "Java Maps (HashMap, LinkedHashMap,\nTreeMap) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java maps through the same 14 lenses as the JavaScript Map blueprint, with two\nJava-only emphases: keys match by equals  and hashCode , so key types must match\nincluding TreeMap , a sorted map with floor and ceiling queries that JavaScript has no\nbuilt-in equivalent for. All code targets Java 17, and ready-to-ingest chunks are in section\n10.\n1. The lenses\nThe 14 lenses are the same as in "
+            },
+            {
+              "document_id": "7c7e004c-a886-4205-915a-b023e6365c61",
+              "filename": "Java Sets \u2014 Curriculum Blueprint.pdf",
+              "revision": "0164171ef2432eb473c8426ddb1b250cee8cf5331a451e0429be29c8d00fd470",
+              "excerpt": "Java Sets (HashSet, LinkedHashSet, TreeSet,\nBitSet) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java sets through the same 14 lenses as the JavaScript Set blueprint, with two Java-\nonly emphases: elements match by equals  and hashCode , so element types and\nincluding the sorted TreeSet  and the compact BitSet , each suited to different\nproblems. All code targets Java 17, and ready-to-ingest chunks are in section 10.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 3199,
+          "output_tokens": 1140,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 13755,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        }
+      }
+    },
+    {
+      "id": "javascript-trees-graphs",
+      "question": "Using the approved JavaScript PDFs, compare a binary tree's node model with a graph's vertices and edges. Why do their traversal assumptions differ?",
+      "expected_sources": [
+        "JavaScript Binary Trees \u2014 Curriculum Blueprint.pdf",
+        "JavaScript Graphs \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "agentic": {
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 3366,
+          "output_tokens": 1292,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 11374,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "status": "failed",
+          "error_type": "InvalidModelOutput",
+          "schema_errors": [
+            "json_invalid"
+          ],
+          "model_preview": "```json\n{\n  \"answer\": \"In a binary tree, a node typically maintains fixed child links (such as left and right) and is accessed hierarchically starting from a root, where each subtree is itself a tree. In contrast, a"
+        },
+        "standard_local": {
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1604,
+          "output_tokens": 896,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 6699,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "status": "failed",
+          "error_type": "InvalidModelOutput",
+          "schema_errors": [
+            "json_invalid"
+          ],
+          "model_preview": "```json\n{\n  \"answer\": \"In a binary tree, each node holds a value and links to child subtrees, accessed hierarchically starting from"
+        }
+      }
+    },
+    {
+      "id": "java-stacks-queues",
+      "question": "Using the approved Java PDFs, compare stacks with queues and deques: which end changes, and how does that explain LIFO versus FIFO?",
+      "expected_sources": [
+        "Java Stacks \u2014 Curriculum Blueprint.pdf",
+        "Java Queues and Deques \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "standard_local": {
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1656,
+          "output_tokens": 896,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 6590,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "status": "failed",
+          "error_type": "InvalidModelOutput",
+          "schema_errors": [
+            "json_invalid"
+          ],
+          "model_preview": "```json\n{\n  \"answer\": \"According to the blueprints, a stack restricts operations like `push` and `pop` to the head, meaning the"
+        },
+        "agentic": {
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 3349,
+          "output_tokens": 1159,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 10794,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "status": "failed",
+          "error_type": "InvalidModelOutput",
+          "schema_errors": [
+            "json_invalid"
+          ],
+          "model_preview": "```json\n{\n  \"answer\": \"According to the provided blueprints, a stack operates at a single end called the top, resulting in Last In"
+        }
+      }
+    },
+    {
+      "id": "javascript-arrays-linked-lists",
+      "question": "Using the approved JavaScript PDFs, compare arrays with linked lists for storage, access and mutation. What changes when the data is held in node references?",
+      "expected_sources": [
+        "JavaScript Arrays \u2014 Curriculum Blueprint.pdf",
+        "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "agentic": {
+          "status": "completed",
+          "answer": "When data is held in node references rather than indexed array slots, nodes are scattered in memory with individual allocations, which impacts cache locality. Access shifts from index lookups to walking references from the head (costing O(n) time). For mutations, operations involve rewiring reference pointers (`next` or `prev`) rather than copying elements, directly changing the structure for any variable referencing those nodes.\n\nGiven that locating an element requires walking the list, what reference must you already hold to insert or delete a node in O(1) time?",
+          "sources": [
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "# Lens Question the learner\nmust answer\nLinked-list specifics to teach\n4 Mutation What changes when I\nrewire?\nAssigning next  or prev  changes\nthe structure for everyone\ncopied\n5 Insertion and\ndeletion\nWhat do I need, and\nwhat does it cost?\nO(1) once you hold the right node:\nsingly needs the predecessor,\nfinding the spot is O(n)\n6 Iteration How do I walk it, and\nwhen do I stop?\ncircular lists stop when the walk\nreturns to the start\nSymbol.iterator  makes\nfor...of  work\n7 Equality and identity Wh"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "operation cost?\nO(n) access and search, O(1)\ncache locality and one allocation\nper node make lists slower than\narrays in practice\n11 Edge cases What inputs break my\ncode?\nEmpty list, one node, two nodes,\nremoving the head or tail, even vs\nodd length, an unexpected cycle,\na single-node circle pointing to\nitself\nJavaScript Linked Lists \u2014 Curriculum Blueprint\nPage 2 of 20"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "reference to its head\n2 Creation How do I build one\ncorrectly?\nNode objects or a ListNode\nthe loop last\n3 Access How do I reach the k-th\nnode?\nOnly by walking from the head,\na known node) to reach things\nquickly\nJavaScript Linked Lists \u2014 Curriculum Blueprint\nPage 1 of 20"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "JavaScript Linked Lists (Singly, Doubly,\nCircular) \u2014 Curriculum Blueprint\nOct 8, 2026  \u00b7  @Guhaprasaanth N\nTeach linked lists through the same 14 lenses as the other blueprints, with pointer\nhandling in place of index handling: a list is only as correct as the order in which its next\n(and prev ) references are rewired. JavaScript has no built-in linked list, so every list is a\nchain of plain objects, and the doubly and circular variants are taught as small changes to\nthe singly linked list ra"
+            }
+          ],
+          "retrieved_expected": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 0.5,
+          "citation_coverage": 0.5,
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 2400,
+          "output_tokens": 1194,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 10888,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000
+        },
+        "standard_local": {
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1402,
+          "output_tokens": 636,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 5358,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "status": "failed",
+          "error_type": "InvalidModelOutput",
+          "schema_errors": [
+            "too_long"
+          ],
+          "model_preview": "{\n  \"answer\": \"According to the materials, linked lists store data as scattered node objects connected by references (`next`/`prev`) with one allocation per node and poorer cache locality compared to arrays. Access requires walking from the head (taking O(n) time) rather than direct index-based retrieval. For mutation, changes occur by rewiring references in O(1) time at a known node rather than c"
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Small PDF-focused pilot, not a general adoption verdict.",
+    "Source coverage does not establish claim correctness or instruction quality.",
+    "Provider usage is reported only when SDK usage metadata is available."
+  ]
+}

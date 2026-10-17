@@ -1,0 +1,52 @@
+{
+  "cases": 6,
+  "strategies": {
+    "standard_local": {
+      "completed": 6,
+      "failed": 0,
+      "median_ms": 2769.0,
+      "mean_retrieval_coverage": 0.8333333333333334,
+      "mean_context_coverage": 0.75,
+      "mean_citation_coverage": 0.75,
+      "model_calls": 6,
+      "input_tokens": 5978,
+      "output_tokens": 883,
+      "usage_complete": true,
+      "expected_pdf_sources": 10,
+      "expected_pdfs_retrieved": 8,
+      "expected_pdfs_cited": 7,
+      "expected_pdfs_in_context": 7
+    },
+    "agentic": {
+      "completed": 6,
+      "failed": 0,
+      "median_ms": 6413.0,
+      "mean_retrieval_coverage": 0.9166666666666666,
+      "mean_context_coverage": 0.9166666666666666,
+      "mean_citation_coverage": 0.9166666666666666,
+      "model_calls": 18,
+      "input_tokens": 17012,
+      "output_tokens": 982,
+      "usage_complete": true,
+      "expected_pdf_sources": 10,
+      "expected_pdfs_retrieved": 9,
+      "expected_pdfs_cited": 9,
+      "expected_pdfs_in_context": 9
+    }
+  },
+  "recommendation": "Keep standard RAG as default; private opt-in pilot only.",
+  "review_findings": [
+    {
+      "case": "java-maps-sets",
+      "finding": "Agentic answer generalizes equals/hashCode across maps and sets. It needs qualification by implementation; source coverage alone is not factual validation."
+    },
+    {
+      "case": "javascript-arrays-linked-lists",
+      "finding": "Neither strategy retrieved the expected arrays PDF. Equivalent array information in another source can help, but the exact-source benchmark remains incomplete."
+    },
+    {
+      "case": "all",
+      "finding": "One small PDF-focused run does not establish generalization, adversarial robustness, or learning outcomes."
+    }
+  ]
+}

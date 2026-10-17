@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "canonical_file": "java-javascript.jsonl",
+  "source": "Training Data/dsa_mentor_rag_export/dsa_curriculum.jsonl",
+  "sha256": "e9f8a4a1734a73a01ffd388e41af694c104bc0a77594cf3a896212fd80ac4b72",
+  "records": 4280,
+  "languages": {
+    "java": 2377,
+    "javascript": 1903
+  },
+  "kinds": {
+    "concept": 274,
+    "exercise": 67,
+    "reference": 2339,
+    "lens": 434,
+    "gotcha": 584,
+    "curriculum": 245,
+    "exercise_format": 337
+  },
+  "retrieval_policy": {
+    "release_languages": [
+      "javascript",
+      "java"
+    ],
+    "require_contains_answer": false,
+    "exclude_kinds": [
+      "exercise",
+      "gotcha"
+    ],
+    "payloads_returned_to_learners": false
+  },
+  "source_verification": "Retained from source; not independently certified by this release.",
+  "foundation_lessons": 24,
+  "foundation_test_cases": 144
+}

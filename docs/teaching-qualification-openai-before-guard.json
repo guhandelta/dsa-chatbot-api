@@ -1,0 +1,255 @@
+{
+  "created_at": "2026-10-16T03:04:46.990125+00:00",
+  "provider": "openai",
+  "live": true,
+  "experiment_configuration": {
+    "model": "gpt-4o-mini",
+    "engine_sha256": "c8e2e45ae8e92b8f4b0a65d00ed6dd3c018eb94a5c68ba0c745c63dd40a00e83",
+    "max_searches": 2,
+    "max_model_calls": 3,
+    "max_context_sources": 4,
+    "planner_output_tokens": 300,
+    "answer_output_tokens": 900,
+    "input_bytes_per_call": 16000,
+    "call_timeout_seconds": 10,
+    "request_timeout_seconds": 30,
+    "sdk_retries": 0,
+    "thinking_budget": null
+  },
+  "baseline": "one-shot local retrieval over the same approved stores; no vector embeddings",
+  "human_answer_review": "pending",
+  "cases": [
+    {
+      "id": "java-maps-sets",
+      "question": "Use the approved Java PDFs to compare maps for key-value lookup with sets for uniqueness. What should I think about for equality?",
+      "expected_sources": [
+        "Java Maps \u2014 Curriculum Blueprint.pdf",
+        "Java Sets \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "standard_local": {
+          "status": "completed",
+          "answer": "When comparing maps for key-value lookup with sets for uniqueness in Java, it's crucial to consider how equality is determined. For maps, keys are compared using the `equals` method and their hash codes, meaning that key types must match. In contrast, sets ensure uniqueness based on the same principles of equality. This can lead to issues if the types are not consistent, such as querying a `Map<Long, ...>` with an `int`, which can result in a missed lookup. How do you plan to handle type consistency when using maps and sets?",
+          "sources": [
+            {
+              "document_id": "91900a50-ca0c-4879-90c6-af73ace9223e",
+              "filename": "Java Maps \u2014 Curriculum Blueprint.pdf",
+              "revision": "654e37e8bce321931d5e0fa83dc7013e81cc2ace79aa49d1b9c06dfa6fb7f5ce",
+              "excerpt": "Java Maps (HashMap, LinkedHashMap,\nTreeMap) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java maps through the same 14 lenses as the JavaScript Map blueprint, with two\nJava-only emphases: keys match by equals  and hashCode , so key types must match\nincluding TreeMap , a sorted map with floor and ceiling queries that JavaScript has no\nbuilt-in equivalent for. All code targets Java 17, and ready-to-ingest chunks are in section\n10.\n1. The lenses\nThe 14 lenses are the same as in "
+            },
+            {
+              "document_id": "corpus-java-ref-maps-key-and-lookup-track-p1",
+              "filename": "blueprint",
+              "revision": "1a1059b234da745572a07734b9f4fb523af711b61c0c766d9a17fcea0ac19014",
+              "excerpt": "Java \u00b7 Java Maps (HashMap, LinkedHashMap, TreeMap) \u00b7 Key and lookup track\nMost Java map bugs happen at the lookup: `get` returns `null` for three different reasons (absent key, a stored `null`, a key of the wrong type), and boxed values bring the `Integer` equality trap with them. Java 8's `merge` and `compute` methods remove most of the hand-written lookup code where these bugs live. Each row is one lesson."
+            },
+            {
+              "document_id": "corpus-java-ref-maps-key-and-lookup-track-t6",
+              "filename": "blueprint",
+              "revision": "80811e4a70b886bfbe011d66726faeaccc20e8d54943c7034fd3947ec2024b80",
+              "excerpt": "Java \u00b7 Java Maps (HashMap, LinkedHashMap, TreeMap) \u00b7 Key and lookup track\nSituation: `Long` vs `Integer` keys\nTypical bug: `Map<Long, ...>` queried with an `int` misses, because `Integer.valueOf(5)` is not equal to `Long.valueOf(5)`\nCorrect technique: Cast to the key type: `map.get((long) x)`"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 0.5,
+          "context_coverage": 0.5,
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1141,
+          "output_tokens": 134,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 6594,
+          "output_token_limit": 900,
+          "input_byte_limit_per_call": 16000,
+          "upload_document_limit": 100,
+          "context_sources": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "blueprint",
+            "Java Linking Chunks.pdf",
+            "blueprint"
+          ]
+        },
+        "agentic": {
+          "status": "completed",
+          "answer": "When comparing maps and sets in Java, it's important to consider that both rely on the `equals` method and `hashCode` for determining equality. For maps, keys must match by these methods, while for sets, elements must do the same. This means that the types of keys in maps and elements in sets should be consistent to ensure proper functionality. How do you plan to handle custom objects in your maps or sets?",
+          "sources": [
+            {
+              "document_id": "91900a50-ca0c-4879-90c6-af73ace9223e",
+              "filename": "Java Maps \u2014 Curriculum Blueprint.pdf",
+              "revision": "654e37e8bce321931d5e0fa83dc7013e81cc2ace79aa49d1b9c06dfa6fb7f5ce",
+              "excerpt": "Java Maps (HashMap, LinkedHashMap,\nTreeMap) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java maps through the same 14 lenses as the JavaScript Map blueprint, with two\nJava-only emphases: keys match by equals  and hashCode , so key types must match\nincluding TreeMap , a sorted map with floor and ceiling queries that JavaScript has no\nbuilt-in equivalent for. All code targets Java 17, and ready-to-ingest chunks are in section\n10.\n1. The lenses\nThe 14 lenses are the same as in "
+            },
+            {
+              "document_id": "7c7e004c-a886-4205-915a-b023e6365c61",
+              "filename": "Java Sets \u2014 Curriculum Blueprint.pdf",
+              "revision": "0164171ef2432eb473c8426ddb1b250cee8cf5331a451e0429be29c8d00fd470",
+              "excerpt": "Java Sets (HashSet, LinkedHashSet, TreeSet,\nBitSet) \u2014 Curriculum Blueprint\nOct 9, 2026  \u00b7  @Guhaprasaanth N\nTeach Java sets through the same 14 lenses as the JavaScript Set blueprint, with two Java-\nonly emphases: elements match by equals  and hashCode , so element types and\nincluding the sorted TreeSet  and the compact BitSet , each suited to different\nproblems. All code targets Java 17, and ready-to-ingest chunks are in section 10.\n1. The lenses\nThe 14 lenses are the same as in the JavaScri"
+            }
+          ],
+          "retrieved_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 1.0,
+          "citation_coverage": 1.0,
+          "context_coverage": 1.0,
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 2755,
+          "output_tokens": 152,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 3760,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "upload_document_limit": 100,
+          "context_sources": [
+            "Java Maps \u2014 Curriculum Blueprint.pdf",
+            "Java Sets \u2014 Curriculum Blueprint.pdf",
+            "Java Linking Chunks.pdf",
+            "Java Linking Chunks.pdf"
+          ]
+        }
+      }
+    },
+    {
+      "id": "javascript-arrays-linked-lists",
+      "question": "Using the approved JavaScript PDFs, compare arrays with linked lists for storage, access and mutation. What changes when the data is held in node references?",
+      "expected_sources": [
+        "JavaScript Arrays \u2014 Curriculum Blueprint.pdf",
+        "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+      ],
+      "runs": {
+        "agentic": {
+          "status": "completed",
+          "answer": "Arrays and linked lists differ significantly in storage, access, and mutation. Arrays store elements in contiguous memory, allowing for O(1) access time by index, while linked lists consist of nodes scattered in memory, requiring O(n) time to access elements since traversal from the head is necessary. Mutation in linked lists can be O(1) if the correct node is already referenced, but finding that node can take O(n). When data is held in node references, the structure can be easily modified by changing pointers, unlike arrays where resizing or shifting elements is needed. How do you think the choice between using an array or a linked list might affect performance in a specific application?",
+          "sources": [
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "# Lens Question the learner\nmust answer\nLinked-list specifics to teach\n4 Mutation What changes when I\nrewire?\nAssigning next  or prev  changes\nthe structure for everyone\ncopied\n5 Insertion and\ndeletion\nWhat do I need, and\nwhat does it cost?\nO(1) once you hold the right node:\nsingly needs the predecessor,\nfinding the spot is O(n)\n6 Iteration How do I walk it, and\nwhen do I stop?\ncircular lists stop when the walk\nreturns to the start\nSymbol.iterator  makes\nfor...of  work\n7 Equality and identity Wh"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "operation cost?\nO(n) access and search, O(1)\ncache locality and one allocation\nper node make lists slower than\narrays in practice\n11 Edge cases What inputs break my\ncode?\nEmpty list, one node, two nodes,\nremoving the head or tail, even vs\nodd length, an unexpected cycle,\na single-node circle pointing to\nitself\nJavaScript Linked Lists \u2014 Curriculum Blueprint\nPage 2 of 20"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "reference to its head\n2 Creation How do I build one\ncorrectly?\nNode objects or a ListNode\nthe loop last\n3 Access How do I reach the k-th\nnode?\nOnly by walking from the head,\na known node) to reach things\nquickly\nJavaScript Linked Lists \u2014 Curriculum Blueprint\nPage 1 of 20"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "JavaScript Linked Lists (Singly, Doubly,\nCircular) \u2014 Curriculum Blueprint\nOct 8, 2026  \u00b7  @Guhaprasaanth N\nTeach linked lists through the same 14 lenses as the other blueprints, with pointer\nhandling in place of index handling: a list is only as correct as the order in which its next\n(and prev ) references are rewired. JavaScript has no built-in linked list, so every list is a\nchain of plain objects, and the doubly and circular variants are taught as small changes to\nthe singly linked list ra"
+            }
+          ],
+          "retrieved_expected": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 0.5,
+          "citation_coverage": 0.5,
+          "context_coverage": 0.5,
+          "strategy": "agentic",
+          "searches": 2,
+          "model_calls": 3,
+          "input_tokens": 2451,
+          "output_tokens": 207,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 3509,
+          "output_token_limit": 1500,
+          "input_byte_limit_per_call": 16000,
+          "upload_document_limit": 100,
+          "context_sources": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ]
+        },
+        "standard_local": {
+          "status": "completed",
+          "answer": "Arrays and linked lists differ significantly in storage, access, and mutation. Arrays store elements in contiguous memory, allowing for O(1) access time but O(n) for insertion and deletion unless at the end. Linked lists, however, consist of nodes that hold values and references to other nodes, making insertion and deletion O(1) if the node references are known, but O(n) to find those nodes. When data is held in node references, mutations like reassigning `next` or `prev` affect all references to those nodes without copying the data, which contrasts with how arrays handle data. How do you think the choice between using an array or a linked list might affect performance in a specific application?",
+          "sources": [
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "# Lens Question the learner\nmust answer\nLinked-list specifics to teach\n4 Mutation What changes when I\nrewire?\nAssigning next  or prev  changes\nthe structure for everyone\ncopied\n5 Insertion and\ndeletion\nWhat do I need, and\nwhat does it cost?\nO(1) once you hold the right node:\nsingly needs the predecessor,\nfinding the spot is O(n)\n6 Iteration How do I walk it, and\nwhen do I stop?\ncircular lists stop when the walk\nreturns to the start\nSymbol.iterator  makes\nfor...of  work\n7 Equality and identity Wh"
+            },
+            {
+              "document_id": "corpus-js-ref-linkedlists-the-lenses-t4",
+              "filename": "blueprint",
+              "revision": "cb18057fa67383537b40935d7044b424d010e0dde51a45c0f838d5e7038aa24d",
+              "excerpt": "JavaScript \u00b7 JavaScript Linked Lists (Singly, Doubly, Circular) \u00b7 The lenses\n#: 4\nLens: Mutation\nQuestion the learner must answer: What changes when I rewire?\nLinked-list specifics to teach: Assigning `next` or `prev` changes the structure for everyone holding a reference; nothing is copied"
+            },
+            {
+              "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
+              "filename": "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+              "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440",
+              "excerpt": "JavaScript Linked Lists (Singly, Doubly,\nCircular) \u2014 Curriculum Blueprint\nOct 8, 2026  \u00b7  @Guhaprasaanth N\nTeach linked lists through the same 14 lenses as the other blueprints, with pointer\nhandling in place of index handling: a list is only as correct as the order in which its next\n(and prev ) references are rewired. JavaScript has no built-in linked list, so every list is a\nchain of plain objects, and the doubly and circular variants are taught as small changes to\nthe singly linked list ra"
+            }
+          ],
+          "retrieved_expected": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ],
+          "cited_expected": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf"
+          ],
+          "retrieval_coverage": 0.5,
+          "citation_coverage": 0.5,
+          "context_coverage": 0.5,
+          "strategy": "standard_local",
+          "searches": 2,
+          "model_calls": 1,
+          "input_tokens": 1108,
+          "output_tokens": 168,
+          "usage_complete": true,
+          "fallback": null,
+          "clarification": false,
+          "elapsed_ms": 4389,
+          "output_token_limit": 900,
+          "input_byte_limit_per_call": 16000,
+          "upload_document_limit": 100,
+          "context_sources": [
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+            "blueprint",
+            "JavaScript Linked Lists \u2014 Curriculum Blueprint.pdf",
+            "blueprint"
+          ]
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Small PDF-focused pilot, not a general adoption verdict.",
+    "Source coverage does not establish claim correctness or instruction quality.",
+    "Provider usage is reported only when SDK usage metadata is available."
+  ]
+}

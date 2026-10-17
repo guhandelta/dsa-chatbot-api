@@ -30,6 +30,7 @@ Files without front matter fall back to the original H1 format and default to
 track=dsa, which keeps every previously authored problem working unchanged.
 """
 import re
+import json
 from functools import lru_cache
 from pathlib import Path
 
@@ -77,6 +78,9 @@ class ContentMeta(BaseModel):
     # Progression level for Language Fundamentals. None means the item is not
     # level-scoped — DSA problems are ordered by `difficulty` instead, which is
     # a separate axis and must not be conflated with this one.
+    order: int = 0
+    prerequisites: list[str] = []
+    starter_code: str = ""
     level: str | None = None
     # Design-pattern tags, parallel to `algorithms`. These cross-link a
     # language idiom page to the pattern it implements, so Expert-level
@@ -131,6 +135,9 @@ def parse_file(path: Path) -> ContentMeta:
         source=front.get("source", "authored"),
         io_mode=front.get("io_mode", "function"),
         level=front.get("level"),
+        order=int(front.get("order", 0)),
+        prerequisites=[x.strip() for x in front.get("prerequisites", "").split(",") if x.strip()],
+        starter_code=json.loads(front.get("starter_code", '""')),
         patterns=front.get("patterns", []),
         fn_python=front.get("fn_python"),
         fn_javascript=front.get("fn_javascript"),
@@ -156,6 +163,14 @@ def list_content() -> list[ContentMeta]:
                 continue
             seen.add(md.stem)
             out.append(parse_file(md))
+    from app.services.curriculum import concept_items
+    for r in concept_items():
+        m = r["metadata"]
+        out.append(ContentMeta(
+            id="corpus-" + r["id"], title=r["payload"]["concept"],
+            track="language", language=m["language"], category=m["data_structure"],
+            source="curriculum", level="intermediate", order=500,
+        ))
     order = {d: i for i, d in enumerate(DIFFICULTIES)}
     out.sort(key=lambda c: (c.track, order.get(c.difficulty, 9), c.title))
     return out
@@ -198,6 +213,8 @@ def filter_content(
 
 
 def find_path(content_id: str) -> Path | None:
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,119}", content_id):
+        return None
     for directory in _all_dirs():
         candidate = directory / f"{content_id}.md"
         if candidate.is_file():
@@ -209,13 +226,15 @@ def read_content(content_id: str) -> str:
     """Full markdown (front matter stripped) for one item."""
     path = find_path(content_id)
     if not path:
-        return ""
+        from app.services.curriculum import concept_document
+        return concept_document(content_id)
     _, body = _parse_front_matter(path.read_text())
     return body
 
 
 def content_exists(content_id: str) -> bool:
-    return find_path(content_id) is not None
+    from app.services.curriculum import concept_document
+    return find_path(content_id) is not None or bool(concept_document(content_id))
 
 
 def known_algorithms() -> list[str]:
@@ -302,7 +321,7 @@ def track_summary(language: str | None = None) -> list[dict]:
     return out
 
 
-def load_test_cases(content_id: str) -> tuple[list, list, dict, str]:
+def load_test_cases(content_id: str, *, text: str | None = None) -> tuple[list, list, dict, str]:
     """Returns (args_list, expected_list, fn_names, io_mode) for a problem.
 
     Empty lists mean the problem has no executable tests (e.g. linked-list
@@ -314,7 +333,8 @@ def load_test_cases(content_id: str) -> tuple[list, list, dict, str]:
     path = find_path(content_id)
     if not path:
         return [], [], {}, "function"
-    front, _ = _parse_front_matter(path.read_text())
+    source = text if text is not None else path.read_text()
+    front, _ = _parse_front_matter(source)
     raw = front.get("test_cases")
     if not raw:
         return [], [], {}, front.get("io_mode", "function")
@@ -325,8 +345,16 @@ def load_test_cases(content_id: str) -> tuple[list, list, dict, str]:
     fns = {}
     if front.get("fn_python"):
         fns["python"] = front["fn_python"]
-    if front.get("fn_javascript"):
-        fns["javascript"] = front["fn_javascript"]
+    for lang in ("javascript", "java", "cpp", "c", "rust"):
+        if front.get(f"fn_{lang}"):
+            fns[lang] = front[f"fn_{lang}"]
+    # Legacy DSA documents encode the Java method in the reference snippet.
+    if "java" not in fns:
+        m = re.search(r"### Java\n```java\n(.*?)```", source, re.DOTALL)
+        if m:
+            fn = re.search(r"public\s+(?:static\s+)?[\w<>\[\]]+\s+(\w+)\s*\(", m.group(1))
+            if fn:
+                fns["java"] = fn.group(1)
     return (
         [c["args"] for c in cases],
         [c["expected"] for c in cases],
@@ -335,7 +363,7 @@ def load_test_cases(content_id: str) -> tuple[list, list, dict, str]:
     )
 
 
-def reference_solution(content_id: str, language: str = "python") -> tuple[str, str] | None:
+def reference_solution(content_id: str, language: str = "python", *, text: str | None = None) -> tuple[str, str] | None:
     """Returns (code, function_name) of the verified reference solution.
     This is what a student's submission is diffed against during fuzzing."""
     import re as _re
@@ -343,18 +371,29 @@ def reference_solution(content_id: str, language: str = "python") -> tuple[str, 
     path = find_path(content_id)
     if not path:
         return None
-    _, body = _parse_front_matter(path.read_text())
-    label = {"python": "Python", "javascript": "JavaScript"}.get(language)
+    source = text if text is not None else path.read_text()
+    _, body = _parse_front_matter(source)
+    label = {"python": "Python", "javascript": "JavaScript", "java": "Java"}.get(language)
     if not label:
         return None
     m = _re.search(rf"### {label}\n```[a-z]*\n(.*?)```", body, _re.DOTALL)
     if not m:
         return None
     code = m.group(1)
-    front, _ = _parse_front_matter(path.read_text())
+    front, _ = _parse_front_matter(source)
     fn = front.get(f"fn_{language}")
     if not fn:
-        pattern = r"^\s*def\s+(\w+)" if language == "python" else r"^\s*function\s+(\w+)"
+        pattern = (r"^\s*def\s+(\w+)" if language == "python" else
+                   r"(?:public\s+)?(?:static\s+)?[\w<>\[\]]+\s+(\w+)\s*\(" if language == "java" else
+                   r"^\s*function\s+(\w+)")
         fm = _re.search(pattern, code, _re.MULTILINE)
         fn = fm.group(1) if fm else None
     return (code, fn) if fn else None
+
+
+def comparison_mode(content_id: str, *, text: str | None = None) -> str:
+    path = find_path(content_id)
+    mode = _parse_front_matter(text if text is not None else path.read_text())[0].get("comparison", "exact") if path else "exact"
+    if mode not in ("exact", "unordered_flat", "unordered_nested"):
+        raise ValueError("Unknown exercise comparison mode")
+    return mode

@@ -1,0 +1,2594 @@
+{
+  "records": 17804,
+  "languages": [
+    "c",
+    "cpp",
+    "java",
+    "javascript",
+    "python",
+    "ruby",
+    "rust",
+    "typescript"
+  ],
+  "subjects": [
+    {
+      "language": "c",
+      "subject": "c",
+      "records": 1369,
+      "reference_safe_records": 886,
+      "by_kind": {
+        "concept": 199,
+        "exercise": 224,
+        "gotcha": 222,
+        "curriculum": 109,
+        "reference": 615
+      },
+      "candidate_exercises": 224,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-5e1beb264cdcf74a2e9a30c2",
+          "ref-8259590419f638774ba07c49",
+          "ref-ef34f8d111751e43a4d67267"
+        ],
+        "control-flow": [
+          "ref-1387afcc32197d1479994306",
+          "ref-cc4326c21a9f4612037c98eb",
+          "ref-b04a938f813d99980cd86373"
+        ],
+        "functions": [
+          "ref-92a90413020af6d8ba409388",
+          "ref-8259590419f638774ba07c49",
+          "ref-9e2b9840bab2ead665c3fd69"
+        ],
+        "collections": [
+          "ref-820a2ea30c7c8d90b644361b",
+          "ref-837d94555816b33498491477",
+          "ref-d280920c0ce9598e80665ce5"
+        ],
+        "strings-unicode": [
+          "ref-39dec1889c5796b913f090d4",
+          "ref-614b709ec4f165aa6afed51b",
+          "ref-b7042f691a6fffe9c5359b7a"
+        ],
+        "errors": [],
+        "modules-dependencies": [],
+        "testing-debugging": [
+          "ref-a5e70d4f7a28c42be2730780",
+          "ref-f7a97849397bfb7f4439f38d",
+          "ref-02c414b36dce47ae1227ecc0"
+        ],
+        "references-memory": [
+          "ref-820a2ea30c7c8d90b644361b",
+          "ref-837d94555816b33498491477",
+          "ref-d280920c0ce9598e80665ce5"
+        ],
+        "equality-ordering": [
+          "ref-b04a938f813d99980cd86373",
+          "ref-45cf7e0eac07904740ab2490",
+          "ref-8b02dd7717d4becd8f45fe57"
+        ],
+        "complexity": [
+          "ref-820a2ea30c7c8d90b644361b",
+          "ref-837d94555816b33498491477",
+          "ref-d280920c0ce9598e80665ce5"
+        ],
+        "recursion": [
+          "ref-903e0cae6942cac0469b54bc",
+          "ref-253d089555da630293a40732",
+          "ref-84c3414aae564f8826902bd8"
+        ],
+        "search-sort": [
+          "ref-7471e686dc7d3f12a3f741f3",
+          "ref-bdf7a114f842ee200b825cc2",
+          "ref-2ddc4cbc150ca1d8bf59da00"
+        ],
+        "linked-lists": [
+          "ref-0401b4ea33d848cf97aac3f4",
+          "ref-4187ce4deb2746fe8bda1996",
+          "ref-8238b23639fb9c26149eb6f7"
+        ],
+        "stacks-queues": [
+          "ref-837d94555816b33498491477",
+          "ref-55b436b9d2ec73096070171a",
+          "ref-72a34dcb1174a8e454dc928c"
+        ],
+        "trees-heaps": [
+          "ref-837d94555816b33498491477",
+          "ref-b5a0855e79a37d5cd6f255c3",
+          "ref-af08fd2c6ebf7e139d67aa52"
+        ],
+        "graphs": [
+          "ref-837d94555816b33498491477",
+          "ref-d280920c0ce9598e80665ce5",
+          "ref-b5a0855e79a37d5cd6f255c3"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": [
+          "ref-837d94555816b33498491477",
+          "ref-b5a0855e79a37d5cd6f255c3",
+          "ref-483f709ff84bfaca62be41e0"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "errors",
+        "modules-dependencies",
+        "dynamic-programming",
+        "greedy-backtracking"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-7e1ac19b17d549813b3f1729",
+            "ref-8812480ba03ca94daac10eda",
+            "ref-ce87bf6a3c3119d71e7f3b6a",
+            "ref-a2397c8cb37fc584fe8bc15b"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-6135eaabf17c9b824201dab5",
+            "ref-2e0beaecade14ee5ce4c0504",
+            "ref-d4062b2406cee67789d9de1c",
+            "ref-b6aa0b42d121afc9673b0d6b"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-8aeb23fe6c3bf0cb95dca67f",
+            "ref-ffcaa24647bda0ea3949e1e3",
+            "ref-ff6958f98514d1c0cb77439d",
+            "ref-0353da6eade0c00ae8efa5d8"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "c",
+      "subject": "embedded-c",
+      "records": 2094,
+      "reference_safe_records": 1404,
+      "by_kind": {
+        "concept": 345,
+        "curriculum": 345,
+        "exercise": 345,
+        "gotcha": 345,
+        "reference": 714
+      },
+      "candidate_exercises": 345,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-3f83e042a5abd75d0ffc4303",
+          "ref-04821e04fb1502fff992aeb3",
+          "ref-add08d9fb7d8835c25b318a9"
+        ],
+        "control-flow": [
+          "ref-d53d78f0adc9c7f846695aa3",
+          "ref-c67951c4e0a917233c5593ea",
+          "ref-bd2cbc5091124ef9fc375e93"
+        ],
+        "functions": [
+          "ref-91fc3c0f893ef6c4e9bf7c78",
+          "ref-e0eeb42e6184f44321063d63",
+          "ref-afcfd0872fe52bb005a48ebf"
+        ],
+        "collections": [
+          "ref-28aecc116323abc351b89694",
+          "ref-56f301932f2d3ab3b88b072b",
+          "ref-61ce33d75bb495cccdbed9e6"
+        ],
+        "strings-unicode": [
+          "ref-0ba1171c9a0849acf202cd5a",
+          "ref-4d63eda9e18469f69b72b5b5",
+          "ref-526948b4423001a83034d13f"
+        ],
+        "errors": [],
+        "modules-dependencies": [],
+        "testing-debugging": [
+          "ref-91fc3c0f893ef6c4e9bf7c78",
+          "ref-e0eeb42e6184f44321063d63",
+          "ref-afcfd0872fe52bb005a48ebf"
+        ],
+        "references-memory": [
+          "ref-1f55ab2fd1451d47884c1513",
+          "ref-6abe53a154ed26d2f388ed28",
+          "ref-9fa36cfb41f7f7c43c0cb578"
+        ],
+        "equality-ordering": [
+          "ref-95f872783b37a41abe85585f",
+          "ref-ed79a5411414b69730fbdb3e",
+          "ref-841ec52c574550ce0bcefd1d"
+        ],
+        "complexity": [
+          "ref-d53d78f0adc9c7f846695aa3",
+          "ref-c67951c4e0a917233c5593ea",
+          "ref-bd2cbc5091124ef9fc375e93"
+        ],
+        "recursion": [
+          "ref-99e7f4b51f20051442bc21bb",
+          "ref-8c8b2ce8dbec00963d7a6ae6",
+          "ref-a0cb5bc7aaf3ae048a4f2387"
+        ],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-06a8962b366dc73a90a4d969",
+          "ref-7c58aa8b5523df99bc4669ef",
+          "ref-8ee885ff84c953896694f44b"
+        ],
+        "trees-heaps": [
+          "ref-094c123f7212e9a50007770f",
+          "ref-5f3a638a6a4b12f9427cdeef",
+          "ref-030db1a697e362401389bf72"
+        ],
+        "graphs": [
+          "ref-f29f3ef2e5fc5d7ff2984613"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": [
+          "ref-0a68d6969a7ec80eda67531e",
+          "ref-95f872783b37a41abe85585f",
+          "ref-87a0afef7d7bbeb16f7c3a8f"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "errors",
+        "modules-dependencies",
+        "search-sort",
+        "linked-lists",
+        "dynamic-programming",
+        "greedy-backtracking"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "interrupt memory register",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-413c1f65a9faddb901742619",
+            "ref-dcdde7430e5fe83a593a3375",
+            "ref-1f8dade11ce3c897089b73f9",
+            "ref-d212ba4d0c96e2d5a7efedae"
+          ]
+        },
+        {
+          "query": "pointer volatile",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-6815351b8a83d8066ff1d6a8",
+            "ref-0e0fdadef1fc4510eea8b07b",
+            "ref-4cc3203b3d7687cbfada73b9",
+            "ref-ed2faf2fe54ab85fc7255655"
+          ]
+        },
+        {
+          "query": "peripheral testing",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-030db1a697e362401389bf72",
+            "ref-508c66bc6884351e03ca3aae",
+            "ref-c006f022ec4fe7a914a3332b",
+            "ref-7146582f608b2b035144ba9e"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "cpp",
+      "subject": "cpp",
+      "records": 414,
+      "reference_safe_records": 414,
+      "by_kind": {
+        "reference": 414
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-6e7e458fa51ac898111bcc77",
+          "ref-2c5cd6c4d0f8bdc9cb33d01b"
+        ],
+        "control-flow": [
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-7dbe6052f1d7c0756e9ebafa",
+          "ref-98ca4156f748dbb53095319c"
+        ],
+        "functions": [
+          "ref-f61f5a79f9d1908ef528057f",
+          "ref-07cc6c08fe18cfad7b5146cd",
+          "ref-a0f1b2161ba5c639e522f86c"
+        ],
+        "collections": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-489cce6571518857cb79a520",
+          "ref-3df78c550f85ab39cd9f5a17"
+        ],
+        "strings-unicode": [
+          "ref-79a2f7f283ae05a2487ed761",
+          "ref-a851ba0ec5b38d029b6b3558",
+          "ref-f58812e30a3ee50ead4f70a8"
+        ],
+        "errors": [
+          "ref-7dbe6052f1d7c0756e9ebafa",
+          "ref-98ca4156f748dbb53095319c",
+          "ref-b6da0f9ff4428ba53bcb309f"
+        ],
+        "modules-dependencies": [
+          "ref-ab201f037a30f419f14f003a",
+          "ref-b0bbe8109cfc81af91e38b8c"
+        ],
+        "testing-debugging": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-489cce6571518857cb79a520"
+        ],
+        "references-memory": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-489cce6571518857cb79a520"
+        ],
+        "equality-ordering": [
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-2c5cd6c4d0f8bdc9cb33d01b",
+          "ref-7dbe6052f1d7c0756e9ebafa"
+        ],
+        "complexity": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-ba008aec213d77c76dcc23f1"
+        ],
+        "recursion": [
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-9da3163a1f4fcbcedad6e0bd",
+          "ref-62bd39e98bf3953d2f212c41"
+        ],
+        "search-sort": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-9da3163a1f4fcbcedad6e0bd"
+        ],
+        "linked-lists": [
+          "ref-3df78c550f85ab39cd9f5a17",
+          "ref-e8dd49265f3522017f8aaebc",
+          "ref-f9a6d2d189faa4c635f4b44b"
+        ],
+        "stacks-queues": [
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-ab5060402621105d82e77d0a",
+          "ref-9da3163a1f4fcbcedad6e0bd"
+        ],
+        "trees-heaps": [
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-489cce6571518857cb79a520",
+          "ref-6e7e458fa51ac898111bcc77"
+        ],
+        "graphs": [
+          "ref-0373091a9925c765d9b187ca",
+          "ref-6752436d20036775aad1aea7",
+          "ref-f61f5a79f9d1908ef528057f"
+        ],
+        "dynamic-programming": [
+          "ref-308382b3b5f8066de6b5a9a2",
+          "ref-cee3ffe6112f2666f4127a91",
+          "ref-b0eb68381b51f491fceeee54"
+        ],
+        "greedy-backtracking": [
+          "ref-6752436d20036775aad1aea7",
+          "ref-f61f5a79f9d1908ef528057f",
+          "ref-cee3ffe6112f2666f4127a91"
+        ],
+        "boundary-cases": [
+          "ref-696eeb3777fb9c2cf2a0ab36",
+          "ref-a984d3750dfa5d3363c1798f",
+          "ref-2c5cd6c4d0f8bdc9cb33d01b"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "cpp-fundamentals",
+            "ref-99a497c2694c50f56857e97c",
+            "ref-e8765dca1a801e499ea0da0a",
+            "ref-28fcb8a0ec2d6bf172089fd6"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-d1e7f1db8089467e00faba8c",
+            "ref-637162ecc410e41669051552",
+            "ref-6d941be66a7b9c26c95a4388",
+            "ref-45b709da7e0a4f4ebacc17a8"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-ad22049c497f199b3a7f28bf",
+            "ref-90f31e7cea139c5ddcfc0936",
+            "ref-376d918841f0387975b5d3f7",
+            "ref-dfae48e1e3970e82163f1655"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "java",
+      "subject": "java",
+      "records": 2377,
+      "reference_safe_records": 2052,
+      "by_kind": {
+        "concept": 139,
+        "exercise": 26,
+        "reference": 1359,
+        "lens": 238,
+        "gotcha": 299,
+        "curriculum": 133,
+        "exercise_format": 183
+      },
+      "candidate_exercises": 26,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "java-list-remove-index-vs-value",
+          "java-integer-cache-equality",
+          "java-int-overflow"
+        ],
+        "control-flow": [
+          "java-ref-arrays-the-lenses-t6",
+          "java-ref-arrays-the-lenses-t9",
+          "java-ref-arrays-index-handling-track-t4"
+        ],
+        "functions": [
+          "java-list-remove-index-vs-value",
+          "java-ref-arrays-curriculum-levels-l1",
+          "java-ref-arrays-curriculum-levels-l3"
+        ],
+        "collections": [
+          "java-list-remove-index-vs-value",
+          "java-integer-cache-equality",
+          "java-int-overflow"
+        ],
+        "strings-unicode": [
+          "java-ref-arrays-the-lenses-p1",
+          "java-ref-arrays-the-lenses-t1",
+          "java-ref-arrays-bridges-to-other-forms-p1"
+        ],
+        "errors": [
+          "java-ref-arrays-the-lenses-p2",
+          "java-ref-arrays-index-handling-track-t1",
+          "java-ref-arrays-curriculum-levels-l0"
+        ],
+        "modules-dependencies": [
+          "java-ref-graphs-algorithm-choice-track-p1",
+          "java-ref-graphs-when-to-model-it-as-a-graph-and-t1",
+          "java-ref-graphs-curriculum-levels-l6"
+        ],
+        "testing-debugging": [
+          "java-ref-arrays-the-lenses-t14",
+          "java-ref-arrays-when-it-must-stay-an-array-and-w-t14",
+          "java-ref-arrays-curriculum-levels-p2"
+        ],
+        "references-memory": [
+          "java-integer-cache-equality",
+          "java-ref-arrays-the-lenses-t1",
+          "java-ref-arrays-the-lenses-t7"
+        ],
+        "equality-ordering": [
+          "java-integer-cache-equality",
+          "java-ref-arrays-overview-p1",
+          "java-ref-arrays-the-lenses-t7"
+        ],
+        "complexity": [
+          "java-list-remove-index-vs-value",
+          "java-integer-cache-equality",
+          "java-int-overflow"
+        ],
+        "recursion": [
+          "java-ref-classes-object-model-and-design-track-t10",
+          "java-ref-classes-bridges-to-other-forms-t8",
+          "java-graph-directed-cycle-three-states"
+        ],
+        "search-sort": [
+          "java-int-overflow",
+          "java-ref-arrays-the-lenses-t13",
+          "java-ref-arrays-index-handling-track-t12"
+        ],
+        "linked-lists": [
+          "java-ref-classes-curriculum-levels-l5",
+          "java-collections-program-to-interface",
+          "java-collections-null-policies"
+        ],
+        "stacks-queues": [
+          "java-ref-arrays-the-lenses-t13",
+          "java-ref-arrays-when-it-must-stay-an-array-and-w-t18",
+          "java-ref-classes-the-lenses-t13"
+        ],
+        "trees-heaps": [
+          "java-ref-arrays-when-it-must-stay-an-array-and-w-t6",
+          "java-bits-lowest-set-bit",
+          "java-ref-bits-overview-p1"
+        ],
+        "graphs": [
+          "java-ref-arrays-when-it-must-stay-an-array-and-w-t6",
+          "java-ref-classes-equality-and-hashing-track-p2",
+          "java-ref-classes-object-model-and-design-track-t9"
+        ],
+        "dynamic-programming": [
+          "java-ref-bits-bridges-to-other-structures-p1",
+          "java-ref-graphs-when-to-model-it-as-a-graph-and-t11",
+          "java-ref-algrecursion-fit-t2"
+        ],
+        "greedy-backtracking": [
+          "java-ref-grids-the-lenses-t4",
+          "java-ref-grids-traversal-track-t7",
+          "java-ref-grids-curriculum-levels-l4"
+        ],
+        "boundary-cases": [
+          "java-ref-arrays-the-lenses-t10",
+          "java-ref-arrays-the-lenses-t11",
+          "java-ref-arrays-the-lenses-p2"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "java-path-04-functions",
+            "corpus-java-collections-basics",
+            "java-path-04-functions",
+            "corpus-java-ref-trees-what-changes-from-the-javascript-t7"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "corpus-java-ref-classes-curriculum-levels-l6",
+            "corpus-java-ref-collections-iteration-mutation-and-immutabil-t8",
+            "corpus-java-ref-classes-curriculum-levels-l2",
+            "corpus-java-ref-collections-choosing-a-collection-t15"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "corpus-java-ref-algsorting-notes-t7",
+            "corpus-java-ref-grids-traversal-track-t7",
+            "corpus-java-ref-trees-curriculum-levels-l5",
+            "corpus-java-ref-grids-traversal-track-t10"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 12,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "java",
+      "subject": "spring-boot",
+      "records": 3,
+      "reference_safe_records": 3,
+      "by_kind": {
+        "reference": 3
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-0863853953f6a4c60d963b91"
+        ],
+        "control-flow": [],
+        "functions": [
+          "ref-0863853953f6a4c60d963b91"
+        ],
+        "collections": [],
+        "strings-unicode": [],
+        "errors": [],
+        "modules-dependencies": [
+          "ref-a7c6f9c3f99153d6d70fbaca"
+        ],
+        "testing-debugging": [
+          "ref-37f256f058cec7b507418eb0",
+          "ref-0863853953f6a4c60d963b91"
+        ],
+        "references-memory": [
+          "ref-a7c6f9c3f99153d6d70fbaca",
+          "ref-37f256f058cec7b507418eb0",
+          "ref-0863853953f6a4c60d963b91"
+        ],
+        "equality-ordering": [],
+        "complexity": [],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [],
+        "trees-heaps": [],
+        "graphs": [],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": []
+      },
+      "topics_not_evidenced_by_scan": [
+        "control-flow",
+        "collections",
+        "strings-unicode",
+        "errors",
+        "equality-ordering",
+        "complexity",
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "stacks-queues",
+        "trees-heaps",
+        "graphs",
+        "dynamic-programming",
+        "greedy-backtracking",
+        "boundary-cases"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "auto configuration",
+          "result_count": 3,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-a7c6f9c3f99153d6d70fbaca",
+            "ref-0863853953f6a4c60d963b91",
+            "ref-37f256f058cec7b507418eb0"
+          ]
+        },
+        {
+          "query": "configuration properties",
+          "result_count": 3,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-0863853953f6a4c60d963b91",
+            "ref-a7c6f9c3f99153d6d70fbaca",
+            "ref-37f256f058cec7b507418eb0"
+          ]
+        },
+        {
+          "query": "application testing",
+          "result_count": 3,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-37f256f058cec7b507418eb0",
+            "ref-a7c6f9c3f99153d6d70fbaca",
+            "ref-0863853953f6a4c60d963b91"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "java",
+      "subject": "spring-core",
+      "records": 1,
+      "reference_safe_records": 1,
+      "by_kind": {
+        "reference": 1
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [],
+        "control-flow": [],
+        "functions": [],
+        "collections": [],
+        "strings-unicode": [],
+        "errors": [],
+        "modules-dependencies": [],
+        "testing-debugging": [
+          "ref-016f7031863efffaae9c1e65"
+        ],
+        "references-memory": [
+          "ref-016f7031863efffaae9c1e65"
+        ],
+        "equality-ordering": [],
+        "complexity": [],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [],
+        "trees-heaps": [],
+        "graphs": [],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": []
+      },
+      "topics_not_evidenced_by_scan": [
+        "values-types",
+        "control-flow",
+        "functions",
+        "collections",
+        "strings-unicode",
+        "errors",
+        "modules-dependencies",
+        "equality-ordering",
+        "complexity",
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "stacks-queues",
+        "trees-heaps",
+        "graphs",
+        "dynamic-programming",
+        "greedy-backtracking",
+        "boundary-cases"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "dependency injection beans",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-016f7031863efffaae9c1e65"
+          ]
+        },
+        {
+          "query": "application context lifecycle",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-016f7031863efffaae9c1e65"
+          ]
+        },
+        {
+          "query": "configuration scopes",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-016f7031863efffaae9c1e65"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "java",
+      "subject": "spring-data",
+      "records": 2,
+      "reference_safe_records": 2,
+      "by_kind": {
+        "reference": 2
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [],
+        "control-flow": [],
+        "functions": [],
+        "collections": [
+          "ref-24c0a3ae2ed7acf1c6b0d789"
+        ],
+        "strings-unicode": [],
+        "errors": [],
+        "modules-dependencies": [],
+        "testing-debugging": [
+          "ref-24c0a3ae2ed7acf1c6b0d789"
+        ],
+        "references-memory": [
+          "ref-24c0a3ae2ed7acf1c6b0d789",
+          "ref-bdf8bd07518f1cdde197faac"
+        ],
+        "equality-ordering": [],
+        "complexity": [],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [],
+        "trees-heaps": [],
+        "graphs": [],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": []
+      },
+      "topics_not_evidenced_by_scan": [
+        "values-types",
+        "control-flow",
+        "functions",
+        "strings-unicode",
+        "errors",
+        "modules-dependencies",
+        "equality-ordering",
+        "complexity",
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "stacks-queues",
+        "trees-heaps",
+        "graphs",
+        "dynamic-programming",
+        "greedy-backtracking",
+        "boundary-cases"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "repository persistence",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-24c0a3ae2ed7acf1c6b0d789"
+          ]
+        },
+        {
+          "query": "transactions queries",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-24c0a3ae2ed7acf1c6b0d789"
+          ]
+        },
+        {
+          "query": "entity mapping",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-24c0a3ae2ed7acf1c6b0d789"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "java",
+      "subject": "spring-mvc",
+      "records": 3,
+      "reference_safe_records": 3,
+      "by_kind": {
+        "reference": 3
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-326349e2c00840094864f37d"
+        ],
+        "control-flow": [],
+        "functions": [
+          "ref-326349e2c00840094864f37d"
+        ],
+        "collections": [],
+        "strings-unicode": [],
+        "errors": [
+          "ref-326349e2c00840094864f37d",
+          "ref-e9c6f0ba474d44fea731ba62"
+        ],
+        "modules-dependencies": [],
+        "testing-debugging": [],
+        "references-memory": [
+          "ref-326349e2c00840094864f37d",
+          "ref-e9c6f0ba474d44fea731ba62",
+          "ref-f720d40d411f5ff63bf481dc"
+        ],
+        "equality-ordering": [],
+        "complexity": [],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-f720d40d411f5ff63bf481dc"
+        ],
+        "trees-heaps": [],
+        "graphs": [],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": []
+      },
+      "topics_not_evidenced_by_scan": [
+        "control-flow",
+        "collections",
+        "strings-unicode",
+        "modules-dependencies",
+        "testing-debugging",
+        "equality-ordering",
+        "complexity",
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "trees-heaps",
+        "graphs",
+        "dynamic-programming",
+        "greedy-backtracking",
+        "boundary-cases"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "DispatcherServlet controllers",
+          "result_count": 3,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-e9c6f0ba474d44fea731ba62",
+            "ref-326349e2c00840094864f37d",
+            "ref-f720d40d411f5ff63bf481dc"
+          ]
+        },
+        {
+          "query": "request mapping validation",
+          "result_count": 3,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-e9c6f0ba474d44fea731ba62",
+            "ref-f720d40d411f5ff63bf481dc",
+            "ref-326349e2c00840094864f37d"
+          ]
+        },
+        {
+          "query": "exception handling",
+          "result_count": 2,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-e9c6f0ba474d44fea731ba62",
+            "ref-326349e2c00840094864f37d"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "java",
+      "subject": "spring-security",
+      "records": 1,
+      "reference_safe_records": 1,
+      "by_kind": {
+        "reference": 1
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [],
+        "control-flow": [],
+        "functions": [],
+        "collections": [],
+        "strings-unicode": [],
+        "errors": [],
+        "modules-dependencies": [],
+        "testing-debugging": [
+          "ref-ad8bcc47622a8042154397bf"
+        ],
+        "references-memory": [
+          "ref-ad8bcc47622a8042154397bf"
+        ],
+        "equality-ordering": [],
+        "complexity": [],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-ad8bcc47622a8042154397bf"
+        ],
+        "trees-heaps": [],
+        "graphs": [],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": []
+      },
+      "topics_not_evidenced_by_scan": [
+        "values-types",
+        "control-flow",
+        "functions",
+        "collections",
+        "strings-unicode",
+        "errors",
+        "modules-dependencies",
+        "equality-ordering",
+        "complexity",
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "trees-heaps",
+        "graphs",
+        "dynamic-programming",
+        "greedy-backtracking",
+        "boundary-cases"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "authentication authorization",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-ad8bcc47622a8042154397bf"
+          ]
+        },
+        {
+          "query": "filter chain",
+          "result_count": 0,
+          "scope_ok": true,
+          "source_ids": []
+        },
+        {
+          "query": "CSRF security testing",
+          "result_count": 1,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-ad8bcc47622a8042154397bf"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "java",
+      "subject": "spring-testing",
+      "records": 2,
+      "reference_safe_records": 2,
+      "by_kind": {
+        "reference": 2
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [],
+        "control-flow": [],
+        "functions": [],
+        "collections": [],
+        "strings-unicode": [],
+        "errors": [],
+        "modules-dependencies": [
+          "ref-ea2dc4db1cfe3df93eaae20e"
+        ],
+        "testing-debugging": [
+          "ref-ea2dc4db1cfe3df93eaae20e",
+          "ref-b4379556e2c5d2ef8c36f871"
+        ],
+        "references-memory": [
+          "ref-ea2dc4db1cfe3df93eaae20e",
+          "ref-b4379556e2c5d2ef8c36f871"
+        ],
+        "equality-ordering": [],
+        "complexity": [],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [],
+        "trees-heaps": [],
+        "graphs": [],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": []
+      },
+      "topics_not_evidenced_by_scan": [
+        "values-types",
+        "control-flow",
+        "functions",
+        "collections",
+        "strings-unicode",
+        "errors",
+        "equality-ordering",
+        "complexity",
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "stacks-queues",
+        "trees-heaps",
+        "graphs",
+        "dynamic-programming",
+        "greedy-backtracking",
+        "boundary-cases"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "unit integration testing",
+          "result_count": 2,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-ea2dc4db1cfe3df93eaae20e",
+            "ref-b4379556e2c5d2ef8c36f871"
+          ]
+        },
+        {
+          "query": "test slices",
+          "result_count": 2,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-b4379556e2c5d2ef8c36f871",
+            "ref-ea2dc4db1cfe3df93eaae20e"
+          ]
+        },
+        {
+          "query": "mock application context",
+          "result_count": 2,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-ea2dc4db1cfe3df93eaae20e",
+            "ref-b4379556e2c5d2ef8c36f871"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "javascript",
+      "subject": "javascript",
+      "records": 1903,
+      "reference_safe_records": 1574,
+      "by_kind": {
+        "concept": 135,
+        "exercise": 41,
+        "reference": 980,
+        "lens": 196,
+        "gotcha": 285,
+        "curriculum": 112,
+        "exercise_format": 154
+      },
+      "candidate_exercises": 41,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "js-array-number-precision",
+          "js-ref-arrays-the-lenses-t1",
+          "js-ref-arrays-the-lenses-t9"
+        ],
+        "control-flow": [
+          "js-array-remove-while-iterating",
+          "js-ref-arrays-the-lenses-t6",
+          "js-ref-arrays-the-lenses-t10"
+        ],
+        "functions": [
+          "js-ref-arrays-the-lenses-t10",
+          "js-ref-arrays-index-handling-track-p2",
+          "js-ref-arrays-curriculum-levels-l1"
+        ],
+        "collections": [
+          "js-array-remove-while-iterating",
+          "js-array-sort-comparator",
+          "js-array-equality-and-copies"
+        ],
+        "strings-unicode": [
+          "js-array-sort-comparator",
+          "js-ref-arrays-overview-p1",
+          "js-ref-arrays-the-lenses-t8"
+        ],
+        "errors": [
+          "js-ref-maps-order-and-iteration-track-p1",
+          "js-ref-stacks-when-it-must-be-a-stack-and-when-t4"
+        ],
+        "modules-dependencies": [
+          "js-ref-graphs-algorithm-choice-track-t4",
+          "js-ref-graphs-when-to-model-it-as-a-graph-and-t1",
+          "js-ref-graphs-when-to-model-it-as-a-graph-and-t13"
+        ],
+        "testing-debugging": [
+          "js-ref-arrays-the-lenses-t12",
+          "js-ref-arrays-the-lenses-t14",
+          "js-ref-arrays-when-it-must-stay-an-array-t12"
+        ],
+        "references-memory": [
+          "js-array-remove-while-iterating",
+          "js-array-equality-and-copies",
+          "js-ref-arrays-the-lenses-t7"
+        ],
+        "equality-ordering": [
+          "js-array-sort-comparator",
+          "js-array-equality-and-copies",
+          "js-ref-arrays-the-lenses-t7"
+        ],
+        "complexity": [
+          "js-array-remove-while-iterating",
+          "js-array-sort-comparator",
+          "js-array-equality-and-copies"
+        ],
+        "recursion": [
+          "js-ref-graphs-the-lenses-t6",
+          "js-ref-graphs-representation-and-traversal-tra-t11",
+          "js-ref-graphs-when-to-model-it-as-a-graph-and-t8"
+        ],
+        "search-sort": [
+          "js-array-sort-comparator",
+          "js-ref-arrays-the-lenses-t7",
+          "js-ref-arrays-the-lenses-t13"
+        ],
+        "linked-lists": [
+          "js-ref-arrays-overview-p1",
+          "js-linkedlist-reorder",
+          "js-ref-linkedlists-overview-p1"
+        ],
+        "stacks-queues": [
+          "js-ref-arrays-overview-p1",
+          "js-ref-arrays-the-lenses-t13",
+          "js-ref-arrays-when-it-must-stay-an-array-t11"
+        ],
+        "trees-heaps": [
+          "js-ref-arrays-when-it-must-stay-an-array-t7",
+          "js-ref-arrays-when-it-must-stay-an-array-t17",
+          "js-graph-union-find"
+        ],
+        "graphs": [
+          "js-ref-arrays-when-it-must-stay-an-array-t7",
+          "js-graph-undirected-both-directions",
+          "js-graph-directed-cycle-three-states"
+        ],
+        "dynamic-programming": [
+          "js-ref-graphs-when-to-model-it-as-a-graph-and-t11",
+          "js-ref-algrecursion-fit-t2"
+        ],
+        "greedy-backtracking": [
+          "js-array-equality-and-copies",
+          "js-ref-grids-the-lenses-t4",
+          "js-ref-grids-the-lenses-t13"
+        ],
+        "boundary-cases": [
+          "js-array-number-precision",
+          "js-ref-arrays-the-lenses-t11",
+          "js-ref-graphs-the-lenses-t11"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "corpus-js-ref-sets-membership-and-identity-track-t5",
+            "javascript-path-04-functions",
+            "corpus-js-ref-heaps-bridges-and-language-mapping-t11",
+            "javascript-fundamentals"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "javascript-path-06-arrays",
+            "corpus-js-ref-algsorting-notes-t7",
+            "corpus-js-ref-heaps-bridges-and-language-mapping-t10",
+            "javascript-path-08-sets"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "corpus-js-ref-grids-traversal-track-t12",
+            "corpus-js-ref-trees-curriculum-levels-l5",
+            "corpus-js-ref-algsorting-notes-t7",
+            "corpus-js-ref-grids-traversal-track-t9"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 12,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": true
+    },
+    {
+      "language": "python",
+      "subject": "embedded-python",
+      "records": 1102,
+      "reference_safe_records": 793,
+      "by_kind": {
+        "reference": 562,
+        "concept": 165,
+        "exercise": 198,
+        "gotcha": 78,
+        "curriculum": 99
+      },
+      "candidate_exercises": 198,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-684779c93ce2ba30f3bf9035",
+          "ref-0084f4483116b08d8693055d",
+          "ref-ee845aced4bc00a309d56984"
+        ],
+        "control-flow": [
+          "ref-408b363306cd6e37bfbe335c",
+          "ref-575d782eaced47e0a164f99f",
+          "ref-37769887760fb8ae1282d482"
+        ],
+        "functions": [
+          "ref-9f8d10a44f63ccb25f6bdb80",
+          "ref-764a8cf9621c71d942912ce2",
+          "ref-53f75218b2feb83d8e4ecb9a"
+        ],
+        "collections": [
+          "ref-684779c93ce2ba30f3bf9035",
+          "ref-83571be7bbb1154cf1766119",
+          "ref-066c9ecc6a1e6300dae6ba0e"
+        ],
+        "strings-unicode": [
+          "ref-289830425b553ffbbb97fbcb",
+          "ref-e6969337547b87cc3ab1f0ee",
+          "ref-7ee17f4ddb1e9f3d82bce21e"
+        ],
+        "errors": [
+          "ref-f8d2a621f25578bb7f22a171",
+          "ref-00acd3991795ada03ebc1129",
+          "ref-d7a4ba1f2fa9d2890f49c390"
+        ],
+        "modules-dependencies": [
+          "ref-408b363306cd6e37bfbe335c",
+          "ref-ee845aced4bc00a309d56984",
+          "ref-af9119ea2ec6f91034ef9960"
+        ],
+        "testing-debugging": [
+          "ref-684779c93ce2ba30f3bf9035",
+          "ref-83571be7bbb1154cf1766119",
+          "ref-066c9ecc6a1e6300dae6ba0e"
+        ],
+        "references-memory": [
+          "ref-684779c93ce2ba30f3bf9035",
+          "ref-83571be7bbb1154cf1766119",
+          "ref-066c9ecc6a1e6300dae6ba0e"
+        ],
+        "equality-ordering": [
+          "ref-3ae1b050937975a6b2b79cb5",
+          "ref-e6969337547b87cc3ab1f0ee",
+          "ref-d0d0228aabbed44bfaa63e5a"
+        ],
+        "complexity": [
+          "ref-ee845aced4bc00a309d56984",
+          "ref-9a7365124b7d44a0e6495e22",
+          "ref-8436a57074b2c0f3675e28e2"
+        ],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-83571be7bbb1154cf1766119",
+          "ref-d513b273f33a08c9c2187457",
+          "ref-b676778101e19f9c78cb702c"
+        ],
+        "trees-heaps": [
+          "ref-f8d2a621f25578bb7f22a171",
+          "ref-d7a4ba1f2fa9d2890f49c390",
+          "ref-53b6a0e75c02453be8eefe2e"
+        ],
+        "graphs": [
+          "ref-1b3f46a9f9a100ee855529f8",
+          "ref-3a5a1ebbc1e68b79f85d2828",
+          "ref-8f9981ad12d0e18dbcf9302d"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": [
+          "ref-83571be7bbb1154cf1766119",
+          "ref-7aa0327ba163c839bef96c11",
+          "ref-528dc9644a2b056c10a7f0ef"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "dynamic-programming",
+        "greedy-backtracking"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "interrupt memory allocation",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-4143a85d20140ff34bb00ceb",
+            "ref-6cdffdab57f1cc148cdf8e91",
+            "ref-68277166bea29679f649670d",
+            "ref-b676778101e19f9c78cb702c"
+          ]
+        },
+        {
+          "query": "MicroPython peripherals",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-117132df37373cb80066a370",
+            "ref-95b823c6748a0060a5d5144f",
+            "ref-c6cf4c3e245a2040217b7195",
+            "ref-18aa67bddc95c4811fb26be1"
+          ]
+        },
+        {
+          "query": "hardware timing",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-3c59b9a7478e2008de53b9e3",
+            "ref-9347d8aab6a91287da424496",
+            "ref-d03ce63226923361c54c0416",
+            "ref-f9f9f58adf8fb99ca89a9ac9"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "python",
+      "subject": "python",
+      "records": 397,
+      "reference_safe_records": 338,
+      "by_kind": {
+        "reference": 276,
+        "concept": 50,
+        "exercise": 25,
+        "gotcha": 30,
+        "curriculum": 16
+      },
+      "candidate_exercises": 25,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-c9f2cebf6ef5a3a3af0f2dcc",
+          "ref-13990fcd7f0ea01ffb37df92",
+          "ref-ec8331a0c3848dcb6a90bde3"
+        ],
+        "control-flow": [
+          "ref-c9f2cebf6ef5a3a3af0f2dcc",
+          "ref-03a2578ce85858e7be4a3083",
+          "ref-ec8331a0c3848dcb6a90bde3"
+        ],
+        "functions": [
+          "ref-94bd0cb354aef64d700d56eb",
+          "ref-c9f2cebf6ef5a3a3af0f2dcc",
+          "ref-cdb6d9502a8d095d9aa1d23d"
+        ],
+        "collections": [
+          "ref-11c05e6f97b39fa4755fc8e5",
+          "ref-94bd0cb354aef64d700d56eb",
+          "ref-94cc1c264b8e1b1628244b7c"
+        ],
+        "strings-unicode": [
+          "ref-797d16af9ef4e8175817dd6b",
+          "ref-a03a7db3e553ca610fef1d58",
+          "ref-abecfa8a76e670d4873e6384"
+        ],
+        "errors": [
+          "ref-0b3ce64664de88626ba940bc",
+          "ref-2bab1147d4ff7919e67a4ab9",
+          "ref-8cfab51ecd3fd34a7e39d33d"
+        ],
+        "modules-dependencies": [
+          "ref-faa1537f0846e26bbd1ed854",
+          "ref-2c5558f60d91ea2245695173",
+          "ref-42de9cbee071f91f067fa8f7"
+        ],
+        "testing-debugging": [
+          "ref-e88668353aa03ebf4f32c5fe",
+          "ref-c9f2cebf6ef5a3a3af0f2dcc",
+          "ref-be711e6c144c472b3bff1524"
+        ],
+        "references-memory": [
+          "ref-11c05e6f97b39fa4755fc8e5",
+          "ref-94bd0cb354aef64d700d56eb",
+          "ref-94cc1c264b8e1b1628244b7c"
+        ],
+        "equality-ordering": [
+          "ref-c9f2cebf6ef5a3a3af0f2dcc",
+          "ref-13990fcd7f0ea01ffb37df92",
+          "ref-ec8331a0c3848dcb6a90bde3"
+        ],
+        "complexity": [
+          "ref-c9f2cebf6ef5a3a3af0f2dcc",
+          "ref-ec8331a0c3848dcb6a90bde3",
+          "ref-6feddcac35191f09fe5b0c8b"
+        ],
+        "recursion": [
+          "ref-94bd0cb354aef64d700d56eb",
+          "ref-13990fcd7f0ea01ffb37df92",
+          "ref-f9cfbf5e1e38665347d1b416"
+        ],
+        "search-sort": [
+          "ref-11c05e6f97b39fa4755fc8e5",
+          "ref-03a2578ce85858e7be4a3083",
+          "ref-797d16af9ef4e8175817dd6b"
+        ],
+        "linked-lists": [
+          "ref-94cc1c264b8e1b1628244b7c",
+          "ref-13990fcd7f0ea01ffb37df92",
+          "ref-03a2578ce85858e7be4a3083"
+        ],
+        "stacks-queues": [
+          "ref-eb68270de6f657f21d476ae5",
+          "ref-ec8331a0c3848dcb6a90bde3",
+          "ref-8a28179d639e515a84156aef"
+        ],
+        "trees-heaps": [
+          "ref-11c05e6f97b39fa4755fc8e5",
+          "ref-94bd0cb354aef64d700d56eb",
+          "ref-94cc1c264b8e1b1628244b7c"
+        ],
+        "graphs": [
+          "ref-03a2578ce85858e7be4a3083",
+          "ref-4ea9ead4146ee6cdb7dfb02b",
+          "ref-ec8331a0c3848dcb6a90bde3"
+        ],
+        "dynamic-programming": [
+          "ref-0c65070cd0eb52949e82b073",
+          "ref-ef86b895c3b2b2401e4a5fa4",
+          "ref-1ce56a31600e3ce4dc472096"
+        ],
+        "greedy-backtracking": [
+          "ref-0c65070cd0eb52949e82b073",
+          "ref-1473e4b224db9400d18f7935",
+          "ref-3cac4a1a1beee64d2cc22b1e"
+        ],
+        "boundary-cases": [
+          "ref-6911ebb8878a785e136b9a6c",
+          "ref-3e68c11109a16b1359e35d25",
+          "ref-63878244ca3a4c168ac99444"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "python-fundamentals",
+            "ref-0ac896e1d86ba1863a3c881f",
+            "ref-4a0a96019dc832d471966616",
+            "ref-cb5ad4e4800db3726f5d215b"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-f750b5e9fffb468f0c0ef635",
+            "ref-45e196168b15b8fce49df721",
+            "ref-da975126f0a5f1c5c861afc7",
+            "python-dicts-and-sets"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-1cbeb050f8041ab482407772",
+            "ref-31ba9f95e175418d541e8401",
+            "ref-4dd4e6a96c9968b33115fff7",
+            "ref-c741ac56a19be5c122d663a9"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "python",
+      "subject": "python-django",
+      "records": 708,
+      "reference_safe_records": 708,
+      "by_kind": {
+        "reference": 708
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-15434c4974fdc8221607a0db"
+        ],
+        "control-flow": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-15434c4974fdc8221607a0db",
+          "ref-bc62c93afd48ecd53e75a7a9"
+        ],
+        "functions": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-6af2d5a2eedd969c25d0513f"
+        ],
+        "collections": [
+          "ref-15434c4974fdc8221607a0db",
+          "ref-6af2d5a2eedd969c25d0513f",
+          "ref-605d13ec501a33297642c493"
+        ],
+        "strings-unicode": [
+          "ref-867ad5fac1f7ae02f94c82a0",
+          "ref-92d559e7a0e7d0be0308ed07",
+          "ref-3dd6abcc13ea829a67637369"
+        ],
+        "errors": [],
+        "modules-dependencies": [
+          "ref-7adf5d920df2a15552c1adc5",
+          "ref-62d27781e188640e4b5a3f6f",
+          "ref-65f538f43aa72fbb316e39c7"
+        ],
+        "testing-debugging": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-6af2d5a2eedd969c25d0513f"
+        ],
+        "references-memory": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-15434c4974fdc8221607a0db"
+        ],
+        "equality-ordering": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-bc62c93afd48ecd53e75a7a9"
+        ],
+        "complexity": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-15434c4974fdc8221607a0db",
+          "ref-bc62c93afd48ecd53e75a7a9"
+        ],
+        "recursion": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-15434c4974fdc8221607a0db",
+          "ref-bc62c93afd48ecd53e75a7a9"
+        ],
+        "search-sort": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-7ee5f309601eadfa5c00a978",
+          "ref-14dba6fbc536aa07b866368b"
+        ],
+        "linked-lists": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-5dd0a519c0a10cce09a6cfaf",
+          "ref-c61f97ca884c00cbb6a00bf0"
+        ],
+        "stacks-queues": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-6af2d5a2eedd969c25d0513f"
+        ],
+        "trees-heaps": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-7ee5f309601eadfa5c00a978",
+          "ref-c61f97ca884c00cbb6a00bf0"
+        ],
+        "graphs": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-7ee5f309601eadfa5c00a978",
+          "ref-14dba6fbc536aa07b866368b"
+        ],
+        "dynamic-programming": [
+          "ref-304faedf0e96a1cd3653b059",
+          "ref-15434c4974fdc8221607a0db",
+          "ref-3dd6abcc13ea829a67637369"
+        ],
+        "greedy-backtracking": [
+          "ref-b4a6b445628f8ddc90fe650b",
+          "ref-4a8e1b0b7c4008143f832f50",
+          "ref-58548d5dc946808e9a960906"
+        ],
+        "boundary-cases": [
+          "ref-ab6b34a878385f9c8c6e6b15",
+          "ref-15434c4974fdc8221607a0db",
+          "ref-7ee5f309601eadfa5c00a978"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "errors"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "Django models ORM",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-0847d5a6177bdb1b70ebec75",
+            "ref-ef140668865b3a1d9201fbd5",
+            "ref-8aae52f966689166b0fa31b3",
+            "ref-6f1b6a5d748f784cf231048c"
+          ]
+        },
+        {
+          "query": "request views routing",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-178350dacd50df632e35cd59",
+            "ref-a486da8a5df5be2f05936d52",
+            "ref-50bbd577e8c0596e55443ff4",
+            "ref-f3567ab14da27740b1b87b5c"
+          ]
+        },
+        {
+          "query": "testing migrations",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-29114ad9bb933b429270ebfa",
+            "ref-33838834355a402959b08af2",
+            "ref-1d1bcb8f340c165f094fde42",
+            "ref-4beb12264b360b07f64a6581"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "python",
+      "subject": "python-fastapi",
+      "records": 708,
+      "reference_safe_records": 708,
+      "by_kind": {
+        "reference": 708
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-ce786d46260f3909ae51013d",
+          "ref-919992072120c78437304a77",
+          "ref-c906a80f42f9fb36c8c233b2"
+        ],
+        "control-flow": [
+          "ref-919992072120c78437304a77",
+          "ref-c906a80f42f9fb36c8c233b2",
+          "ref-c9c307040306cb4ee2129d16"
+        ],
+        "functions": [
+          "ref-919992072120c78437304a77",
+          "ref-9c820b1030c734222da32543",
+          "ref-08a45fd7b83e4a4152e60095"
+        ],
+        "collections": [
+          "ref-c906a80f42f9fb36c8c233b2",
+          "ref-9c820b1030c734222da32543",
+          "ref-5e08570f488f818923078df4"
+        ],
+        "strings-unicode": [
+          "ref-26395afb0182b372c656ed25",
+          "ref-a9e24900a621380efd32c014",
+          "ref-5753191b7a5c8bb95bc48359"
+        ],
+        "errors": [],
+        "modules-dependencies": [
+          "ref-2ff77ca00cc554e1e8c4f903",
+          "ref-e3a1409830eabafc81ee661b",
+          "ref-d9e2946b43a76d4f363febdf"
+        ],
+        "testing-debugging": [
+          "ref-ce786d46260f3909ae51013d",
+          "ref-919992072120c78437304a77",
+          "ref-9c820b1030c734222da32543"
+        ],
+        "references-memory": [
+          "ref-ce786d46260f3909ae51013d",
+          "ref-919992072120c78437304a77",
+          "ref-c906a80f42f9fb36c8c233b2"
+        ],
+        "equality-ordering": [
+          "ref-ce786d46260f3909ae51013d",
+          "ref-919992072120c78437304a77",
+          "ref-c9c307040306cb4ee2129d16"
+        ],
+        "complexity": [
+          "ref-919992072120c78437304a77",
+          "ref-c906a80f42f9fb36c8c233b2",
+          "ref-c9c307040306cb4ee2129d16"
+        ],
+        "recursion": [
+          "ref-919992072120c78437304a77",
+          "ref-c906a80f42f9fb36c8c233b2",
+          "ref-c9c307040306cb4ee2129d16"
+        ],
+        "search-sort": [
+          "ref-919992072120c78437304a77",
+          "ref-08a45fd7b83e4a4152e60095",
+          "ref-ca28440c30e054b1cfa3b006"
+        ],
+        "linked-lists": [
+          "ref-ce786d46260f3909ae51013d",
+          "ref-434cc025700a7718b350e062",
+          "ref-d371533ddeee929de48cafa7"
+        ],
+        "stacks-queues": [
+          "ref-ce786d46260f3909ae51013d",
+          "ref-919992072120c78437304a77",
+          "ref-9c820b1030c734222da32543"
+        ],
+        "trees-heaps": [
+          "ref-919992072120c78437304a77",
+          "ref-08a45fd7b83e4a4152e60095",
+          "ref-ca28440c30e054b1cfa3b006"
+        ],
+        "graphs": [
+          "ref-919992072120c78437304a77",
+          "ref-08a45fd7b83e4a4152e60095",
+          "ref-ca28440c30e054b1cfa3b006"
+        ],
+        "dynamic-programming": [
+          "ref-a75f1858e6a198c1c26bb69a",
+          "ref-1c07254c962e2cd196f33635",
+          "ref-26395afb0182b372c656ed25"
+        ],
+        "greedy-backtracking": [
+          "ref-1e907aad822ccd6b68d7f8e1",
+          "ref-9da89b44000fa6d192c081bd",
+          "ref-3bd8f64f9efe606e77216b8b"
+        ],
+        "boundary-cases": [
+          "ref-919992072120c78437304a77",
+          "ref-c906a80f42f9fb36c8c233b2",
+          "ref-08a45fd7b83e4a4152e60095"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "errors"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "FastAPI dependency injection",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-18ef7022ac25e10d66f920a4",
+            "ref-1cb4cf8127e485fa744883f0",
+            "ref-4d66eec9cc41467f5d74fa08",
+            "ref-f160f558030815d8dc753219"
+          ]
+        },
+        {
+          "query": "request validation asynchronous",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-9c3238f896fac84716d67659",
+            "ref-ba3a9890d91c1fa80bbc6387",
+            "ref-091dcc4912c4daaf6f2094fc",
+            "ref-1808a0494cbe02383ede4ef0"
+          ]
+        },
+        {
+          "query": "testing responses",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-8394f0d07c480c0b81a85421",
+            "ref-5f88583d1c602abdb2d51327",
+            "ref-f76da0ccf69e909ae7a7585e",
+            "ref-2ea23fb3f9c9a0ed8eb1085c"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "python",
+      "subject": "python-flask",
+      "records": 708,
+      "reference_safe_records": 708,
+      "by_kind": {
+        "reference": 708
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b81bdea52df78895e202e697",
+          "ref-8c14ab2497b4e715f9fd8770"
+        ],
+        "control-flow": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-8c14ab2497b4e715f9fd8770",
+          "ref-81797954f4eaff8d809fc2ac"
+        ],
+        "functions": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b81bdea52df78895e202e697",
+          "ref-6f3144b5a6429b0626b50b49"
+        ],
+        "collections": [
+          "ref-6f3144b5a6429b0626b50b49",
+          "ref-baa2826f5fc27a7581eed7d3",
+          "ref-4b0adfaa743438d2c4cac421"
+        ],
+        "strings-unicode": [
+          "ref-be94bbbc19da6015df1c82e4",
+          "ref-05c7ec02aeb5323505a7bb4d",
+          "ref-881e6925a5ae653568693939"
+        ],
+        "errors": [],
+        "modules-dependencies": [
+          "ref-af1aa7487cf0ca7e1361da64",
+          "ref-01defc93cd02aca7cdb8f234",
+          "ref-b297e7f99f882c05aebccb07"
+        ],
+        "testing-debugging": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b81bdea52df78895e202e697",
+          "ref-6f3144b5a6429b0626b50b49"
+        ],
+        "references-memory": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b81bdea52df78895e202e697",
+          "ref-8c14ab2497b4e715f9fd8770"
+        ],
+        "equality-ordering": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b81bdea52df78895e202e697",
+          "ref-81797954f4eaff8d809fc2ac"
+        ],
+        "complexity": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-8c14ab2497b4e715f9fd8770",
+          "ref-81797954f4eaff8d809fc2ac"
+        ],
+        "recursion": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-8c14ab2497b4e715f9fd8770",
+          "ref-81797954f4eaff8d809fc2ac"
+        ],
+        "search-sort": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-b6af8ef18535f70225e8e798",
+          "ref-2d95e8513577af50184b50d8"
+        ],
+        "linked-lists": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b6af8ef18535f70225e8e798",
+          "ref-ddbbea96eafd1c27a3f12d32"
+        ],
+        "stacks-queues": [
+          "ref-4ef671de51926cc9d6427137",
+          "ref-b81bdea52df78895e202e697",
+          "ref-6f3144b5a6429b0626b50b49"
+        ],
+        "trees-heaps": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-2d95e8513577af50184b50d8",
+          "ref-39fb8303a59763d1512f6ab5"
+        ],
+        "graphs": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-2d95e8513577af50184b50d8",
+          "ref-39fb8303a59763d1512f6ab5"
+        ],
+        "dynamic-programming": [
+          "ref-881e6925a5ae653568693939",
+          "ref-de4a05d5395c72063f4922ae",
+          "ref-f14bca79d65e10e238cd1034"
+        ],
+        "greedy-backtracking": [
+          "ref-2459c9bbfd0d48447809e1ce",
+          "ref-d3cd929e7eb0aacce19bc974",
+          "ref-091b95c3d3f3d964e7daf08d"
+        ],
+        "boundary-cases": [
+          "ref-b81bdea52df78895e202e697",
+          "ref-8c14ab2497b4e715f9fd8770",
+          "ref-2d95e8513577af50184b50d8"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "errors"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "Flask application context",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-623a2b0ea172823c261ff6e9",
+            "ref-1da592b5e96661b3b70aa2de",
+            "ref-4d08e96e823a5a1dad0c8af1",
+            "ref-aa97586a0f350befb792096b"
+          ]
+        },
+        {
+          "query": "request routing blueprints",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-1148ad9cb85916fad3d95b85",
+            "ref-74623d830fd0f281c15e56dc",
+            "ref-5a34bbac5b3dabce736f1f7c",
+            "ref-00675f83d60d3c2c9e02b20d"
+          ]
+        },
+        {
+          "query": "testing configuration",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-8eeca606a8ff6fc4cc619bc2",
+            "ref-623a2b0ea172823c261ff6e9",
+            "ref-a0f7237fa0f2853105c7e0df",
+            "ref-b0592e2069e87631521b2d7f"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": true,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "ruby",
+      "subject": "ruby",
+      "records": 1179,
+      "reference_safe_records": 756,
+      "by_kind": {
+        "reference": 539,
+        "concept": 161,
+        "exercise": 192,
+        "gotcha": 200,
+        "curriculum": 87
+      },
+      "candidate_exercises": 192,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-662e5f7eb396faebb7968627",
+          "ref-16ff76c14e3c9f915da8c3f6",
+          "ref-7a40848e32f1602fee2fb620"
+        ],
+        "control-flow": [
+          "ref-af87144d1001216fd16d837b",
+          "ref-080c03bb6f7f95baab96c3dd",
+          "ref-b6c0becdebbae51e0b342a95"
+        ],
+        "functions": [
+          "ref-12088bd6304dc77280de2d82",
+          "ref-662e5f7eb396faebb7968627",
+          "ref-d6b765912aa237621485e304"
+        ],
+        "collections": [
+          "ref-5f1ebc9f62d058d47c67a67f",
+          "ref-12088bd6304dc77280de2d82",
+          "ref-b4a7e03184852ca092844172"
+        ],
+        "strings-unicode": [
+          "ref-5f1ebc9f62d058d47c67a67f",
+          "ref-2bb83b3d52070c0d79cd05e8",
+          "ref-8bb1a036fae754c1cfabd3d5"
+        ],
+        "errors": [
+          "ref-43d64f0c3a5d6b28b1dc2363"
+        ],
+        "modules-dependencies": [
+          "ref-d6b765912aa237621485e304",
+          "ref-985005e372a10e47dbeae3ba",
+          "ref-d6076cd9cfa19e8867bf5f5a"
+        ],
+        "testing-debugging": [
+          "ref-5f1ebc9f62d058d47c67a67f",
+          "ref-12088bd6304dc77280de2d82",
+          "ref-b4a7e03184852ca092844172"
+        ],
+        "references-memory": [
+          "ref-5f1ebc9f62d058d47c67a67f",
+          "ref-12088bd6304dc77280de2d82",
+          "ref-b4a7e03184852ca092844172"
+        ],
+        "equality-ordering": [
+          "ref-5f1ebc9f62d058d47c67a67f",
+          "ref-662e5f7eb396faebb7968627",
+          "ref-7bb64904e57e562d8695d736"
+        ],
+        "complexity": [
+          "ref-d1b320e22398240477fac7a2",
+          "ref-bc3fe09b7a51c91ffb6ac7ba",
+          "ref-f85a926ec6c6fd4a2d1eded1"
+        ],
+        "recursion": [
+          "ref-b8098599c0d9b36ee902f080",
+          "ref-bc3fe09b7a51c91ffb6ac7ba",
+          "ref-3fdba271ce86507923ac59ef"
+        ],
+        "search-sort": [
+          "ref-b8098599c0d9b36ee902f080",
+          "ref-ea0f32a400fa4688040bd8bb",
+          "ref-388c4f796ac879e52c5e9d14"
+        ],
+        "linked-lists": [
+          "ref-5655d0af9b4f3600c39247e9",
+          "ref-76a183f4e9b23548b9c80a1f",
+          "ref-41c7ea9bd492c8c1f5c47d8d"
+        ],
+        "stacks-queues": [
+          "ref-12088bd6304dc77280de2d82",
+          "ref-b4a7e03184852ca092844172",
+          "ref-7bb64904e57e562d8695d736"
+        ],
+        "trees-heaps": [
+          "ref-b8098599c0d9b36ee902f080",
+          "ref-0b1407e021aa439d406042d6",
+          "ref-ab64ff4d8403ee273dd6cd7b"
+        ],
+        "graphs": [
+          "ref-de479706f3f605ec830582b6",
+          "ref-4f26ae13a6ab4574345b0bfb",
+          "ref-d6325a59b74e654c7c48789e"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [
+          "ref-51f7b73a6607daae10a23798",
+          "ref-bbc68715dd2a292121a1c702",
+          "ref-c23dae33a8c82410af5530d4"
+        ],
+        "boundary-cases": [
+          "ref-d35b09582f7d8ce88228c01d",
+          "ref-dc3b2171f01f35e67dd693df",
+          "ref-09515fea66b3272597577a4d"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "dynamic-programming"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-e7c28c72ca20d7f940f0d261",
+            "ref-c45549b3b6f003e48f28fe50",
+            "ref-04ac5de22be24f37f406bb18",
+            "ruby-fundamentals"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-1a23f9f60a57bce9566359ff",
+            "ref-b8153bb5e56f7442b74fc93a",
+            "ref-ed9b0e0797962a72eed94e1b",
+            "ref-447ce2fa4c3c74df7730917f"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-cb71a74ef68b29a63b6b138c",
+            "ref-64fca048dd93dfe79cc208b7",
+            "ref-b8098599c0d9b36ee902f080",
+            "ref-bc42a4a723c139017a03e02b"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": false,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "rust",
+      "subject": "rust",
+      "records": 3218,
+      "reference_safe_records": 1838,
+      "by_kind": {
+        "reference": 688,
+        "concept": 920,
+        "curriculum": 230,
+        "exercise": 920,
+        "gotcha": 460
+      },
+      "candidate_exercises": 920,
+      "explicit_version_metadata_records": 2875,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-279c5cdd3dfba63a768dd3e7",
+          "ref-61555628db60099f2d60b014",
+          "ref-5ec087590bbc1cd5ecc7c049"
+        ],
+        "control-flow": [
+          "ref-279c5cdd3dfba63a768dd3e7",
+          "ref-5ec087590bbc1cd5ecc7c049",
+          "ref-a79b3bf261f05608984a037a"
+        ],
+        "functions": [
+          "ref-61555628db60099f2d60b014",
+          "ref-807c37d2f08856d6e1322c51",
+          "ref-b05170193aab49532a1e29f3"
+        ],
+        "collections": [
+          "ref-61555628db60099f2d60b014",
+          "ref-807c37d2f08856d6e1322c51",
+          "ref-b05170193aab49532a1e29f3"
+        ],
+        "strings-unicode": [
+          "ref-706ea8c4fc30a806c2725f5e",
+          "ref-89aeb6eab112777cd3a3915d",
+          "ref-7a8d8667f2100cf7fe16bcf3"
+        ],
+        "errors": [
+          "ref-61555628db60099f2d60b014",
+          "ref-706ea8c4fc30a806c2725f5e",
+          "ref-807c37d2f08856d6e1322c51"
+        ],
+        "modules-dependencies": [
+          "ref-a8e01a96ae7f53558ef5b230",
+          "ref-9ec951a0b427762a7c1c5a8b",
+          "ref-ad2d7675c2ec88a1e2fa5465"
+        ],
+        "testing-debugging": [
+          "ref-706ea8c4fc30a806c2725f5e",
+          "ref-89aeb6eab112777cd3a3915d",
+          "ref-7a8d8667f2100cf7fe16bcf3"
+        ],
+        "references-memory": [
+          "ref-279c5cdd3dfba63a768dd3e7",
+          "ref-61555628db60099f2d60b014",
+          "ref-706ea8c4fc30a806c2725f5e"
+        ],
+        "equality-ordering": [
+          "ref-61555628db60099f2d60b014",
+          "ref-706ea8c4fc30a806c2725f5e",
+          "ref-807c37d2f08856d6e1322c51"
+        ],
+        "complexity": [
+          "ref-61555628db60099f2d60b014",
+          "ref-807c37d2f08856d6e1322c51",
+          "ref-89aeb6eab112777cd3a3915d"
+        ],
+        "recursion": [
+          "ref-279c5cdd3dfba63a768dd3e7",
+          "ref-61555628db60099f2d60b014",
+          "ref-5ec087590bbc1cd5ecc7c049"
+        ],
+        "search-sort": [
+          "ref-6fa4a45d7fb9d581863e35f7",
+          "ref-f2ce5fadfbb26a4984025377",
+          "ref-d4a11f746bd5be919fac6cbe"
+        ],
+        "linked-lists": [
+          "ref-ffe7b44d0b9b0665725821b9",
+          "ref-37263ab72659c2a4c6ac33c7",
+          "ref-f9055bb2cafc063e43dc8a36"
+        ],
+        "stacks-queues": [
+          "ref-0c9feb236f38c05188963715",
+          "ref-e63b8cd42a6ad92563d327e5",
+          "ref-7fe40d63f9cb992c02e9a085"
+        ],
+        "trees-heaps": [
+          "ref-279c5cdd3dfba63a768dd3e7",
+          "ref-5ec087590bbc1cd5ecc7c049",
+          "ref-a79b3bf261f05608984a037a"
+        ],
+        "graphs": [
+          "ref-279c5cdd3dfba63a768dd3e7",
+          "ref-61555628db60099f2d60b014",
+          "ref-706ea8c4fc30a806c2725f5e"
+        ],
+        "dynamic-programming": [
+          "ref-65f45d3db15873a328b93ed7",
+          "ref-ed4b7c56c76d96d48597b1a8",
+          "ref-0f4d9dc5376d6b651e52956a"
+        ],
+        "greedy-backtracking": [
+          "ref-da716110b62c2bb24ea1e2cc",
+          "ref-f519a7ff5ab24fef1de4ab1f",
+          "ref-3db4a1cb4687d33ead1e7a38"
+        ],
+        "boundary-cases": [
+          "ref-706ea8c4fc30a806c2725f5e",
+          "ref-89aeb6eab112777cd3a3915d",
+          "ref-7a8d8667f2100cf7fe16bcf3"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-b03ec80ef83fca9b9b0fe106",
+            "ref-23b89a5c01e7d6b75bec7418",
+            "ref-12e6fa27d2479478ba654485",
+            "ref-4a31deba7cc20a4ef6c378f6"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-ee637c3be20bd4ce94333bc5",
+            "ref-7d05c47f5c2c4178ae57eed4",
+            "ref-e3e97ba9731835f95f368d8e",
+            "ref-0bbf51f3c12ae7f462825c59"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-2394db37cc95df041ef250b1",
+            "ref-eafa7aea5c29a2d63fbc493b",
+            "ref-f081f9131cd651abfc3cee45",
+            "ref-6c5ad30e8c0ba7843a0b0bca"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": true,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "typescript",
+      "subject": "typescript",
+      "records": 1615,
+      "reference_safe_records": 1135,
+      "by_kind": {
+        "reference": 762,
+        "concept": 281,
+        "exercise": 206,
+        "gotcha": 235,
+        "curriculum": 131
+      },
+      "candidate_exercises": 206,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-31cc745f250a6ea4c4d13d1d",
+          "ref-dc7dd033d9903929d454ff34",
+          "ref-6629f15bc5d400b510ac4018"
+        ],
+        "control-flow": [
+          "ref-31cc745f250a6ea4c4d13d1d",
+          "ref-909122c228776054bfd191dd",
+          "ref-4a9aaa9648cb5c59203fbcdf"
+        ],
+        "functions": [
+          "ref-dcc4b6d8050dfbc4c6a116b9",
+          "ref-885e709f03ea3392f2ec5e23",
+          "ref-b74f0ecedaec5221fc77c56c"
+        ],
+        "collections": [
+          "ref-94310b8efd9275c5d87868f9",
+          "ref-31cc745f250a6ea4c4d13d1d",
+          "ref-dcc4b6d8050dfbc4c6a116b9"
+        ],
+        "strings-unicode": [
+          "ref-3acff612c4bd39bd5d9aba93",
+          "ref-41847ef27e0f2f5e15d50cd9",
+          "ref-a664cb17671fd2667ea0e914"
+        ],
+        "errors": [
+          "ref-2a1c7f0aaebaa37f3e303241"
+        ],
+        "modules-dependencies": [
+          "ref-5030df3a2b83dbe2b188638e",
+          "ref-10d7d8c640ecde1d5f41ddaf",
+          "ref-4e18f1103071f2fb41cf8d6c"
+        ],
+        "testing-debugging": [
+          "ref-e82669cf32c4826a32e96047",
+          "ref-6f837d42d98174efd70afb3e",
+          "ref-ed6d8aa7871e8e569e1ab1d7"
+        ],
+        "references-memory": [
+          "ref-94310b8efd9275c5d87868f9",
+          "ref-31cc745f250a6ea4c4d13d1d",
+          "ref-dcc4b6d8050dfbc4c6a116b9"
+        ],
+        "equality-ordering": [
+          "ref-94310b8efd9275c5d87868f9",
+          "ref-dcc4b6d8050dfbc4c6a116b9",
+          "ref-885e709f03ea3392f2ec5e23"
+        ],
+        "complexity": [
+          "ref-8fc06340121d34387420ed0a",
+          "ref-ee79394493b6f38dd18be184",
+          "ref-e9d15d11500571f83e918ed1"
+        ],
+        "recursion": [
+          "ref-94310b8efd9275c5d87868f9",
+          "ref-31cc745f250a6ea4c4d13d1d",
+          "ref-c4777243aecf04a7845b306e"
+        ],
+        "search-sort": [
+          "ref-28f009aae051264ddefacca6",
+          "ref-f2abb0f4e30d0fa76ee863cc",
+          "ref-767a215df0deafa09ab65723"
+        ],
+        "linked-lists": [
+          "ref-a78b0ef005cdd5e0652ae3d5",
+          "ref-7f1aace20bec0246ec0ee94e",
+          "ref-2b1b7f7380e8e204e9850286"
+        ],
+        "stacks-queues": [
+          "ref-f9298ec095e8a78faffaf9b6",
+          "ref-3c09c9304a72f6c42ccefb3a",
+          "ref-e4b46d5bb45c709c36b485b8"
+        ],
+        "trees-heaps": [
+          "ref-94310b8efd9275c5d87868f9",
+          "ref-dc7dd033d9903929d454ff34",
+          "ref-e82669cf32c4826a32e96047"
+        ],
+        "graphs": [
+          "ref-dc7dd033d9903929d454ff34",
+          "ref-d7648a0a01aef0bb0aa21cca",
+          "ref-8265eb3b93a33f72e7bd636d"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [
+          "ref-e416a18a0e84adf0d5989333",
+          "ref-8b1465380124c4d27fc4b8ed",
+          "ref-d4b27f66a81993b43e586eab"
+        ],
+        "boundary-cases": [
+          "ref-28f009aae051264ddefacca6",
+          "ref-7f1aace20bec0246ec0ee94e",
+          "ref-375d40e28d7ba1d577441f13"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "dynamic-programming"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-c5074315f16e6b796227fc1f",
+            "typescript-fundamentals",
+            "ref-cc20bb6d3b5ac48c8b2ce8dc",
+            "ref-cd5ab82dd5bf434f760fd734"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-9c5022ac8729fbcbf1557e63",
+            "ref-2fda725e08ea8a66a8710f81",
+            "ref-eb0104c1284a33474bed1deb",
+            "ref-077453a081a7655432c7316a"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-8761f7d9975d9ce654a881d4",
+            "ref-f3e98ded9c975a88b9bc0438",
+            "ref-3b36d141beb769b775ff931a",
+            "ref-c73139cfaab3d0fd35cadb38"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": false,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    }
+  ],
+  "structural_findings": [],
+  "generated_at": "2026-10-16T04:01:53.258437+00:00",
+  "corpus_sha256": {
+    "data/curriculum/java-javascript.jsonl": "e9f8a4a1734a73a01ffd388e41af694c104bc0a77594cf3a896212fd80ac4b72",
+    "data/reference_library/records.jsonl": "04ee7eab2248fb7fe9602c3521f3d2d59b83bafb395153a073c16ccdeaa2acd5"
+  },
+  "authored_dsa_solution_sections": {
+    "Python": 23,
+    "JavaScript": 23,
+    "Java": 23,
+    "C++": 23,
+    "C": 23,
+    "Rust": 23
+  },
+  "limitations": [
+    "No LLM calls or executions occur in this inventory.",
+    "Presence and keyword matches do not verify teaching claims or exercise answers.",
+    "Runtime code support does not prove a runtime is installed or an example passed.",
+    "Actual uploaded PDF contents remain separately covered by uploaded-reference-audit.json.",
+    "This does not restructure learning paths or change subscription/payment policy."
+  ]
+}

@@ -25,8 +25,9 @@ def get_embeddings() -> Any:
     """Embedding model. Shared by both backends so vectors stay comparable —
     switching backends does NOT require changing this, but changing the
     embedding model DOES require re-ingesting everything.
-    Uses Google Gemini embeddings if available, falls back to OpenAI or Deterministic."""
+    Uses the configured provider; fake embeddings require explicit development opt-in."""
     provider = (settings.embedding_provider or "").lower().strip()
+    explicit_fake = provider == "deterministic"
     if not provider:
         provider = "google" if settings.google_api_key else ("openai" if settings.openai_api_key else "deterministic")
 
@@ -55,7 +56,9 @@ def get_embeddings() -> Any:
 
     # Last resort so local dev boots without keys. Retrieval is meaningless
     # with these vectors — say so loudly rather than degrade silently.
-    logger.warning("No embedding provider available; using fake embeddings (RAG retrieval disabled in effect)")
+    if not explicit_fake:
+        raise RuntimeError("No embedding provider is available. Configure a real embedding provider before using RAG.")
+    logger.warning("Explicit development-only fake embeddings selected; retrieval is not semantic")
     from langchain_core.embeddings import DeterministicFakeEmbedding
     return DeterministicFakeEmbedding(size=768)
 
@@ -139,7 +142,11 @@ def ingest_documents(docs_path: str | None = None) -> None:
 
     # Tag every document with problem_id = file name without extension,
     # e.g. data/dsa_problems/two-sum.md -> "two-sum"
+    from app.services.content_access import public_text
     for doc in documents:
+        doc.page_content = public_text(doc.page_content)
+        doc.metadata["contains_answer"] = False
+        doc.metadata["catalog"] = "release-v1"
         source = doc.metadata.get("source", "")
         stem = Path(source).stem
         doc.metadata["problem_id"] = stem
@@ -155,14 +162,24 @@ def ingest_documents(docs_path: str | None = None) -> None:
     # Metadata (incl. problem_id) is preserved on every chunk.
     splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)
     chunks = splitter.split_documents(documents)
+    if docs_path is None:
+        from app.services.curriculum import retrieval_documents
+        for chunk in retrieval_documents():
+            chunk.metadata["catalog"] = "release-v1"
+            chunks.append(chunk)
 
-    # Drop the existing collection so re-running ingest replaces rather than
-    # duplicating every chunk. Both backends expose delete_collection, but it
-    # is guarded because a first run has nothing to drop.
-    try:
-        get_vectorstore().delete_collection()
-    except Exception:
-        pass
+    if docs_path is None:
+        from app.services.reference_library import records, eligible
+        from langchain_core.documents import Document
+        for row in records():
+            if eligible(row):
+                chunks.append(Document(page_content=row['document'], metadata={
+                    **row['metadata'], 'problem_id':row['id'], 'catalog':'release-v1'}))
+
+    # Replace only this catalog; approved instructor uploads live in the same
+    # collection and must survive a curriculum refresh. Legacy, unlabelled
+    # chunks are excluded by the answer-safe retrieval filter.
+    get_vectorstore().delete(where={"catalog": "release-v1"})
 
     # add_documents works identically on both backends, unlike the
     # Chroma-specific from_documents() constructor.
@@ -178,6 +195,7 @@ def add_documents_in_batches(
     batch_size: int = 40,
     delay_between_batches: float = 1.0,
     max_retries: int = 6,
+    document_ids: list[str] | None = None,
 ) -> list[str]:
     """Adds documents to the vector store in rate-limited batches with
     automatic 429 retry / backoff for providers with strict per-minute quotas
@@ -186,6 +204,8 @@ def add_documents_in_batches(
     if not chunks:
         return []
 
+    if document_ids is not None and len(document_ids) != len(chunks):
+        raise ValueError("Every chunk requires exactly one vector id")
     total_chunks = len(chunks)
     total_batches = (total_chunks + batch_size - 1) // batch_size
     logger.info(
@@ -199,7 +219,8 @@ def add_documents_in_batches(
 
         for attempt in range(1, max_retries + 1):
             try:
-                ids.extend(vectorstore.add_documents(batch) or [])
+                options = {"ids": document_ids[i:i+batch_size]} if document_ids is not None else {}
+                ids.extend(vectorstore.add_documents(batch, **options) or [])
                 logger.info(
                     f"Successfully indexed batch {batch_idx}/{total_batches} ({len(batch)} chunks)"
                 )
@@ -257,6 +278,8 @@ def split_document_for_training(
         RecursiveCharacterTextSplitter,
     )
 
+    from app.services.content_access import public_text
+    text_content = public_text(text_content)
     is_markdown = filename.lower().endswith((".md", ".markdown"))
     chunks: list[Document] = []
 
@@ -293,6 +316,7 @@ def split_document_for_training(
             "problem_id": stem,
             "source": filename,
             "track": track,
+            "contains_answer": False,
             **doc.metadata,
         }
         if user_id:
@@ -331,6 +355,8 @@ def upsert_problem(
     from langchain_core.documents import Document
     from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+    from app.services.content_access import public_text
+    markdown = public_text(markdown)
     vs = get_vectorstore()
     # Remove prior chunks for this problem (no-op if it is new)
     try:
@@ -347,6 +373,7 @@ def upsert_problem(
                     "problem_id": problem_id,
                     "source": f"{problem_id}.md",
                     "track": track,
+                    "contains_answer": False,
                     **({"language": language} if language else {}),
                 },
             )
@@ -365,12 +392,19 @@ def delete_problem(problem_id: str) -> None:
         pass
 
 
+class UploadIndexError(RuntimeError):
+    def __init__(self, chunk_ids):
+        super().__init__("Upload indexing failed; prospective vectors need cleanup")
+        self.chunk_ids = chunk_ids
+
+
 def index_uploaded_document(
     doc_id: str,
     filename: str,
     text_content: str,
     track: str = "custom",
     user_id: str | None = None,
+    language: str = "",
 ) -> list[str]:
     """Chunks and embeds an uploaded document (see POST /learn/train) so the
     RAG pipeline can retrieve it. Returns the vector ids written; the caller
@@ -381,14 +415,21 @@ def index_uploaded_document(
     """
     if not text_content or not text_content.strip():
         return []
-    chunks = split_document_for_training(
-        filename=filename,
-        text_content=text_content,
-        stem=f"upload:{doc_id}",
-        track=track,
-        user_id=user_id,
-    )
-    return add_documents_in_batches(get_vectorstore(), chunks)
+    from app.services.uploaded_knowledge import project
+    chunks = list(project(doc_id, filename, text_content, track, language))
+    # Keep legacy language-neutral notes indexable for instructor management;
+    # chat never consumes upload vectors directly and withholds ambiguous views.
+    if not chunks:
+        return []
+    import uuid
+    # IDs are chosen before provider writes. A failed batch (including a
+    # partial write) can therefore be removed without knowing its response.
+    ids = [str(uuid.uuid4()) for _ in chunks]
+    try:
+        add_documents_in_batches(get_vectorstore(), chunks, document_ids=ids)
+    except Exception as exc:
+        raise UploadIndexError(ids) from exc
+    return ids
 
 
 def remove_chunks(ids: list[str]) -> None:

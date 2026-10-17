@@ -1,0 +1,32 @@
+[
+  {
+    "id":"java-arrays", "language":"java", "track":"language",
+    "question":"Using the approved Java PDF notes, how do arrays and ArrayList differ in fixed length and resizing?",
+    "expected_sources":["Java Arrays and ArrayList — Curriculum Blueprint.pdf"]
+  },
+  {
+    "id":"javascript-queues", "language":"javascript", "track":"language",
+    "question":"Using the approved JavaScript PDF notes, how do queues and deques represent FIFO and access at both ends?",
+    "expected_sources":["JavaScript Queues and Deques — Curriculum Blueprint.pdf"]
+  },
+  {
+    "id":"java-maps-sets", "language":"java", "track":"language",
+    "question":"Use the approved Java PDFs to compare maps for key-value lookup with sets for uniqueness. What should I think about for equality?",
+    "expected_sources":["Java Maps — Curriculum Blueprint.pdf","Java Sets — Curriculum Blueprint.pdf"]
+  },
+  {
+    "id":"javascript-trees-graphs", "language":"javascript", "track":"language",
+    "question":"Using the approved JavaScript PDFs, compare a binary tree's node model with a graph's vertices and edges. Why do their traversal assumptions differ?",
+    "expected_sources":["JavaScript Binary Trees — Curriculum Blueprint.pdf","JavaScript Graphs — Curriculum Blueprint.pdf"]
+  },
+  {
+    "id":"java-stacks-queues", "language":"java", "track":"language",
+    "question":"Using the approved Java PDFs, compare stacks with queues and deques: which end changes, and how does that explain LIFO versus FIFO?",
+    "expected_sources":["Java Stacks — Curriculum Blueprint.pdf","Java Queues and Deques — Curriculum Blueprint.pdf"]
+  },
+  {
+    "id":"javascript-arrays-linked-lists", "language":"javascript", "track":"language",
+    "question":"Using the approved JavaScript PDFs, compare arrays with linked lists for storage, access and mutation. What changes when the data is held in node references?",
+    "expected_sources":["JavaScript Arrays — Curriculum Blueprint.pdf","JavaScript Linked Lists — Curriculum Blueprint.pdf"]
+  }
+]

@@ -1,0 +1,3624 @@
+{
+  "checked_at": "2026-10-15T13:30:03.830513+00:00",
+  "scope": "Current JavaScript/Java executable curriculum and DSA references",
+  "limitations": [
+    "Fixture execution does not prove correctness for all inputs.",
+    "Reference-only material and language-switching pathways are not certified by this audit.",
+    "Other language implementations require their own runtime audit."
+  ],
+  "verified_count": 70,
+  "blocked_count": 0,
+  "reference_only_count": 333,
+  "non_executable_corpus_exercise_count": 67,
+  "non_executable_corpus_exercises": [
+    "java-list-remove-index-vs-value-ex1",
+    "java-bits-unsigned-shift-ex1",
+    "java-record-as-key-ex1",
+    "java-collections-view-vs-copy-ex1",
+    "java-graph-valid-tree-ex1",
+    "java-grid-char-cells-ex1",
+    "java-pq-iteration-not-sorted-ex1",
+    "java-list-fast-slow-ex1",
+    "java-treemap-floor-ceiling-ex1",
+    "java-queue-deque-trace-ex1",
+    "java-fenwick-indexing-ex1",
+    "java-treeset-comparator-equality-ex1",
+    "java-stack-iteration-order-ex1",
+    "java-string-split-regex-ex1",
+    "java-tree-validate-bst-long-bounds-ex1",
+    "java-trie-end-marker-ex1",
+    "java-uf-roots-ex1",
+    "js-array-remove-while-iterating-ex1",
+    "js-array-remove-while-iterating-ex2",
+    "js-array-remove-while-iterating-ex3",
+    "js-graph-valid-tree-ex1",
+    "js-grid-independent-rows-ex1",
+    "js-grid-independent-rows-ex2",
+    "js-grid-independent-rows-ex3",
+    "js-heap-sift-trace-ex1",
+    "js-linkedlist-save-next-before-rewiring-ex1",
+    "js-linkedlist-save-next-before-rewiring-ex2",
+    "js-linkedlist-save-next-before-rewiring-ex3",
+    "js-map-key-identity-ex1",
+    "js-map-key-identity-ex2",
+    "js-map-key-identity-ex3",
+    "js-object-key-coercion-ex1",
+    "js-object-key-coercion-ex2",
+    "js-object-key-coercion-ex3",
+    "js-queue-level-snapshot-ex1",
+    "js-queue-level-snapshot-ex2",
+    "js-queue-level-snapshot-ex3",
+    "js-set-visited-on-enqueue-ex1",
+    "js-set-visited-on-enqueue-ex2",
+    "js-set-visited-on-enqueue-ex3",
+    "js-stack-recursion-to-loop-ex1",
+    "js-stack-recursion-to-loop-ex2",
+    "js-stack-recursion-to-loop-ex3",
+    "js-string-code-units-vs-code-points-ex1",
+    "js-string-code-units-vs-code-points-ex2",
+    "js-string-code-units-vs-code-points-ex3",
+    "js-tree-recursion-contract-ex1",
+    "js-trie-search-vs-prefix-ex1",
+    "js-uf-roots-ex1",
+    "js-alg-prefix-sum-ex1",
+    "js-alg-binary-search-boundary-ex1",
+    "js-alg-sliding-window-variable-ex1",
+    "java-alg-prefix-sum-ex1",
+    "java-alg-binary-search-boundary-ex1",
+    "java-alg-binary-search-midpoint-ex1",
+    "js-alg-sort-comparator-safety-ex1",
+    "js-alg-dutch-national-flag-ex1",
+    "java-alg-sort-comparator-safety-ex1",
+    "java-alg-dutch-national-flag-ex1",
+    "js-alg-backtracking-subsets-ex1",
+    "js-alg-dp-knapsack-ex1",
+    "java-alg-memoization-ex1",
+    "java-alg-dp-knapsack-ex1",
+    "js-alg-intervals-merge-ex1",
+    "js-alg-intervals-scheduling-ex1",
+    "java-alg-intervals-merge-ex1",
+    "java-alg-bfs-shortest-path-ex1"
+  ],
+  "fixture_case_checks": 422,
+  "exercises": [
+    {
+      "id": "best-time-to-buy-and-sell-stock",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "6fd74e4fcd313bb76daca1c7a6a5abb264198b9d8e3b79124adb8c4bbbb8eb9f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              5,
+              0,
+              0,
+              2,
+              0,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "best-time-to-buy-and-sell-stock",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "6fd74e4fcd313bb76daca1c7a6a5abb264198b9d8e3b79124adb8c4bbbb8eb9f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              5,
+              0,
+              0,
+              2,
+              0,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "binary-search",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "43c649adf32a83a75f757c4246569361ae081af65bb1a5d445b03e169831e068",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              4,
+              -1,
+              0,
+              -1,
+              1,
+              0
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "binary-search",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "43c649adf32a83a75f757c4246569361ae081af65bb1a5d445b03e169831e068",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              4,
+              -1,
+              0,
+              -1,
+              1,
+              0
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "climbing-stairs",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "ef31d257d6c9d0607acdba6062c81a0c46a02f4c98d62e75eee0dba993fa68cf",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              2,
+              3,
+              1,
+              8,
+              89,
+              1836311903
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "climbing-stairs",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "ef31d257d6c9d0607acdba6062c81a0c46a02f4c98d62e75eee0dba993fa68cf",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              2,
+              3,
+              1,
+              8,
+              89,
+              1836311903
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "contains-duplicate",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "e20e7fcb2e35ff9d83f21de6ed6747bd6b762db2b3d5abe4bc947b790c2d7e5f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              true,
+              false,
+              true,
+              false,
+              true,
+              false
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "contains-duplicate",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "e20e7fcb2e35ff9d83f21de6ed6747bd6b762db2b3d5abe4bc947b790c2d7e5f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              true,
+              false,
+              true,
+              false,
+              true,
+              false
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "counting-bits",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "88a1fccc1404b82acba476d913a76a8ed92e7309d84a63e6d9061692baccfbf9",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                0,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                2,
+                1,
+                2
+              ],
+              [
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                2,
+                1,
+                2,
+                2,
+                3,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                2
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "counting-bits",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "88a1fccc1404b82acba476d913a76a8ed92e7309d84a63e6d9061692baccfbf9",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                0,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                2,
+                1,
+                2
+              ],
+              [
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                2,
+                1,
+                2,
+                2,
+                3,
+                1
+              ],
+              [
+                0,
+                1,
+                1,
+                2
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "missing-number",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "e712a6c45afa6e114ae9bf2c6a7256ac56983e6418e8a372e513d20fd6ab36b6",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              2,
+              2,
+              8,
+              1,
+              0,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "missing-number",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "e712a6c45afa6e114ae9bf2c6a7256ac56983e6418e8a372e513d20fd6ab36b6",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              2,
+              2,
+              8,
+              1,
+              0,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "number-of-1-bits",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "a351261107b12d1df4339e70dfc2ba3eb700b36ae9759d5d4d9d1f964e878c77",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              1,
+              0,
+              31,
+              1,
+              8
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "number-of-1-bits",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "a351261107b12d1df4339e70dfc2ba3eb700b36ae9759d5d4d9d1f964e878c77",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (wide/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              1,
+              0,
+              31,
+              1,
+              8
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "reverse-bits",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "78a30de45181d8f8014befda21ada929c0abce7b3c42acdd65956e311af47f33",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              964176192,
+              3221225471,
+              0,
+              2147483648,
+              1,
+              4278190080
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "reverse-bits",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "78a30de45181d8f8014befda21ada929c0abce7b3c42acdd65956e311af47f33",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (wide/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              964176192,
+              3221225471,
+              0,
+              2147483648,
+              1,
+              4278190080
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "reverse-linked-list",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "20f7037fa0b607860c4377ec296bd382335c1f2e7cc9e914117d9af74d7afa76",
+      "case_count": 7,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 7,
+            "total_cases": 7,
+            "outputs": [
+              [],
+              [
+                1
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                5,
+                4,
+                3,
+                2,
+                1
+              ],
+              [
+                2,
+                0,
+                -3
+              ],
+              [
+                2,
+                2,
+                2
+              ],
+              [
+                0,
+                -1,
+                0
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "reverse-linked-list",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "20f7037fa0b607860c4377ec296bd382335c1f2e7cc9e914117d9af74d7afa76",
+      "case_count": 7,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 7 cases (narrow/instance)",
+            "passed_cases": 7,
+            "total_cases": 7,
+            "outputs": [
+              [],
+              [
+                1
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                5,
+                4,
+                3,
+                2,
+                1
+              ],
+              [
+                2,
+                0,
+                -3
+              ],
+              [
+                2,
+                2,
+                2
+              ],
+              [
+                0,
+                -1,
+                0
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "two-sum",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "023d131166c86eb8d4a82524d3162e0790d8189ff1fb7d77865ced2aa49e3dbb",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                0,
+                3
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "two-sum",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "023d131166c86eb8d4a82524d3162e0790d8189ff1fb7d77865ced2aa49e3dbb",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                0,
+                3
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "3sum",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "1714eb9acf5f98618be07b7e16292993f74f7a7148309c4ea4f4b16e255b70de",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                [
+                  -1,
+                  -1,
+                  2
+                ],
+                [
+                  -1,
+                  0,
+                  1
+                ]
+              ],
+              [],
+              [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              [
+                [
+                  -2,
+                  0,
+                  2
+                ],
+                [
+                  -2,
+                  1,
+                  1
+                ]
+              ],
+              [],
+              [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "3sum",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "1714eb9acf5f98618be07b7e16292993f74f7a7148309c4ea4f4b16e255b70de",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                [
+                  -1,
+                  -1,
+                  2
+                ],
+                [
+                  -1,
+                  0,
+                  1
+                ]
+              ],
+              [],
+              [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              [
+                [
+                  -2,
+                  0,
+                  2
+                ],
+                [
+                  -2,
+                  1,
+                  1
+                ]
+              ],
+              [],
+              [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "coin-change",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "7e535e7af7f27a78b6fa909cdf43b1f0d50b89a761c961b60690a54b6e505d0b",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              -1,
+              0,
+              2,
+              4,
+              20
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "coin-change",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "7e535e7af7f27a78b6fa909cdf43b1f0d50b89a761c961b60690a54b6e505d0b",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              -1,
+              0,
+              2,
+              4,
+              20
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "combination-sum-iv",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "3a4a0069a9e15510d152af5338feea3eb967cd7a342172bf42bb4afaaefbe673",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              7,
+              0,
+              1,
+              3,
+              8,
+              39882198
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "combination-sum-iv",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "3a4a0069a9e15510d152af5338feea3eb967cd7a342172bf42bb4afaaefbe673",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              7,
+              0,
+              1,
+              3,
+              8,
+              39882198
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "container-with-most-water",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "7cc8cf62a9cb5ef23885edd993845d5e81de15dcc6ac7f44936cb23dc6070937",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              49,
+              1,
+              16,
+              2,
+              17,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "container-with-most-water",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "7cc8cf62a9cb5ef23885edd993845d5e81de15dcc6ac7f44936cb23dc6070937",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              49,
+              1,
+              16,
+              2,
+              17,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "find-minimum-in-rotated-sorted-array",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "e7791a598ac714b967a297164001481377ca43eaafa703803ed23bb5553800a8",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              1,
+              0,
+              11,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "find-minimum-in-rotated-sorted-array",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "e7791a598ac714b967a297164001481377ca43eaafa703803ed23bb5553800a8",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              1,
+              0,
+              11,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "longest-common-subsequence",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "bda3ceb1b9e222a192ddd3b1a74775a7636d6a2f7e47177761e92299add17b45",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              3,
+              0,
+              0,
+              1,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "longest-common-subsequence",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "bda3ceb1b9e222a192ddd3b1a74775a7636d6a2f7e47177761e92299add17b45",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (wide/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              3,
+              0,
+              0,
+              1,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "longest-increasing-subsequence",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "224d30689613a0c186a1f03ab56d2f3abcda04ffb31293a4868de14f63bca29f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              4,
+              4,
+              1,
+              1,
+              1,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "longest-increasing-subsequence",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "224d30689613a0c186a1f03ab56d2f3abcda04ffb31293a4868de14f63bca29f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              4,
+              4,
+              1,
+              1,
+              1,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "maximum-product-subarray",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "7850872be4721a40694521aedf03ca6c28cd108fbba5b4b30de93ec67e61e306",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              6,
+              0,
+              -2,
+              2,
+              24,
+              4
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "maximum-product-subarray",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "7850872be4721a40694521aedf03ca6c28cd108fbba5b4b30de93ec67e61e306",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              6,
+              0,
+              -2,
+              2,
+              24,
+              4
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "maximum-subarray",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "08bf055c2db812790d74c218b5c77323e1d62c33378a424ca6f385c4453757c9",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              6,
+              1,
+              23,
+              -1,
+              -1,
+              0
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "maximum-subarray",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "08bf055c2db812790d74c218b5c77323e1d62c33378a424ca6f385c4453757c9",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              6,
+              1,
+              23,
+              -1,
+              -1,
+              0
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "product-of-array-except-self",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "dd68d552fea103402abeb9ffea1cab19686a0caf4c3926150835250899043509",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                24,
+                12,
+                8,
+                6
+              ],
+              [
+                0,
+                0,
+                9,
+                0,
+                0
+              ],
+              [
+                3,
+                2
+              ],
+              [
+                1,
+                1,
+                1
+              ],
+              [
+                0,
+                5
+              ],
+              [
+                6,
+                3,
+                2
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "product-of-array-except-self",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "dd68d552fea103402abeb9ffea1cab19686a0caf4c3926150835250899043509",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              [
+                24,
+                12,
+                8,
+                6
+              ],
+              [
+                0,
+                0,
+                9,
+                0,
+                0
+              ],
+              [
+                3,
+                2
+              ],
+              [
+                1,
+                1,
+                1
+              ],
+              [
+                0,
+                5
+              ],
+              [
+                6,
+                3,
+                2
+              ]
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "search-in-rotated-sorted-array",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "15d49ffce22e06ef7e5e98c5b857773552ecfbe45e257d91bd9b7a818e0fbb15",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              4,
+              -1,
+              -1,
+              0,
+              2,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "search-in-rotated-sorted-array",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "15d49ffce22e06ef7e5e98c5b857773552ecfbe45e257d91bd9b7a818e0fbb15",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              4,
+              -1,
+              -1,
+              0,
+              2,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "sum-of-two-integers",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "7b6ccc884d12960129b40e27e11693fdab9a37f78226fdec6b872974a1380c13",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              1,
+              0,
+              -2,
+              0,
+              3000
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "sum-of-two-integers",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "7b6ccc884d12960129b40e27e11693fdab9a37f78226fdec6b872974a1380c13",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              1,
+              0,
+              -2,
+              0,
+              3000
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "word-break",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "3b8a38d73f55bbfa7e33447ec45988b4bd22a7b8a13faa237780f9f3e40df7d9",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              true,
+              true,
+              false,
+              true,
+              false,
+              true
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "word-break",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "3b8a38d73f55bbfa7e33447ec45988b4bd22a7b8a13faa237780f9f3e40df7d9",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (wide/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              true,
+              true,
+              false,
+              true,
+              false,
+              true
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-06-arrays",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "2e019d4bc1dc09511ee1daa99f7dfa61f865e593f3e0a781ccfad82aecf84c18",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              0,
+              2,
+              1,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-12-complexity",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "3fdfb0ef56356a844f956ff7998f7d70b569b58eb1adfe42fce586374b74effb",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              false,
+              false,
+              true,
+              true,
+              false,
+              true
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-02-conditions",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "f5362e26cfe2a7ca9d4c5f7350fdefdcc2e3efb5aade1e76c7c6d3ace41fe646",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              true,
+              true,
+              true,
+              false,
+              false,
+              true
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-04-functions",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "67ced972154dd6d39255160614c4cd1332aefb371732a2452ac04f727c12758f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              3,
+              0,
+              7,
+              6,
+              2000
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-03-loops",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "eb47591c4062b2dcea88c3f71f0ace970d94e6fa774b4d41378d81b8e97af50d",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              3,
+              15,
+              55,
+              500500
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-07-maps",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "beb4289241f98822418f51978ca8fe0b1259ecf238f7df3cee3c553440d80a35",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (wide/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              2,
+              0,
+              3,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-09-objects",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "36cd47bee02f0684040ee830921eb7360c823aab482c4cf9f3999bc55cf20d1c",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              12,
+              -5,
+              7,
+              0,
+              60
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-11-recursion",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "7d97c60eba9b45fa9b024ee06a9812ba0fa3790bbe9bb500ec4d66f8afd2752f",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              7,
+              1,
+              6,
+              18,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-08-sets",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "93467a747d30267397e3f7528cd111a18f9e9eec7557d35b1633c2c32d06f617",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              1,
+              3,
+              2,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-05-strings",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "28bb19ced90fe3057ba524af8e882d7dc8ad7840e0b0a4dfdda5f710f49ed60e",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (wide/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              0,
+              2,
+              5,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-10-validation",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "f2370de03c290bce5990f7c568491d0f928cbafba86141ee1193d9061db94cab",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              9,
+              2,
+              4,
+              9,
+              9,
+              0
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "java-path-01-values",
+      "language": "java",
+      "verified": true,
+      "source_sha256": "8df92d418a6f3fd87ae8488d8c015e11331717ba2cb2c7847514005a510ad638",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "java",
+            "tier": 1,
+            "status": "passed",
+            "detail": "executed 6 cases (narrow/instance)",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              12,
+              0,
+              0,
+              1,
+              1000000,
+              42
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-06-arrays",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "0d5276a63f656ab719cb7a52a2fd19d12c9907b5662bd90b391f36e005d24014",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              0,
+              2,
+              1,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-12-complexity",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "acd4c100078198e1684e6e3e64764c9c79b4916b958d17557eff5243f1e38d61",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              false,
+              false,
+              true,
+              true,
+              false,
+              true
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-02-conditions",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "75e68cdff7ca767302b56dc295b2c4668ccbbad142d1874a0143e64015938a33",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              true,
+              true,
+              true,
+              false,
+              false,
+              true
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-04-functions",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "9e3fd117fdab030ed8ee6d22ff64caf69ffb9df86fcc1174a8dc9ec35c076b9b",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              3,
+              3,
+              0,
+              7,
+              6,
+              2000
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-03-loops",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "b71fc75d2f7a1473e46f5b9147f3b8b58fa9d84dab65617186bb151a48242427",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              3,
+              15,
+              55,
+              500500
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-07-maps",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "c2c324c73da13f04021bd7565e0e4dccb068a47a4421f12d4fbb81e7313378d2",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              2,
+              0,
+              3,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-09-objects",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "9acbcd363567069f5719f9ae786cd8e9341e39971fd69943d2b5a86f81926aba",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              12,
+              -5,
+              7,
+              0,
+              60
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-11-recursion",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "20f4853595eeec52157057f5a3b913bb8255d7d3d9f86ede93e4ee0aa2490ace",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              7,
+              1,
+              6,
+              18,
+              1
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-08-sets",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "68825fd4e8044b785e2cacb2546ea2482cc2001d149dc1fc4e35045fb0546422",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              1,
+              3,
+              2,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-05-strings",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "407c560d3ddde365079a73bd3ed306a8e0cbc899b42a4a8a4b58f82b4fad3f21",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              0,
+              1,
+              0,
+              2,
+              5,
+              3
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-10-validation",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "b84db3acc6a5f5cf924970eb94d0ead70cbb55c3bde22d8fb03a25ffe13bb7ec",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              9,
+              2,
+              4,
+              9,
+              9,
+              0
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    },
+    {
+      "id": "javascript-path-01-values",
+      "language": "javascript",
+      "verified": true,
+      "source_sha256": "e35b0f99ea39ae76b3a484aba54d0cfd1f879eb361d52c514378bf9c65ec9dc0",
+      "case_count": 6,
+      "issues": [],
+      "execution": {
+        "results": [
+          {
+            "language": "javascript",
+            "tier": 1,
+            "status": "passed",
+            "detail": "",
+            "passed_cases": 6,
+            "total_cases": 6,
+            "outputs": [
+              12,
+              0,
+              0,
+              1,
+              1000000,
+              42
+            ]
+          }
+        ],
+        "agreement": true,
+        "agreement_detail": "n/a (fewer than two executable implementations)",
+        "tier1_ok": true,
+        "tier2_ok": true,
+        "can_publish": true,
+        "unverified": [],
+        "toolchains": {
+          "python": true,
+          "javascript": true,
+          "c": true,
+          "cpp": true,
+          "java": true,
+          "rust": true
+        }
+      }
+    }
+  ],
+  "reference_only": [
+    "dynamic-array",
+    "balanced-bst",
+    "binary-search-concept",
+    "binary-heap",
+    "binary-search-tree",
+    "tree-traversal",
+    "bloom-filter",
+    "fenwick-tree",
+    "graph-representation",
+    "hash-keys",
+    "hash-table",
+    "hashing-patterns",
+    "heap-patterns",
+    "lru-cache",
+    "linked-list",
+    "lowest-common-ancestor",
+    "monotonic-stack",
+    "queue-deque",
+    "segment-tree",
+    "skip-list",
+    "stack",
+    "string",
+    "trie",
+    "union-find",
+    "bellman-ford",
+    "binary-search-technique",
+    "binary-search-variants",
+    "bit-manipulation",
+    "bfs",
+    "counting-radix-sort",
+    "dfs",
+    "dijkstra",
+    "floyd-warshall",
+    "graph-algorithm-selection",
+    "insertion-sort-heap-sort",
+    "merge-sort",
+    "minimum-spanning-tree",
+    "number-theory",
+    "prefix-sums",
+    "quickselect",
+    "quicksort",
+    "sliding-window",
+    "sorting-comparison",
+    "string-matching",
+    "strongly-connected-components",
+    "topological-sort",
+    "two-pointers",
+    "backtracking",
+    "divide-and-conquer",
+    "dynamic-programming",
+    "greedy",
+    "kadane",
+    "knapsack-coin-change",
+    "longest-increasing-subsequence-technique",
+    "sequence-dp",
+    "corpus-js-array-equality-and-copies",
+    "corpus-js-object-reference-equality",
+    "corpus-js-string-equality-and-ordering",
+    "corpus-java-bits-unsigned-shift",
+    "corpus-js-tree-validate-bst-bounds",
+    "corpus-java-blocking-queue",
+    "corpus-java-fenwick-order-statistics",
+    "corpus-java-set-basics",
+    "corpus-java-linkedhashmap-lru",
+    "corpus-js-map-insertion-order",
+    "corpus-js-map-basics",
+    "corpus-js-set-insertion-order",
+    "corpus-js-set-basics",
+    "corpus-js-tree-nodes-and-null",
+    "corpus-java-trie-xor",
+    "corpus-java-string-char-arithmetic",
+    "corpus-js-alg-sort-comparator-safety",
+    "corpus-js-tree-complete-binary-tree",
+    "corpus-java-list-dummy-node",
+    "corpus-js-linkedlist-dummy-head",
+    "corpus-js-queue-ring-buffer",
+    "corpus-js-alg-sliding-window-fixed",
+    "corpus-java-alg-sliding-window-fixed",
+    "corpus-js-alg-bipartite-coloring",
+    "corpus-java-alg-bipartite-coloring",
+    "corpus-js-alg-greedy-coin-counterexample",
+    "corpus-java-alg-greedy-coin-counterexample",
+    "corpus-js-uf-roots",
+    "corpus-java-uf-roots",
+    "corpus-js-heap-array-layout",
+    "corpus-java-mutable-keys",
+    "corpus-js-linkedlist-nodes-and-references",
+    "corpus-java-map-key-type-mismatch",
+    "corpus-js-alg-binary-search-boundary",
+    "corpus-java-alg-binary-search-boundary",
+    "corpus-js-heap-two-heaps-median",
+    "corpus-js-stack-monotonic",
+    "corpus-java-trie-end-marker",
+    "corpus-js-trie-end-marker",
+    "corpus-js-alg-prefix-sum-range",
+    "corpus-java-alg-prefix-sum-range",
+    "corpus-java-stack-monotonic",
+    "corpus-js-alg-backtracking-combination-sum",
+    "corpus-java-alg-backtracking-combination-sum",
+    "corpus-js-trie-structure",
+    "corpus-js-alg-sliding-window-variable",
+    "corpus-java-alg-sliding-window-variable",
+    "corpus-js-trie-wildcard-dfs",
+    "corpus-js-object-null-prototype-dictionaries",
+    "corpus-java-alg-dp-two-dimensional",
+    "corpus-js-stack-iteration-order",
+    "corpus-js-tree-iterative-traversals",
+    "corpus-js-heap-decrease-key",
+    "corpus-js-tree-bst-inorder-sorted",
+    "corpus-js-set-bitmask",
+    "corpus-js-graph-undirected-both-directions",
+    "corpus-js-array-from",
+    "corpus-js-alg-sort-mutates-in-place",
+    "corpus-java-stack-iteration-order",
+    "corpus-java-arraylist-basics",
+    "corpus-java-queue-front-cost",
+    "corpus-java-array-basics",
+    "corpus-java-aslist-fixed-size-view",
+    "corpus-java-alg-sort-mutates-in-place",
+    "corpus-js-alg-bfs-shortest-path",
+    "corpus-js-queue-bfs-shortest-path",
+    "corpus-java-alg-backtracking-subsets",
+    "corpus-js-alg-backtracking-subsets",
+    "corpus-js-graph-nodes-and-edges",
+    "corpus-js-alg-binary-search-on-answer",
+    "corpus-java-alg-binary-search-on-answer",
+    "corpus-js-alg-binary-search-midpoint",
+    "corpus-java-bitset-basics",
+    "corpus-js-grid-cell-types",
+    "corpus-java-tree-build-from-traversals",
+    "corpus-js-alg-dp-two-dimensional",
+    "corpus-js-graph-adjacency-list",
+    "corpus-java-comparator-factories",
+    "corpus-java-string-builder-loops",
+    "corpus-java-alg-sort-multikey-stable",
+    "corpus-js-grid-bounds-and-directions",
+    "corpus-java-grid-bounds-and-dirs",
+    "corpus-java-collections-choosing",
+    "corpus-js-string-code-units-vs-code-points",
+    "corpus-java-collections-basics",
+    "corpus-java-boxing-basics",
+    "corpus-js-array-write-pointer-compaction",
+    "corpus-java-comparator-safety",
+    "corpus-java-integer-cache-equality",
+    "corpus-java-grid-char-cells",
+    "corpus-java-string-equals-vs-reference",
+    "corpus-java-alg-sort-comparator-safety",
+    "corpus-java-classes-basics",
+    "corpus-java-bits-loop-on-nonzero",
+    "corpus-js-alg-prefix-sum-hashmap",
+    "corpus-java-alg-prefix-sum-hashmap",
+    "corpus-js-map-counting",
+    "corpus-java-map-merge-counting",
+    "corpus-js-alg-counting-bucket-sort",
+    "corpus-java-alg-counting-bucket-sort",
+    "corpus-java-collections-program-to-interface",
+    "corpus-java-stack-use-arraydeque",
+    "corpus-java-alg-recursion-depth",
+    "corpus-java-stack-overflow-recursion",
+    "corpus-js-alg-dp-one-dimensional",
+    "corpus-java-alg-dp-one-dimensional",
+    "corpus-js-queue-head-index",
+    "corpus-js-graph-directed-cycle-three-states",
+    "corpus-js-heap-dijkstra-stale-entries",
+    "corpus-java-alg-memoization",
+    "corpus-java-collections-fail-fast",
+    "corpus-js-object-bracket-access",
+    "corpus-java-collections-null-policies",
+    "corpus-js-string-building",
+    "corpus-js-alg-recursion-depth",
+    "corpus-js-tree-recursion-contract",
+    "corpus-java-tree-recursion-contract",
+    "corpus-js-grid-independent-rows",
+    "corpus-js-linkedlist-fast-slow",
+    "corpus-java-fenwick-indexing",
+    "corpus-js-alg-dp-coin-change",
+    "corpus-java-grid-iterative-flood-fill",
+    "corpus-js-grid-iterative-flood-fill",
+    "corpus-js-trie-autocomplete",
+    "corpus-js-map-grouping",
+    "corpus-java-map-computeifabsent-grouping",
+    "corpus-js-linkedlist-reorder",
+    "corpus-js-alg-dp-knapsack",
+    "corpus-java-alg-dp-knapsack",
+    "corpus-js-tree-bst-rule",
+    "corpus-js-alg-search-rotated-array",
+    "corpus-java-alg-search-rotated-array",
+    "corpus-js-stack-rpn-operand-order",
+    "corpus-java-alg-bfs-shortest-path",
+    "corpus-js-alg-intervals-insert",
+    "corpus-java-alg-intervals-insert",
+    "corpus-js-set-algebra-intersection",
+    "corpus-java-string-unicode-code-points",
+    "corpus-js-graph-dfs-iterative",
+    "java-library",
+    "java-fundamentals",
+    "javascript-library",
+    "javascript-fundamentals",
+    "corpus-js-map-sorted-keys",
+    "corpus-js-heap-class",
+    "corpus-js-queue-sliding-window-max",
+    "corpus-java-design-class-invariants",
+    "corpus-js-trie-children-representation",
+    "corpus-java-tree-state-in-fields",
+    "corpus-java-pq-topk-direction",
+    "corpus-java-deque-monotonic",
+    "corpus-java-collections-view-vs-copy",
+    "corpus-js-graph-kruskal-mst",
+    "corpus-java-linkedlist-get-index",
+    "corpus-java-list-of-immutable",
+    "corpus-java-list-remove-index-vs-value",
+    "corpus-js-alg-dp-lis-binary-search",
+    "corpus-java-alg-dp-lis-binary-search",
+    "corpus-java-list-fast-slow",
+    "corpus-java-graph-clone-identity-map",
+    "corpus-js-map-key-identity",
+    "corpus-java-map-basics",
+    "corpus-js-set-visited-on-enqueue",
+    "corpus-java-pq-lazy-deletion",
+    "corpus-js-alg-memoization",
+    "corpus-java-graph-union-find",
+    "corpus-js-alg-merge-sort-inversions",
+    "corpus-java-alg-merge-sort-inversions",
+    "corpus-java-bits-twos-complement",
+    "corpus-java-graph-dijkstra-overflow",
+    "corpus-java-trie-array-children",
+    "corpus-js-array-number-precision",
+    "corpus-js-object-key-coercion",
+    "corpus-js-object-keys-entries",
+    "corpus-java-graph-adjacency-building",
+    "corpus-js-string-graphemes-intl-segmenter",
+    "corpus-java-pq-iteration-not-sorted",
+    "corpus-java-equals-hashcode-contract",
+    "corpus-java-bits-operators",
+    "corpus-js-tree-pass-down-state",
+    "corpus-java-tree-validate-bst-long-bounds",
+    "corpus-java-uf-optimisations",
+    "corpus-js-uf-optimisations",
+    "corpus-java-range-query-choice",
+    "corpus-js-tree-traversal-choice",
+    "corpus-js-tree-traversals-recursive",
+    "corpus-java-pq-direction-and-comparators",
+    "corpus-js-queue-level-snapshot",
+    "corpus-js-queue-multi-source-bfs",
+    "corpus-java-set-element-types",
+    "corpus-js-alg-quickselect",
+    "corpus-java-alg-quickselect",
+    "corpus-java-pq-changing-priorities",
+    "corpus-js-stack-lifo-patterns",
+    "corpus-js-string-indexing",
+    "corpus-java-queue-level-snapshot",
+    "corpus-java-tree-path-copy",
+    "corpus-java-list-remove-while-iterating",
+    "corpus-js-graph-kahn-topological-sort",
+    "corpus-js-array-remove-while-iterating",
+    "corpus-js-stack-recursion-to-loop",
+    "corpus-js-tree-max-path-sum-gain",
+    "corpus-js-tree-combine-plus-global",
+    "corpus-java-trie-stringbuilder-paths",
+    "corpus-java-list-reverse-iterative",
+    "corpus-js-grid-rotate-in-place",
+    "corpus-js-linkedlist-save-next-before-rewiring",
+    "corpus-js-trie-word-search-ii-pruning",
+    "corpus-java-grid-multi-source-bfs",
+    "corpus-java-list-doubly-sentinels",
+    "corpus-java-set-add-returns-boolean",
+    "corpus-js-set-add-returns-set",
+    "corpus-js-alg-backtracking-permutations",
+    "corpus-java-alg-backtracking-permutations",
+    "corpus-js-alg-two-pointers-dedupe",
+    "corpus-java-alg-two-pointers-dedupe",
+    "corpus-js-alg-sort-multikey-stable",
+    "corpus-java-alg-intervals-merge",
+    "corpus-js-alg-intervals-merge",
+    "corpus-js-alg-meeting-rooms-sweep",
+    "corpus-java-alg-meeting-rooms-sweep",
+    "corpus-js-object-copy-shallow-deep",
+    "corpus-js-graph-components-outer-loop",
+    "corpus-js-alg-search-sorted-matrix",
+    "corpus-java-alg-search-sorted-matrix",
+    "corpus-java-segment-tree-identity",
+    "corpus-java-uf-weighted",
+    "corpus-js-uf-weighted",
+    "corpus-js-set-composite-values",
+    "corpus-js-stack-min-stack",
+    "corpus-java-trie-word-search-ii",
+    "corpus-java-string-split-regex",
+    "corpus-js-string-length",
+    "corpus-java-string-basics",
+    "corpus-js-heap-topk-direction",
+    "corpus-java-alg-binary-search-midpoint",
+    "corpus-java-alg-dutch-national-flag",
+    "corpus-js-alg-dutch-national-flag",
+    "corpus-js-alg-intervals-scheduling",
+    "corpus-java-alg-intervals-scheduling",
+    "corpus-java-graph-directed-cycle-three-states",
+    "corpus-java-alg-greedy-jump-game",
+    "corpus-js-alg-greedy-jump-game",
+    "corpus-java-treemap-floor-ceiling",
+    "corpus-java-treeset-comparator-equality",
+    "corpus-java-graph-nodes-and-edges",
+    "corpus-java-coordinate-compression",
+    "corpus-js-alg-two-pointers-opposite",
+    "corpus-java-alg-two-pointers-opposite",
+    "corpus-js-linkedlist-nth-from-end",
+    "corpus-java-uf-rollback",
+    "corpus-js-graph-union-find",
+    "corpus-js-object-nullish-defaults",
+    "corpus-java-uf-label-keys",
+    "corpus-js-uf-label-keys",
+    "corpus-java-record-as-key",
+    "corpus-java-alg-dp-coin-change",
+    "corpus-js-stack-end-operations",
+    "corpus-java-object-references",
+    "corpus-java-list-node-basics",
+    "corpus-js-linkedlist-walking",
+    "corpus-java-tree-serialise-null-children",
+    "corpus-java-bits-add-without-plus",
+    "corpus-java-bits-xor-cancellation",
+    "corpus-java-set-algebra-mutates",
+    "corpus-js-array-fill-references",
+    "corpus-js-array-loop-forms",
+    "corpus-java-grid-shallow-clone",
+    "corpus-java-int-overflow",
+    "corpus-java-primitive-types",
+    "corpus-java-bitmask-shift-width",
+    "corpus-java-queue-method-families",
+    "corpus-java-stack-empty-behaviour",
+    "corpus-js-heap-sift-up-down",
+    "corpus-js-array-sort-comparator",
+    "corpus-js-array-splice",
+    "corpus-js-string-split-literal",
+    "corpus-java-bits-lowest-set-bit"
+  ]
+}
