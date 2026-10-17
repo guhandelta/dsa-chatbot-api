@@ -2,13 +2,17 @@
 track: dsa
 difficulty: Easy
 source: leetcode
-io_mode: function
+io_mode: linked_list
+fn_python: reverse_list
+fn_javascript: reverseList
+fn_java: reverseList
+test_cases: [{"args": [[]], "expected": []}, {"args": [[1]], "expected": [1]}, {"args": [[1, 2]], "expected": [2, 1]}, {"args": [[1, 2, 3, 4, 5]], "expected": [5, 4, 3, 2, 1]}, {"args": [[-3, 0, 2]], "expected": [2, 0, -3]}, {"args": [[2, 2, 2]], "expected": [2, 2, 2]}, {"args": [[0, -1, 0]], "expected": [0, -1, 0]}]
 algorithms: linked-list
 ---
 # Reverse Linked List (LC 206) — Easy — Linked List
 
 ## Problem
-Given the head of a singly linked list, reverse it and return the new head.
+Given the head of a singly linked list, reverse it and return the new head. Test fixtures encode lists as arrays of node values; your function receives `ListNode` objects with `val` and `next` fields. An empty array represents a null head.
 
 ## Example
 1→2→3→4→5 → 5→4→3→2→1

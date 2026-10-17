@@ -11,7 +11,7 @@ test_cases: [{"args": [11], "expected": 3}, {"args": [128], "expected": 1}, {"ar
 # Number of 1 Bits (LC 191) — Easy — Bit Manipulation
 
 ## Problem
-Return the number of set bits (Hamming weight) in the binary representation of an unsigned 32-bit integer.
+Return the number of set bits (Hamming weight) in the binary representation of an unsigned 32-bit integer in [0, 4294967295]. Java uses `long` to represent the unsigned input.
 
 ## Example
 n = 11 (1011) → 3
@@ -50,7 +50,7 @@ function hammingWeight(n) {
 
 ### Java
 ```java
-public int hammingWeight(int n) {
+public int hammingWeight(long n) {
     int count = 0;
     while (n != 0) {
         n &= n - 1;

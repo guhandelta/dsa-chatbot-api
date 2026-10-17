@@ -25,17 +25,18 @@ async def save(session: AsyncSession, t: Trace) -> None:
     """
     try:
         payload = t.to_dict()
-        session.add(TraceRecord(
-            trace_id=t.trace_id,
-            name=t.name,
-            user_id=t.user_id,
-            duration_ms=t.duration_ms,
-            status=t.status,
-            total_tokens=t.total_tokens,
-            estimated_cost_usd=t.estimated_cost_usd,
-            payload=json.dumps(payload, default=str)[:200_000],
-        ))
-        await session.commit()
+        async with session.begin_nested():
+            session.add(TraceRecord(
+                trace_id=t.trace_id,
+                name=t.name,
+                user_id=t.user_id,
+                duration_ms=t.duration_ms,
+                status=t.status,
+                total_tokens=t.total_tokens,
+                estimated_cost_usd=t.estimated_cost_usd,
+                payload=json.dumps(payload, default=str)[:200_000],
+            ))
+            await session.flush()
     except Exception:
         logger.exception("Failed to persist trace %s (ignored)", t.trace_id)
 

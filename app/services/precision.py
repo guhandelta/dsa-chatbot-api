@@ -26,7 +26,18 @@ import re
 import time
 from dataclasses import dataclass, field
 
-from app.services.code_runner import _equal, _run_tier1
+from app.services.code_runner import _equal, _run_tier1, run_suite, LangResult
+
+def _execute(language, code, fn, cases, expected, problem_id=""):
+    if language != "java":
+        return _run_tier1(language, code, fn, cases, expected)
+    from app.services.content_catalog import load_test_cases
+    _, samples, _, _ = load_test_cases(problem_id)
+    shape = next((x for x in samples if x is not None), None)
+    hints = [shape for _ in cases] if all(x is None for x in expected) else expected
+    report = run_suite({language: code}, {language: fn}, cases, hints)
+    return LangResult(**report["results"][0])
+
 
 
 # ---------------------------------------------------------------- generators
@@ -103,10 +114,18 @@ def _two_sum_gen(rng):
     """Two Sum guarantees exactly one valid answer, so the input must be
     constructed rather than random — otherwise 'no answer exists' cases
     produce spurious diffs."""
-    n = rng.randint(2, 12)
-    nums = _ints(n, rng=rng)
-    i, j = rng.sample(range(n), 2)
-    return [nums, nums[i] + nums[j]]
+    if rng.random() < 0.2:
+        value = rng.randint(-50, 50)
+        return [[value, value], 2 * value]
+    for _ in range(100):
+        n = rng.randint(2, 12)
+        nums = _ints(n, rng=rng)
+        i, j = rng.sample(range(n), 2)
+        target = nums[i] + nums[j]
+        if sum(nums[a]+nums[b]==target for a in range(n) for b in range(a+1,n))==1:
+            return [nums,target]
+    return [[0,0,1,2,3],0]
+
 
 
 GENERATORS["two-sum"] = _two_sum_gen
@@ -178,6 +197,24 @@ class FuzzReport:
         }
 
 
+def _valid_case(problem_id, args):
+    if problem_id != "two-sum": return True
+    nums,target=args
+    return sum(nums[a]+nums[b]==target for a in range(len(nums)) for b in range(a+1,len(nums)))==1
+
+
+def _outputs_equal(problem_id, student, reference, args):
+    if problem_id == "two-sum":
+        nums,target=args
+        return (isinstance(student,list) and len(student)==2
+                and all(isinstance(i,int) and not isinstance(i,bool) and 0<=i<len(nums) for i in student)
+                and student[0]!=student[1] and nums[student[0]]+nums[student[1]]==target)
+    if problem_id == "3sum":
+        from app.services.output_comparison import compare
+        return compare(student, reference, "unordered_nested")
+    return _equal(student,reference)
+
+
 def _shrink(args: list, student_code: str, student_fn: str,
             reference_code: str, reference_fn: str, language: str,
             problem_id: str = "") -> list:
@@ -185,6 +222,7 @@ def _shrink(args: list, student_code: str, student_fn: str,
     `[3,3], 6` rather than a 12-element array. Only shrinks list arguments,
     and only while the failure still reproduces."""
     min_len = MIN_LIST_LEN.get(problem_id, 1)
+    attempts = 0
     current = list(args)
     improved = True
     while improved:
@@ -197,16 +235,21 @@ def _shrink(args: list, student_code: str, student_fn: str,
                     continue
                 trial = list(current)
                 trial[idx] = candidate
+                if not _valid_case(problem_id,trial):
+                    continue
+                attempts += 1
+                if attempts > (6 if language == "java" else 40):
+                    return current
                 try:
-                    s = _run_tier1(language, student_code, student_fn, [trial], [None])
-                    r = _run_tier1(language, reference_code, reference_fn, [trial], [None])
+                    s = _execute(language, student_code, student_fn, [trial], [None], problem_id)
+                    r = _execute(language, reference_code, reference_fn, [trial], [None], problem_id)
                 except Exception:
                     continue
                 if s.status == "failed" and not s.outputs:
                     continue
                 if not s.outputs or not r.outputs:
                     continue
-                if not _equal(s.outputs[0], r.outputs[0]):
+                if not _outputs_equal(problem_id,s.outputs[0],r.outputs[0],trial):
                     current = trial
                     improved = True
                     break
@@ -227,8 +270,8 @@ def differential_fuzz(
 ) -> FuzzReport:
     """Run student and reference over many generated inputs and diff them."""
     report = FuzzReport()
-    if language not in ("python", "javascript"):
-        report.note = f"Fuzzing is only available for Python and JavaScript, not {language}."
+    if language not in ("python", "javascript", "java"):
+        report.note = f"Fuzzing is only available for Python, JavaScript and Java, not {language}."
         return report
     if not supports_fuzzing(problem_id):
         report.note = "No input generator is defined for this problem."
@@ -251,23 +294,31 @@ def differential_fuzz(
 
     # One batched process per side rather than one per case — same evidence,
     # a fraction of the process churn.
-    student = _run_tier1(language, student_code, student_fn, cases, [None] * len(cases))
-    if student.status == "failed" and not student.outputs:
+    student = _execute(language, student_code, student_fn, cases, [None] * len(cases), problem_id)
+    if student.tier != 1 or student.status == "unverified":
+        report.note = "Student execution is unavailable for this language/input shape."
+        return report
+    if student.status in ("failed", "error") and not student.outputs:
         report.ran = True
         report.total = len(cases)
         report.note = f"Your code errored during fuzzing: {student.detail[:200]}"
         return report
 
-    reference = _run_tier1(language, reference_code, reference_fn, cases, [None] * len(cases))
-    if not reference.outputs:
+    reference = _execute(language, reference_code, reference_fn, cases, [None] * len(cases), problem_id)
+    if len(reference.outputs) != len(cases):
         report.note = "The reference solution could not be executed for this problem."
         return report
 
+    if len(student.outputs) != len(cases):
+        report.ran = True
+        report.total = len(cases)
+        report.note = "Student execution did not return every case."
+        return report
     report.ran = True
     report.total = len(cases)
 
     for args, s_out, r_out in zip(cases, student.outputs, reference.outputs):
-        if _equal(s_out, r_out):
+        if _outputs_equal(problem_id,s_out,r_out,args):
             report.passed += 1
         elif len(report.counterexamples) < 3:
             minimal = _shrink(args, student_code, student_fn,
@@ -275,8 +326,8 @@ def differential_fuzz(
                               problem_id=problem_id)
             if minimal != args:
                 try:
-                    s2 = _run_tier1(language, student_code, student_fn, [minimal], [None])
-                    r2 = _run_tier1(language, reference_code, reference_fn, [minimal], [None])
+                    s2 = _execute(language, student_code, student_fn, [minimal], [None], problem_id)
+                    r2 = _execute(language, reference_code, reference_fn, [minimal], [None], problem_id)
                     if s2.outputs and r2.outputs:
                         args, s_out, r_out = minimal, s2.outputs[0], r2.outputs[0]
                 except Exception:
@@ -358,55 +409,22 @@ def measure_complexity(
 ) -> ComplexityReport:
     """Time the submission across increasing input sizes and fit the curve."""
     report = ComplexityReport()
-    if language != "python":
-        report.note = "Complexity measurement currently supports Python only."
+    if language not in ("python", "javascript", "java"):
+        report.note = "Complexity measurement supports Python, JavaScript and Java."
         return report
     if len(scale_cases) < 3:
         report.note = "Not enough input sizes to measure growth."
         return report
 
-    import subprocess
-    import sys as _sys
-    import tempfile
-    from pathlib import Path
-
-    harness = _TIMING_HARNESS_PY.format(solution=student_code, fn=student_fn)
-    with tempfile.TemporaryDirectory() as td:
-        path = Path(td) / "t.py"
-        path.write_text(harness)
-        try:
-            proc = subprocess.run(
-                [_sys.executable, str(path)],
-                input=json.dumps(scale_cases),
-                capture_output=True, text=True, timeout=30,
-            )
-        except subprocess.TimeoutExpired:
-            report.note = "Timed out while measuring — likely worse than quadratic."
-            return report
-
-    if proc.returncode != 0:
-        report.note = f"Could not measure: {proc.stderr.strip()[:200]}"
-        return report
-
-    timings = None
-    for line in proc.stdout.splitlines():
-        if line.startswith("__T__"):
-            timings = json.loads(line[5:])
-    if not timings:
-        report.note = "No timing data produced."
-        return report
-
-    sizes = [len(c[0]) if c and isinstance(c[0], list) else c[0] for c in scale_cases]
-    report.ran = True
-    report.sizes = [int(s) for s in sizes]
-    report.timings = timings
-    report.estimate = _classify(report.sizes, timings)
-    return report
+    from app.services.timing import measure
+    return measure(student_code, student_fn, scale_cases, language)
 
 
 def extract_fn_name(code: str, language: str) -> str | None:
     if language == "python":
         m = re.search(r"^\s*def\s+(\w+)\s*\(", code, re.MULTILINE)
+    elif language == "java":
+        m = re.search(r"(?:public\s+)?(?:static\s+)?[\w<>\[\]]+\s+(\w+)\s*\(", code)
     else:
         m = re.search(r"^\s*function\s+(\w+)\s*\(", code, re.MULTILINE)
     return m.group(1) if m else None

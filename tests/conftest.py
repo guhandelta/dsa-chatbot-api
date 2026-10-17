@@ -9,7 +9,7 @@ import pytest_asyncio
 
 # Provide dummy settings BEFORE importing the app, so config validation passes
 os.environ.setdefault("OPENAI_API_KEY", "test-key")
-os.environ.setdefault("JWT_SECRET", "test-secret")
+os.environ.setdefault("JWT_SECRET", "test-secret-for-offline-tests-at-least-32-bytes")
 os.environ.setdefault("SIGNUP_BONUS", "50")
 os.environ.setdefault("AUTO_CREATE_TABLES", "true")
 os.environ.setdefault("CHAT_COST", "1")

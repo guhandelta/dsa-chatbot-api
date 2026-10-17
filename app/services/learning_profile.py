@@ -22,7 +22,7 @@ import json
 from collections import Counter
 from dataclasses import dataclass, field
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import LearningEvent
@@ -236,7 +236,7 @@ async def build_profile(session: AsyncSession, user_id: str) -> LearningProfile:
 
 
 async def recall_similar_moment(
-    session: AsyncSession, user_id: str, algorithms: list[str], problem_id: str,
+    session: AsyncSession, user_id: str, algorithms: list[str], problem_id: str, language: str | None = None,
 ) -> str | None:
     """Find a moment where this learner reasoned their way through a related
     problem, so the mentor can remind them of their OWN thinking.
@@ -246,26 +246,38 @@ async def recall_similar_moment(
     """
     if not algorithms:
         return None
-    events = await _events(session, user_id, limit=300)
+    stmt = select(LearningEvent).where(LearningEvent.user_id == user_id)
+    if language is not None:
+        stmt = stmt.where(LearningEvent.language == language)
+    events = list((await session.scalars(stmt.order_by(LearningEvent.created_at.desc()).limit(300))).all())
     tags = set(algorithms)
 
     for e in events:
         if e.problem_id == problem_id or not e.reasoning:
             continue
-        if e.kind not in ("solved", "hint"):
+        if e.kind not in ("solved", "hint", "reflection"):
             continue
         if tags & {a for a in e.algorithms.split(",") if a}:
-            return (
-                f"On \"{e.problem_id}\" you wrote: \"{e.reasoning[:300]}\" — "
-                "and that reasoning got you there."
-            )
+            if e.kind in ("reflection", "solved"):
+                solved = await session.scalar(select(LearningEvent.id).where(
+                    LearningEvent.user_id == user_id, LearningEvent.problem_id == e.problem_id,
+                    LearningEvent.language == e.language, LearningEvent.kind == "solved",
+                    LearningEvent.created_at <= e.created_at).limit(1))
+                if solved is None:
+                    continue
+                provenance = "reasoning associated with a verified solve; the wording itself is not proof"
+            else:
+                provenance = "unfinished hint reasoning; no verified success is implied"
+            return (f'On "{e.problem_id}" ({e.language}) you wrote: "{e.reasoning[:300]}" — '
+                    + provenance + ".")
     return None
 
 
 async def export_profile(session: AsyncSession, user_id: str) -> dict:
     """Full export of everything stored about this learner. A behavioural
     profile of a paying customer must be exportable and deletable on request."""
-    events = await _events(session, user_id, limit=5000)
+    events = list((await session.scalars(select(LearningEvent).where(
+        LearningEvent.user_id == user_id).order_by(LearningEvent.created_at.desc()))).all())
     profile = await build_profile(session, user_id)
     return {
         "profile": profile.to_dict(),
@@ -282,7 +294,5 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
 
 
 async def delete_profile(session: AsyncSession, user_id: str) -> int:
-    events = await _events(session, user_id, limit=100000)
-    for e in events:
-        await session.delete(e)
-    return len(events)
+    result = await session.execute(delete(LearningEvent).where(LearningEvent.user_id == user_id))
+    return result.rowcount

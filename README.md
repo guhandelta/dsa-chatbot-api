@@ -1,3 +1,24 @@
+# Private JavaScript / Java learning application
+
+See [confirmed integrity fixes and current practice workflow](docs/CONFIRMED_FIXES.md).
+See [content admission, six-week hint cycles, and retained credits](docs/CONTENT_VERIFICATION.md)
+and the [latest executable reference audit](docs/exercise-audit.json).
+Pricing and subscription packaging remain undecided. Recall sources have provisional
+approval; cross-language recall remains open. See [product decisions](docs/PRODUCT_DECISIONS.md).
+
+Additional TypeScript, Python, C/C++, Rust, Ruby, embedded and framework references
+are now available through Chat's Reference library selector. See
+[import coverage, Spring sources and limitations](docs/REFERENCE_LIBRARY.md).
+
+The learning screens now expose a shared 12-stage path in JavaScript and Java,
+DSA workouts, and optional solutions gated by completed evaluation. The canonical
+curriculum ships with the API and supports local retrieval before vector indexing.
+
+See [release behavior, setup, validation, and remaining work](docs/RELEASE_CURRICULUM.md)
+and the [packaged corpus guide](data/curriculum/README.md).
+
+---
+
 # DSA Chatbot API
 
 FastAPI backend: auth (JWT), peppercorn currency with an append-only ledger,
@@ -131,8 +152,8 @@ Instructors add problems at runtime through `POST /training/submit` (or the
    languages, and adds per-solution explanations plus *thinking style* notes
    (the transferable reasoning pattern, for learners taking notes).
 2. **Validate** — nothing is trusted. Solutions are actually executed:
-   - **Tier 1 (Python, JavaScript):** run against generated test cases.
-   - **Tier 2 (C, C++, Java, Rust):** compiled / type-checked.
+   - **Execution:** Python, JavaScript, and supported C/C++/Java/Rust input shapes run against generated cases.
+   - **Compile-only fallback:** unsupported compiled-language shapes remain unverified for correctness.
    - **Cross-language agreement:** Tier-1 implementations must produce
      identical outputs — this is what stops the LLM marking its own homework.
 3. **Repair** — failures (with real compiler/test output) go back for one
@@ -401,12 +422,11 @@ without any subscription.
 by Stripe; Stripe then calls `POST /subscriptions/webhook`, which grants or
 revokes the entitlement. Only the Stripe subscription id is stored.
 
-The webhook **refuses every request** unless `STRIPE_WEBHOOK_SECRET` is set
-and a signature header is present — an unverified webhook is a
-free-subscription endpoint for anyone who finds the URL. Signature
-verification with the Stripe SDK is marked explicitly in the handler so it
-cannot be forgotten. For local testing without Stripe, use
-`POST /subscriptions/admin/grant`.
+The webhook verifies Stripe v1 signatures against the raw body, rejects stale
+signatures, and records event IDs for replay protection. Signed subscription
+state supplies its expiry. Checkout/invoice pricing mappings remain deferred;
+manual admin grants support private development. See
+[confirmed fixes](docs/CONFIRMED_FIXES.md) for the current contract.
 
 Renewals extend an existing entitlement rather than stacking duplicates, and
 cancellation keeps time already paid for.
@@ -532,3 +552,18 @@ instrumentation does not change.
 
 Traces accumulate quickly. Pruning is manual (`DELETE /admin/traces`) so the
 policy is an explicit operator decision rather than a silent default.
+
+
+### Private agentic retrieval pilot
+
+Ordinary RAG remains the default. An admin-only opt-in experiment is available
+with `AGENTIC_RAG_ENABLED=true`; see
+[the measured results, limits and remaining risks](docs/AGENTIC_RAG_EXPERIMENT.md).
+The experiment does not certify teaching accuracy or change subscription/pricing
+policy. Keep it disabled outside controlled evaluation.
+
+October 15 follow-up: [OpenAI comparison, live mentor and Docker checks](docs/REMAINING_CHECKS_2026-10-15.md).
+
+[Whole-library foundation readiness and coverage audit](docs/FOUNDATION_READINESS.md) covers every packaged language and framework subject.
+
+[October 16 knowledge-base gaps and language suggestions](docs/KNOWLEDGE_BASE_GAPS_2026-10-16.md) · [HTML/CSS training-data generation prompts](docs/training-prompts/README.md).

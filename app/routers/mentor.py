@@ -3,7 +3,7 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,29 +31,30 @@ def _algorithms_for(problem_id: str) -> list[str]:
     return []
 
 
-async def _current_tier(session: AsyncSession, user_id: str, problem_id: str) -> int:
-    """Hint tier for this learner on this problem.
+async def _current_tier(session: AsyncSession, user_id: str, problem_id: str,
+                        language: str = "python", *, now: datetime | None = None) -> int:
+    """Fixed six-week cycles anchored to the first hint for this scope.
 
-    Escalation is driven by the learner asking again within one working
-    session — never volunteered, and never permanent. Hints older than
-    `hint_tier_reset_hours` are ignored, so a learner returning to a problem
-    days later starts at tier 1 and gets to think it through again rather
-    than being handed the strongest hint immediately.
-
-    Without the window, tier only ever ratchets upward: come back next week
-    and the mentor opens by naming the technique, which defeats the point.
+    A new session, subscription renewal, or recent hint never shifts the reset.
+    Language switching has its own hint history. Timestamps are interpreted in UTC.
     """
-    cutoff = datetime.now(timezone.utc) - timedelta(
-        hours=settings.hint_tier_reset_hours
-    )
-    stmt = select(LearningEvent).where(
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    times = list((await session.scalars(select(LearningEvent.created_at).where(
         LearningEvent.user_id == user_id,
         LearningEvent.problem_id == problem_id,
+        LearningEvent.language == language,
         LearningEvent.kind == "hint",
-        LearningEvent.created_at >= cutoff,
-    )
-    hints = list((await session.execute(stmt)).scalars())
-    return min(len(hints) + 1, MAX_TIER)
+        LearningEvent.created_at <= now,
+    ).order_by(LearningEvent.created_at))).all())
+    if not times:
+        return 1
+    times = [t.replace(tzinfo=timezone.utc) if t.tzinfo is None else t for t in times]
+    duration = timedelta(hours=settings.hint_tier_reset_hours)
+    anchor = times[0]
+    cycle_start = anchor + ((now - anchor) // duration) * duration
+    return min(sum(t >= cycle_start for t in times) + 1, MAX_TIER)
 
 
 @router.get("/entitlement")
@@ -66,106 +67,42 @@ async def entitlement(
 
 
 @router.post("/ask", response_model=MentorResponse)
-async def ask(
-    request: MentorRequest,
-    current_user: User = Depends(get_current_user),
-    session: AsyncSession = Depends(get_session),
-):
+async def ask(request: MentorRequest, current_user: User = Depends(get_current_user),
+              session: AsyncSession = Depends(get_session),
+              idempotency_key: str | None = Header(default=None)):
+    from app.services.operations import perform
+    from app.services.content_catalog import content_exists
     try:
         assert_active(current_user)
     except AccountSuspendedError as exc:
-        raise HTTPException(status_code=403, detail=str(exc))
-
-    # Gate 1: subscription for this language unlocks the mentor
-    decision = await entitlements.check(session, current_user.id, request.language)
-    if not decision["entitled"]:
-        raise HTTPException(status_code=402, detail=decision["reason"])
-
-    # Gate 2: rate limit — mentor turns are LLM calls, so an unbounded
-    # client loop is a direct cost exposure.
-    try:
-        await enforce_rate_limit(session, current_user.id, kind="hint")
-    except RateLimitExceeded as exc:
-        raise HTTPException(status_code=429, detail=str(exc))
-
-    # Gate 3: peppercorns still pay for the turn
-    try:
-        balance = await debit(
-            session, current_user.id, settings.mentor_cost, reason="mentor"
-        )
-    except InsufficientPeppercornsError as exc:
-        raise HTTPException(status_code=402, detail=str(exc))
-    await session.commit()
-
-    algorithms = _algorithms_for(request.problem_id)
-    tier = await _current_tier(session, current_user.id, request.problem_id)
-
-    # The strongest hint available: their own earlier reasoning on a
-    # structurally similar problem.
-    recalled = await learning_profile.recall_similar_moment(
-        session, current_user.id, algorithms, request.problem_id
-    )
-    profile = await learning_profile.build_profile(session, current_user.id)
-
-    try:
-        async with trace(
-            "mentor",
-            user_id=current_user.id,
-            problem_id=request.problem_id,
-            language=request.language,
-            tier=tier,
-        ) as t:
-            async with span("recall_lookup") as sp:
-                sp.set(found=bool(recalled), algorithms=algorithms)
-            async with span("llm_mentor", provider=request.provider):
-                reply = await mentor_reply(
-                    problem_id=request.problem_id,
-                    reasoning=request.reasoning,
-                    current_code=request.current_code,
-                    language=request.language,
-                    tier=tier,
-                    provider=request.provider,
-                    recalled_moment=recalled,
-                    profile_summary=profile.summary() if profile.total_attempts else "",
-                )
-        await trace_store.save(session, t)
-    except Exception:
-        logger.exception("Mentor failed; refunding")
-        balance = await credit(
-            session, current_user.id, settings.mentor_cost, reason="refund:mentor"
-        )
-        await session.commit()
-        raise HTTPException(
-            status_code=502,
-            detail="The mentor could not respond. Your peppercorns were refunded.",
-        )
-
-    # Record the learner's own words — this becomes the raw material for
-    # reminding them how they think, on a later problem.
-    await learning_profile.record_event(
-        session,
-        current_user.id,
-        request.problem_id,
-        kind="hint",
-        language=request.language,
-        algorithms=algorithms,
-        hint_tier=tier,
-        reasoning=request.reasoning,
-    )
-    await session.commit()
-
-    offer = (
-        step_back_offer(request.problem_id, algorithms) if tier >= MAX_TIER else None
-    )
-
-    return MentorResponse(
-        reply=reply,
-        hint_tier=tier,
-        tier_label=TIERS[tier][0],
-        recalled_moment=recalled,
-        step_back_offer=offer,
-        peppercorns_remaining=balance,
-    )
+        raise HTTPException(403,str(exc))
+    if not content_exists(request.problem_id):
+        raise HTTPException(404,'Problem not found')
+    async def prepare():
+        decision=await entitlements.check(session,current_user.id,request.language)
+        if not decision['entitled']:
+            raise HTTPException(402,decision['reason'])
+        try:
+            await enforce_rate_limit(session,current_user.id,'hint')
+        except RateLimitExceeded as exc:
+            raise HTTPException(429,str(exc))
+    async def work(balance):
+        algorithms=_algorithms_for(request.problem_id)
+        tier=await _current_tier(session,current_user.id,request.problem_id,request.language)
+        recalled=await learning_profile.recall_similar_moment(session,current_user.id,algorithms,request.problem_id,request.language)
+        profile=await learning_profile.build_profile(session,current_user.id)
+        async with trace('mentor',user_id=current_user.id,problem_id=request.problem_id,language=request.language,tier=tier) as t:
+            reply=await mentor_reply(problem_id=request.problem_id,reasoning=request.reasoning,
+                current_code=request.current_code,language=request.language,tier=tier,provider=request.provider,
+                recalled_moment=recalled,profile_summary=profile.summary() if profile.total_attempts else '')
+        await trace_store.save(session,t)
+        await learning_profile.record_event(session,current_user.id,request.problem_id,kind='hint',
+            language=request.language,algorithms=algorithms,hint_tier=tier,reasoning=request.reasoning)
+        return MentorResponse(reply=reply,hint_tier=tier,tier_label=TIERS[tier][0],
+            recalled_moment=recalled,step_back_offer=step_back_offer(request.problem_id,algorithms) if tier>=MAX_TIER else None,
+            peppercorns_remaining=balance)
+    return await perform(session,current_user.id,'mentor',idempotency_key,request.model_dump(),
+                         settings.mentor_cost,'mentor',work,prepare=prepare)
 
 
 @router.post("/reflect")
@@ -181,11 +118,28 @@ async def reflect(
     Free (no peppercorns): this is the raw material tier-3 recall draws on,
     so charging for it would starve the feature that makes the mentor good.
     """
+    try:
+        assert_active(current_user)
+    except AccountSuspendedError as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
+    from app.services.content_catalog import content_exists
+    if not content_exists(problem_id):
+        raise HTTPException(status_code=404, detail="Problem not found")
+    if not reasoning.strip() or len(reasoning) > 4000:
+        raise HTTPException(status_code=422, detail="Reflection must contain 1–4000 characters.")
+    solved = await session.scalar(select(LearningEvent.id).where(
+        LearningEvent.user_id == current_user.id,
+        LearningEvent.problem_id == problem_id,
+        LearningEvent.language == language,
+        LearningEvent.kind == "solved",
+    ).limit(1))
+    if solved is None:
+        raise HTTPException(status_code=403, detail="Pass evaluation in this language before reflecting.")
     await learning_profile.record_event(
         session,
         current_user.id,
         problem_id,
-        kind="solved",
+        kind="reflection",
         language=language,
         algorithms=_algorithms_for(problem_id),
         reasoning=reasoning,
@@ -219,7 +173,7 @@ async def delete_my_profile(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    """Erase all learning history. Deleting it costs the learner their
+    """Erase learning-profile events. Saved sessions and chats are separate. Deleting it costs the learner their
     personalisation, which the UI should say plainly before calling this."""
     removed = await learning_profile.delete_profile(session, current_user.id)
     await session.commit()

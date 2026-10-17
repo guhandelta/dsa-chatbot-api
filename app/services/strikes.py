@@ -2,9 +2,9 @@
 
 POLICY (configurable via .env)
 ------------------------------
-  Strike 1  warning, submission refused, peppercorns refunded
-  Strike 2  final warning, submission refused, peppercorns refunded
-  Strike 3  account suspended, peppercorns NOT refunded and not returned
+  Strike 1  warning, submission refused before charging
+  Strike 2  final warning, submission refused before charging
+  Strike 3  account suspended; existing balance is preserved
 
 Only a `block` verdict from the screener counts as a strike. A `warn`
 (suspicious but plausibly a beginner mistake — an accidental infinite loop, a
@@ -76,22 +76,15 @@ async def record_event(
             "suspended": False,
         }
 
-    new_count = user.strikes + 1
+    new_count = (await session.execute(update(User).where(User.id == user.id)
+        .values(strikes=User.strikes + 1).returning(User.strikes))).scalar_one()
     suspend = new_count >= settings.max_strikes
-
-    values: dict = {"strikes": new_count}
     if suspend:
-        values["status"] = "suspended"
-        values["suspended_reason"] = (
-            f"Account suspended after {new_count} blocked submissions "
-            f"containing prohibited operations."
-        )
-
-    await session.execute(update(User).where(User.id == user.id).values(**values))
-    user.strikes = new_count
-    if suspend:
+        reason = f"Account suspended after {new_count} blocked submissions containing prohibited operations."
+        await session.execute(update(User).where(User.id == user.id).values(status="suspended", suspended_reason=reason))
         user.status = "suspended"
-        user.suspended_reason = values["suspended_reason"]
+        user.suspended_reason = reason
+    user.strikes = new_count
 
     remaining = max(settings.max_strikes - new_count, 0)
     return {
@@ -102,12 +95,12 @@ async def record_event(
         "suspended": suspend,
         "message": (
             "Your account has been suspended for repeatedly submitting code "
-            "with prohibited operations. Remaining peppercorns are not "
-            "refunded. Contact support if you believe this is an error."
+            "with prohibited operations. Your balance is preserved, but spending "
+            "is disabled. Contact support if you believe this is an error."
             if suspend else
             f"This submission was blocked. Strike {new_count} of "
             f"{settings.max_strikes} — {remaining} more will suspend your "
-            "account, and remaining peppercorns will not be refunded."
+            "account. Your balance is preserved during suspension."
         ),
     }
 

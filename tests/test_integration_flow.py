@@ -127,6 +127,11 @@ async def test_mentor_recalls_their_own_earlier_reasoning(client, db, stub_llm):
     await entitlements.grant(db, uid, "python", days=30)
     await db.commit()
 
+    r = await client.post("/analyze/", headers=h, json={
+        "problem_id": "contains-duplicate", "language": "python",
+        "user_code": "def contains_duplicate(nums): return len(nums) != len(set(nums))",
+    })
+    assert r.status_code == 200
     # They reflect on a hash-map problem they solved
     await client.post("/mentor/reflect", headers=h, params={
         "problem_id": "contains-duplicate",

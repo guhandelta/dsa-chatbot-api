@@ -1,5 +1,7 @@
 # Centralized settings loaded from .env using pydantic-settings
 from pathlib import Path
+from typing import Literal
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ENV_PATH = Path(__file__).resolve().parents[2] / ".env"
@@ -19,7 +21,7 @@ class Settings(BaseSettings):
     # Model IDs (override via .env without touching code)
     openai_model: str = "gpt-4o-mini"
     anthropic_model: str = "claude-sonnet-4-20250514"
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-3.8-flash"
 
     # Vector store backend: "chroma" (embedded, zero setup) or "pgvector"
     # (Postgres/Supabase — one database for everything, scales horizontally).
@@ -51,10 +53,12 @@ class Settings(BaseSettings):
     admin_emails: str = ""
 
     # Sandbox limits for executing submitted solutions
+    exec_backend: Literal["subprocess", "docker"] = "subprocess"
+    exec_container_image: str = ""
     exec_timeout_seconds: int = 8
     exec_memory_mb: int = 512
-    # Max processes the sandboxed child may create (blocks fork bombs)
-    exec_max_processes: int = 16
+    # Per-container process limit (host subprocess mode cannot enforce this)
+    exec_max_processes: int = 64
     # Max bytes of stdout captured from a run
     exec_max_output_bytes: int = 65536
 
@@ -64,8 +68,12 @@ class Settings(BaseSettings):
     submissions_per_hour: int = 30
     # Mentor turns per hour (separate budget — hints are cheaper than reviews)
     hints_per_hour: int = 60
-    # A learner returning after this long restarts at hint tier 1
-    hint_tier_reset_hours: int = 12
+    chats_per_hour: int = 60
+    # Fixed hint-cycle length (six weeks); anchored per learner/problem/language
+    hint_tier_reset_hours: int = Field(default=1008, ge=1)
+
+    # Optional JDK location; JAVA_HOME is read from .env by Settings.
+    java_home: str = ""
 
     # Peppercorn economy
     signup_bonus: int = 50
@@ -78,6 +86,9 @@ class Settings(BaseSettings):
 
     # Tests and throwaway databases only. Real environments run migrations.
     auto_create_tables: bool = False
+
+    # Private opt-in agentic retrieval pilot; ordinary RAG remains the default.
+    agentic_rag_enabled: bool = False
 
     # Observability. Tracing is cheap (in-memory spans, one insert per
     # request) but can be disabled entirely if needed.

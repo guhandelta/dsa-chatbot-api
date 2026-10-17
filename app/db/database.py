@@ -42,8 +42,11 @@ async def init_db() -> None:
 
     async with engine.begin() as conn:
         tables = await conn.run_sync(lambda sync: inspect(sync).get_table_names())
+        practice_columns = await conn.run_sync(lambda sync: {c["name"] for c in inspect(sync).get_columns("practice_sessions")}) if "practice_sessions" in tables else set()
 
-    if "users" not in tables:
+        knowledge_columns = await conn.run_sync(lambda sync: {c["name"] for c in inspect(sync).get_columns("knowledge_documents")}) if "knowledge_documents" in tables else set()
+
+    if not {"users", "service_operations", "practice_sessions", "practice_checkpoints", "webhook_receipts", "vector_cleanup_jobs"}.issubset(tables) or "busy_token" not in practice_columns or "language" not in knowledge_columns:
         raise RuntimeError(
             "Database schema is not initialised. Run:  alembic upgrade head"
         )

@@ -3,6 +3,7 @@ track: dsa
 difficulty: Medium
 source: leetcode
 io_mode: function
+comparison: unordered_nested
 algorithms: arrays, sorting, two-pointers
 fn_python: three_sum
 fn_javascript: threeSum

@@ -14,6 +14,7 @@ IMPORTANT: nothing here is trusted. Everything this module returns is a
 actually executes it. The LLM proposes, the compiler and test suite decide.
 """
 from pydantic import BaseModel, Field
+from typing import Literal
 
 from app.services.llm_router import get_llm
 
@@ -89,6 +90,9 @@ class EnrichedProblem(BaseModel):
     )
     solutions: list[SolutionOut] = Field(
         description="EXACTLY one entry per language: python, javascript, java, cpp, c, rust"
+    )
+    comparison: Literal["exact", "unordered_flat", "unordered_nested"] = Field(
+        default="exact", description="Keep arrays and matrices ordered unless the statement explicitly permits reordering."
     )
     test_cases: list[TestCase] = Field(
         description="6-10 test cases including edge cases. Must be verifiably correct — "
@@ -190,7 +194,13 @@ CASE rather than incorrect code, fix the test case instead and say so in
 def to_markdown(p: EnrichedProblem) -> str:
     """Render the canonical knowledge-base markdown (same format the catalog
     parses and the RAG pipeline ingests)."""
-    lines = [f"# {p.title} — {p.difficulty} — {p.category}", ""]
+    import json
+    lines = ["---", "track: dsa", f"difficulty: {p.difficulty}",
+             "source: authored", "io_mode: function", f"comparison: {p.comparison}"]
+    for solution in p.solutions:
+        lines.append(f"fn_{solution.language}: {solution.function_name}")
+    lines += ["test_cases: " + json.dumps([t.model_dump() for t in p.test_cases]),
+              "---", f"# {p.title} — {p.difficulty} — {p.category}", ""]
     lines += ["## Problem", p.statement, ""]
     if p.examples:
         lines += ["## Examples"] + [f"- {e}" for e in p.examples] + [""]

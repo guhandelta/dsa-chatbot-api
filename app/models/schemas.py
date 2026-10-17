@@ -54,6 +54,9 @@ class LearnTrainResponse(BaseModel):
     chunks_trained: int
     track: str = "custom"
     message: str
+    retrieval_status: str = "awaiting_approval"
+    reference_language: str | None = None
+    reference_chunks: int = 0
 
 
 class KnowledgeDocumentOut(BaseModel):
@@ -69,6 +72,12 @@ class KnowledgeDocumentOut(BaseModel):
     review_note: str = ""
     created_at: datetime | None = None
     reviewed_at: datetime | None = None
+
+
+    retrieval_status: str = "awaiting_approval"
+    reference_language: str | None = None
+    reference_chunks: int = 0
+    projection_version: str = ""
 
 
 class KnowledgeDocumentDetail(KnowledgeDocumentOut):
@@ -89,20 +98,31 @@ Track = Literal["language", "dsa", "algorithm"]
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=8000)
     thread_id: Optional[str] = None          # For conversation memory
-    provider: Provider = "openai"
-    language: str = "python"                  # e.g. "python", "java", "cpp"
+    provider: Provider = "gemini"
+    language: str = Field(default="python", min_length=1, max_length=32) # e.g. "python", "java", "cpp"
     mode: Literal["learn", "practice"] = "learn"
+    retrieval_mode: Literal["standard", "agentic"] = "standard"
     # Which of the three learning tracks this conversation belongs to.
     # Scopes retrieval so a Python-basics question doesn't pull graph theory.
     track: Track = "dsa"
     # Optional focus: a specific content item or algorithm tag
-    focus_id: Optional[str] = None
+    focus_id: Optional[str] = Field(default=None, min_length=1, max_length=120)
+    subject: str | None = Field(default=None, min_length=1, max_length=80, pattern=r"^[a-z0-9-]+$")
+
+
+class SourceCitation(BaseModel):
+    document_id: str
+    filename: str
+    revision: str
+    excerpt: str
 
 
 class ChatResponse(BaseModel):
     answer: str
     thread_id: str
     peppercorns_remaining: int
+    sources: list[SourceCitation] = Field(default_factory=list)
+    retrieval: dict | None = None
 
 
 class ThreadOut(BaseModel):
@@ -147,6 +167,7 @@ class AnalysisResult(BaseModel):
 
 
 class AnalyzeResponse(BaseModel):
+    solution_available: bool = False
     analysis: AnalysisResult
     peppercorns_remaining: int
     # Real execution results when the problem has verified test cases.

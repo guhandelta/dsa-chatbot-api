@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.security import get_current_user
 from app.db.models import User
+from app.db.database import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.content_catalog import (
     LEVELS,
     SECTIONS,
@@ -27,10 +29,12 @@ def list_tracks(current_user: User = Depends(get_current_user)):
     Counts are scoped to the learner's language for Language Fundamentals,
     which is the only language-specific section.
     """
+    language = current_user.preferred_language if current_user.preferred_language in ("javascript", "java") else "javascript"
     return {
-        "tracks": track_summary(language=current_user.preferred_language),
-        "languages": known_languages(),
-        "preferred_language": current_user.preferred_language,
+        "tracks": [t for t in track_summary(language=language)
+                   if t["track"] in ("language", "dsa")],
+        "languages": ["javascript", "java"],
+        "preferred_language": language,
         # `browse` opens on the topic list rather than a chat box: landing in
         # an empty conversation with no context makes the learner invent a
         # question before they have seen what is available.
@@ -51,6 +55,26 @@ def language_levels(
         "levels": level_summary(lang),
         "valid_levels": list(LEVELS),
     }
+
+
+@router.get("/language/progress")
+async def language_progress(
+    language: str,
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    from sqlalchemy import select
+    from app.db.models import LearningEvent
+    ids = list((await session.scalars(select(LearningEvent.problem_id).where(
+        LearningEvent.user_id == current_user.id,
+        LearningEvent.language == language,
+        LearningEvent.kind == "solved",
+    ).distinct())).all())
+    lessons = sorted([c for c in filter_content(track="language", language=language)
+                      if 0 < c.order < 100], key=lambda c: c.order)
+    completed = [c.id for c in lessons if c.id in ids]
+    return {"completed_ids": completed, "total": len(lessons),
+            "next_id": next((c.id for c in lessons if c.id not in completed), None)}
 
 
 @router.get("/patterns/tags")
@@ -74,6 +98,13 @@ def pattern_related(
     lang = language or current_user.preferred_language
     items = filter_content(pattern=pattern)
     return [c for c in items if c.language in (None, lang)]
+
+
+@router.get("/reference-subjects")
+def reference_subjects(_: User = Depends(get_current_user)):
+    """Imported knowledge for reference chat; no new executable workouts implied."""
+    from app.services.reference_library import subjects
+    return {"subjects": subjects(), "retrieval": "local_bm25", "status": "reference_only"}
 
 
 @router.get("/{track}/items", response_model=list[ContentMeta])
@@ -103,10 +134,10 @@ def track_items(
             detail=f"Unknown level '{level}'. Valid: {', '.join(LEVELS)}",
         )
     lang = language or (current_user.preferred_language if track == "language" else None)
-    return filter_content(
+    return sorted(filter_content(
         track=track, language=lang, difficulty=difficulty,
         algorithm=algorithm, source=source, level=level, pattern=pattern,
-    )
+    ), key=lambda c: (c.order or 999, c.title))
 
 
 @router.get("/algorithms/tags")
@@ -140,4 +171,5 @@ def get_item(content_id: str, _: User = Depends(get_current_user)):
     body = read_content(content_id)
     if not body:
         raise HTTPException(status_code=404, detail="Content not found")
-    return {"id": content_id, "markdown": body}
+    from app.services.content_access import learner_document
+    return {"id": content_id, "markdown": learner_document(content_id)}

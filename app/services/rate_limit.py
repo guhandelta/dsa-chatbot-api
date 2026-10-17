@@ -71,6 +71,8 @@ def _limit_for(kind: str) -> int:
     """Separate budgets: a review is far more expensive than a hint, so they
     must not share one counter — exhausting reviews should never block the
     mentor."""
+    if kind == "chat":
+        return settings.chats_per_hour
     if kind == "hint":
         return settings.hints_per_hour
     return settings.submissions_per_hour
@@ -110,7 +112,7 @@ async def enforce_rate_limit(session: AsyncSession, user_id: str, kind: str) -> 
 
     used = await count_recent(session, user_id, kind)
     if used >= limit:
-        noun = "submissions" if kind == "attempt" else "mentor questions"
+        noun = "submissions" if kind == "attempt" else "chat turns" if kind == "chat" else "mentor questions"
         raise RateLimitExceeded(
             f"You've made {used} {noun} in the past hour, which is the limit "
             f"({limit}). This resets on a rolling basis — try again shortly. "

@@ -32,7 +32,8 @@ from app.models.schemas import (
     LearnTrainResponse,
 )
 from app.services.document_parser import ALLOWED_EXTENSIONS, extract_text_from_file
-from app.services.knowledge_base import index_uploaded_document, remove_chunks
+from app.services.knowledge_base import index_uploaded_document, UploadIndexError
+from app.services.maintenance import queue_cleanup, drain_cleanup
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/learn", tags=["learn"])
@@ -66,6 +67,12 @@ def _chunk_ids(doc: KnowledgeDocument) -> list[str]:
 
 
 def _out(doc: KnowledgeDocument, owner_email: str = "") -> KnowledgeDocumentOut:
+    from app.services.uploaded_knowledge import project, infer_language, PROJECTION_VERSION
+    projected = project(doc.id, doc.filename, doc.text, doc.track, doc.language)
+    language = doc.language or infer_language(doc.filename)
+    retrieval_status = ("awaiting_approval" if doc.status != "published" else
+                        "language_review_required" if not language else
+                        "no_reference_text" if not projected else "available")
     return KnowledgeDocumentOut(
         id=doc.id,
         owner_id=doc.owner_id,
@@ -79,29 +86,32 @@ def _out(doc: KnowledgeDocument, owner_email: str = "") -> KnowledgeDocumentOut:
         review_note=doc.review_note,
         created_at=doc.created_at,
         reviewed_at=doc.reviewed_at,
+        retrieval_status=retrieval_status,
+        reference_language=language,
+        reference_chunks=len(projected),
+        projection_version=PROJECTION_VERSION,
     )
 
 
-async def _index(doc: KnowledgeDocument) -> list[str]:
+async def _index(doc: KnowledgeDocument, session: AsyncSession) -> list[str]:
+    filename = doc.filename
     try:
         return await asyncio.to_thread(
-            index_uploaded_document, doc.id, doc.filename, doc.text, doc.track, doc.owner_id
+            index_uploaded_document, doc.id, doc.filename, doc.text, doc.track, doc.owner_id, doc.language
         )
-    except Exception:
-        logger.exception("Knowledge base indexing failed for '%s'", doc.filename)
+    except Exception as exc:
+        # Roll back an attempted replacement before committing its cleanup
+        # obligation. Original content and review evidence remain unchanged.
+        await session.rollback()
+        if isinstance(exc, UploadIndexError):
+            queue_cleanup(session, exc.chunk_ids)
+            await session.commit()
+        logger.exception("Knowledge base indexing failed for '%s'", filename)
         raise HTTPException(
             status_code=502,
             detail="Failed to index the document into the knowledge base. Check the embedding provider and try again.",
         )
 
-
-async def _remove(ids: list[str]) -> None:
-    # Best effort: a vector-store hiccup must not strand the DB record, and
-    # orphaned vectors are only retrievable context, not a correctness issue.
-    try:
-        await asyncio.to_thread(remove_chunks, ids)
-    except Exception:
-        logger.exception("Failed to remove %d knowledge chunks", len(ids))
 
 
 def _mark_reviewed(doc: KnowledgeDocument, reviewer: User, new_status: str, note: str = "") -> None:
@@ -120,17 +130,19 @@ async def _get_visible(session: AsyncSession, doc_id: str, user: User) -> Knowle
     return doc
 
 
-async def _read_upload(request: Request) -> tuple[str, str, str]:
+async def _read_upload(request: Request) -> tuple[str, str, str, str]:
     """Returns (filename, extracted_text, track) from multipart or JSON."""
     content_type = request.headers.get("content-type", "").lower()
     filename = ""
     file_bytes = b""
     text_content = ""
+    language = ""
 
     if "multipart/form-data" in content_type or "application/x-www-form-urlencoded" in content_type:
         form = await request.form()
         uploaded_file = form.get("file")
         track = _clean_track(form.get("track"))
+        language = str(form.get("language") or "").strip().lower()
         text_content = str(form.get("text") or "").strip()
         if isinstance(uploaded_file, UploadFile):
             filename = uploaded_file.filename or "document.txt"
@@ -152,6 +164,7 @@ async def _read_upload(request: Request) -> tuple[str, str, str]:
         filename = str(body.get("filename") or "pasted_notes.md")
         text_content = str(body.get("text") or body.get("content") or "").strip()
         track = _clean_track(body.get("track"))
+        language = str(body.get("language") or "").strip().lower()
     else:
         raise HTTPException(
             status_code=415,
@@ -191,7 +204,13 @@ async def _read_upload(request: Request) -> tuple[str, str, str]:
             status_code=413,
             detail=f"Document is too long ({len(final_text):,} characters; limit {MAX_TEXT_CHARS:,}). Split it and upload the parts.",
         )
-    return filename, final_text, track
+    if language and language not in {"javascript", "java", "typescript", "python", "cpp", "c", "rust", "go", "ruby"}:
+        raise HTTPException(422, "Unsupported reference language.")
+    from app.services.uploaded_knowledge import infer_language
+    inferred = infer_language(filename)
+    if language and inferred and language != inferred:
+        raise HTTPException(422, "The selected language conflicts with the filename. Choose the source language.")
+    return filename, final_text, track, language
 
 
 @router.get("/status")
@@ -220,7 +239,7 @@ async def train_knowledge_base(
     `text`) or JSON (`{"text": ..., "filename": ..., "track": ...}`).
     Re-uploading a filename you already uploaded replaces that document.
     """
-    filename, final_text, track = await _read_upload(request)
+    filename, final_text, track, language = await _read_upload(request)
 
     existing = (
         await session.execute(
@@ -238,6 +257,7 @@ async def train_knowledge_base(
 
     doc.file_type = Path(filename).suffix.lower() or ".txt"
     doc.track = track
+    doc.language = language
     doc.text = final_text
     doc.characters = len(final_text)
     doc.chunk_ids = "[]"
@@ -248,7 +268,7 @@ async def train_knowledge_base(
     if current_user.role == "admin":
         # Index before touching the old version, so a failed re-upload
         # leaves the previous published copy in place.
-        new_ids = await _index(doc)
+        new_ids = await _index(doc, session)
         doc.chunk_ids = json.dumps(new_ids)
         _mark_reviewed(doc, current_user, "published")
         message = f"Published '{filename}' to the knowledge base ({len(new_ids)} chunk(s), track: {track})."
@@ -257,10 +277,11 @@ async def train_knowledge_base(
         doc.status = "pending"
         message = f"Uploaded '{filename}'. It will be used in chat once an admin approves it."
 
+    queue_cleanup(session, old_ids)
     await session.commit()
-    if old_ids:
-        await _remove(old_ids)
+    await drain_cleanup(session)
 
+    view = _out(doc)
     return LearnTrainResponse(
         status="success",
         document_id=doc.id,
@@ -271,6 +292,9 @@ async def train_knowledge_base(
         chunks_trained=len(new_ids),
         track=track,
         message=message,
+        retrieval_status=view.retrieval_status,
+        reference_language=view.reference_language,
+        reference_chunks=view.reference_chunks,
     )
 
 
@@ -319,9 +343,10 @@ async def delete_document(
 ):
     doc = await _get_visible(session, doc_id, current_user)
     ids = _chunk_ids(doc)
+    queue_cleanup(session, ids)
     await session.delete(doc)
     await session.commit()
-    await _remove(ids)
+    await drain_cleanup(session)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -334,7 +359,7 @@ async def approve_document(
     doc = await _get_visible(session, doc_id, admin)
     if doc.status == "published":
         raise HTTPException(status_code=409, detail="Document is already published.")
-    ids = await _index(doc)
+    ids = await _index(doc, session)
     doc.chunk_ids = json.dumps(ids)
     _mark_reviewed(doc, admin, "published")
     await session.commit()
@@ -353,6 +378,7 @@ async def reject_document(
     ids = _chunk_ids(doc)
     doc.chunk_ids = "[]"
     _mark_reviewed(doc, admin, "rejected", (body.note if body else "").strip())
+    queue_cleanup(session, ids)
     await session.commit()
-    await _remove(ids)
+    await drain_cleanup(session)
     return _out(doc)

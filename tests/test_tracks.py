@@ -58,7 +58,7 @@ async def test_language_preference_persists(client):
         "/auth/register", json={"email": "lang@x.com", "password": "password123"}
     )
     token = r.json()["access_token"]
-    assert r.json()["user"]["preferred_language"] == "python"
+    assert r.json()["user"]["preferred_language"] == "javascript"
     h = {"Authorization": f"Bearer {token}"}
 
     upd = await client.patch("/auth/me/language", headers=h, json={"language": "rust"})
@@ -81,9 +81,9 @@ async def test_tracks_endpoint_lists_three_paths(client):
     # `dsa` because a learner sees problems and the techniques behind them as
     # one subject rather than two separate destinations.
     assert [t["track"] for t in body["tracks"]] == [
-        "language", "dsa", "design-patterns",
+        "language", "dsa",
     ]
-    assert body["modes"] == ["learn", "practice"]
+    assert body["modes"] == ["browse", "learn", "practice"]
 
 
 async def test_tracks_require_auth(client):

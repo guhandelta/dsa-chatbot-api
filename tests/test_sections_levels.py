@@ -141,7 +141,7 @@ async def test_tracks_endpoint_returns_sections(client):
     assert r.status_code == 200
     payload = r.json()
     assert [t["track"] for t in payload["tracks"]] == [
-        "language", "dsa", "design-patterns",
+        "language", "dsa",
     ]
     assert "browse" in payload["modes"]
 
@@ -153,7 +153,7 @@ async def test_language_levels_endpoint(client):
     assert r.status_code == 200
     payload = r.json()
     assert [l["level"] for l in payload["levels"]] == list(LEVELS)
-    assert payload["language"] == "python"
+    assert payload["language"] == "javascript"
 
 
 async def test_language_levels_respects_query_language(client):

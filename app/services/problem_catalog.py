@@ -54,5 +54,5 @@ def read_problem_doc(problem_id: str) -> str:
     """Returns the entire markdown reference for a problem, or '' if missing.
     Used by the analyzer so it sees the full description + optimal solution,
     not a few similarity-retrieved chunks."""
-    path = PROBLEMS_DIR / f"{problem_id}.md"
-    return path.read_text() if path.is_file() else ""
+    from app.services.content_catalog import read_content
+    return read_content(problem_id)

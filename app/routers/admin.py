@@ -1,5 +1,5 @@
 # /admin — user & role management. Admins assign the instructor role.
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -150,8 +150,9 @@ async def grant_peppercorns(
     user_id: str,
     amount: int,
     reason: str = "admin_grant",
-    _: User = Depends(require_admin),
+    admin: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
+    idempotency_key: str | None = Header(default=None),
 ):
     """Credit peppercorns to an account.
 
@@ -165,7 +166,11 @@ async def grant_peppercorns(
     if amount <= 0:
         raise HTTPException(status_code=400, detail="Amount must be positive")
 
-    await credit(session, user_id, amount, reason=f"admin:{reason}")
-    await session.commit()
-    await session.refresh(target)
-    return UserOut.model_validate(target)
+    from app.services.operations import perform
+    async def work(_):
+        await credit(session, user_id, amount, reason=f"admin:{reason}")
+        await session.refresh(target)
+        return UserOut.model_validate(target)
+    return await perform(session, admin.id, "admin:credit", idempotency_key,
+                         {"user_id": user_id, "amount": amount, "reason": reason},
+                         0, "admin:credit", work)

@@ -3,6 +3,7 @@ track: dsa
 difficulty: Easy
 source: leetcode
 io_mode: function
+comparison: unordered_flat
 algorithms: arrays, hash-map
 fn_python: two_sum
 fn_javascript: twoSum

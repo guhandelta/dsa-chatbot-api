@@ -1,7 +1,7 @@
-"""Hint tiers must reset after a break.
+"""Hint tiers must reset after the configured cycle.
 
 Without a window, tier only ratchets upward: a learner returning to a problem
-days later would be handed the strongest hint immediately, which defeats the
+after six weeks would be handed the strongest hint immediately, which defeats the
 Socratic design.
 """
 from datetime import datetime, timedelta, timezone
@@ -38,17 +38,17 @@ async def test_tier_is_clamped_at_max(db):
 
 
 async def test_tier_resets_after_the_window(db, monkeypatch):
-    monkeypatch.setattr(settings, "hint_tier_reset_hours", 12)
+    monkeypatch.setattr(settings, "hint_tier_reset_hours", 1008)
     for _ in range(6):
-        await _hint(db, "u4", "two-sum", 20)     # yesterday
+        await _hint(db, "u4", "two-sum", 1009)     # outside six weeks
     assert await _current_tier(db, "u4", "two-sum") == 1, "stale hints must not carry over"
 
 
 async def test_window_boundary(db, monkeypatch):
-    monkeypatch.setattr(settings, "hint_tier_reset_hours", 12)
-    await _hint(db, "u5", "two-sum", 11.9)       # inside
+    monkeypatch.setattr(settings, "hint_tier_reset_hours", 1008)
+    await _hint(db, "u5", "two-sum", 1007.9)       # inside
     assert await _current_tier(db, "u5", "two-sum") == 2
-    await _hint(db, "u6", "two-sum", 12.1)       # outside
+    await _hint(db, "u6", "two-sum", 1008.1)       # outside
     assert await _current_tier(db, "u6", "two-sum") == 1
 
 

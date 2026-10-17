@@ -28,7 +28,7 @@ class User(Base):
     # "student" | "instructor" | "admin" — only instructor/admin may train the bot
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="student")
     # Chosen once, respected across every track and mode
-    preferred_language: Mapped[str] = mapped_column(String(20), nullable=False, default="python")
+    preferred_language: Mapped[str] = mapped_column(String(20), nullable=False, default="javascript")
     # "active" | "suspended" — suspended accounts cannot spend or submit
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
     strikes: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -139,6 +139,7 @@ class Subscription(Base):
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     provider_ref: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    provider_event_timestamp: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
 
 class LearningEvent(Base):
@@ -211,6 +212,7 @@ class KnowledgeDocument(Base):
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     file_type: Mapped[str] = mapped_column(String(10), nullable=False, default=".txt")
     track: Mapped[str] = mapped_column(String(20), nullable=False, default="custom")
+    language: Mapped[str] = mapped_column(String(20), nullable=False, default="")
     # "pending" | "published" | "rejected"
     status: Mapped[str] = mapped_column(String(20), index=True, nullable=False, default="pending")
     text: Mapped[str] = mapped_column(Text, nullable=False, default="")
@@ -223,3 +225,60 @@ class KnowledgeDocument(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
+
+
+class ServiceOperation(Base):
+    """Durable request receipt; debit and terminal response share transactions."""
+    __tablename__ = "service_operations"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    scope: Mapped[str] = mapped_column(String(100))
+    fingerprint: Mapped[str] = mapped_column(String(64))
+    state: Mapped[str] = mapped_column(String(20), default="running")
+    amount: Mapped[int] = mapped_column(Integer, default=0)
+    reason: Mapped[str] = mapped_column(String(100), default="")
+    http_status: Mapped[int] = mapped_column(Integer, default=200)
+    response_json: Mapped[str] = mapped_column(Text, default="{}")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class PracticeSession(Base):
+    __tablename__ = "practice_sessions"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    problem_id: Mapped[str] = mapped_column(String(120))
+    language: Mapped[str] = mapped_column(String(20))
+    provider: Mapped[str] = mapped_column(String(20))
+    busy: Mapped[bool] = mapped_column(Boolean, default=False)
+    busy_token: Mapped[str] = mapped_column(String(64), default="")
+    status: Mapped[str] = mapped_column(String(20), default="active")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class PracticeCheckpoint(Base):
+    __tablename__ = "practice_checkpoints"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    thread_id: Mapped[str] = mapped_column(String(255), index=True)
+    namespace: Mapped[str] = mapped_column(String(255), default="")
+    checkpoint_id: Mapped[str] = mapped_column(String(64))
+    parent_id: Mapped[str] = mapped_column(String(64), default="")
+    checkpoint_data: Mapped[str] = mapped_column(Text)
+    metadata_data: Mapped[str] = mapped_column(Text)
+    writes_json: Mapped[str] = mapped_column(Text, default="{}")
+
+
+class WebhookReceipt(Base):
+    __tablename__ = "webhook_receipts"
+    id: Mapped[str] = mapped_column(String(255), primary_key=True)
+    payload_hash: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class VectorCleanupJob(Base):
+    """Transactional outbox: retain failed vector deletion until it succeeds."""
+    __tablename__ = "vector_cleanup_jobs"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    chunk_ids: Mapped[str] = mapped_column(Text, nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_error: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)

@@ -13,6 +13,10 @@ langchain-community>=0.3,<0.4
 langchain-text-splitters>=0.3,<0.4
 chromadb>=0.5
 
+# Practice-session orchestration (app/graphs/). 1.0.x resolves against
+# langchain-core 0.3.x; re-check before widening the upper bound.
+langgraph>=1.0,<1.1
+
 # pgvector backend (Supabase / Postgres). Only needed when VECTOR_STORE=pgvector.
 langchain-postgres>=0.0.12
 psycopg[binary]>=3.1

@@ -11,7 +11,7 @@ test_cases: [{"args": [43261596], "expected": 964176192}, {"args": [4294967293],
 # Reverse Bits (LC 190) — Easy — Bit Manipulation
 
 ## Problem
-Reverse the bits of a 32-bit unsigned integer and return the result.
+Reverse the bits of a 32-bit unsigned integer and return the result. Inputs and outputs are integers in [0, 4294967295]. Java uses `long` to represent that unsigned range.
 
 ## Example
 00000010100101000001111010011100 → 00111001011110000010100101000000
@@ -50,8 +50,8 @@ function reverseBits(n) {
 
 ### Java
 ```java
-public int reverseBits(int n) {
-    int res = 0;
+public long reverseBits(long n) {
+    long res = 0;
     for (int i = 0; i < 32; i++) {
         res = (res << 1) | (n & 1);
         n >>>= 1;

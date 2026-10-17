@@ -28,7 +28,7 @@ async def active_for(session: AsyncSession, user_id: str, language: str) -> Subs
     stmt = select(Subscription).where(
         Subscription.user_id == user_id,
         Subscription.language == language,
-        Subscription.status == "active",
+        Subscription.status.in_(("active", "cancelled")),
     )
     for sub in (await session.execute(stmt)).scalars():
         expires = sub.expires_at
@@ -57,6 +57,7 @@ async def check(session: AsyncSession, user_id: str, language: str) -> dict:
         "entitled": False,
         "reason": (
             f"Mentor guidance for {language} requires a {language} subscription. "
+            "Your peppercorns do not expire with your subscription. "
             "Reviews, chat, and practice remain available without one."
         ),
         "expires_at": None,
@@ -81,6 +82,7 @@ async def grant(session: AsyncSession, user_id: str, language: str,
         if expires.tzinfo is None:
             expires = expires.replace(tzinfo=timezone.utc)
         existing.expires_at = expires + timedelta(days=days)
+        existing.status = "active"
         if provider_ref:
             existing.provider_ref = provider_ref
         session.add(existing)

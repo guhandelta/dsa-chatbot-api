@@ -1,4 +1,5 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 .env
@@ -7,3 +8,7 @@ app/chroma_db/
 *.db
 .DS_Store
 import_times.log
+.coverage
+.pytest_cache/
+.vscode/
+.patch_code_runner.py

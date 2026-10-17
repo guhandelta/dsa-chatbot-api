@@ -102,3 +102,28 @@ def test_quadratic_is_distinguishable_from_linear():
 def test_supports_fuzzing_flags():
     assert supports_fuzzing("two-sum")
     assert not supports_fuzzing("reverse-linked-list")
+
+
+def test_two_sum_generated_and_shrunk_cases_preserve_unique_answer():
+    from app.services.precision import GENERATORS,_valid_case
+    import random
+    rng=random.Random(8)
+    assert all(_valid_case('two-sum',GENERATORS['two-sum'](rng)) for _ in range(300))
+    ref,fn=reference('two-sum')
+    report=differential_fuzz('two-sum',BUGGY['two-sum'],'two_sum',ref,fn,'python',iterations=50,seed=7)
+    assert report.counterexamples
+    assert all(_valid_case('two-sum',c.args) for c in report.counterexamples)
+
+
+def test_two_sum_accepts_reversed_valid_indices():
+    ref,fn=reference('two-sum')
+    reversed_code=ref.replace('return [seen[target - x], i]','return [i, seen[target - x]]')
+    report=differential_fuzz('two-sum',reversed_code,fn,ref,fn,'python',iterations=30,seed=7)
+    assert report.passed==report.total and not report.counterexamples
+
+
+def test_incomplete_fuzzing_is_not_described_as_a_pass():
+    from app.services.deep_review import summarize_evidence
+    text=summarize_evidence({'fuzz':{'ran':True,'total':200,'passed':0,'counterexamples':[],'note':'Runtime error'}})
+    assert 'all 200' not in text
+    assert 'incomplete' in text

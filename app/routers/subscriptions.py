@@ -6,7 +6,7 @@
 # stored here is the Stripe subscription id.
 import logging
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,68 +37,88 @@ async def my_subscriptions(
 
 
 @router.post("/webhook")
-async def stripe_webhook(
-    payload: dict,
-    stripe_signature: str = Header(default="", alias="Stripe-Signature"),
-    session: AsyncSession = Depends(get_session),
-):
-    """Stripe calls this after a successful payment or cancellation.
-
-    SECURITY: the signature MUST be verified before trusting the payload —
-    this endpoint is public, so an unverified webhook is a free-subscription
-    endpoint for anyone who finds the URL. Verification is left explicit
-    rather than stubbed silently, so it cannot be forgotten.
-    """
-    if not settings.stripe_webhook_secret:
-        raise HTTPException(
-            status_code=503,
-            detail="Stripe webhook secret is not configured; refusing to trust this payload.",
-        )
-    # Verify with: stripe.Webhook.construct_event(raw_body, stripe_signature,
-    #              settings.stripe_webhook_secret)
-    # Requires the RAW request body, so wire this with a Request object when
-    # you add the stripe SDK.
-    if not stripe_signature:
-        raise HTTPException(status_code=400, detail="Missing Stripe signature.")
-
-    event_type = payload.get("type", "")
-    data = payload.get("data", {}).get("object", {})
-    user_id = (data.get("metadata") or {}).get("user_id")
-    language = (data.get("metadata") or {}).get("language")
-    if not user_id or not language:
-        raise HTTPException(status_code=400, detail="Missing user_id/language metadata.")
-
-    if event_type in ("checkout.session.completed", "invoice.payment_succeeded"):
-        await entitlements.grant(
-            session, user_id, language, days=30, provider_ref=data.get("subscription", "")
-        )
+async def stripe_webhook(request: Request,
+    stripe_signature: str = Header(default="",alias="Stripe-Signature"),
+    session: AsyncSession = Depends(get_session)):
+    import hashlib
+    from datetime import datetime, timezone
+    from sqlalchemy.exc import IntegrityError
+    from app.db.models import Subscription, WebhookReceipt
+    from app.services.webhooks import verified_event
+    raw=await request.body()
+    if len(raw)>1_000_000:raise HTTPException(413,'Webhook payload too large.')
+    event=verified_event(raw,stripe_signature,settings.stripe_webhook_secret)
+    digest=hashlib.sha256(raw).hexdigest()
+    existing=await session.get(WebhookReceipt,event['id'])
+    if existing:
+        if existing.payload_hash!=digest:raise HTTPException(409,'Event ID was reused with different data.')
+        return {'duplicate':True}
+    session.add(WebhookReceipt(id=event['id'],payload_hash=digest))
+    try:await session.flush()
+    except IntegrityError:
+        await session.rollback()
+        existing=await session.get(WebhookReceipt,event['id'])
+        if existing is None or existing.payload_hash!=digest:raise HTTPException(409,'Event ID conflict.')
+        return {'duplicate':True}
+    kind=event.get('type','')
+    data=event.get('data',{}).get('object',{})
+    # Entitlement periods come from signed subscription state, not guessed
+    # 30-day additions. Checkout/invoice pricing rules remain deferred.
+    if kind not in ('customer.subscription.created','customer.subscription.updated','customer.subscription.deleted'):
         await session.commit()
-        return {"granted": language}
-
-    if event_type in ("customer.subscription.deleted",):
-        await entitlements.revoke(session, user_id, language)
+        return {'ignored':kind}
+    ref=data.get('id')
+    if not isinstance(ref,str) or not ref:raise HTTPException(400,'Missing subscription ID.')
+    sub=await session.scalar(select(Subscription).where(Subscription.provider_ref==ref))
+    metadata=data.get('metadata') or {}
+    uid=metadata.get('user_id') or (sub.user_id if sub else None)
+    language=metadata.get('language') or (sub.language if sub else None)
+    if not uid or not language or await session.get(User,uid) is None:raise HTTPException(400,'Unknown subscription owner or language.')
+    if sub and (sub.user_id!=uid or sub.language!=language):raise HTTPException(409,'Subscription ownership cannot change through a webhook.')
+    period=data.get('current_period_end')
+    if period is None:
+        period=max((i.get('current_period_end',0) for i in (data.get('items') or {}).get('data',[])),default=0)
+    if not isinstance(period,(int,float)) or period<=0:raise HTTPException(400,'Missing subscription period.')
+    expires=datetime.fromtimestamp(period,timezone.utc)
+    status=data.get('status')
+    # Only signed active/trialing state creates access. Cancellation retains
+    # the reported period; unpaid, expired, or incomplete state cannot grant.
+    state = ('cancelled' if kind=='customer.subscription.deleted' else
+             'inactive' if status not in ('active','trialing') else
+             'cancelled' if data.get('cancel_at_period_end') else 'active')
+    event_time=event.get('created',0)
+    if not isinstance(event_time,int) or event_time<0:raise HTTPException(400,'Invalid event timestamp.')
+    if sub is None and kind=='customer.subscription.deleted':
         await session.commit()
-        return {"revoked": language}
-
-    return {"ignored": event_type}
+        return {'ignored':'unknown cancelled subscription'}
+    if sub is None:
+        sub=Subscription(user_id=uid,language=language,provider_ref=ref,expires_at=expires,status=state,provider_event_timestamp=event_time)
+        session.add(sub)
+    else:
+        # Delayed updates must not roll a renewed period backwards.
+        current=sub.expires_at.replace(tzinfo=timezone.utc) if sub.expires_at.tzinfo is None else sub.expires_at
+        if expires>=current and event_time>=sub.provider_event_timestamp:
+            sub.expires_at=expires;sub.status=state;sub.provider_event_timestamp=event_time
+    await session.commit()
+    return {'updated':language}
 
 
 @router.post("/admin/grant", response_model=SubscriptionOut)
 async def admin_grant(
     user_id: str,
-    language: str,
-    days: int = 30,
-    _: User = Depends(require_admin),
+    language: str = Query(min_length=1,max_length=20),
+    days: int = Query(default=30,ge=1,le=3650),
+    issuer: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
+    idempotency_key: str | None = Header(default=None),
 ):
-    """Manual grant — for comps, support fixes, and local testing without Stripe."""
-    target = await session.get(User, user_id)
-    if target is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    sub = await entitlements.grant(session, user_id, language, days=days)
-    await session.commit()
-    await session.refresh(sub)
-    return SubscriptionOut(
-        id=sub.id, language=sub.language, status=sub.status,
-        expires_at=sub.expires_at.isoformat(),
-    )
+    from app.services.operations import perform
+    if await session.get(User,user_id) is None:
+        raise HTTPException(404,"User not found")
+    async def work(_):
+        sub=await entitlements.grant(session,user_id,language,days=days)
+        await session.flush()
+        return SubscriptionOut(id=sub.id,language=sub.language,status=sub.status,
+                               expires_at=sub.expires_at.isoformat())
+    return await perform(session,issuer.id,'subscription:grant',idempotency_key,
+                         {'user_id':user_id,'language':language,'days':days},0,'admin-grant',work)

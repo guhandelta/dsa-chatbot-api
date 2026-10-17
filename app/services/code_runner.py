@@ -2,22 +2,14 @@
 
 SECURITY NOTE
 -------------
-This runs code written by instructors/admins. Locally it is confined with an
-OS-level CPU/memory/file-size limit, a wall-clock timeout, a scratch working
-directory, and a stripped environment (so it cannot read your .env or API
-keys). That is adequate for a trusted local dev setup. It is NOT a true
-sandbox: a determined author could still open sockets or exhaust the disk.
-Before exposing this to untrusted users, swap `_run` for a container-per-run
-executor (Docker) or an external judge (Judge0 / Piston). The rest of the
-pipeline talks to this module through `run_suite`, so only this file changes.
+EXEC_BACKEND=docker uses a digest-pinned operator-provided toolchain image,
+network isolation, a read-only root, dropped capabilities and resource limits.
+It fails closed if Docker/image startup fails. The default subprocess backend
+is for trusted local development: resource limits are NOT filesystem/network
+isolation and static screening is not a security boundary.
 
-TIERS
------
-Tier 1 (Python, JavaScript): executed against real test cases. Arguments and
-expected values arrive as JSON, so dispatch is dynamic and generic.
-Tier 2 (C, C++, Java, Rust): compiled / type-checked. A compile catches type
-errors, bad signatures and undeclared names. Languages whose toolchain is
-absent are reported as "unverified" — never as passing.
+Interpreted and supported compiled signatures execute real test cases. An
+unsupported signature or missing toolchain is never reported as passing.
 """
 from __future__ import annotations
 
@@ -25,15 +17,29 @@ import json
 import os
 import resource
 import shutil
+import signal
 import subprocess
 import tempfile
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from functools import lru_cache
 
 from app.core.config import settings
+from app.services import exec_harness
 
+# Interpreted languages: run directly, test cases handed over as JSON on stdin.
 TIER1 = ("python", "javascript")
-TIER2 = ("c", "cpp", "java", "rust")
+
+# Compiled languages. These are EXECUTED too, not merely compiled: the test
+# data has no JSON parser to rely on in C, so `exec_harness` code-generates a
+# driver with the cases embedded as native literals and only the answers are
+# printed. When a problem's shape cannot be expressed as a typed signature
+# (linked lists, trees, node graphs) execution is refused and the language
+# falls back to the compile-only check below — never to a silent pass.
+COMPILED = ("c", "cpp", "java", "rust")
+
+# The compile-only fallback, used when execution was refused.
+TIER2 = COMPILED
 
 # Which executable proves a toolchain is installed
 _TOOLCHAIN = {
@@ -48,7 +54,33 @@ _TOOLCHAIN = {
 
 def available_languages() -> dict[str, bool]:
     """Runtime detection — Java/Rust are optional on a dev machine."""
-    return {lang: shutil.which(exe) is not None for lang, exe in _TOOLCHAIN.items()}
+    if settings.exec_backend == "docker":
+        return _container_languages(settings.exec_container_image)
+    tools = {lang: shutil.which(exe) is not None for lang, exe in _TOOLCHAIN.items()}
+    tools["java"] = _working_javac(exec_harness.java_tool("javac"))
+    return tools
+
+
+@lru_cache(maxsize=8)
+def _container_languages(image: str) -> dict[str, bool]:
+    tools = {}
+    with tempfile.TemporaryDirectory(prefix="dsa-probe-") as scratch:
+        for language, executable in _TOOLCHAIN.items():
+            try:
+                tools[language] = _run([executable, "--version"], Path(scratch))[0] == 0
+            except RuntimeError:
+                tools[language] = False
+    return tools
+
+
+@lru_cache(maxsize=8)
+def _working_javac(executable: str) -> bool:
+    # macOS ships a javac shim even when no JDK is installed.
+    try:
+        result = subprocess.run([executable, "-version"], capture_output=True, timeout=5)
+        return result.returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
 
 
 @dataclass
@@ -65,9 +97,15 @@ class LangResult:
 def _limits(apply_address_space: bool = True):
     """Applied inside the child process before exec.
 
-    `apply_address_space` is False for Node: V8 *reserves* a large virtual
-    address space at startup, so an RLIMIT_AS cap makes it abort immediately.
-    Node's heap is bounded with --max-old-space-size instead.
+    `apply_address_space` is False for Node and for Java: V8 and the JVM both
+    *reserve* a large virtual address space at startup, so an RLIMIT_AS cap
+    makes them abort immediately — and `javac` is itself a Java program, so
+    the compile step is affected as well. Their heaps are bounded with a
+    runtime flag instead (--max-old-space-size, -Xmx). The set of affected
+    languages lives in exec_harness.NO_ADDRESS_SPACE_LIMIT.
+
+    This is invisible on macOS, where lowering RLIMIT_AS is refused and the
+    error swallowed below, and only shows up on Linux.
     """
     if apply_address_space:
         mem = settings.exec_memory_mb * 1024 * 1024
@@ -85,10 +123,8 @@ def _limits(apply_address_space: bool = True):
     # NOTE: RLIMIT_NPROC is deliberately NOT set here. It caps processes
     # per *UID*, not per process tree, so any value below the API user's
     # existing process count makes every fork fail — including the
-    # compiler's. Fork bombs are contained by the wall-clock timeout and the
-    # static screener instead; true per-tree process limits require cgroups
-    # or a container, which is the production path documented in the module
-    # docstring.
+    # compiler's. Host mode cannot contain a deliberate fork bomb; use the
+    # Docker backend for a per-container process limit.
     # No core dumps (they can be large and leak memory contents)
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     # Detach from the parent's process group so a kill takes the whole tree
@@ -97,29 +133,49 @@ def _limits(apply_address_space: bool = True):
 
 def _run(cmd: list[str], cwd: Path, stdin: str = "",
          apply_address_space: bool = True) -> tuple[int, str, str]:
+    if settings.exec_backend == "docker":
+        from app.services.container_executor import run
+        return run(cmd, cwd, stdin, _run_host)
+    return _run_host(cmd, cwd, stdin, apply_address_space)
+
+
+def _run_host(cmd: list[str], cwd: Path, stdin: str = "",
+         apply_address_space: bool = True) -> tuple[int, str, str]:
     """Run a command with a stripped env, scratch cwd, and hard timeout."""
     env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(cwd), "LANG": "C.UTF-8"}
+    # A few variables only tell a toolchain where it lives. Without them the
+    # toolchain cannot start at all: `rustc` from a rustup install is a shim
+    # that resolves the real compiler through RUSTUP_HOME, and with HOME
+    # pointed at the scratch directory it exits with "could not choose a
+    # version of rustc". These are toolchain-location settings, not secrets.
+    # Host execution still has no filesystem or network isolation.
+    for _k in exec_harness.TOOLCHAIN_ENV_PASSTHROUGH:
+        if _k in os.environ:
+            env[_k] = os.environ[_k]
+    proc = None
     try:
-        proc = subprocess.run(
-            cmd,
-            cwd=cwd,
-            input=stdin,
-            capture_output=True,
-            text=True,
-            timeout=settings.exec_timeout_seconds,
-            env=env,
-            preexec_fn=lambda: _limits(apply_address_space),
-        )
-        # Cap captured output — a program printing in a loop shouldn't be
-        # able to exhaust the API process's memory.
-        cap = settings.exec_max_output_bytes
-        return proc.returncode, proc.stdout[:cap], proc.stderr[:cap]
-    except subprocess.TimeoutExpired:
-        # setsid above means the child leads its own process group, so any
-        # grandchildren die with it rather than being orphaned.
-        return -1, "", f"Timed out after {settings.exec_timeout_seconds}s (possible infinite loop)"
-    except Exception as exc:  # noqa: BLE001
-        return -1, "", f"Execution error: {exc}"
+        # File-backed capture is bounded by RLIMIT_FSIZE; slicing a PIPE only
+        # after communicate() would still allow unbounded parent memory use.
+        with tempfile.TemporaryFile(dir=cwd) as output, tempfile.TemporaryFile(dir=cwd) as errors:
+            proc = subprocess.Popen(cmd,cwd=cwd,stdin=subprocess.PIPE,stdout=output,stderr=errors,
+                text=True,env=env,preexec_fn=lambda: _limits(apply_address_space))
+            try:
+                proc.communicate(input=stdin,timeout=settings.exec_timeout_seconds)
+            except subprocess.TimeoutExpired:
+                try: os.killpg(proc.pid,signal.SIGKILL)
+                except ProcessLookupError: pass
+                proc.wait(timeout=2)
+                return -1,"",f"Timed out after {settings.exec_timeout_seconds}s (possible infinite loop)"
+            cap=settings.exec_max_output_bytes
+            output.seek(0);errors.seek(0)
+            return proc.returncode,output.read(cap).decode('utf-8',errors='replace'),errors.read(cap).decode('utf-8',errors='replace')
+    except (OSError,subprocess.SubprocessError) as exc:
+        raise RuntimeError("Execution infrastructure could not start or complete the process") from exc
+    finally:
+        if proc is not None:
+            try: os.killpg(proc.pid,signal.SIGKILL)
+            except ProcessLookupError: pass
+
 
 
 # ---------------------------------------------------------------- Tier 1
@@ -198,7 +254,8 @@ def _run_stdio(language: str, solution: str, cases: list, expected: list) -> Lan
     return res
 
 
-def _run_tier1(language: str, solution: str, fn: str, cases: list, expected: list) -> LangResult:
+def _run_tier1(language: str, solution: str, fn: str, cases: list, expected: list, equal=None) -> LangResult:
+    equal = equal or _equal
     res = LangResult(language=language, tier=1, status="error", total_cases=len(cases))
     with tempfile.TemporaryDirectory() as td:
         cwd = Path(td)
@@ -225,7 +282,7 @@ def _run_tier1(language: str, solution: str, fn: str, cases: list, expected: lis
             return res
 
     res.outputs = actual
-    passed = sum(1 for a, e in zip(actual, expected) if _equal(a, e))
+    passed = sum(1 for a, e in zip(actual, expected) if equal(a, e))
     res.passed_cases = passed
     if passed == len(cases):
         res.status = "passed"
@@ -234,18 +291,15 @@ def _run_tier1(language: str, solution: str, fn: str, cases: list, expected: lis
         mismatches = [
             f"case {i + 1}: got {a!r}, expected {e!r}"
             for i, (a, e) in enumerate(zip(actual, expected))
-            if not _equal(a, e)
+            if not equal(a, e)
         ]
         res.detail = "; ".join(mismatches[:5])
     return res
 
 
 def _equal(a, b) -> bool:
-    """Order-insensitive for lists of lists (e.g. 3Sum triplets)."""
-    if isinstance(a, list) and isinstance(b, list):
-        if a and b and all(isinstance(x, list) for x in a + b):
-            return sorted(sorted(x) for x in a) == sorted(sorted(x) for x in b)
-    return a == b
+    from app.services.output_comparison import exact
+    return exact(a, b)
 
 
 # ---------------------------------------------------------------- Tier 2
@@ -286,7 +340,7 @@ def _run_tier2(language: str, solution: str) -> LangResult:
         elif language == "java":
             body = solution if "class " in solution else f"class Solution {{\n{solution}\n}}"
             (cwd / "Solution.java").write_text("import java.util.*;\n" + body)
-            cmd = ["javac", "-nowarn", "-d", ".", "Solution.java"]
+            cmd = [exec_harness.java_tool("javac"), "-nowarn", "-d", ".", "Solution.java"]
         else:  # rust
             body = solution if "struct Solution" in solution else f"struct Solution;\nimpl Solution {{\n{solution}\n}}\nfn main() {{}}"
             (cwd / "s.rs").write_text(body)
@@ -303,11 +357,56 @@ def _run_tier2(language: str, solution: str) -> LangResult:
     return res
 
 
+# ------------------------------------------------- Tier 1, compiled languages
+
+
+def _run_compiled(language: str, solution: str, fn: str,
+                  cases: list, expected: list, equal=None) -> LangResult:
+    """Execute a compiled language against the test cases.
+
+    Falls back to the compile-only check when `exec_harness` declines to
+    execute — a refusal is reported at tier 2 and blocks publication. What never
+    happens is a pass being claimed for code that was not run.
+    """
+    import contextlib
+
+    @contextlib.contextmanager
+    def _workdir():
+        with tempfile.TemporaryDirectory() as td:
+            yield Path(td)
+
+    outcome = exec_harness.compile_and_run(
+        language, solution, fn, cases, expected,
+        workdir=_workdir, run=_run,
+        memory_mb=settings.exec_memory_mb, equal=equal or _equal,
+    )
+
+    if outcome.status == "unverified":
+        # Execution was refused, so keep the signal we can still get.
+        res = _run_tier2(language, solution)
+        res.detail = f"not executed: {outcome.detail}"
+        if res.status == "passed":
+            # Compiling is not verifying. Say so plainly rather than letting
+            # it read as a pass.
+            res.status = "unverified"
+            res.detail += " (compiles cleanly, but correctness was not checked)"
+        return res
+
+    return LangResult(
+        language=language, tier=1, status=outcome.status,
+        detail=outcome.detail,
+        passed_cases=len(cases) if outcome.status == "passed" else 0,
+        total_cases=len(cases),
+        outputs=outcome.outputs or [],
+    )
+
+
 # ---------------------------------------------------------------- public API
 
 
 def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
-              cases: list, expected: list, io_mode: str = "function") -> dict:
+              cases: list, expected: list, io_mode: str = "function",
+              comparison: str = "exact") -> dict:
     """Validate every provided solution.
 
     solutions: {"python": "<code>", "c": "<code>", ...}
@@ -319,7 +418,19 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
     Returns a report dict with per-language results, cross-language
     agreement, and whether the publish gate is satisfied.
     """
+    from app.services.output_comparison import compare
+    equal = lambda a, b: compare(a, b, comparison)
     results: list[LangResult] = []
+    if io_mode == "linked_list":
+        from app.services.list_adapter import adapt
+        adapted, names = {}, dict(fn_names)
+        for lang, code in solutions.items():
+            if lang not in ("python", "javascript", "java"):
+                results.append(LangResult(language=lang, tier=2, status="unverified",
+                                          detail="Linked-list adapter unavailable for this language"))
+                continue
+            adapted[lang], names[lang] = adapt(lang, code, fn_names.get(lang, ""))
+        solutions, fn_names = adapted, names
 
     for lang in TIER1:
         if lang in solutions:
@@ -327,11 +438,24 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
                 results.append(_run_stdio(lang, solutions[lang], cases, expected))
             else:
                 results.append(
-                    _run_tier1(lang, solutions[lang], fn_names.get(lang, ""), cases, expected)
+                    _run_tier1(lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal)
                 )
-    for lang in TIER2:
-        if lang in solutions:
+
+    for lang in COMPILED:
+        if lang not in solutions:
+            continue
+        if not available_languages().get(lang):
+            results.append(LangResult(
+                language=lang, tier=2, status="unverified",
+                detail=f"{_TOOLCHAIN[lang]} not installed — cannot verify this language",
+            ))
+        elif io_mode == "stdio":
+            # stdin-driven problems have no typed signature to generate a
+            # driver from; the compile check is all that applies.
             results.append(_run_tier2(lang, solutions[lang]))
+        else:
+            results.append(_run_compiled(
+                lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
 
     # Cross-language agreement across Tier-1 languages that actually ran
     ran = [r for r in results if r.tier == 1 and r.status in ("passed", "failed") and r.outputs]
@@ -339,7 +463,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
     agreement_detail = "n/a (fewer than two executable implementations)"
     if len(ran) >= 2:
         base = ran[0]
-        disagreeing = [r.language for r in ran[1:] if not _equal(r.outputs, base.outputs)]
+        disagreeing = [r.language for r in ran[1:] if len(r.outputs) != len(base.outputs) or not all(equal(a,b) for a,b in zip(r.outputs,base.outputs))]
         agreement = not disagreeing
         agreement_detail = (
             "all executable implementations agree"
@@ -350,9 +474,14 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
     tier1_ran = [r for r in results if r.tier == 1]
     tier2_ran = [r for r in results if r.tier == 2]
     tier1_ok = bool(tier1_ran) and all(r.status == "passed" for r in tier1_ran)
-    tier2_ok = all(r.status in ("passed", "unverified") for r in tier2_ran)
+    tier2_ok = all(r.status == "passed" and r.tier == 1 for r in tier2_ran)
 
-    can_publish = tier1_ok and tier2_ok and agreement
+    can_publish = (tier1_ok and tier2_ok and agreement and bool(cases)
+                   and len(cases) == len(expected)
+                   and len(results) == len(solutions)
+                   and all(r.tier == 1 and r.status == "passed"
+                           and r.passed_cases == r.total_cases == len(cases)
+                           and len(r.outputs) == len(cases) for r in results))
     return {
         "results": [asdict(r) for r in results],
         "agreement": agreement,

@@ -23,15 +23,15 @@ class FakeStore:
         self.fail_delete = False
         self._n = 0
 
-    def add_documents(self, docs):
+    def add_documents(self, docs, ids=None):
         if self.fail_add:
             raise RuntimeError("embedding provider down")
-        ids = []
-        for d in docs:
+        result = []
+        for index, d in enumerate(docs):
             self._n += 1
-            ids.append(f"v{self._n}")
-            self.docs[ids[-1]] = d
-        return ids
+            result.append(ids[index] if ids is not None else f"v{self._n}")
+            self.docs[result[-1]] = d
+        return result
 
     def delete(self, ids=None, **_):
         if self.fail_delete:

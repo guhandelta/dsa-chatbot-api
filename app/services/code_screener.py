@@ -117,6 +117,38 @@ def screen(code: str, language: str = "python") -> ScreenResult:
         return ScreenResult("block", ["Submission exceeds the size limit."],
                             ["size_limit"])
 
+    if language == "python":
+        import ast
+        import io
+        import tokenize
+        # Comments are not executed and must not cause strikes.
+        try:
+            code = tokenize.untokenize(t for t in tokenize.generate_tokens(io.StringIO(code).readline) if t.type != tokenize.COMMENT)
+        except (tokenize.TokenError, IndentationError):
+            pass
+        try:
+            tree = ast.parse(code)
+            aliases = {}
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    for name in node.names: aliases[name.asname or name.name.split('.')[0]] = name.name
+                elif isinstance(node, ast.ImportFrom):
+                    for name in node.names: aliases[name.asname or name.name] = (node.module or '') + '.' + name.name
+            def call_name(node):
+                if isinstance(node, ast.Name): return aliases.get(node.id, node.id)
+                if isinstance(node, ast.Attribute): return call_name(node.value) + '.' + node.attr
+                if isinstance(node, ast.Call): return call_name(node.func)
+                return ''
+            prohibited = ('os.system','os.popen','os.fork','os.exec','os.spawn','os.environ','os.getenv',
+                          'subprocess.','socket.','requests.','urllib.','httpx.','aiohttp.','ctypes.','cffi.',
+                          'pathlib.Path.read_','pathlib.Path.write_')
+            for node in ast.walk(tree):
+                name = call_name(node.func) if isinstance(node, ast.Call) else call_name(node) if isinstance(node, ast.Attribute) else ''
+                if name == 'open' or any(name.startswith(p) for p in prohibited):
+                    return ScreenResult('block', ['uses prohibited filesystem, process, environment, or network operations'], ['python_ast'])
+        except SyntaxError:
+            pass  # Syntax errors belong to evaluation, not the strike policy.
+
     reasons: list[str] = []
     matched: list[str] = []
     worst = "allow"
