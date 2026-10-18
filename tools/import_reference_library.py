@@ -14,13 +14,14 @@ from collections import Counter
 from pathlib import Path
 
 from app.services.document_parser import parse_pdf
+from app.services.knowledge_hygiene import section_chunks, strip_contents
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT/'dsa-chatbot-api/data/reference_library'
 LIMIT = 25*1024*1024
 PRIMARY = {'java','javascript','js'}
 ANSWER_KINDS = {'exercise','coding exercise','coding_exercise','gotcha','common gotcha','common_gotcha','common_gotchas','gotchas','coding_exercises','exercises'}
-STOP = re.compile(r'^(?:\d+[.)]?\s+)?(?:coding\s+)?(?:exercises?|exercise\s+bank|practice\s+bank|assessment|answer\s+key|reference\s+solutions?|solutions?|grading)(?:\b|\s)',re.I)
+STOP = re.compile(r'^(?:\d+[.)]?\s+)?(?:coding\s+)?(?:exercises?|exercise\s+bank|practice\s+bank|assessment|answer\s+key|reference\s+solutions?|solutions?|grading)(?:\b|\s)(?![,;])',re.I)
 
 
 def digest(raw): return hashlib.sha256(raw).hexdigest()
@@ -87,7 +88,7 @@ def normalize(raw, source):
         if not scope:return None
         language=scope[0]
     subject=language
-    if m.get('track')=='embedded' or raw.get('track')=='embedded_c':
+    if m.get('track') in ('embedded','embedded_c') or raw.get('track') in ('embedded','embedded_c'):
         subject='embedded-'+language
     elif scope and scope[0]==language and ('django' in scope[1] or 'flask' in scope[1] or 'fastapi' in scope[1]):
         subject=scope[1]
@@ -147,15 +148,21 @@ def build(source_root, output):
             if suffix=='.docx': text=docx_text(raw)
             elif suffix=='.pdf': text=parse_pdf(raw)
             else: text=raw.decode('utf-8-sig', errors='ignore')
-            safe=safe_reference(text)
+            safe=safe_reference(strip_contents(text))
             if len(safe)<80:failures.append({'source':source,'error':'No usable reference prose'});return
-            for i,part in enumerate(split_text(safe)):
-                accept({'key':(scope[1],'document-'+sha+'-'+str(i)), 'document':part,
+            for i,part in enumerate(section_chunks(safe)):
+                accept({'key':(scope[1],'section-'+sha+'-'+str(i)), 'document':part,
                     'kind':'reference','language':scope[0],'subject':scope[1],'contains_answer':False,
-                    'payload':{'source_sha256':sha,'full_text':text if i==0 else '', 'verification':'not_executed'},'source':source})
+                    'payload':{'source_sha256':sha,'full_text':text if i==0 else '', 'verification':'not_executed',
+                               'chunking':'heading-sections-v1'},'source':source})
     for path in sorted(source_root.rglob('*')):
         if not path.is_file():continue
         rel=path.relative_to(source_root).as_posix();suffix=path.suffix.lower()
+        # Exported candidates contain duplicate batch/combined views plus
+        # evaluation-only queries. Only the dedicated validated importer may
+        # promote them; a legacy source scan must never ingest the archive.
+        if rel.startswith('generated/') or rel.startswith('generated-gap-fill/'):
+            skips['generated_candidate_exports']+=1;continue
         if '/JS/' in '/'+rel or '/Java/' in '/'+rel:
             skips['primary_source_files']+=1;continue
         try:
@@ -182,17 +189,42 @@ def build(source_root, output):
     rows=[]
     for key,(_,item) in sorted(unique.items()):
         context=item.get('context',{})
-        header='Imported reference; not locally executed. Subject: '+item['subject']
-        if context:header+='; '+ '; '.join(f'{k}: {v}' for k,v in context.items())
-        rows.append({'id':'ref-'+digest(json.dumps(key).encode())[:24],'document':header+'\n'+item['document'],
+        # Verification status lives in metadata; only version/platform context is kept in the text.
+        header=('Context: '+'; '.join(f'{k}: {v}' for k,v in context.items())+'\n') if context else ''
+        rows.append({'id':'ref-'+digest(json.dumps(key).encode())[:24],'document':header+item['document'],
             'metadata':{'source':'reference-library','kind':item['kind'],'language':item['language'],
                 'subject':item['subject'],'track':'language','contains_answer':item['contains_answer'],
                 'verified':False,'executable':False,'origin':item['source'],**context},
             'provenance':sorted({alias for origin in provenance[key] for alias in aliases.get(origin,{origin})}),'payload':item['payload']})
+    # Preserve previously promoted generated references, while keeping exported
+    # candidates/evaluation files out of the legacy source normalization path.
+    # Their stable IDs and explicit framework scopes must survive a rebuild.
+    active_file = output/'records.jsonl'
+    retained_generated = []
+    if active_file.exists():
+        from app.services.reference_library import eligible as is_public_reference
+        current_ids = {r['id'] for r in rows}
+        for line in active_file.open(encoding='utf-8'):
+            if not line.strip(): continue
+            record = json.loads(line)
+            metadata = record.get('metadata', {})
+            promoted = (metadata.get('dataset_version') == 'knowledge-gap-fill-v1'
+                        or metadata.get('dataset_version') == 'framework-sections-v1'
+                        or metadata.get('origin') in ('generated_batch_001', 'generated_batch_002')
+                        or str(metadata.get('origin', '')).startswith('generated_gap_fill_'))
+            if promoted and record['id'] not in current_ids and is_public_reference(record):
+                retained_generated.append(record)
+                current_ids.add(record['id'])
+        rows.extend(retained_generated)
+    from app.services.knowledge_hygiene import clean_reference_rows, VERSION
+    rows, quarantine, redirects = clean_reference_rows(rows)
     from app.services.reference_library import eligible
     manifest={'format_version':1,'record_count':len(rows),'retrievable_count':sum(eligible(r) for r in rows),
         'by_subject':dict(Counter(r['metadata']['subject'] for r in rows)),
         'source_files':sources,'skipped':dict(skips),'conflicting_ids_quarantined':conflicts,'errors':failures,
+        'curation_version':VERSION, 'quarantined_records':len(quarantine),
+        'promoted_generated_records_preserved':len(retained_generated),
+        'duplicate_redirects':redirects,
         'notes':['No supplied code was executed. Source verification claims are not executable certification.',
                  'Exercise/gotcha candidates and their answers are preserved but excluded from learner retrieval.',
                  'Blueprint reference views stop at detected exercise/answer headings; editorial review remains required.',
@@ -202,6 +234,18 @@ def build(source_root, output):
     pending=output/'records.pending'
     pending.write_text(''.join(json.dumps(r,ensure_ascii=False,sort_keys=True)+'\n' for r in rows))
     pending.replace(output/'records.jsonl')
+    pending=output/'manifest.pending'
+    pending.write_text(json.dumps(manifest,indent=2)+'\n')
+    pending.replace(output/'manifest.json')
+    # Never overwrite the archive of earlier curation decisions on reimport.
+    archive = output/'quarantine.jsonl'
+    previous = [json.loads(line) for line in archive.open() if line.strip()] if archive.exists() else []
+    retained = {(q['record']['id'], digest(json.dumps(q['record'],sort_keys=True).encode())): q for q in previous + quarantine}
+    pending=output/'quarantine.pending'
+    pending.write_text(''.join(json.dumps(q,ensure_ascii=False,sort_keys=True)+'\n' for q in retained.values()))
+    pending.replace(archive)
+    manifest['quarantined_records'] = len(retained)
+    manifest['active_sha256'] = digest((output/'records.jsonl').read_bytes())
     pending=output/'manifest.pending'
     pending.write_text(json.dumps(manifest,indent=2)+'\n')
     pending.replace(output/'manifest.json')

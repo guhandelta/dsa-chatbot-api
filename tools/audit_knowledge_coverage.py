@@ -64,8 +64,9 @@ def summarize(rows):
     for (language, subject), items in sorted(groups.items()):
         # Deliberately inspect learner reference text only; private solutions must
         # not inflate evidence that a topic is actually available to the learner.
+        from app.services.knowledge_hygiene import PUBLIC_REFERENCE_KINDS
         safe = [r for r in items if r['metadata'].get('contains_answer') is False
-                and r['metadata'].get('kind') not in ('exercise', 'gotcha')]
+                and r['metadata'].get('kind') in PUBLIC_REFERENCE_KINDS]
         evidence = {topic: [r['id'] for r in safe if re.search(pattern, r['document'], re.I)][:3]
                     for topic, pattern in TOPICS.items()}
         subjects.append({'language': language, 'subject': subject, 'records': len(items),

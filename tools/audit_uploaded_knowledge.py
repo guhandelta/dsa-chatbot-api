@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit approved local PDF projections without changing text, approvals or vectors.
+"""Audit approved local extracted reference projections without changing sources.
 
 This verifies mechanical retrieval/source separation; it is not a human review
 of every pedagogical assertion. Run after upload/replacement or projection edits.
@@ -16,6 +16,7 @@ from sqlalchemy import select
 from app.db.database import SessionLocal
 from app.db.models import KnowledgeDocument
 from app.services.uploaded_knowledge import project, infer_language, search, PROJECTION_VERSION
+from app.services.knowledge_hygiene import source_is_plan
 
 
 async def audit():
@@ -24,6 +25,15 @@ async def audit():
     async with SessionLocal() as session:
         rows = list((await session.scalars(select(KnowledgeDocument).where(KnowledgeDocument.status=='published'))).all())
         for row in rows:
+            if source_is_plan(row.filename):
+                docs = project(row.id, row.filename, row.text, row.track, row.language)
+                report['documents'].append({'document_id': row.id, 'filename': row.filename,
+                    'language': row.language or infer_language(row.filename),
+                    'excluded_by_curation': True, 'reference_chunks': len(docs),
+                    'reason': 'Authoring plan; intentionally withheld from learner retrieval.'})
+                if docs:
+                    report['failures'].append(row.id)
+                continue
             docs = project(row.id, row.filename, row.text, row.track, row.language)
             language = row.language or infer_language(row.filename)
             # Expected source is known independently from the ranking result.
