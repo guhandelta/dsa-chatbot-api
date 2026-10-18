@@ -162,7 +162,7 @@ async def test_expired_interrupted_request_refunds_once(client,db):
     from app.services.peppercorns import debit
     headers,uid=await register(client,db);key='interrupted';headers['Idempotency-Key']=key
     from app.models.schemas import ChatRequest
-    payload=ChatRequest(message='hi').model_dump()
+    payload={**ChatRequest(message='hi').model_dump(),'provider':'auto'}
     opid=hashlib.sha256(json.dumps([uid,'chat',key]).encode()).hexdigest()
     fingerprint=hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(',',':')).encode()).hexdigest()
     await debit(db,uid,settings.chat_cost,'chat')

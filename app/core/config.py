@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     # Default LLM provider (can be overridden per request)
     default_provider: str = "openai"
 
+    # Tutor routing preferences; tune with representative questions and costs.
+    chat_explain_provider: Literal['gemini', 'openai', 'claude'] = 'gemini'
+    chat_code_provider: Literal['gemini', 'openai', 'claude'] = 'claude'
+    chat_reasoning_provider: Literal['gemini', 'openai', 'claude'] = 'openai'
+    chat_model_timeout_seconds: float = Field(default=45, ge=1, le=120)
+
     # Model IDs (override via .env without touching code)
     openai_model: str = "gpt-4o-mini"
     anthropic_model: str = "claude-sonnet-4-20250514"

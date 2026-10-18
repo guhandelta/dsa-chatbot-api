@@ -20,6 +20,7 @@ from app.models.schemas import ChatRequest, ChatResponse, MessageOut, ThreadOut
 from app.services.peppercorns import InsufficientPeppercornsError, credit, debit
 from app.services.rag_pipeline import build_history, run_rag_chat
 from app.services.language_access import require_language, require_content, allowed_languages
+from app.services.chat_model_routing import configured_providers, run_routed_chat
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -53,6 +54,8 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
         raise HTTPException(403, str(exc))
     # Authorize before receipt replay as well as before new provider work.
     await require_language(session, current_user, request.language)
+    # A student cannot force a provider by bypassing the page controls.
+    selected_provider = 'auto' if current_user.role == 'student' else request.provider
     if request.focus_id:
         await require_content(session, current_user, request.focus_id, request.language)
     if request.thread_id:
@@ -60,6 +63,8 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
         if (thread.language, thread.subject, thread.track) != (request.language, request.subject or '', request.track):
             raise HTTPException(409, 'Start a new conversation when changing language, subject, or track.')
     async def prepare():
+        if selected_provider == 'auto' and not configured_providers():
+            raise HTTPException(503, 'The tutor is temporarily unavailable. Please try again later.')
         if request.retrieval_mode == 'agentic':
             from app.services.agentic_rag import MAX_MESSAGE_BYTES
             if not settings.agentic_rag_enabled or current_user.role != 'admin':
@@ -89,29 +94,37 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
             thread, rows = None, []
         history=build_history(rows)
         await session.commit()
-        citations=[]
-        retrieval=None
-        if request.retrieval_mode == 'agentic':
-            from app.services.agentic_rag import ReadOnlyTools, Scope, run
-            result=await run(request.message,request.provider,history,ReadOnlyTools(session,
-                Scope(request.language or current_user.preferred_language,request.track,request.focus_id,request.subject)))
-            answer,citations,retrieval=result.answer,result.sources,result.report
-        else:
+        uploads = []
+        if request.retrieval_mode != 'agentic':
             from app.services.uploaded_knowledge import search as search_uploads
             uploads = await search_uploads(session, request.message, request.track,
                 request.language or current_user.preferred_language, request.focus_id, request.subject)
+
+        async def generate(provider):
+            citations = []
+            if request.retrieval_mode == 'agentic':
+                from app.services.agentic_rag import ReadOnlyTools, Scope, run
+                result = await run(request.message, provider, history, ReadOnlyTools(session,
+                    Scope(request.language, request.track, request.focus_id, request.subject)))
+                return result.answer, result.sources, result.report
             upload_options = {"uploaded_documents": uploads, "citations": citations} if uploads else {}
-            answer = await run_rag_chat(message=request.message, provider=request.provider,
+            answer = await run_rag_chat(message=request.message, provider=provider,
                 history=history, language=request.language or current_user.preferred_language,
                 track=request.track, focus_id=request.focus_id,
                 **({"subject":request.subject} if request.subject else {}), **upload_options)
+            return answer, citations, None
+
+        (answer, citations, retrieval), model_routing = await run_routed_chat(
+            request.message, history, selected_provider, generate)
         if thread is None:
             thread=await _get_or_create_thread(session,current_user,None,request.message)
             thread.language, thread.subject, thread.track = request.language, request.subject or '', request.track
         session.add_all([ChatMessage(thread_id=thread.id, role='user', content=request.message),
                          ChatMessage(thread_id=thread.id, role='assistant', content=answer)])
-        return ChatResponse(answer=answer, thread_id=thread.id, peppercorns_remaining=balance, sources=citations, retrieval=retrieval)
-    return await perform(session,current_user.id,'chat',idempotency_key,request.model_dump(),
+        return ChatResponse(answer=answer, thread_id=thread.id, peppercorns_remaining=balance,
+                            sources=citations, retrieval=retrieval, model_routing=model_routing)
+    payload = {**request.model_dump(), 'provider': selected_provider}
+    return await perform(session,current_user.id,'chat',idempotency_key,payload,
                          settings.chat_cost,'chat',work,prepare=prepare)
 
 

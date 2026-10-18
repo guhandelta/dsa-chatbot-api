@@ -98,7 +98,7 @@ Track = Literal["language", "dsa", "algorithm"]
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=8000)
     thread_id: Optional[str] = None          # For conversation memory
-    provider: Provider = "gemini"
+    provider: Literal['auto', 'openai', 'claude', 'gemini'] = 'gemini'
     language: str = Field(default="python", min_length=1, max_length=32) # e.g. "python", "java", "cpp"
     mode: Literal["learn", "practice"] = "learn"
     retrieval_mode: Literal["standard", "agentic"] = "standard"
@@ -123,6 +123,7 @@ class ChatResponse(BaseModel):
     peppercorns_remaining: int
     sources: list[SourceCitation] = Field(default_factory=list)
     retrieval: dict | None = None
+    model_routing: dict | None = None
 
 
 class ThreadOut(BaseModel):
