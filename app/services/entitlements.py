@@ -81,13 +81,19 @@ async def list_for(session: AsyncSession, user_id: str) -> list[Subscription]:
 
 
 async def grant(session: AsyncSession, user_id: str, language: str,
-                days: int = 30, provider_ref: str = "") -> Subscription:
+                days: int = 30, provider_ref: str = "", manual_only: bool = False) -> Subscription:
     """Called by the Stripe webhook on successful payment, or by an admin.
 
     Extends an existing active subscription rather than stacking a second one,
     so a renewal adds time instead of creating a duplicate entitlement.
     """
-    existing = await active_for(session, user_id, language)
+    if manual_only:
+        existing = await session.scalar(select(Subscription).where(
+            Subscription.user_id == user_id, Subscription.language == language,
+            Subscription.provider_ref == '', Subscription.status.in_(('active', 'cancelled')),
+            Subscription.expires_at > _now()).order_by(Subscription.expires_at.desc()))
+    else:
+        existing = await active_for(session, user_id, language)
     if existing:
         expires = existing.expires_at
         if expires.tzinfo is None:

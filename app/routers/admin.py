@@ -1,5 +1,5 @@
 # /admin — user & role management. Admins assign the instructor role.
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,7 @@ from app.models.schemas import RoleUpdate, UserOut
 from app.services import trace_store
 from app.services.peppercorns import credit
 from app.services.strikes import list_events, reinstate
+from app.services import admin_audit
 from app.models.schemas import InstructorLanguagesUpdate
 from app.db.models import InstructorLanguage
 
@@ -47,9 +48,12 @@ async def assign_languages(user_id: str, update: InstructorLanguagesUpdate,
     languages = set(update.languages)
     if languages - set(available_languages()):
         raise HTTPException(422, 'Choose supported teaching languages.')
+    previous = list((await session.scalars(select(InstructorLanguage.language).where(InstructorLanguage.user_id == user_id))).all())
     await session.execute(delete(InstructorLanguage).where(InstructorLanguage.user_id == user_id))
     session.add_all(InstructorLanguage(user_id=user_id, language=language, assigned_by=admin.id)
                     for language in sorted(languages))
+    admin_audit.record(session, admin.id, 'teaching_languages', user_id,
+                       before={'languages': sorted(previous)}, after={'languages': sorted(languages)})
     await session.commit()
     return await teaching_languages(user_id, admin, session)
 
@@ -82,7 +86,10 @@ async def set_role(
             status_code=400, detail="You cannot change your own admin role."
         )
 
+    previous_role = user.role
     user.role = update.role
+    admin_audit.record(session, admin.id, 'role_change', user_id,
+                       before={'role': previous_role}, after={'role': update.role})
     await session.commit()
     await session.refresh(user)
     return UserOut.model_validate(user)
@@ -91,12 +98,14 @@ async def set_role(
 @router.get("/security-events")
 async def security_events(
     user_id: str | None = None,
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
     _: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
 ):
     """Audit trail of blocked submissions. Every automated strike must be
     reviewable by a human — that is what makes suspension defensible."""
-    events = await list_events(session, user_id)
+    events = await list_events(session, user_id, limit=limit, offset=offset)
     return [
         {
             "id": e.id,
@@ -115,7 +124,7 @@ async def security_events(
 @router.post("/users/{user_id}/reinstate", response_model=UserOut)
 async def reinstate_user(
     user_id: str,
-    _: User = Depends(require_admin),
+    admin: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
 ):
     """Clears a suspension and resets the strike counter. The security_events
@@ -123,7 +132,10 @@ async def reinstate_user(
     user = await session.get(User, user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    previous = {'status': user.status, 'strikes': user.strikes}
     await reinstate(session, user)
+    admin_audit.record(session, admin.id, 'account_reinstated', user_id, before=previous,
+                       after={'status': user.status, 'strikes': user.strikes})
     await session.commit()
     await session.refresh(user)
     return UserOut.model_validate(user)
@@ -176,12 +188,17 @@ async def trace_detail(
 @router.delete("/traces")
 async def prune_traces(
     older_than_days: int = 14,
-    _: User = Depends(require_admin),
+    admin: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
 ):
     """Retention is manual by design — traces grow quickly and the right
     policy depends on how much history you want to debug against."""
-    removed = await trace_store.prune(session, older_than_days)
+    if older_than_days < 1:
+        raise HTTPException(422, 'Retention must be at least one day.')
+    removed = await trace_store.prune(session, older_than_days, commit=False)
+    admin_audit.record(session, admin.id, 'traces_pruned', 'trace_records',
+                       after={'older_than_days': older_than_days, 'removed': removed})
+    await session.commit()
     return {"deleted": removed, "older_than_days": older_than_days}
 
 
@@ -208,7 +225,9 @@ async def grant_peppercorns(
 
     from app.services.operations import perform
     async def work(_):
-        await credit(session, user_id, amount, reason=f"admin:{reason}")
+        balance = await credit(session, user_id, amount, reason=f"admin:{reason}")
+        admin_audit.record(session, admin.id, 'peppercorn_grant', user_id, reason=reason[:500],
+                           before={'peppercorns': balance-amount}, after={'peppercorns': balance, 'amount': amount})
         await session.refresh(target)
         return UserOut.model_validate(target)
     return await perform(session, admin.id, "admin:credit", idempotency_key,

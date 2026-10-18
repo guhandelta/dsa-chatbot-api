@@ -122,12 +122,13 @@ async def summary(session: AsyncSession, limit: int = 500) -> dict:
     }
 
 
-async def prune(session: AsyncSession, older_than_days: int) -> int:
+async def prune(session: AsyncSession, older_than_days: int, *, commit: bool = True) -> int:
     """Delete old traces. Traces accumulate quickly; retention is deliberate
     rather than automatic so an operator decides the policy."""
     cutoff = datetime.now(timezone.utc) - timedelta(days=older_than_days)
     result = await session.execute(
         delete(TraceRecord).where(TraceRecord.created_at < cutoff)
     )
-    await session.commit()
+    if commit:
+        await session.commit()
     return result.rowcount or 0

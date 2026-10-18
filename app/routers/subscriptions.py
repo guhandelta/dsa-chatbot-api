@@ -108,6 +108,7 @@ async def admin_grant(
     user_id: str,
     language: str = Query(min_length=1,max_length=20),
     days: int = Query(default=30,ge=1,le=3650),
+    reason: str = Query(default='Manual access grant', min_length=3, max_length=500),
     issuer: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
     idempotency_key: str | None = Header(default=None),
@@ -119,9 +120,12 @@ async def admin_grant(
     if await session.get(User,user_id) is None:
         raise HTTPException(404,"User not found")
     async def work(_):
-        sub=await entitlements.grant(session,user_id,language,days=days)
+        sub=await entitlements.grant(session,user_id,language,days=days,manual_only=True)
         await session.flush()
+        from app.services.admin_audit import record
+        record(session, issuer.id, 'subscription_grant', user_id, reason=reason,
+               after={'language': language, 'days': days, 'expires_at': sub.expires_at})
         return SubscriptionOut(id=sub.id,language=sub.language,status=sub.status,
                                expires_at=sub.expires_at.isoformat())
     return await perform(session,issuer.id,'subscription:grant',idempotency_key,
-                         {'user_id':user_id,'language':language,'days':days},0,'admin-grant',work)
+                         {'user_id':user_id,'language':language,'days':days,'reason':reason},0,'admin-grant',work)

@@ -105,10 +105,12 @@ async def record_event(
     }
 
 
-async def list_events(session: AsyncSession, user_id: str | None = None) -> list[SecurityEvent]:
+async def list_events(session: AsyncSession, user_id: str | None = None, *, limit: int | None = None, offset: int = 0) -> list[SecurityEvent]:
     stmt = select(SecurityEvent).order_by(SecurityEvent.created_at.desc())
     if user_id:
         stmt = stmt.where(SecurityEvent.user_id == user_id)
+    if limit is not None:
+        stmt = stmt.limit(limit).offset(offset)
     return list((await session.execute(stmt)).scalars())
 
 

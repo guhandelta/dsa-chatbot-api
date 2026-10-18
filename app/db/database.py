@@ -48,7 +48,7 @@ async def init_db() -> None:
 
         thread_columns = await conn.run_sync(lambda sync: {c["name"] for c in inspect(sync).get_columns("chat_threads")}) if "chat_threads" in tables else set()
 
-    if not {"users", "service_operations", "practice_sessions", "practice_checkpoints", "webhook_receipts", "vector_cleanup_jobs", "instructor_languages"}.issubset(tables) or "busy_token" not in practice_columns or "language" not in knowledge_columns or not {"language", "subject", "track"}.issubset(thread_columns):
+    if not {"users", "service_operations", "practice_sessions", "practice_checkpoints", "webhook_receipts", "vector_cleanup_jobs", "instructor_languages", "admin_audit_events"}.issubset(tables) or "busy_token" not in practice_columns or "language" not in knowledge_columns or not {"language", "subject", "track"}.issubset(thread_columns):
         raise RuntimeError(
             "Database schema is not initialised. Run:  alembic upgrade head"
         )

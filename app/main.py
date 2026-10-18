@@ -16,6 +16,7 @@ from app.core.config import settings
 from app.db.database import init_db
 from app.routers import (
     admin,
+    admin_dashboard,
     analyze,
     auth,
     chat,
@@ -65,6 +66,7 @@ app.include_router(mentor.router)
 app.include_router(subscriptions.router)
 app.include_router(training.router)
 app.include_router(admin.router)
+app.include_router(admin_dashboard.router)
 
 
 @app.get("/health")

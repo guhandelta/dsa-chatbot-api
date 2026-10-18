@@ -54,6 +54,18 @@ class Transaction(Base):
     user: Mapped["User"] = relationship(back_populates="transactions")
 
 
+class AdminAuditEvent(Base):
+    __tablename__ = "admin_audit_events"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    actor_id: Mapped[str] = mapped_column(ForeignKey('users.id'), index=True)
+    action: Mapped[str] = mapped_column(String(60), index=True)
+    target_id: Mapped[str] = mapped_column(String(120), index=True)
+    reason: Mapped[str] = mapped_column(String(500), default='')
+    before_json: Mapped[str] = mapped_column(Text, default='{}')
+    after_json: Mapped[str] = mapped_column(Text, default='{}')
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
 class InstructorLanguage(Base):
     __tablename__ = "instructor_languages"
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)

@@ -251,6 +251,7 @@ async def train_knowledge_base(
         )
     ).scalar_one_or_none()
     old_ids = _chunk_ids(existing) if existing else []
+    old_state = {'status': existing.status, 'filename': existing.filename} if existing else {}
     doc = existing or KnowledgeDocument(owner_id=current_user.id, filename=filename)
     if existing is None:
         session.add(doc)
@@ -279,6 +280,10 @@ async def train_knowledge_base(
         message = f"Uploaded '{filename}'. It will be used in chat once an admin approves it."
 
     queue_cleanup(session, old_ids)
+    if current_user.role == 'admin':
+        from app.services.admin_audit import record
+        record(session, current_user.id, 'document_replaced' if existing else 'document_uploaded', doc.id,
+               before=old_state, after={'status': doc.status, 'filename': doc.filename})
     await session.commit()
     await drain_cleanup(session)
 
@@ -344,6 +349,10 @@ async def delete_document(
 ):
     doc = await _get_visible(session, doc_id, current_user)
     ids = _chunk_ids(doc)
+    if current_user.role == 'admin':
+        from app.services.admin_audit import record
+        record(session, current_user.id, 'document_deleted', doc.id,
+               before={'filename': doc.filename, 'status': doc.status})
     queue_cleanup(session, ids)
     await session.delete(doc)
     await session.commit()
@@ -354,15 +363,19 @@ async def delete_document(
 @router.post("/documents/{doc_id}/approve", response_model=KnowledgeDocumentOut)
 async def approve_document(
     doc_id: str,
+    body: KnowledgeReviewRequest | None = None,
     admin: User = Depends(require_admin),
     session: AsyncSession = Depends(get_session),
 ):
     doc = await _get_visible(session, doc_id, admin)
     if doc.status == "published":
         raise HTTPException(status_code=409, detail="Document is already published.")
+    previous = doc.status
     ids = await _index(doc, session)
     doc.chunk_ids = json.dumps(ids)
-    _mark_reviewed(doc, admin, "published")
+    _mark_reviewed(doc, admin, "published", (body.note if body else '').strip())
+    from app.services.admin_audit import record
+    record(session, admin.id, 'document_approved', doc.id, reason=doc.review_note, before={'status': previous}, after={'status': doc.status, 'filename': doc.filename})
     await session.commit()
     return _out(doc)
 
@@ -376,9 +389,12 @@ async def reject_document(
 ):
     """Rejects a pending upload, or unpublishes a published one."""
     doc = await _get_visible(session, doc_id, admin)
+    previous = doc.status
     ids = _chunk_ids(doc)
     doc.chunk_ids = "[]"
     _mark_reviewed(doc, admin, "rejected", (body.note if body else "").strip())
+    from app.services.admin_audit import record
+    record(session, admin.id, 'document_rejected', doc.id, reason=doc.review_note, before={'status': previous}, after={'status': doc.status, 'filename': doc.filename})
     queue_cleanup(session, ids)
     await session.commit()
     await drain_cleanup(session)
