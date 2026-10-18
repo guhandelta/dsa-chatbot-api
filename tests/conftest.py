@@ -55,3 +55,20 @@ async def client(session_factory):
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def isolate_training_history(tmp_path, monkeypatch):
+    # Importer tests must never append temporary runs to the application's log.
+    from app.services import training_registry
+    monkeypatch.setattr(training_registry, 'LOG_FILE', tmp_path / 'training-events.json')
+
+
+@pytest.fixture
+def subscribe_user(db):
+    async def subscribe(user_id, *languages):
+        from app.services.entitlements import grant
+        for language in languages:
+            await grant(db, user_id, language, days=42)
+        await db.commit()
+    return subscribe

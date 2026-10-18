@@ -410,11 +410,11 @@ tendency.
 
 ## Subscriptions
 
-Mentor access is a **per-language** subscription: a Python subscriber gets
-Socratic mentoring whenever they code in Python, across all three tracks.
-Two independent gates — the subscription grants *access*, peppercorns pay for
-*usage* (`MENTOR_COST` per turn). Review, chat, and practice stay available
-without any subscription.
+Student learning access is scoped to the languages covered by active
+subscriptions, including fundamentals, chat, reviews, practice and mentoring.
+Admins access all available languages; instructors access teaching assignments
+and languages associated with their saved uploads. Peppercorns pay for usage
+within permitted languages and remain on the account after subscription expiry.
 
 ### Payments
 
@@ -567,3 +567,16 @@ October 15 follow-up: [OpenAI comparison, live mentor and Docker checks](docs/RE
 [Whole-library foundation readiness and coverage audit](docs/FOUNDATION_READINESS.md) covers every packaged language and framework subject.
 
 [October 16 knowledge-base gaps and language suggestions](docs/KNOWLEDGE_BASE_GAPS_2026-10-16.md) · [HTML/CSS training-data generation prompts](docs/training-prompts/README.md).
+
+## Role and language access
+
+Admins can learn in every available language. Instructors can learn in their
+assigned teaching languages and languages associated with their saved uploads.
+Students require active subscriptions covering their chosen languages. Both
+instructors and admins retain RAG training access. Access is enforced by the API
+as well as filtered selectors, including for saved sessions and receipt retries.
+
+Run `alembic upgrade head` for migration `0009_language_access`. Assign instructor
+languages from Admin, then use Chat's language/reference selectors to browse
+permitted material. See [the full access contract](docs/ROLE_LANGUAGE_ACCESS.md)
+for expiry, instructor upload provenance and older chat history behavior.

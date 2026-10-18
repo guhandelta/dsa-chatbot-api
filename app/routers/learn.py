@@ -204,7 +204,8 @@ async def _read_upload(request: Request) -> tuple[str, str, str, str]:
             status_code=413,
             detail=f"Document is too long ({len(final_text):,} characters; limit {MAX_TEXT_CHARS:,}). Split it and upload the parts.",
         )
-    if language and language not in {"javascript", "java", "typescript", "python", "cpp", "c", "rust", "go", "ruby"}:
+    from app.services.language_access import available_languages
+    if language and language not in available_languages():
         raise HTTPException(422, "Unsupported reference language.")
     from app.services.uploaded_knowledge import infer_language
     inferred = infer_language(filename)

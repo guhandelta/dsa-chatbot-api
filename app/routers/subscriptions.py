@@ -1,4 +1,4 @@
-# /subscriptions — per-language mentor entitlements.
+# /subscriptions — per-language student learning entitlements.
 #
 # PAYMENTS ARE NOT HANDLED HERE. Checkout runs in Stripe Checkout, hosted by
 # Stripe, so card data never reaches this server. Stripe then calls the
@@ -113,6 +113,9 @@ async def admin_grant(
     idempotency_key: str | None = Header(default=None),
 ):
     from app.services.operations import perform
+    from app.services.language_access import available_languages
+    if language not in available_languages():
+        raise HTTPException(422, 'Choose a supported language.')
     if await session.get(User,user_id) is None:
         raise HTTPException(404,"User not found")
     async def work(_):

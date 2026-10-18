@@ -205,7 +205,11 @@ class SubmissionOut(BaseModel):
 
 
 class LanguagePreference(BaseModel):
-    language: Literal["python", "javascript", "java", "cpp", "c", "rust"]
+    language: str = Field(min_length=1, max_length=32, pattern=r"^[a-z][a-z0-9-]*$")
+
+
+class InstructorLanguagesUpdate(BaseModel):
+    languages: list[str] = Field(max_length=40)
 
 
 # ---------- Mentor & subscriptions ----------

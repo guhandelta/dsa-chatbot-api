@@ -128,14 +128,15 @@ def test_patterns_and_algorithms_are_independent_tags():
 
 # ---------------- endpoints ----------------
 
-async def _reg(client, email):
+async def _reg(client, email, *, subscribe_user):
     r = await client.post("/auth/register",
                           json={"email": email, "password": "password123"})
+    await subscribe_user(r.json()["user"]["id"], 'javascript', 'rust')
     return r.json()
 
 
-async def test_tracks_endpoint_returns_sections(client):
-    body = await _reg(client, "sec@x.com")
+async def test_tracks_endpoint_returns_sections(client, subscribe_user):
+    body = await _reg(client, "sec@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/", headers=h)
     assert r.status_code == 200
@@ -146,8 +147,8 @@ async def test_tracks_endpoint_returns_sections(client):
     assert "browse" in payload["modes"]
 
 
-async def test_language_levels_endpoint(client):
-    body = await _reg(client, "lvl@x.com")
+async def test_language_levels_endpoint(client, subscribe_user):
+    body = await _reg(client, "lvl@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/language/levels", headers=h)
     assert r.status_code == 200
@@ -156,38 +157,38 @@ async def test_language_levels_endpoint(client):
     assert payload["language"] == "javascript"
 
 
-async def test_language_levels_respects_query_language(client):
-    body = await _reg(client, "lvl2@x.com")
+async def test_language_levels_respects_query_language(client, subscribe_user):
+    body = await _reg(client, "lvl2@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/language/levels?language=rust", headers=h)
     assert r.json()["language"] == "rust"
 
 
-async def test_invalid_level_rejected(client):
-    body = await _reg(client, "badlvl@x.com")
+async def test_invalid_level_rejected(client, subscribe_user):
+    body = await _reg(client, "badlvl@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/language/items?level=wizard", headers=h)
     assert r.status_code == 400
     assert "wizard" in r.json()["detail"]
 
 
-async def test_unknown_section_returns_404(client):
-    body = await _reg(client, "badsec@x.com")
+async def test_unknown_section_returns_404(client, subscribe_user):
+    body = await _reg(client, "badsec@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/nonsense/items", headers=h)
     assert r.status_code == 404
 
 
-async def test_pattern_tags_endpoint(client):
-    body = await _reg(client, "pat@x.com")
+async def test_pattern_tags_endpoint(client, subscribe_user):
+    body = await _reg(client, "pat@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/patterns/tags", headers=h)
     assert r.status_code == 200
     assert "patterns" in r.json()
 
 
-async def test_pattern_related_endpoint(client):
-    body = await _reg(client, "patrel@x.com")
+async def test_pattern_related_endpoint(client, subscribe_user):
+    body = await _reg(client, "patrel@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.get("/tracks/patterns/strategy/related", headers=h)
     assert r.status_code == 200

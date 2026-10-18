@@ -74,14 +74,15 @@ def test_assert_active_rejects_suspended():
         assert_active(User(email="a@b.c", hashed_password="x", status="suspended"))
 
 
-async def _register(client, email):
+async def _register(client, email, *, subscribe_user):
     r = await client.post("/auth/register", json={"email": email, "password": "password123"})
+    await subscribe_user(r.json()["user"]["id"], 'python')
     return r.json()
 
 
-async def test_three_strikes_suspends_without_refund(client, monkeypatch):
+async def test_three_strikes_suspends_without_refund(client, monkeypatch, subscribe_user):
     monkeypatch.setattr(settings, "max_strikes", 3)
-    body = await _register(client, "striker@x.com")
+    body = await _register(client, "striker@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     start_balance = body["user"]["peppercorns"]
 
@@ -110,9 +111,9 @@ async def test_three_strikes_suspends_without_refund(client, monkeypatch):
     assert me.json()["peppercorns"] == start_balance
 
 
-async def test_suspended_account_cannot_submit(client, monkeypatch):
+async def test_suspended_account_cannot_submit(client, monkeypatch, subscribe_user):
     monkeypatch.setattr(settings, "max_strikes", 1)
-    body = await _register(client, "susp@x.com")
+    body = await _register(client, "susp@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     bad = {"problem_id": "two-sum", "user_code": "import socket", "language": "python"}
     await client.post("/analyze/", headers=h, json=bad)
@@ -127,14 +128,14 @@ async def test_suspended_account_cannot_submit(client, monkeypatch):
     assert r.status_code == 403
 
 
-async def test_benign_submission_never_strikes(client, monkeypatch):
+async def test_benign_submission_never_strikes(client, monkeypatch, subscribe_user):
     async def fake(**kwargs):
         from app.models.schemas import AnalysisResult
         return AnalysisResult(mistakes=[], enhancements=[], watchouts=[],
                               interview_tips=[], overall_feedback="ok"), {}
 
     monkeypatch.setattr("app.routers.analyze.deep_review", fake)
-    body = await _register(client, "good@x.com")
+    body = await _register(client, "good@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     r = await client.post("/analyze/", headers=h, json={
         "problem_id": "two-sum",
@@ -146,11 +147,11 @@ async def test_benign_submission_never_strikes(client, monkeypatch):
     assert me.json()["strikes"] == 0
 
 
-async def test_admin_can_reinstate(client, monkeypatch):
+async def test_admin_can_reinstate(client, monkeypatch, subscribe_user):
     monkeypatch.setattr(settings, "max_strikes", 1)
     monkeypatch.setattr(settings, "admin_emails", "boss9@x.com")
-    admin = await _register(client, "boss9@x.com")
-    bad_user = await _register(client, "reinst@x.com")
+    admin = await _register(client, "boss9@x.com", subscribe_user=subscribe_user)
+    bad_user = await _register(client, "reinst@x.com", subscribe_user=subscribe_user)
     uh = {"Authorization": f"Bearer {bad_user['access_token']}"}
     await client.post("/analyze/", headers=uh, json={
         "problem_id": "two-sum", "user_code": "import socket", "language": "python"})

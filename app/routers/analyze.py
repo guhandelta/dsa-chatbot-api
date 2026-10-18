@@ -61,6 +61,8 @@ async def analyze(request:AnalyzeRequest,current_user:User=Depends(get_current_u
     try: assert_active(current_user)
     except AccountSuspendedError as exc: raise HTTPException(403,str(exc))
     validate_problem(request.problem_id,request.language)
+    from app.services.language_access import require_content
+    await require_content(session, current_user, request.problem_id, request.language)
     async def prepare():
         await require_verified_reference(request.problem_id,request.language)
         await check_submission(session,current_user,request.user_code,request.language)

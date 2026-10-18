@@ -81,3 +81,17 @@ UI algorithms and patterns; practical Web APIs; design patterns for all language
 No new curriculum sequence, entitlements or pricing was decided. See
 [the gap report and deferred plans](KNOWLEDGE_BASE_GAPS_2026-10-16.md) and
 [the HTML/CSS prompt pack](training-prompts/README.md).
+
+## October 17 — confirmed base role and language access
+
+The owner confirmed: admins access every available language; instructors access
+languages they teach or upload content for; students access the languages chosen
+through their subscriptions. Both admins and instructors can train the RAG system.
+This supersedes the October 14 allowance for unsubscribed chat/review/practice:
+those learning operations now require current language access as well. Peppercorn
+balances continue to survive expiry, and prices/package counts remain deferred.
+
+Teaching languages are explicitly assigned by admins or derived from saved author
+uploads. Instructor exam, review and contribution permissions need further product
+work later. Implementation boundaries and legacy chat handling are documented in
+[base role and language guardrails](ROLE_LANGUAGE_ACCESS.md).

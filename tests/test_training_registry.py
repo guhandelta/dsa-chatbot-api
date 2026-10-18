@@ -131,9 +131,13 @@ async def test_vectorstore_failure_resilience(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_api_endpoints_accessible_anytime():
+async def test_api_endpoints_allow_admin(client, db):
+    from app.db.models import User
+    body=(await client.post("/auth/register",json={"email":"registry@scope.example","password":"password123"})).json()
+    user=await db.get(User,body["user"]["id"]);user.role="admin";await db.commit()
+    headers={"Authorization":"Bearer "+body["access_token"]}
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url="http://test", headers=headers) as client:
         # 1. Full registry endpoint
         res = await client.get("/training/registry")
         assert res.status_code == 200

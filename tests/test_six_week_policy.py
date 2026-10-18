@@ -59,7 +59,12 @@ async def test_expiry_cancellation_and_renewal_preserve_spendable_balance(client
     assert (await db.get(User, uid)).peppercorns == before
     async def reply(**kwargs): return 'A variable binds a name to a value.'
     monkeypatch.setattr('app.routers.chat.run_rag_chat', reply)
-    result = await client.post('/chat/', headers=headers, json={'message':'What is a variable?'})
+    result = await client.post('/chat/', headers=headers, json={'message':'What is a variable?','language':'java'})
+    assert result.status_code == 403, result.text
+    assert (await client.get('/auth/me', headers=headers)).json()['peppercorns'] == before
+    await entitlements.grant(db, uid, 'java', days=30)
+    await db.commit()
+    result = await client.post('/chat/', headers=headers, json={'message':'What is a variable?', 'language':'java'})
     assert result.status_code == 200, result.text
     after = (await client.get('/auth/me', headers=headers)).json()['peppercorns']
     assert after == before-settings.chat_cost

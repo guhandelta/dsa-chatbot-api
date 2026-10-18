@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import require_instructor
+from app.core.security import require_instructor, require_admin
 from app.db.database import get_session
 from app.db.models import Submission, User
 from app.models.schemas import TrainRequest
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/training", tags=["training"])
 
 
 @router.get("/registry")
-async def training_registry():
+async def training_registry(_: User = Depends(require_instructor)):
     """Returns the comprehensive registry of all technologies, languages,
     frameworks, record counts, vector store status, and recent training events."""
     from app.services.training_registry import get_training_registry
@@ -30,14 +30,14 @@ async def training_registry():
 
 
 @router.get("/registry/history")
-async def training_registry_history(limit: int = 50):
+async def training_registry_history(limit: int = 50, _: User = Depends(require_instructor)):
     """Returns the chronological audit log of training and ingestion events."""
     from app.services.training_registry import get_training_history
     return get_training_history(limit=limit)
 
 
 @router.get("/registry/technologies")
-async def trained_technologies():
+async def trained_technologies(_: User = Depends(require_instructor)):
     """Returns a clean list of all distinct technologies and frameworks trained."""
     from app.services.training_registry import get_trained_technologies
     return get_trained_technologies()
@@ -123,7 +123,7 @@ async def list_submissions(
 
 
 @router.delete("/problems/{problem_id}")
-async def remove_problem(problem_id: str, user: User = Depends(require_instructor)):
+async def remove_problem(problem_id: str, user: User = Depends(require_admin)):
     """Removes a problem from the knowledge base (file + vector chunks),
     so it can be retrained from scratch."""
     path = PROBLEMS_DIR / f"{problem_id}.md"

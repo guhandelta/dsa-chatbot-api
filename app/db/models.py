@@ -54,12 +54,23 @@ class Transaction(Base):
     user: Mapped["User"] = relationship(back_populates="transactions")
 
 
+class InstructorLanguage(Base):
+    __tablename__ = "instructor_languages"
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    language: Mapped[str] = mapped_column(String(32), primary_key=True)
+    assigned_by: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
 class ChatThread(Base):
     __tablename__ = "chat_threads"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
     title: Mapped[str] = mapped_column(String(120), nullable=False, default="New conversation")
+    language: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    subject: Mapped[str] = mapped_column(String(80), nullable=False, default="")
+    track: Mapped[str] = mapped_column(String(20), nullable=False, default="dsa")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     user: Mapped["User"] = relationship(back_populates="threads")

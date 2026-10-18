@@ -19,6 +19,7 @@ from app.db.models import ChatMessage, ChatThread, User
 from app.models.schemas import ChatRequest, ChatResponse, MessageOut, ThreadOut
 from app.services.peppercorns import InsufficientPeppercornsError, credit, debit
 from app.services.rag_pipeline import build_history, run_rag_chat
+from app.services.language_access import require_language, require_content, allowed_languages
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -50,6 +51,14 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
         assert_active(current_user)
     except AccountSuspendedError as exc:
         raise HTTPException(403, str(exc))
+    # Authorize before receipt replay as well as before new provider work.
+    await require_language(session, current_user, request.language)
+    if request.focus_id:
+        await require_content(session, current_user, request.focus_id, request.language)
+    if request.thread_id:
+        thread = await _get_or_create_thread(session, current_user, request.thread_id, request.message)
+        if (thread.language, thread.subject, thread.track) != (request.language, request.subject or '', request.track):
+            raise HTTPException(409, 'Start a new conversation when changing language, subject, or track.')
     async def prepare():
         if request.retrieval_mode == 'agentic':
             from app.services.agentic_rag import MAX_MESSAGE_BYTES
@@ -98,6 +107,7 @@ async def chat(request: ChatRequest, current_user: User = Depends(get_current_us
                 **({"subject":request.subject} if request.subject else {}), **upload_options)
         if thread is None:
             thread=await _get_or_create_thread(session,current_user,None,request.message)
+            thread.language, thread.subject, thread.track = request.language, request.subject or '', request.track
         session.add_all([ChatMessage(thread_id=thread.id, role='user', content=request.message),
                          ChatMessage(thread_id=thread.id, role='assistant', content=answer)])
         return ChatResponse(answer=answer, thread_id=thread.id, peppercorns_remaining=balance, sources=citations, retrieval=retrieval)
@@ -110,8 +120,12 @@ async def list_threads(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
+    languages = await allowed_languages(session, current_user)
+    statement = select(ChatThread)
+    if current_user.role != 'admin':
+        statement = statement.where(ChatThread.language.in_(languages))
     result = await session.execute(
-        select(ChatThread)
+        statement
         .where(ChatThread.user_id == current_user.id)
         .order_by(ChatThread.created_at.desc())
     )
@@ -127,6 +141,8 @@ async def thread_messages(
     thread = await session.get(ChatThread, thread_id)
     if thread is None or thread.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Thread not found")
+    if current_user.role != 'admin' or thread.language:
+        await require_language(session, current_user, thread.language)
     result = await session.execute(
         select(ChatMessage)
         .where(ChatMessage.thread_id == thread_id)

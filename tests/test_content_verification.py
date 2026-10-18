@@ -54,8 +54,9 @@ def test_missing_and_duplicate_publication_languages_are_rejected():
         assert not report['can_publish'] and report['validation_errors']
 
 
-async def test_failed_reference_preflight_does_not_charge_or_call_provider(client, monkeypatch):
+async def test_failed_reference_preflight_does_not_charge_or_call_provider(client, monkeypatch, subscribe_user):
     r = await client.post('/auth/register',json={'email':'blocked-reference@example.com','password':'password123'})
+    await subscribe_user(r.json()['user']['id'], 'java')
     headers = {'Authorization':'Bearer '+r.json()['access_token']}
     before = r.json()['user']['peppercorns']
     monkeypatch.setattr('app.services.content_verification.verify_reference',

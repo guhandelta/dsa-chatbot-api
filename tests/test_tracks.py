@@ -53,7 +53,7 @@ def test_every_algorithm_tag_resolves():
         assert filter_content(algorithm=tag), f"tag {tag} matches nothing"
 
 
-async def test_language_preference_persists(client):
+async def test_language_preference_persists(client, subscribe_user):
     r = await client.post(
         "/auth/register", json={"email": "lang@x.com", "password": "password123"}
     )
@@ -61,6 +61,7 @@ async def test_language_preference_persists(client):
     assert r.json()["user"]["preferred_language"] == "javascript"
     h = {"Authorization": f"Bearer {token}"}
 
+    await subscribe_user(r.json()["user"]["id"], "rust")
     upd = await client.patch("/auth/me/language", headers=h, json={"language": "rust"})
     assert upd.status_code == 200
     assert upd.json()["preferred_language"] == "rust"
@@ -69,11 +70,12 @@ async def test_language_preference_persists(client):
     assert me.json()["preferred_language"] == "rust"
 
 
-async def test_tracks_endpoint_lists_three_paths(client):
+async def test_tracks_endpoint_lists_three_paths(client, subscribe_user):
     r = await client.post(
         "/auth/register", json={"email": "tr@x.com", "password": "password123"}
     )
     h = {"Authorization": f"Bearer {r.json()['access_token']}"}
+    await subscribe_user(r.json()["user"]["id"], "javascript", "java")
     res = await client.get("/tracks/", headers=h)
     assert res.status_code == 200
     body = res.json()

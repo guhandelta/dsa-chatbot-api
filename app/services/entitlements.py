@@ -1,12 +1,12 @@
-"""Per-language mentor subscriptions.
+"""Per-language subscriptions and role-aware mentor access.
 
 A subscription is scoped to ONE programming language. A Python subscriber gets
 Socratic mentoring whenever they are coding in Python — across all three
 tracks, since the mentor responds to the language you are writing in.
 
-Peppercorns are unaffected: the subscription UNLOCKS the mentor, and each
-mentor turn still costs peppercorns. Two gates, two purposes — the
-subscription is access, peppercorns are usage.
+Students use active language subscriptions for learning access. Staff language
+access follows their role and teaching scope. Peppercorns meter paid usage
+within an authorized language and remain in the account after expiry.
 
 PAYMENTS: this module never sees card data. Checkout happens in Stripe
 Checkout (hosted by Stripe), and a webhook calls `grant` / `revoke` with the
@@ -41,6 +41,17 @@ async def active_for(session: AsyncSession, user_id: str, language: str) -> Subs
 
 async def check(session: AsyncSession, user_id: str, language: str) -> dict:
     """Returns an entitlement decision with a reason the UI can show verbatim."""
+    from app.db.models import User
+    from app.services.language_access import allowed_languages
+    user = await session.get(User, user_id)
+    if not user or user.status != 'active':
+        return {'language': language, 'entitled': False,
+                'reason': 'An active account is required.', 'expires_at': None}
+    if user and user.role in ('admin', 'instructor'):
+        allowed = language in await allowed_languages(session, user)
+        return {'language': language, 'entitled': allowed,
+                'reason': 'Language access granted by your role.' if allowed else
+                          'This language is outside your teaching access.', 'expires_at': None}
     sub = await active_for(session, user_id, language)
     if sub:
         expires = sub.expires_at
@@ -58,7 +69,7 @@ async def check(session: AsyncSession, user_id: str, language: str) -> dict:
         "reason": (
             f"Mentor guidance for {language} requires a {language} subscription. "
             "Your peppercorns do not expire with your subscription. "
-            "Reviews, chat, and practice remain available without one."
+            "Learning, reviews, chat, and practice require access to the selected language."
         ),
         "expires_at": None,
     }

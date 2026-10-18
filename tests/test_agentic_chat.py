@@ -4,6 +4,7 @@ from sqlalchemy import select,func,update
 from app.core.config import settings
 from app.db.models import User,ChatThread,ChatMessage,KnowledgeDocument,Transaction
 from app.services import agentic_rag as ar
+from app.services.entitlements import grant
 from tests.test_agentic_rag import Scripted,SEARCH,ANSWER,doc
 
 
@@ -11,6 +12,8 @@ async def register(client,db,role='admin',email='pilot@example.com'):
     response=(await client.post('/auth/register',json={'email':email,'password':'password123'})).json()
     uid=response['user']['id']
     await db.execute(update(User).where(User.id==uid).values(role=role))
+    if role == 'student':
+        await grant(db, uid, 'java', days=42)
     await db.commit()
     return {'Authorization':'Bearer '+response['access_token']},uid
 
@@ -113,6 +116,9 @@ async def test_slow_chat_does_not_hold_sqlite_write_lock(tmp_path,monkeypatch):
     try:
         async with AsyncClient(transport=ASGITransport(app=app),base_url='http://test') as client:
             result=(await client.post('/auth/register',json={'email':'slow@example.com','password':'password123'})).json()
+            async with factory() as session:
+                await grant(session, result['user']['id'], 'java', days=42)
+                await session.commit()
             headers={'Authorization':'Bearer '+result['access_token']}
             task=asyncio.create_task(client.post('/chat/',headers=headers,json={'message':'arrays','language':'java'}))
             await asyncio.wait_for(entered.wait(),3)

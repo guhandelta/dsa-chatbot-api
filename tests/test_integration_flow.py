@@ -54,13 +54,14 @@ def stub_llm(monkeypatch):
     monkeypatch.setattr("app.routers.mentor.mentor_reply", fake_mentor)
 
 
-async def _register(client, email):
+async def _register(client, email, *, subscribe_user):
     r = await client.post("/auth/register", json={"email": email, "password": "password123"})
+    await subscribe_user(r.json()["user"]["id"], 'python')
     return r.json()
 
 
-async def test_buggy_submission_is_caught_and_recorded(client, db, stub_llm):
-    body = await _register(client, "flow1@x.com")
+async def test_buggy_submission_is_caught_and_recorded(client, db, stub_llm, subscribe_user):
+    body = await _register(client, "flow1@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
 
     r = await client.post("/analyze/", headers=h, json={
@@ -80,8 +81,8 @@ async def test_buggy_submission_is_caught_and_recorded(client, db, stub_llm):
     assert profile.json()["solved"] == 0
 
 
-async def test_correct_submission_records_a_solve(client, stub_llm):
-    body = await _register(client, "flow2@x.com")
+async def test_correct_submission_records_a_solve(client, stub_llm, subscribe_user):
+    body = await _register(client, "flow2@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
 
     r = await client.post("/analyze/", headers=h, json={
@@ -94,8 +95,8 @@ async def test_correct_submission_records_a_solve(client, stub_llm):
     assert profile.json()["solved"] == 1
 
 
-async def test_repeated_error_becomes_a_pattern(client, stub_llm):
-    body = await _register(client, "flow3@x.com")
+async def test_repeated_error_becomes_a_pattern(client, stub_llm, subscribe_user):
+    body = await _register(client, "flow3@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
 
     for _ in range(2):
@@ -110,8 +111,8 @@ async def test_repeated_error_becomes_a_pattern(client, stub_llm):
     assert profile["summary"]
 
 
-async def test_single_failure_is_not_called_a_pattern(client, stub_llm):
-    body = await _register(client, "flow4@x.com")
+async def test_single_failure_is_not_called_a_pattern(client, stub_llm, subscribe_user):
+    body = await _register(client, "flow4@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     await client.post("/analyze/", headers=h, json={
         "problem_id": "two-sum", "user_code": BUGGY_TWO_SUM, "language": "python",
@@ -120,8 +121,8 @@ async def test_single_failure_is_not_called_a_pattern(client, stub_llm):
     assert profile["recurring_errors"] == []
 
 
-async def test_mentor_recalls_their_own_earlier_reasoning(client, db, stub_llm):
-    body = await _register(client, "flow5@x.com")
+async def test_mentor_recalls_their_own_earlier_reasoning(client, db, stub_llm, subscribe_user):
+    body = await _register(client, "flow5@x.com", subscribe_user=subscribe_user)
     uid = body["user"]["id"]
     h = {"Authorization": f"Bearer {body['access_token']}"}
     await entitlements.grant(db, uid, "python", days=30)
@@ -151,8 +152,8 @@ async def test_mentor_recalls_their_own_earlier_reasoning(client, db, stub_llm):
     assert "contains-duplicate" in payload["recalled_moment"]
 
 
-async def test_hint_tier_escalates_only_on_repeat_asks(client, db, stub_llm):
-    body = await _register(client, "flow6@x.com")
+async def test_hint_tier_escalates_only_on_repeat_asks(client, db, stub_llm, subscribe_user):
+    body = await _register(client, "flow6@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     await entitlements.grant(db, body["user"]["id"], "python", days=30)
     await db.commit()
@@ -168,8 +169,8 @@ async def test_hint_tier_escalates_only_on_repeat_asks(client, db, stub_llm):
     assert tiers == [1, 2, 3, 4, 4], f"unexpected escalation: {tiers}"
 
 
-async def test_step_back_offered_at_top_tier(client, db, stub_llm):
-    body = await _register(client, "flow7@x.com")
+async def test_step_back_offered_at_top_tier(client, db, stub_llm, subscribe_user):
+    body = await _register(client, "flow7@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     await entitlements.grant(db, body["user"]["id"], "python", days=30)
     await db.commit()
@@ -185,8 +186,8 @@ async def test_step_back_offered_at_top_tier(client, db, stub_llm):
     assert offer["easier_problem"] or offer["concept"]
 
 
-async def test_mentor_charges_peppercorns_per_turn(client, db, stub_llm):
-    body = await _register(client, "flow8@x.com")
+async def test_mentor_charges_peppercorns_per_turn(client, db, stub_llm, subscribe_user):
+    body = await _register(client, "flow8@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     start = body["user"]["peppercorns"]
     await entitlements.grant(db, body["user"]["id"], "python", days=30)

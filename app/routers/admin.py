@@ -1,6 +1,6 @@
 # /admin — user & role management. Admins assign the instructor role.
 from fastapi import APIRouter, Depends, Header, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import require_admin
@@ -10,8 +10,48 @@ from app.models.schemas import RoleUpdate, UserOut
 from app.services import trace_store
 from app.services.peppercorns import credit
 from app.services.strikes import list_events, reinstate
+from app.models.schemas import InstructorLanguagesUpdate
+from app.db.models import InstructorLanguage
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+
+@router.get('/languages')
+async def language_catalog(_: User = Depends(require_admin)):
+    from app.services.language_access import available_languages
+    return {'languages': available_languages()}
+
+
+@router.get('/users/{user_id}/languages')
+async def teaching_languages(user_id: str, _: User = Depends(require_admin),
+                             session: AsyncSession = Depends(get_session)):
+    from app.services.language_access import access_view
+    user = await session.get(User, user_id)
+    if user is None:
+        raise HTTPException(404, 'User not found')
+    assigned = list((await session.scalars(select(InstructorLanguage.language).where(
+        InstructorLanguage.user_id == user_id))).all())
+    return {**await access_view(session, user), 'assigned_languages': sorted(assigned)}
+
+
+@router.put('/users/{user_id}/languages')
+async def assign_languages(user_id: str, update: InstructorLanguagesUpdate,
+                           admin: User = Depends(require_admin),
+                           session: AsyncSession = Depends(get_session)):
+    from app.services.language_access import available_languages
+    user = await session.get(User, user_id)
+    if user is None:
+        raise HTTPException(404, 'User not found')
+    if user.role != 'instructor':
+        raise HTTPException(409, 'Teaching languages can only be assigned to instructors.')
+    languages = set(update.languages)
+    if languages - set(available_languages()):
+        raise HTTPException(422, 'Choose supported teaching languages.')
+    await session.execute(delete(InstructorLanguage).where(InstructorLanguage.user_id == user_id))
+    session.add_all(InstructorLanguage(user_id=user_id, language=language, assigned_by=admin.id)
+                    for language in sorted(languages))
+    await session.commit()
+    return await teaching_languages(user_id, admin, session)
 
 
 @router.get("/users", response_model=list[UserOut])

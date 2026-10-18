@@ -80,7 +80,7 @@ async def test_mentor_requires_subscription(client):
         "problem_id": "two-sum", "language": "python",
         "reasoning": "I think I need a nested loop",
     })
-    assert r.status_code == 402
+    assert r.status_code == 403
     assert "subscription" in r.json()["detail"].lower()
 
 

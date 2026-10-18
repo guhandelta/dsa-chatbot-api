@@ -36,13 +36,14 @@ def test_reference_exercises_execute(item):
     assert result['passed_cases'] == 6
 
 
-async def register(client, email):
+async def register(client, email, *, subscribe_user):
     r = await client.post('/auth/register', json={'email':email,'password':'password123'})
+    await subscribe_user(r.json()['user']['id'], 'java', 'javascript')
     return {'Authorization': 'Bearer ' + r.json()['access_token']}, r.json()['user']['id']
 
 
-async def test_statements_never_expose_references_or_hidden_cases(client):
-    headers, _ = await register(client,'statement@example.com')
+async def test_statements_never_expose_references_or_hidden_cases(client,subscribe_user):
+    headers, _ = await register(client,'statement@example.com',subscribe_user=subscribe_user)
     for cid in ['two-sum','javascript-path-01-values','java-path-07-maps']:
         for url in [f'/problems/{cid}',f'/tracks/items/{cid}']:
             r=await client.get(url,headers=headers)
@@ -55,9 +56,9 @@ async def test_statements_never_expose_references_or_hidden_cases(client):
 
 
 @pytest.mark.parametrize('status,tier,total,unlocks', [('passed',1,6,True),('failed',1,6,True),('error',1,6,False),('unverified',2,0,False),('passed',2,0,False)])
-async def test_reveal_requires_own_completed_evaluation(client,monkeypatch,session_factory,status,tier,total,unlocks):
-    headers, uid = await register(client,'learner@example.com')
-    other, _ = await register(client,'other@example.com')
+async def test_reveal_requires_own_completed_evaluation(client,monkeypatch,session_factory,status,tier,total,unlocks,subscribe_user):
+    headers, uid = await register(client,'learner@example.com',subscribe_user=subscribe_user)
+    other, _ = await register(client,'other@example.com',subscribe_user=subscribe_user)
     async def review(**kwargs):
         return AnalysisResult(mistakes=[],enhancements=[],watchouts=[],interview_tips=[],overall_feedback='Feedback'), {'curated':{'results':[{'language':'javascript','tier':tier,'status':status,'total_cases':total,'passed_cases':6 if status=='passed' else 0}]}}
     monkeypatch.setattr('app.routers.analyze.deep_review', review)
@@ -76,8 +77,8 @@ async def test_reveal_requires_own_completed_evaluation(client,monkeypatch,sessi
         assert bool(solved)==(status=='passed' and tier==1 and total>0)
 
 
-async def test_provider_failure_does_not_unlock(client,monkeypatch):
-    headers,_=await register(client,'failure@example.com')
+async def test_provider_failure_does_not_unlock(client,monkeypatch,subscribe_user):
+    headers,_=await register(client,'failure@example.com',subscribe_user=subscribe_user)
     async def broken(**kwargs): raise RuntimeError('provider unavailable')
     monkeypatch.setattr('app.routers.analyze.deep_review',broken)
     r=await client.post('/analyze/',headers=headers,json={'problem_id':'two-sum','user_code':'function twoSum(nums, target) { return []; }','language':'javascript','provider':'openai'})
@@ -104,9 +105,9 @@ def test_packaged_corpus_and_local_retrieval_are_answer_safe():
     assert not search('map', 'language', 'java', 'does-not-exist')
 
 
-async def test_progress_is_owned_and_language_scoped(client,session_factory):
-    headers,uid=await register(client,'progress@example.com')
-    other,_=await register(client,'progress-other@example.com')
+async def test_progress_is_owned_and_language_scoped(client,session_factory,subscribe_user):
+    headers,uid=await register(client,'progress@example.com',subscribe_user=subscribe_user)
+    other,_=await register(client,'progress-other@example.com',subscribe_user=subscribe_user)
     async with session_factory() as session:
         session.add(LearningEvent(user_id=uid,problem_id='java-path-01-values',language='java',kind='solved'))
         session.add(LearningEvent(user_id=uid,problem_id='java-path-02-conditions',language='java',kind='attempt'))
@@ -117,8 +118,8 @@ async def test_progress_is_owned_and_language_scoped(client,session_factory):
     assert (await client.get('/tracks/language/progress?language=java',headers=other)).json()['completed_ids']==[]
 
 
-async def test_unknown_or_wrong_language_exercise_is_not_evaluated(client,monkeypatch):
-    headers,_=await register(client,'invalid-exercise@example.com')
+async def test_unknown_or_wrong_language_exercise_is_not_evaluated(client,monkeypatch,subscribe_user):
+    headers,_=await register(client,'invalid-exercise@example.com',subscribe_user=subscribe_user)
     calls=[]
     async def review(**kwargs): calls.append(kwargs); raise AssertionError('should not evaluate')
     monkeypatch.setattr('app.routers.analyze.deep_review',review)

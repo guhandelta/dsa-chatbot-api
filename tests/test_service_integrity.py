@@ -12,8 +12,11 @@ from app.core.config import settings
 from app.services import entitlements
 
 
-async def register(client,email='integrity@example.com'):
+async def register(client,db,email='integrity@example.com',languages=('python','java','javascript')):
     body=(await client.post('/auth/register',json={'email':email,'password':'password123'})).json()
+    for language in languages:
+        await entitlements.grant(db, body['user']['id'], language, days=42)
+    await db.commit()
     return {'Authorization':'Bearer '+body['access_token']},body['user']['id']
 
 
@@ -21,7 +24,7 @@ async def test_chat_receipt_replays_without_charging_and_rejects_changed_body(cl
     calls=[]
     async def reply(**kw):calls.append(kw);return 'Grounded answer'
     monkeypatch.setattr('app.routers.chat.run_rag_chat',reply)
-    headers,uid=await register(client);headers['Idempotency-Key']='same-request'
+    headers,uid=await register(client,db);headers['Idempotency-Key']='same-request'
     first=await client.post('/chat/',headers=headers,json={'message':'Help'})
     again=await client.post('/chat/',headers=headers,json={'message':'Help'})
     assert first.status_code==again.status_code==200
@@ -34,7 +37,7 @@ async def test_failed_operation_refunds_once_and_replays_error(client,monkeypatc
     calls=[]
     async def fail(**kw):calls.append(kw);raise RuntimeError('infrastructure')
     monkeypatch.setattr('app.routers.chat.run_rag_chat',fail)
-    headers,uid=await register(client);headers['Idempotency-Key']='failed-request'
+    headers,uid=await register(client,db);headers['Idempotency-Key']='failed-request'
     for _ in range(2):assert (await client.post('/chat/',headers=headers,json={'message':'help'})).status_code==502
     assert len(calls)==1
     assert (await client.get('/auth/me',headers=headers)).json()['peppercorns']==settings.signup_bonus
@@ -42,7 +45,7 @@ async def test_failed_operation_refunds_once_and_replays_error(client,monkeypatc
 
 
 async def test_suspended_chat_and_rate_limit_do_not_charge(client,monkeypatch,db):
-    headers,uid=await register(client)
+    headers,uid=await register(client,db)
     user=await db.get(User,uid);user.status='suspended';await db.commit()
     assert (await client.post('/chat/',headers=headers,json={'message':'hi'})).status_code==403
     user.status='active';await db.commit()
@@ -54,7 +57,7 @@ async def test_suspended_chat_and_rate_limit_do_not_charge(client,monkeypatch,db
 
 
 async def test_reflection_requires_verified_solve_and_never_creates_solve(client,db):
-    headers,uid=await register(client)
+    headers,uid=await register(client,db)
     params={'problem_id':'two-sum','language':'java','reasoning':'I used complements.'}
     assert (await client.post('/mentor/reflect',headers=headers,params=params)).status_code==403
     db.add(LearningEvent(user_id=uid,problem_id='two-sum',language='java',kind='solved'));await db.commit()
@@ -71,7 +74,7 @@ def signed(payload,secret='whsec_test',stamp=None):
 
 
 async def test_subscription_signature_idempotency_and_cancelled_access(client,db,monkeypatch):
-    headers,uid=await register(client)
+    headers,uid=await register(client,db,languages=())
     monkeypatch.setattr(settings,'stripe_webhook_secret','whsec_test')
     end=int(time.time())+86400
     payload={'id':'evt_one','type':'customer.subscription.created','data':{'object':{'id':'sub_one','status':'active','current_period_end':end,'metadata':{'user_id':uid,'language':'java'}}}}
@@ -101,7 +104,7 @@ async def test_langgraph_session_survives_new_requests_and_replays_actions(clien
         return AnalysisResult(mistakes=[],enhancements=[],watchouts=[],interview_tips=[],overall_feedback='Passed').model_dump(),{'curated':{'results':[{'language':'java','tier':1,'status':'passed','total_cases':6,'passed_cases':6}]}}
     async def hint(**kw):return 'What invariant holds?'
     monkeypatch.setattr('app.routers.practice.default_deps',lambda:PracticeDeps(notes,lambda *a:(True,''),review,hint,lambda p:None))
-    headers,uid=await register(client)
+    headers,uid=await register(client,db)
     start=await client.post('/practice/sessions',headers=headers,json={'problem_id':'java-path-01-values','language':'java'})
     assert start.status_code==200,start.text
     sid=start.json()['session_id']
@@ -122,16 +125,16 @@ async def test_langgraph_session_survives_new_requests_and_replays_actions(clien
     assert reflected.status_code==200,reflected.text
     assert reflected.json()['awaiting'] is None
     assert await db.scalar(select(func.count()).select_from(LearningEvent).where(LearningEvent.user_id==uid,LearningEvent.kind=='solved'))==1
-    other,_=await register(client,'another@example.com')
+    other,_=await register(client,db,'another@example.com')
     assert (await client.get('/practice/sessions/'+sid,headers=other)).status_code==404
 
 
-async def test_inflight_duplicate_is_rejected_without_second_work(client,monkeypatch):
+async def test_inflight_duplicate_is_rejected_without_second_work(client,monkeypatch,db):
     entered=asyncio.Event();release=asyncio.Event();calls=[]
     async def reply(**kw):
         calls.append(kw);entered.set();await release.wait();return 'reply'
     monkeypatch.setattr('app.routers.chat.run_rag_chat',reply)
-    headers,_=await register(client);headers['Idempotency-Key']='inflight'
+    headers,_=await register(client,db);headers['Idempotency-Key']='inflight'
     task=asyncio.create_task(client.post('/chat/',headers=headers,json={'message':'hi'}))
     await asyncio.wait_for(entered.wait(),5)
     duplicate=await client.post('/chat/',headers=headers,json={'message':'hi'})
@@ -142,7 +145,7 @@ async def test_inflight_duplicate_is_rejected_without_second_work(client,monkeyp
 
 
 async def test_blocked_retry_adds_only_one_strike(client,db):
-    headers,uid=await register(client);headers['Idempotency-Key']='blocked'
+    headers,uid=await register(client,db);headers['Idempotency-Key']='blocked'
     payload={'problem_id':'two-sum','language':'python','user_code':'import os\nos.system("anything")'}
     for _ in range(2):assert (await client.post('/analyze/',headers=headers,json=payload)).status_code==400
     db.expire_all()
@@ -157,7 +160,7 @@ def test_python_screen_resolves_import_alias_and_ignores_comments():
 
 async def test_expired_interrupted_request_refunds_once(client,db):
     from app.services.peppercorns import debit
-    headers,uid=await register(client);key='interrupted';headers['Idempotency-Key']=key
+    headers,uid=await register(client,db);key='interrupted';headers['Idempotency-Key']=key
     from app.models.schemas import ChatRequest
     payload=ChatRequest(message='hi').model_dump()
     opid=hashlib.sha256(json.dumps([uid,'chat',key]).encode()).hexdigest()
@@ -170,7 +173,7 @@ async def test_expired_interrupted_request_refunds_once(client,db):
 
 
 async def test_mentor_lookup_failure_after_debit_is_refunded(client,db,monkeypatch):
-    headers,uid=await register(client)
+    headers,uid=await register(client,db)
     await entitlements.grant(db,uid,'java');await db.commit()
     async def broken(*a,**kw):raise RuntimeError('profile database lookup failed')
     monkeypatch.setattr('app.routers.mentor._current_tier',broken)
@@ -180,7 +183,7 @@ async def test_mentor_lookup_failure_after_debit_is_refunded(client,db,monkeypat
 
 
 async def test_final_learning_write_failure_rolls_back_and_refunds(client,db,monkeypatch):
-    headers,uid=await register(client)
+    headers,uid=await register(client,db)
     async def review(**kw):return AnalysisResult(mistakes=[],enhancements=[],watchouts=[],interview_tips=[],overall_feedback='Feedback'),{}
     async def broken(*a,**kw):raise RuntimeError('learning write failed')
     monkeypatch.setattr('app.routers.analyze.deep_review',review)
@@ -218,7 +221,7 @@ async def test_published_problem_retains_executable_tests_and_refreshes_catalog(
 
 
 async def test_stale_subscription_update_cannot_undo_cancellation(client,db,monkeypatch):
-    _,uid=await register(client)
+    _,uid=await register(client,db,languages=())
     monkeypatch.setattr(settings,'stripe_webhook_secret','whsec_test')
     now=int(time.time());end=now+86400
     base={'status':'active','id':'sub_order','current_period_end':end,'metadata':{'user_id':uid,'language':'java'}}
@@ -235,7 +238,7 @@ async def test_recovery_settles_expired_reservation_without_duplicate_credit(cli
     from app.services.operations import recover_expired_scope
     from app.services.peppercorns import debit
     from app.db.models import PracticeSession
-    _,uid=await register(client)
+    _,uid=await register(client,db)
     item=PracticeSession(user_id=uid,problem_id='two-sum',language='java',provider='gemini',busy=True,busy_token='a'*64)
     db.add(item);await db.flush();sid=item.id
     await debit(db,uid,settings.analyze_cost,'analyze')
@@ -249,7 +252,7 @@ async def test_recovery_settles_expired_reservation_without_duplicate_credit(cli
 
 
 async def test_admin_grant_receipt_prevents_double_extension(client,db):
-    headers,uid=await register(client)
+    headers,uid=await register(client,db,languages=())
     user=await db.get(User,uid);user.role='admin';await db.commit()
     headers['Idempotency-Key']='manual-grant'
     params={'user_id':uid,'language':'java','days':30}
@@ -270,7 +273,7 @@ async def test_concurrent_graph_action_cannot_release_the_active_lock(client,mon
         return AnalysisResult(mistakes=[],enhancements=[],watchouts=[],interview_tips=[],overall_feedback='Reviewed').model_dump(),{}
     async def hint(**kw):return 'Question'
     monkeypatch.setattr('app.routers.practice.default_deps',lambda:PracticeDeps(notes,lambda *a:(True,''),review,hint,lambda p:None))
-    headers,_=await register(client)
+    headers,_=await register(client,db)
     sid=(await client.post('/practice/sessions',headers=headers,json={'problem_id':'two-sum','language':'java'})).json()['session_id']
     headers['Idempotency-Key']='first-action'
     body={'action':'submit','code':'public int[] twoSum(int[] a,int t){return new int[]{0,1};}'}
@@ -296,7 +299,7 @@ async def test_graph_failure_rolls_back_checkpoint_refunds_and_allows_new_attemp
         return AnalysisResult(mistakes=[],enhancements=[],watchouts=[],interview_tips=[],overall_feedback='Reviewed').model_dump(),{}
     async def hint(**kw):return 'Question'
     monkeypatch.setattr('app.routers.practice.default_deps',lambda:PracticeDeps(notes,lambda *a:(True,''),review,hint,lambda p:None))
-    headers,uid=await register(client)
+    headers,uid=await register(client,db)
     sid=(await client.post('/practice/sessions',headers=headers,json={'problem_id':'two-sum','language':'java'})).json()['session_id']
     body={'action':'submit','code':'public int[] twoSum(int[] a,int t){return new int[]{0,1};}'}
     headers['Idempotency-Key']='failed-graph-action'
@@ -326,7 +329,7 @@ async def test_self_critique_failure_does_not_return_an_unaudited_draft(monkeypa
 
 
 async def test_admin_credit_retry_is_one_ledger_entry(client,db):
-    headers, uid = await register(client)
+    headers, uid = await register(client,db)
     user = await db.get(User,uid)
     user.role = 'admin'
     await db.commit()

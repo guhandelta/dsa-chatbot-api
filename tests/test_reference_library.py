@@ -74,8 +74,9 @@ def test_blueprint_solutions_are_not_in_retrieval_view():
     assert safe_reference('Concept\nUseful teaching prose.\n8. Coding Exercises\nSECRET-SOLUTION')=='Concept\nUseful teaching prose.'
 
 
-async def test_reference_subject_api_and_chat_validate_before_debit(client, monkeypatch):
+async def test_reference_subject_api_and_chat_validate_before_debit(client, monkeypatch, subscribe_user):
     response=await client.post('/auth/register',json={'email':'library@example.com','password':'password123'})
+    await subscribe_user(response.json()['user']['id'], 'java', 'python')
     headers={'Authorization':'Bearer '+response.json()['access_token']}
     balance=response.json()['user']['peppercorns'];calls=[]
     async def reply(**kwargs):calls.append(kwargs);return 'Scoped reference explanation.'

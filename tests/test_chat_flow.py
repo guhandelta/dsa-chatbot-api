@@ -6,17 +6,18 @@ import pytest
 from app.core.config import settings
 
 
-async def _register(client, email="c@x.com"):
+async def _register(client, email="c@x.com", *, subscribe_user):
     r = await client.post("/auth/register", json={"email": email, "password": "password123"})
+    await subscribe_user(r.json()["user"]["id"], 'python')
     return r.json()["access_token"]
 
 
-async def test_chat_debits_and_persists(client, monkeypatch):
+async def test_chat_debits_and_persists(client, monkeypatch, subscribe_user):
     async def fake_rag(message, provider, history, language, **kwargs):
         return "Here is a hint."
 
     monkeypatch.setattr("app.routers.chat.run_rag_chat", fake_rag)
-    token = await _register(client)
+    token = await _register(client, subscribe_user=subscribe_user)
     headers = {"Authorization": f"Bearer {token}"}
 
     r = await client.post("/chat/", headers=headers, json={"message": "hint for two sum?"})
@@ -30,12 +31,12 @@ async def test_chat_debits_and_persists(client, monkeypatch):
     assert [m["role"] for m in msgs.json()] == ["user", "assistant"]
 
 
-async def test_chat_refunds_on_provider_failure(client, monkeypatch):
+async def test_chat_refunds_on_provider_failure(client, monkeypatch, subscribe_user):
     async def boom(*a, **k):
         raise RuntimeError("provider down")
 
     monkeypatch.setattr("app.routers.chat.run_rag_chat", boom)
-    token = await _register(client, "boom@x.com")
+    token = await _register(client, "boom@x.com", subscribe_user=subscribe_user)
     headers = {"Authorization": f"Bearer {token}"}
 
     r = await client.post("/chat/", headers=headers, json={"message": "hi"})
@@ -45,21 +46,21 @@ async def test_chat_refunds_on_provider_failure(client, monkeypatch):
     assert me.json()["peppercorns"] == 50  # debit was refunded
 
 
-async def test_chat_insufficient_balance_returns_402(client, monkeypatch):
+async def test_chat_insufficient_balance_returns_402(client, monkeypatch, subscribe_user):
     async def fake_rag(*a, **k):
         return "ok"
 
     monkeypatch.setattr("app.routers.chat.run_rag_chat", fake_rag)
     # New user with the bonus set to 0 for this test
     monkeypatch.setattr(settings, "signup_bonus", 0)
-    token = await _register(client, "broke@x.com")
+    token = await _register(client, "broke@x.com", subscribe_user=subscribe_user)
     headers = {"Authorization": f"Bearer {token}"}
 
     r = await client.post("/chat/", headers=headers, json={"message": "hi"})
     assert r.status_code == 402
 
 
-async def test_analyze_debits_five(client, monkeypatch):
+async def test_analyze_debits_five(client, monkeypatch, subscribe_user):
     from app.models.schemas import AnalysisResult
 
     # /analyze runs the precision pipeline (deep_review), which returns the
@@ -71,7 +72,7 @@ async def test_analyze_debits_five(client, monkeypatch):
         ), {}
 
     monkeypatch.setattr("app.routers.analyze.deep_review", fake_review)
-    token = await _register(client, "anlz@x.com")
+    token = await _register(client, "anlz@x.com", subscribe_user=subscribe_user)
     headers = {"Authorization": f"Bearer {token}"}
 
     r = await client.post(

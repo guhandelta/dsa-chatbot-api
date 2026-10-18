@@ -123,11 +123,12 @@ async def test_zero_limit_disables_the_check(db, monkeypatch):
     await enforce_rate_limit(db, "u10", "attempt")
 
 
-async def test_rate_limited_request_returns_429_and_no_charge(client, db, monkeypatch):
+async def test_rate_limited_request_returns_429_and_no_charge(client, db, monkeypatch, subscribe_user):
     monkeypatch.setattr(settings, "submissions_per_hour", 1)
     r = await client.post("/auth/register",
                           json={"email": "rl@x.com", "password": "password123"})
     body = r.json()
+    await subscribe_user(r.json()["user"]["id"], "python")
     h = {"Authorization": f"Bearer {body['access_token']}"}
     start = body["user"]["peppercorns"]
     await _debits(db, body["user"]["id"], "analyze", 1)

@@ -1,4 +1,4 @@
-"""Problem statements are public; solutions require an evaluated submission."""
+"""Problem content requires language access; solutions also require evaluation."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,6 +7,7 @@ from app.db.database import get_session
 from app.db.models import User
 from app.services.problem_catalog import ProblemMeta, list_problems
 from app.services.content_catalog import content_exists
+from app.services.language_access import resolve_language, require_content
 from app.services.content_verification import require_verified_reference
 from app.services.content_access import can_reveal, learner_document, solution_document
 
@@ -14,12 +15,14 @@ router = APIRouter(prefix="/problems", tags=["problems"])
 
 
 @router.get("/", response_model=list[ProblemMeta])
-def get_problems():
+async def get_problems(language: str | None = None, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    await resolve_language(session, user, language)
     return list_problems()
 
 
 @router.get("/{problem_id}")
-def get_problem(problem_id: str):
+async def get_problem(problem_id: str, language: str | None = None, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    await require_content(session, user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     return {"id": problem_id, "markdown": learner_document(problem_id)}
@@ -29,6 +32,7 @@ def get_problem(problem_id: str):
 async def solution_access(problem_id: str, language: str,
                           user: User = Depends(get_current_user),
                           session: AsyncSession = Depends(get_session)):
+    await require_content(session, user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     return {"available": bool(solution_document(problem_id, language)) and
@@ -39,6 +43,7 @@ async def solution_access(problem_id: str, language: str,
 async def reveal_solution(problem_id: str, language: str,
                           user: User = Depends(get_current_user),
                           session: AsyncSession = Depends(get_session)):
+    await require_content(session, user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     if not await can_reveal(session, user.id, problem_id, language):

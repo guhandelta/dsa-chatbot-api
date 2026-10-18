@@ -19,6 +19,7 @@ from app.services.operations import perform,recover_expired_scope
 from app.services.practice_checkpoints import TransactionalSaver
 from app.services.strikes import assert_active,AccountSuspendedError
 from app.services.rate_limit import enforce_rate_limit,RateLimitExceeded
+from app.services.language_access import require_content
 
 router=APIRouter(prefix='/practice',tags=['practice'])
 
@@ -41,6 +42,7 @@ def active(user):
 async def owned(session,user,sid):
     item=await session.get(PracticeSession,sid)
     if item is None or item.user_id!=user.id:raise HTTPException(404,'Practice session not found')
+    await require_content(session, user, item.problem_id, item.language)
     return item
 
 
@@ -62,6 +64,7 @@ def render(sid,state,balance=None):
 @router.post('/sessions')
 async def start(request:StartRequest,user:User=Depends(get_current_user),session:AsyncSession=Depends(get_session),idempotency_key:str|None=Header(default=None)):
     active(user);validate_problem(request.problem_id,request.language)
+    await require_content(session, user, request.problem_id, request.language)
     async def work(_):
         await require_verified_reference(request.problem_id,request.language)
         item=PracticeSession(user_id=user.id,problem_id=request.problem_id,language=request.language,provider=request.provider)

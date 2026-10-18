@@ -78,6 +78,8 @@ async def ask(request: MentorRequest, current_user: User = Depends(get_current_u
         raise HTTPException(403,str(exc))
     if not content_exists(request.problem_id):
         raise HTTPException(404,'Problem not found')
+    from app.services.language_access import require_content
+    await require_content(session, current_user, request.problem_id, request.language)
     async def prepare():
         decision=await entitlements.check(session,current_user.id,request.language)
         if not decision['entitled']:
@@ -123,6 +125,8 @@ async def reflect(
     except AccountSuspendedError as exc:
         raise HTTPException(status_code=403, detail=str(exc))
     from app.services.content_catalog import content_exists
+    from app.services.language_access import require_content
+    await require_content(session, current_user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     if not reasoning.strip() or len(reasoning) > 4000:

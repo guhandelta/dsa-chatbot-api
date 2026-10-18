@@ -89,8 +89,17 @@ async def set_language(
     session: AsyncSession = Depends(get_session),
 ):
     """The learner picks their language once; every track and mode respects it."""
+    from app.services.language_access import require_language
+    await require_language(session, current_user, pref.language)
     current_user.preferred_language = pref.language
     session.add(current_user)
     await session.commit()
     await session.refresh(current_user)
     return UserOut.model_validate(current_user)
+
+
+@router.get('/me/access')
+async def my_access(current_user: User = Depends(get_current_user),
+                    session: AsyncSession = Depends(get_session)):
+    from app.services.language_access import access_view
+    return await access_view(session, current_user)
