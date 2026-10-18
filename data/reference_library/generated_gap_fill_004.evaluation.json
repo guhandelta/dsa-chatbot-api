@@ -1,0 +1,34 @@
+{
+  "batch": "generated_gap_fill_004.jsonl",
+  "record_count": 39,
+  "passed": true,
+  "errors": [],
+  "warnings": [],
+  "checks": [
+    "JSONL/schema",
+    "unique IDs",
+    "nonempty self-contained prose",
+    "reference-safe flags",
+    "official-domain provenance",
+    "honest execution/review status"
+  ],
+  "limitations": [
+    "No code execution",
+    "No expert claim-by-claim certification",
+    "No LLM-answer quality or vector recall test"
+  ],
+  "promoted": true,
+  "newly_appended": 39,
+  "library_record_count": 15264,
+  "library_retrievable_count": 10036,
+  "library_subject_counts": {
+    "cpp": 341,
+    "java": 26,
+    "javascript": 26,
+    "ruby": 1337,
+    "rust": 3124,
+    "typescript": 1901
+  },
+  "integration": "packaged-reference-library-lexical-retrieval",
+  "embedding_rebuild": "not-run"
+}

@@ -1,5 +1,5 @@
 {
-  "projection_version": "upload-reference-v1",
+  "projection_version": "upload-reference-v2",
   "documents": [
     {
       "document_id": "8d5aa6ee-66b4-421e-a104-e7ff408b3bbb",
@@ -14,7 +14,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "8b0073d2f89daba06dafb3074a58f246cadb581d5597fbad368389d2877bcc21",
-      "revision": "6eef29340921db3eb08656e6b3e91d072aac8fe61e537acef2973da1fa96c4c8"
+      "revision": "f6351dc7744b1a02e646db1502a422b7b34ca265cf6b933e2c39074d12d0ef89"
     },
     {
       "document_id": "41711d6b-80b6-420a-94e6-25243ebf43b4",
@@ -29,7 +29,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "f62d50b875f26b88ac307f353766bed42a0ef4ba3202ed8900c1da9a31024221",
-      "revision": "5c39e9409ae5efbc6f317ad29987467cef6ad6c4feab6eecbaf75b71f590ead8"
+      "revision": "d2ff944d98a722d8c97b0ec604bbc2de6f555f6c716ba62f6987de541dcfb984"
     },
     {
       "document_id": "91900a50-ca0c-4879-90c6-af73ace9223e",
@@ -44,7 +44,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "0f581c98967f52819696b78957e028fc5ffbad914b8ba8e2e531917e2dd8d846",
-      "revision": "654e37e8bce321931d5e0fa83dc7013e81cc2ace79aa49d1b9c06dfa6fb7f5ce"
+      "revision": "94ba1f5ca4993ed0365b4f0418c94249457df6ce78de2d97da8efc8e9a7c2823"
     },
     {
       "document_id": "7c7e004c-a886-4205-915a-b023e6365c61",
@@ -59,7 +59,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "72553f20b5c6538c9759a55e2a5fffc2f66c657e55dcb3d3a3a076b1232cf405",
-      "revision": "0164171ef2432eb473c8426ddb1b250cee8cf5331a451e0429be29c8d00fd470"
+      "revision": "d6cebaffcb98acd7420f88b34d76c946ee66d8241c86a51e71c96c77eec3ce34"
     },
     {
       "document_id": "ff149832-d872-4c04-ab6e-725be5584658",
@@ -74,7 +74,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "63b3a849fd612309c8ad414098abe3aee8ddc4aaf878c0aa542bc7cb79cf36e0",
-      "revision": "d9fa6cafd8b241db59fd56c418726514082c28f96c2ad0c97998143af8f8ee99"
+      "revision": "dae1c2c7d76544432cf1f7d36e7abdf7c9b35000416df4d79c15d52fc76bcf1d"
     },
     {
       "document_id": "d5e7022c-3e43-4b8c-babd-353e0e6abb47",
@@ -89,7 +89,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "f788afc65870ed3ddf799bd540ef0ecef4ba2c296a3eecc7d70444bb50b9ceaa",
-      "revision": "afbf3ec4d30d5a265534247ab2a24afeaa73020ace6a85473f8cd5da96be8459"
+      "revision": "551aaf1d5026cb35c3826c98680862c5591a908a0921b55114384766fbc34bad"
     },
     {
       "document_id": "79defb27-0802-4a9d-bb69-753c1c6e7ec2",
@@ -104,7 +104,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "5d130f06a405af9d42f84717bcac742b9ac431184ba3fc8c42dfe1f1020c73b4",
-      "revision": "327b73743be6ce9e89e6bf560a96a5834d7446c378cfce83c4a24b4d0ea3ea1b"
+      "revision": "304cf7a165d02020f401361a783afc8bc30cd149e291c96278ca3d299f0904ec"
     },
     {
       "document_id": "1e2817f2-0259-4347-b5fb-3d9bbea1c339",
@@ -119,7 +119,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "ae890f47f34c2b26fb76c79a62f747f2d33f5cbc8a0ccd4c9e5246b74f81eda8",
-      "revision": "a2c4c0a48e252ae4e11c7c69bdac9537b958267f2540001cef646874fc551e83"
+      "revision": "46884ce90eae21fdb4d1a088ba4f4da83fc8a98681990c46c22649dbfd0c9b57"
     },
     {
       "document_id": "ac0218e0-8177-4aef-a9b7-efb058c331b1",
@@ -134,7 +134,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "8afd590a288e8a8ce6408b094e019855ed40715d8737e4fae1e2cb616988028e",
-      "revision": "cefd12e55ef7003ca53ef89723faed20103a11653d2141ae0a9c7595f816d990"
+      "revision": "9e1cc91c84f7550abeec8faa651eb3757c025b3850ac4049cc640d9cd28bc982"
     },
     {
       "document_id": "1c2b7a65-0ff3-4e61-b3e5-394405d56938",
@@ -149,7 +149,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "57fd20be916a403946050d78c8d7a1cc4f8eadd5404abaff0105eb9cabc60f3a",
-      "revision": "2bc56b3be1a5245867435ef0ff26ec697f9f62cb2dc30e394ff1bb7b1e8a3a56"
+      "revision": "78cd3c83457631e902d7f277fa29d9a1871646b8c2f9e2085ff041c356428b1d"
     },
     {
       "document_id": "2f54d6f9-9954-46a1-abf2-27002629dc28",
@@ -164,7 +164,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "7c65c371ca980f776946b078c32344c791c074917ad0ac2bb83fdf78c29fbed6",
-      "revision": "51e51916f340d4c626eaac2066063d1fd32c76c323a5101f807afedd1342cbdf"
+      "revision": "7778018a5b653c69d3aef8eafb29ba9d6ebab87f3ff66ed18c47c4314651b1d0"
     },
     {
       "document_id": "1e429a73-459f-4d08-986e-cccfefb5b91b",
@@ -179,7 +179,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "426cfeb59dc772b4d3690583cf824db143d342e38e41c1f305e6f296b080c79e",
-      "revision": "69abe74d9b591afb2c1388b062f7c2613a28f7182a28a8dfed5912a44fdff595"
+      "revision": "d0448ec965d25f4ff2206a6c54a02c0f0f18d227d2b08a1a0d3e2b2e61049a38"
     },
     {
       "document_id": "4afe80ac-88a3-403c-8092-b6796a12be10",
@@ -194,7 +194,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "bcb832019402fcb65b59aad9732d0dff45d1ab9a03444f17acde53c1eaf34f0f",
-      "revision": "e1511736837ccacde88778d7d1eecc6a2c4c34b12c4b3e5642ed614d46686050"
+      "revision": "df28a32d51b56623fa6f488784acf9c8d07da7f4941ca12a37fad56a774a8618"
     },
     {
       "document_id": "64e2cc2a-7645-459d-b462-29ea967e492a",
@@ -209,7 +209,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "6671ccbe8e96d384e6df7e8762407142a46b72d62cb725d8fa79ce413a75d376",
-      "revision": "fb3dc5b9199f8ba5bdee5ce78add52ee439276e5b7d7d1c8df1ab730466e2bb9"
+      "revision": "67e73253a873498a8cf33a284e0bdbef88aa07bd0b76313736b42b552c1d29ae"
     },
     {
       "document_id": "8769b8d9-b0b9-4c53-b6a1-8896e30b5a62",
@@ -224,7 +224,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "934ccbbdd6dbcb880c7785c678c6c350ca0f16ed2c8976ebaebb32d43875c0f8",
-      "revision": "47aec129ce50f6bb01d72bfe633cb50e967e90b8769ff868128ff16047de537c"
+      "revision": "b2640cc4aa2ab975127fe1614ba899ef3486a527ac8f07379c6d24529428e89d"
     },
     {
       "document_id": "22a15a25-5ebe-4975-b467-afe2eebd3c4d",
@@ -239,7 +239,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "ff56bfbc40ea6902ef70ac1310bdb32a3e4dbfb847c41893ee1c73b97d8c63db",
-      "revision": "9b7bdfe9efae5c9e002fb26c3ef49972360e116077b542ca9776cb469ed07b67"
+      "revision": "8edf258d1de204400c94a6882f9766b094ee6afd08495f79edc158c30feeb10d"
     },
     {
       "document_id": "9dc99b6c-560d-4b52-b072-927c3339c38e",
@@ -254,7 +254,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "332cc46b0d9613e78a5ab74c001449f7c24cfb0b217e25528c3f89c59bd23d71",
-      "revision": "d777528d053e9c58a484c859026c48a440fccfd8c840e3efe4250452e26c5a7f"
+      "revision": "6ab12c79f9ad5e1a44b20ff9d5210515a23758e7f2ba13295583e18ecddd621f"
     },
     {
       "document_id": "66e24e28-30fd-45b1-b45f-e7fa2b65963a",
@@ -269,7 +269,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "8efb9da00c9b42634440c083d2e0ada2b97d851bc94e85ae582d431e56cd77ed",
-      "revision": "5e4be615cba1177e5a48ca8f6b1eb1a150750366bad13262864b99f60f8ad37d"
+      "revision": "d54258143ebfd27ff30b99432213338f122d5e48a0eac6b037e1bf8a1b402144"
     },
     {
       "document_id": "66b07c28-60ee-4219-9681-16adf687b443",
@@ -284,7 +284,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "8af5153cb5fa8ad10b708aab1f8f020cd18fd75f23ed128c3ccfd1ebe3e25265",
-      "revision": "47d2a56b070647f333c5141d0e7432d6d7908ad9611c6c90f03fc68df29265e1"
+      "revision": "c1fc136847f18ae4de449a9b21520f9712c5bd932fb53c533cc751b018ebb427"
     },
     {
       "document_id": "1d530185-224e-4704-88d4-0d068323864b",
@@ -299,7 +299,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "b4a3d83fc384fe0563d08cbce82441cc300848f6a6376dd4efb8dc3393571726",
-      "revision": "db5762a06b7dc28b3a0cac75eab53749e9f3d3af0177d2ce17a75f21d87eab03"
+      "revision": "985f8c5d7e4ab4baa535df3d7d58bb9143d896c9b5e89d1d73a8ce884936e16b"
     },
     {
       "document_id": "70432421-585f-4964-a8b1-36eb80346b8c",
@@ -314,7 +314,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "7595a82bafc46329f27259345d52fb026cb11ab3dc49d7f44bcc2da63fea2a85",
-      "revision": "0eb40812e652c034c98d6c866ed8c83926dcef85e1112740f1353caed1d39d7b"
+      "revision": "0e229d56e9b7862df5b54063cf4d10d1566cc2ab10eeb344a80b0b4d1a820a38"
     },
     {
       "document_id": "8fcca0be-9490-472c-9bfc-09d7eb07fa1b",
@@ -329,7 +329,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "2c727681ab71dbe8056a5cb51110a03efd2c3617358609ea20b1a4114faf3d5e",
-      "revision": "c046d4847877fc8611eb9342ffb68434d0be77250f4a8804b74e5eb021d02fe3"
+      "revision": "44413895acee991ff82402736ee5c370fa93d5a0b54b39d606074cc29d631089"
     },
     {
       "document_id": "c239011a-a0ae-4bf2-a1a5-77007c7378c5",
@@ -344,7 +344,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "e81daef2e96aeae93545d378a2c3966b976a9447c09deac203008339a764b74c",
-      "revision": "d8afc392d6b5b511b09861a38e22036fd7c00974bbdebc01f601a09fafb41f78"
+      "revision": "cbee1e073fa8836c3b41589afcee81ffe09f7c5fd673577fc23c261c0d313035"
     },
     {
       "document_id": "3e53a5be-fe8f-4554-92a0-b746c056c5d8",
@@ -359,7 +359,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "7d02473c210fe7e8b8bcd47ee4d82c06d61ce79ad6037c567905b54f594c0097",
-      "revision": "46d9223fab145e539f0a1f661a746da47d7ccdb5d0852bda5fa8449488e7799b"
+      "revision": "3194a97dc3e35122ee3bf970773f11fa6e4c9f9827dca81c4d82027ea9eee7fb"
     },
     {
       "document_id": "3152b79b-aeb2-49d9-a010-c75505293938",
@@ -374,7 +374,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "2989bf0c819c712f340cb7f93566604c6fe9df5c8cc0fe683e4b0252ce4aec7c",
-      "revision": "805faa10530b9409667895f8ba98ec3469d2710ee06043a0c95abae6d406f440"
+      "revision": "f26a20037647ea3a358dd2049315c173d67a62bd9e9c9495d29d7ec0ac63a86f"
     },
     {
       "document_id": "50429cda-5de4-40ba-9d69-20183301d560",
@@ -389,7 +389,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "b4fbc52ffbaf1fb3a7c091ca797feca9f7c09425435de18e68e5d7746b1a3638",
-      "revision": "ecb7d176b6f8dd721a13208543c91c477e7fccbccad74ae2752625968b6f4e74"
+      "revision": "f335e7aa8976657d5dfc3f3e6fe2d93a1269e0a002b765494cc485dba2998c91"
     },
     {
       "document_id": "0040c846-9a5e-4e7c-8bca-cf3d665c0573",
@@ -404,7 +404,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "65dff884755010d22664245152b2fcac9fade552fe53b68160192a65b7ed0534",
-      "revision": "7ba9ab957d63e0f87e2cfce85d5229977b9232011b0e5c25fc6e5d96ddc35cf0"
+      "revision": "a5ed90601b490c1129a949a9c15563186db46f913a34ae6404d759c7dda57822"
     },
     {
       "document_id": "94785edd-9206-45c0-b459-4ed55fd7a209",
@@ -419,7 +419,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "e3fb1cbbe2e47f51d9b25752a302e0a8a7b1284571e911b95cf7f7fce283f042",
-      "revision": "2203baffe219fa5704037d82c54480a8a07d56a3e2c5134245bcca5fdd7bab1c"
+      "revision": "5a7fa0fa25393d88bcba763af676971a11cbce48685da4d753df2d0a57fc6f6c"
     },
     {
       "document_id": "30644abe-d1a2-4172-a835-81447d1d128c",
@@ -434,7 +434,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "9c65d339ee7ade056e12a5cc132c68f6f69b55ec6e4a18353332b0ed289ced47",
-      "revision": "5c3797573a9efb75a725d38a37885a6c0f8b0471161b5f7f207b89a8d3119247"
+      "revision": "b93914714012009d6edd81580b81938f956e34fae92f28ebfcffad22292aa9ec"
     },
     {
       "document_id": "d6c652b2-5db7-48b4-863b-ca9d660ee869",
@@ -449,7 +449,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "54966e76783e3fe4169b106f4075c08cab57a19619e4fc01864b2779a39da1a1",
-      "revision": "8ce0ba62cef6778e1b4c256600c49f9b072be626cf64277445e90453f41fa18c"
+      "revision": "1c02cd561f64fba601236f05ad261a2456e8724e115925136371729fd789acc9"
     },
     {
       "document_id": "a361b57c-09ca-4dd4-a31d-921aab711844",
@@ -464,7 +464,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "222ca25ce9e510da95d46e9fbb8fcea8c96f19465bbc98ec3648430316bf6500",
-      "revision": "96b8195d037d8c50903be83516a163b28f990417b51f0e341c28834bdfb75a78"
+      "revision": "df1ae537b35890b82af3a9aa6cdfd7b5848b0ff9dd4d27552fbd4d64403e2323"
     },
     {
       "document_id": "64552887-837e-4f95-bf5b-efeb55344ca0",
@@ -479,7 +479,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "9c7e2b6030fc5eaffac42fc092065f4d8f1eff1148d523918fd4425bdcc469a4",
-      "revision": "b2d4c0a20444aa6f8b0c701ea415621151b1f15115ab0ce4fc9de17bc10097fd"
+      "revision": "44d28e77e9546ca35a396cb2a883904b7131e0b68450b06a1451d351078b5773"
     },
     {
       "document_id": "3a464362-73ce-4671-9af6-d78103743079",
@@ -494,7 +494,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "f1e3d9335ffdd2a00e37932b7d6fba7e8b9ce89246e83584260a516cc519d624",
-      "revision": "7d613a72bfa3488ef45840a51896ff1d83398c32e816a6ba1333b95db677b3db"
+      "revision": "7ee6684655528698d1483ea2ff620f3b71d4b48741e262790201fd8a349865ee"
     },
     {
       "document_id": "9cb11ddc-e1fe-4a8e-8dd3-6947982547c6",
@@ -509,7 +509,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "afb2a361d6d76072eedcbad399b85bf5610140334536d39d5e4b51a9836dfe86",
-      "revision": "d1f13747655efed060073f21bdb07b0c0bfb3a367f88482149ff5124d10d1850"
+      "revision": "63345b9ac5593a731955aa8bdba30b7a384c7c561a68fa7c0c7518909c97b5a9"
     },
     {
       "document_id": "d0266555-e9d2-45a4-8049-099bf7723732",
@@ -524,7 +524,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "faa6e98007274716fc2124cbd577f864da910936c9a2e8b2c204aabc63c7eac9",
-      "revision": "2ccf67d7a2dd4ea3735d932602152a96d13dda935034846a0261a81dfa331188"
+      "revision": "df0f9d6afc8edd0ab734dcf65d4f6e2efff14656455afec3ef75665c0614f47d"
     },
     {
       "document_id": "e3964592-4ebb-4bb4-9269-8abe89db36f6",
@@ -539,7 +539,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "a86fc0e40692e71e19c1629c189239972f5cb1ac99cbccfe4a8689efa8015ccf",
-      "revision": "847fb7380c007af333b67ac080c7d01128d68c0de7f4731c19f7e92847395d31"
+      "revision": "5fed175a3916c69fb095e0d456ca1463e993e8ed0661bd98d4d09cc248406919"
     },
     {
       "document_id": "7cb80b9d-efaa-49bb-bf60-be9cbcd08479",
@@ -554,7 +554,7 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "5027428e1621af00a94b50487a8e57f35ddfd4c46b91d23444da071f8ed200e1",
-      "revision": "5503a21d07827f2aff8199f1dc37fa4d2b6ae204cd9766ed97716faecd6ed2ec"
+      "revision": "fd4bf2468307d41e43bba86e333fae30360c98a4f0c6b8d0455f22368659815e"
     },
     {
       "document_id": "d0417ab4-887f-40f6-84fd-3b1e3f729700",
@@ -569,7 +569,97 @@
       "source_found_at_4": true,
       "wrong_language_excluded": true,
       "approval_fingerprint": "e715143d7b1d943e14e0c4ec21b201d6860d677f0883808139775d1eb8b635e4",
-      "revision": "25f24e855d3407c121910bb9661a3761bb8e8458e95cda05e1636d95b315b524"
+      "revision": "a79694610a2573c36048e0c68255eadbb1fdc3ac00763876d1df77301b595558"
+    },
+    {
+      "document_id": "9fca3755-84e0-45ab-872d-f4f5453edf51",
+      "filename": "html-batch-00b-reference-inventory.md",
+      "track": "custom",
+      "language": "html",
+      "original_characters": 43539,
+      "original_sha256": "6aa1ddaf8d8a58decf987ba9132182b581d64440344dfa219597f09b08475831",
+      "reference_chunks": 40,
+      "reference_characters": 27131,
+      "question": "Explain html-batch-00b-reference-inventory",
+      "source_found_at_4": true,
+      "wrong_language_excluded": true,
+      "approval_fingerprint": "3cf3c9e58ed19ccd815b4593e8b41e115107df8440b34d35532ad4998a3a58dd",
+      "revision": "2a482958fcab1d1252c9ffb9a3f2fa29614fbf352888b98450f125b4e4fa3b90"
+    },
+    {
+      "document_id": "0ea90dee-9e9d-42c5-8a32-94f912601630",
+      "filename": "HTML tutor reference.docx",
+      "track": "custom",
+      "language": "html",
+      "original_characters": 85468,
+      "original_sha256": "1498dda8f01922bbb3cfbfc4caf9b2e4cc3696a4bfcd73c25674cf8c7970acb3",
+      "reference_chunks": 2,
+      "reference_characters": 1113,
+      "question": "Explain HTML tutor reference",
+      "source_found_at_4": true,
+      "wrong_language_excluded": true,
+      "approval_fingerprint": "44d495e2681b98487cc7358bd38f0f191e52ca7464e39a0b621e28585809742f",
+      "revision": "15fc5615abd1787d3b08e84dc9af4606a5d38c4e755b4f8a9bdfba38fe0b82e0"
+    },
+    {
+      "document_id": "a06b3238-cce5-47db-981b-5bb2ea692ff5",
+      "filename": "HTML elements attributes and Web APIs.md",
+      "track": "custom",
+      "language": "html",
+      "original_characters": 275247,
+      "original_sha256": "00aaa50af4bb69c0869a3e5d5dfc5827fca80452242bdab614c396c661e9d804",
+      "reference_chunks": 3,
+      "reference_characters": 1941,
+      "question": "Explain HTML elements attributes and Web APIs",
+      "source_found_at_4": true,
+      "wrong_language_excluded": true,
+      "approval_fingerprint": "ebce3b32af294df580bef9fa1c49f6e3091b7be30d2d3e0224ac9092dc44487e",
+      "revision": "2721eebff4e6bd63f1571a845eb4839bcfffa8fc9d730d7de6052d5be0261c46"
+    },
+    {
+      "document_id": "c6b99a11-f43f-4cf6-9e71-b9fdf6f31952",
+      "filename": "Tailwind Bulma Shadcn Training Curriculum.pdf",
+      "track": "custom",
+      "language": "css",
+      "original_characters": 160087,
+      "original_sha256": "402893b8fd822f4e7942cfba6300b098723accbc5742efb2d3bacca63eddbee2",
+      "reference_chunks": 160,
+      "reference_characters": 130583,
+      "question": "Explain Tailwind Bulma Shadcn Training Curriculum",
+      "source_found_at_4": true,
+      "wrong_language_excluded": true,
+      "approval_fingerprint": "3a1361c3e69a4790f155785cee2a35531416666c6243273fc3aad264585b0059",
+      "revision": "b258a19cbbc1f35ded37204781d4fced94d68d6ac65531ef549d31e05dc90a82"
+    },
+    {
+      "document_id": "561079a1-b3b2-4068-84b9-dd001df14a54",
+      "filename": "CSS Sass Bootstrap Curriculum \u2013 Part 1.txt",
+      "track": "custom",
+      "language": "css",
+      "original_characters": 444993,
+      "original_sha256": "52803ae881f76c693e5e4974f64b724cdf9552671ff8d6e4d5418c72a5640c11",
+      "reference_chunks": 60,
+      "reference_characters": 43535,
+      "question": "Explain CSS Sass Bootstrap Curriculum \u2013 Part 1",
+      "source_found_at_4": true,
+      "wrong_language_excluded": true,
+      "approval_fingerprint": "d2f9b7074984d01f93261b9805e3f196c3dd1dd2e2e5718d6467fcb7cb27aa8a",
+      "revision": "6141714fa51079f475de3a692346ba1960bb537caf3b66452ced4099c4560bed"
+    },
+    {
+      "document_id": "8298649f-ef4e-4d81-af6d-2c73bc0158a7",
+      "filename": "CSS Sass Bootstrap Curriculum \u2013 Part 2.txt",
+      "track": "custom",
+      "language": "css",
+      "original_characters": 443887,
+      "original_sha256": "5d44da8b0cf5bdafe00e9031d2e8b3a1f998e7310119349cbeb11d7ac31627bc",
+      "reference_chunks": 341,
+      "reference_characters": 269034,
+      "question": "Explain CSS Sass Bootstrap Curriculum \u2013 Part 2",
+      "source_found_at_4": true,
+      "wrong_language_excluded": true,
+      "approval_fingerprint": "e68f4e28e0a06d4b56ae74434a92409945520f01d3c30ccd2eef2ae7b7985be4",
+      "revision": "aec63057cea99b1354517974f727ea589fb51cfd534760c990337a03526418cb"
     }
   ],
   "failures": []

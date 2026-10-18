@@ -1,8 +1,10 @@
 {
-  "records": 17804,
+  "records": 19960,
   "languages": [
     "c",
     "cpp",
+    "css",
+    "html",
     "java",
     "javascript",
     "python",
@@ -14,16 +16,16 @@
     {
       "language": "c",
       "subject": "c",
-      "records": 1369,
-      "reference_safe_records": 886,
+      "records": 2730,
+      "reference_safe_records": 1636,
       "by_kind": {
-        "concept": 199,
-        "exercise": 224,
-        "gotcha": 222,
-        "curriculum": 109,
-        "reference": 615
+        "exercise": 481,
+        "concept": 413,
+        "gotcha": 308,
+        "curriculum": 225,
+        "reference": 1303
       },
-      "candidate_exercises": 224,
+      "candidate_exercises": 481,
       "explicit_version_metadata_records": 0,
       "topic_evidence_ids": {
         "values-types": [
@@ -42,9 +44,9 @@
           "ref-9e2b9840bab2ead665c3fd69"
         ],
         "collections": [
-          "ref-820a2ea30c7c8d90b644361b",
           "ref-837d94555816b33498491477",
-          "ref-d280920c0ce9598e80665ce5"
+          "ref-d280920c0ce9598e80665ce5",
+          "ref-b5a0855e79a37d5cd6f255c3"
         ],
         "strings-unicode": [
           "ref-39dec1889c5796b913f090d4",
@@ -52,31 +54,34 @@
           "ref-b7042f691a6fffe9c5359b7a"
         ],
         "errors": [],
-        "modules-dependencies": [],
+        "modules-dependencies": [
+          "ref-ce376ca19c57bba1ff388df6",
+          "ref-bb8732a220006cf39bd16bc2"
+        ],
         "testing-debugging": [
           "ref-a5e70d4f7a28c42be2730780",
           "ref-f7a97849397bfb7f4439f38d",
           "ref-02c414b36dce47ae1227ecc0"
         ],
         "references-memory": [
-          "ref-820a2ea30c7c8d90b644361b",
           "ref-837d94555816b33498491477",
-          "ref-d280920c0ce9598e80665ce5"
+          "ref-d280920c0ce9598e80665ce5",
+          "ref-b5a0855e79a37d5cd6f255c3"
         ],
         "equality-ordering": [
           "ref-b04a938f813d99980cd86373",
           "ref-45cf7e0eac07904740ab2490",
-          "ref-8b02dd7717d4becd8f45fe57"
+          "ref-8bcfa005d879b4b820b883e9"
         ],
         "complexity": [
-          "ref-820a2ea30c7c8d90b644361b",
           "ref-837d94555816b33498491477",
-          "ref-d280920c0ce9598e80665ce5"
+          "ref-d280920c0ce9598e80665ce5",
+          "ref-b5a0855e79a37d5cd6f255c3"
         ],
         "recursion": [
-          "ref-903e0cae6942cac0469b54bc",
           "ref-253d089555da630293a40732",
-          "ref-84c3414aae564f8826902bd8"
+          "ref-84c3414aae564f8826902bd8",
+          "ref-4c27e1d0d7a3b2d6af9d257b"
         ],
         "search-sort": [
           "ref-7471e686dc7d3f12a3f741f3",
@@ -86,12 +91,12 @@
         "linked-lists": [
           "ref-0401b4ea33d848cf97aac3f4",
           "ref-4187ce4deb2746fe8bda1996",
-          "ref-8238b23639fb9c26149eb6f7"
+          "ref-6e6760b239a6340f7ff7cd49"
         ],
         "stacks-queues": [
           "ref-837d94555816b33498491477",
-          "ref-55b436b9d2ec73096070171a",
-          "ref-72a34dcb1174a8e454dc928c"
+          "ref-72a34dcb1174a8e454dc928c",
+          "ref-cc4326c21a9f4612037c98eb"
         ],
         "trees-heaps": [
           "ref-837d94555816b33498491477",
@@ -113,7 +118,6 @@
       },
       "topics_not_evidenced_by_scan": [
         "errors",
-        "modules-dependencies",
         "dynamic-programming",
         "greedy-backtracking"
       ],
@@ -126,9 +130,9 @@
           "scope_ok": true,
           "source_ids": [
             "ref-7e1ac19b17d549813b3f1729",
-            "ref-8812480ba03ca94daac10eda",
-            "ref-ce87bf6a3c3119d71e7f3b6a",
-            "ref-a2397c8cb37fc584fe8bc15b"
+            "ref-e2f4334f0bd9ccdd38adb3bc",
+            "ref-85646a4765456461ac767fb4",
+            "ref-ce87bf6a3c3119d71e7f3b6a"
           ]
         },
         {
@@ -148,9 +152,9 @@
           "scope_ok": true,
           "source_ids": [
             "ref-8aeb23fe6c3bf0cb95dca67f",
-            "ref-ffcaa24647bda0ea3949e1e3",
             "ref-ff6958f98514d1c0cb77439d",
-            "ref-0353da6eade0c00ae8efa5d8"
+            "ref-ffcaa24647bda0ea3949e1e3",
+            "ref-f805cfe1fd6f2d062c1ddca7"
           ]
         }
       ],
@@ -162,14 +166,14 @@
     {
       "language": "c",
       "subject": "embedded-c",
-      "records": 2094,
-      "reference_safe_records": 1404,
+      "records": 2024,
+      "reference_safe_records": 989,
       "by_kind": {
         "concept": 345,
         "curriculum": 345,
         "exercise": 345,
         "gotcha": 345,
-        "reference": 714
+        "reference": 644
       },
       "candidate_exercises": 345,
       "explicit_version_metadata_records": 0,
@@ -208,8 +212,8 @@
         ],
         "references-memory": [
           "ref-1f55ab2fd1451d47884c1513",
-          "ref-6abe53a154ed26d2f388ed28",
-          "ref-9fa36cfb41f7f7c43c0cb578"
+          "ref-9fa36cfb41f7f7c43c0cb578",
+          "ref-65710b6ef154b5664db7c985"
         ],
         "equality-ordering": [
           "ref-95f872783b37a41abe85585f",
@@ -235,8 +239,8 @@
         ],
         "trees-heaps": [
           "ref-094c123f7212e9a50007770f",
-          "ref-5f3a638a6a4b12f9427cdeef",
-          "ref-030db1a697e362401389bf72"
+          "ref-030db1a697e362401389bf72",
+          "ref-b33d2a8904c6bcf85dcf8e32"
         ],
         "graphs": [
           "ref-f29f3ef2e5fc5d7ff2984613"
@@ -287,10 +291,10 @@
           "result_count": 4,
           "scope_ok": true,
           "source_ids": [
-            "ref-030db1a697e362401389bf72",
-            "ref-508c66bc6884351e03ca3aae",
-            "ref-c006f022ec4fe7a914a3332b",
-            "ref-7146582f608b2b035144ba9e"
+            "ref-e3df0a47b50752e335bca822",
+            "ref-e707d07c7872e67ee7ae8c91",
+            "ref-f061f0b4c2563d03f6a5fb64",
+            "ref-58caf857b53d5a70ba993ca2"
           ]
         }
       ],
@@ -302,10 +306,10 @@
     {
       "language": "cpp",
       "subject": "cpp",
-      "records": 414,
-      "reference_safe_records": 414,
+      "records": 400,
+      "reference_safe_records": 400,
       "by_kind": {
-        "reference": 414
+        "reference": 400
       },
       "candidate_exercises": 0,
       "explicit_version_metadata_records": 0,
@@ -454,10 +458,423 @@
       "learner_reference_admission_gate_enabled": false
     },
     {
+      "language": "css",
+      "subject": "css",
+      "records": 306,
+      "reference_safe_records": 306,
+      "by_kind": {
+        "reference": 306
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-bbbd25287afae48f54d9f248",
+          "ref-183992302303c2477b195b30",
+          "ref-21581931f1ba5ba95b5b1343"
+        ],
+        "control-flow": [
+          "ref-827fdb8fa8b2ca04e01f193b",
+          "ref-e4b479a3e3da3a899fdf287e",
+          "ref-1d6c0b5e20a2d88fc5d6becc"
+        ],
+        "functions": [
+          "ref-e4baf23aacee74b1a4804c07",
+          "ref-a26cc99f8cc052cf50317024",
+          "ref-5207c9c9b3c325abab4ed8e3"
+        ],
+        "collections": [
+          "ref-e4baf23aacee74b1a4804c07",
+          "ref-cfce0df841920f759c93305b",
+          "ref-183992302303c2477b195b30"
+        ],
+        "strings-unicode": [
+          "ref-5207c9c9b3c325abab4ed8e3",
+          "ref-5adbfaca00d5f0b4b86ba5ca",
+          "ref-58459262ae7ef934636eda58"
+        ],
+        "errors": [
+          "ref-4ca029975569b3f61cc50cb5",
+          "ref-7ae233a2ed7f05e67ca8ab40",
+          "ref-d0fbd266030dbad77fa466e5"
+        ],
+        "modules-dependencies": [
+          "ref-bbbd25287afae48f54d9f248",
+          "ref-e4baf23aacee74b1a4804c07",
+          "ref-183992302303c2477b195b30"
+        ],
+        "testing-debugging": [
+          "ref-bbbd25287afae48f54d9f248",
+          "ref-92925700cd68beb6a197b553",
+          "ref-183992302303c2477b195b30"
+        ],
+        "references-memory": [
+          "ref-bbbd25287afae48f54d9f248",
+          "ref-e4baf23aacee74b1a4804c07",
+          "ref-51802c5cd3c1d54077c0b52a"
+        ],
+        "equality-ordering": [
+          "ref-c63b910bbbb6013f2a4b4400",
+          "ref-3cbdc422f6ebcfef8703cc48",
+          "ref-5adbfaca00d5f0b4b86ba5ca"
+        ],
+        "complexity": [
+          "ref-e90a3d40580fa2621578aab3",
+          "ref-c10c2f78fa50b01a26229a63"
+        ],
+        "recursion": [],
+        "search-sort": [],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-183992302303c2477b195b30",
+          "ref-7ae233a2ed7f05e67ca8ab40",
+          "ref-aed312bf63492773f924c830"
+        ],
+        "trees-heaps": [
+          "ref-51802c5cd3c1d54077c0b52a",
+          "ref-827fdb8fa8b2ca04e01f193b",
+          "ref-5a7234c0cdf790349728a7d9"
+        ],
+        "graphs": [
+          "ref-63009218fdfe56dfef0ff70f"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": [
+          "ref-e4baf23aacee74b1a4804c07",
+          "ref-f063376ad803447953fba390",
+          "ref-92925700cd68beb6a197b553"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "recursion",
+        "search-sort",
+        "linked-lists",
+        "dynamic-programming",
+        "greedy-backtracking"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-1d6c0b5e20a2d88fc5d6becc",
+            "ref-0f80529b3de74c5afbc0cd38",
+            "ref-6cd8d5ef13bbb256c9a5ce3a",
+            "ref-10e9e9d1292c89523d27f23f"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-40f16007940f341d981ac672",
+            "ref-3cbdc422f6ebcfef8703cc48",
+            "ref-514727602db99aaa35d48dfd",
+            "ref-5207c9c9b3c325abab4ed8e3"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-354444418952c38052069ad6",
+            "ref-e9ef67dab355f0dc28dd5361",
+            "ref-9f0cc6c664525dd1cd382f6c",
+            "ref-98da7a6b742930035e2b4c59"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": false,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "css",
+      "subject": "tailwind",
+      "records": 84,
+      "reference_safe_records": 84,
+      "by_kind": {
+        "reference": 84
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-50bdbabe5ca37ba2560d07f9",
+          "ref-e0ba70eb18353b7a074fcbce",
+          "ref-731a20fd586311cd2fb3d8f0"
+        ],
+        "control-flow": [
+          "ref-e93af094b2ef89808f25c3d1",
+          "ref-ee1ac6d88627b0d5b44a1b8f",
+          "ref-2c869569958daadf29d6ba77"
+        ],
+        "functions": [
+          "ref-731a20fd586311cd2fb3d8f0",
+          "ref-e93af094b2ef89808f25c3d1",
+          "ref-d33038ff5de0cb80828e0bee"
+        ],
+        "collections": [
+          "ref-9c57c1ee33c548820e3dd74e",
+          "ref-27a5a2b2574dd41baa0795fd",
+          "ref-15a3ec5225e559a08a433650"
+        ],
+        "strings-unicode": [
+          "ref-5873317005107f2a7e21b1c9",
+          "ref-e93af094b2ef89808f25c3d1",
+          "ref-0fa85d604cac17563d0125c0"
+        ],
+        "errors": [],
+        "modules-dependencies": [
+          "ref-50bdbabe5ca37ba2560d07f9",
+          "ref-e0ba70eb18353b7a074fcbce",
+          "ref-9c57c1ee33c548820e3dd74e"
+        ],
+        "testing-debugging": [
+          "ref-50bdbabe5ca37ba2560d07f9",
+          "ref-5873317005107f2a7e21b1c9",
+          "ref-e93af094b2ef89808f25c3d1"
+        ],
+        "references-memory": [
+          "ref-50bdbabe5ca37ba2560d07f9",
+          "ref-e0ba70eb18353b7a074fcbce",
+          "ref-731a20fd586311cd2fb3d8f0"
+        ],
+        "equality-ordering": [
+          "ref-58d111535584ec021688e6a4",
+          "ref-597ff9febdb11a474dd955fc",
+          "ref-75d34ad6bb374e11e8ffef8a"
+        ],
+        "complexity": [
+          "ref-8c283d28da847b5be7864970",
+          "ref-6c6344d86559151796ec5fea",
+          "ref-2c869569958daadf29d6ba77"
+        ],
+        "recursion": [],
+        "search-sort": [
+          "ref-8d54a5f542d189e49c9e2156",
+          "ref-57a579f62b458c3bb96d6c33",
+          "ref-e6fada04324d1f36162846f0"
+        ],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-ee1ac6d88627b0d5b44a1b8f",
+          "ref-8c283d28da847b5be7864970"
+        ],
+        "trees-heaps": [
+          "ref-ddff80314e292455483be9e2",
+          "ref-6a32802e99f3e522b15b5064",
+          "ref-939e1a680935c2bd0b006c0d"
+        ],
+        "graphs": [
+          "ref-234aa7dea94c121d95060584",
+          "ref-bd55fdb7b5d92109bcea950e",
+          "ref-9c75af37056b9e48a8d72afe"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": [
+          "ref-0fa85d604cac17563d0125c0",
+          "ref-7ecc0c783d3372127890a0af",
+          "ref-ad33298acc7c16f2070c57ce"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "errors",
+        "recursion",
+        "linked-lists",
+        "dynamic-programming",
+        "greedy-backtracking"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-731a20fd586311cd2fb3d8f0",
+            "ref-20d9c42522d59434da70fa7e",
+            "ref-1c98adf628eb13ddf107d3d8",
+            "ref-58d111535584ec021688e6a4"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 2,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-f7fc648a9e37d6e295fc4438",
+            "ref-956cf09ab9a4d0a2b515c70e"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-57a579f62b458c3bb96d6c33",
+            "ref-cabc9a33d32837c196db36b7",
+            "ref-d6e972767a5c914f1d4b5e19",
+            "ref-b665f9b56884bcd7e0d5b9f1"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": false,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
+      "language": "html",
+      "subject": "html",
+      "records": 222,
+      "reference_safe_records": 222,
+      "by_kind": {
+        "reference": 222
+      },
+      "candidate_exercises": 0,
+      "explicit_version_metadata_records": 0,
+      "topic_evidence_ids": {
+        "values-types": [
+          "ref-42728250aa67b62ca96037d7",
+          "ref-2d7b36e7ac31888a691dfdf7",
+          "ref-22c4c267421addebcbb2a69d"
+        ],
+        "control-flow": [
+          "ref-22c4c267421addebcbb2a69d",
+          "ref-ccdfa73def75ed9f6f46ab46",
+          "ref-1ba2084237a309d5f1bb974d"
+        ],
+        "functions": [
+          "ref-e208d252764005cfbbc94c5f",
+          "ref-1a0ec6b4ab1924f49e93c966",
+          "ref-93035ba93d0234de564d3130"
+        ],
+        "collections": [
+          "ref-42728250aa67b62ca96037d7",
+          "ref-532765e6f4a549f071f0ee83",
+          "ref-22c4c267421addebcbb2a69d"
+        ],
+        "strings-unicode": [
+          "ref-532765e6f4a549f071f0ee83",
+          "ref-2d7b36e7ac31888a691dfdf7",
+          "ref-a9f14e5349b98cd1aff750ca"
+        ],
+        "errors": [
+          "ref-b894fa8e5dd5fa98a33ed93a",
+          "ref-21b73253677a249335e64b6a",
+          "ref-5d156c318266c47ff8abe243"
+        ],
+        "modules-dependencies": [
+          "ref-532765e6f4a549f071f0ee83",
+          "ref-5633a5277708b9756bd55f3d",
+          "ref-2eb11ab649a7b1f8873e9bd1"
+        ],
+        "testing-debugging": [
+          "ref-5633a5277708b9756bd55f3d",
+          "ref-93035ba93d0234de564d3130",
+          "ref-061ece0a08a4b041b1564705"
+        ],
+        "references-memory": [
+          "ref-42728250aa67b62ca96037d7",
+          "ref-532765e6f4a549f071f0ee83",
+          "ref-2d7b36e7ac31888a691dfdf7"
+        ],
+        "equality-ordering": [
+          "ref-5633a5277708b9756bd55f3d",
+          "ref-2eb11ab649a7b1f8873e9bd1",
+          "ref-50ba834226017c7075a29ac6"
+        ],
+        "complexity": [
+          "ref-532765e6f4a549f071f0ee83",
+          "ref-50ba834226017c7075a29ac6",
+          "ref-67452272bb55b5ec0c8707fa"
+        ],
+        "recursion": [],
+        "search-sort": [
+          "ref-4f5534a3d1e643934510419d"
+        ],
+        "linked-lists": [],
+        "stacks-queues": [
+          "ref-9fc4bc0b7c4aef20c701db44",
+          "ref-0c012b533f14d885c9fe5b4a"
+        ],
+        "trees-heaps": [
+          "ref-f0849fbc52f84af1a6641dbf",
+          "ref-6cce72db48820b2a8a17bf15",
+          "ref-44341a4109b816113f63e2be"
+        ],
+        "graphs": [
+          "ref-9f08b6a3af0f506d249a7796"
+        ],
+        "dynamic-programming": [],
+        "greedy-backtracking": [],
+        "boundary-cases": [
+          "ref-22c4c267421addebcbb2a69d",
+          "ref-2b21ed2b770574db25af6e3b",
+          "ref-231c414543af04197ce24d8f"
+        ]
+      },
+      "topics_not_evidenced_by_scan": [
+        "recursion",
+        "linked-lists",
+        "dynamic-programming",
+        "greedy-backtracking"
+      ],
+      "quality_status": "not_certified",
+      "scope_note": "Keyword matches are review leads, not evidence of completeness or factual correctness. Framework subjects need framework-specific review.",
+      "retrieval_probes": [
+        {
+          "query": "variables functions types",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-0e12244ce6021f0a5fcb9f0f",
+            "ref-dfcd77199072722e20192204",
+            "ref-bbb3bc2cf6dcd58ff0967af4",
+            "ref-ed06f7e1d543e056ec0f2a75"
+          ]
+        },
+        {
+          "query": "collections equality memory",
+          "result_count": 2,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-2d40f75caccba27c8dee9ae0",
+            "ref-72ef2374598cda3922803dfa"
+          ]
+        },
+        {
+          "query": "binary search graph traversal",
+          "result_count": 4,
+          "scope_ok": true,
+          "source_ids": [
+            "ref-9f08b6a3af0f506d249a7796",
+            "ref-7243270151404c01406648d1",
+            "ref-97b1293f2de439ecfec76c94",
+            "ref-50ba834226017c7075a29ac6"
+          ]
+        }
+      ],
+      "execution_adapter_available_in_code": false,
+      "authored_foundation_exercises": 0,
+      "application_reference_extractor_supported": false,
+      "learner_reference_admission_gate_enabled": false
+    },
+    {
       "language": "java",
       "subject": "java",
       "records": 2377,
-      "reference_safe_records": 2052,
+      "reference_safe_records": 1498,
       "by_kind": {
         "concept": 139,
         "exercise": 26,
@@ -476,14 +893,14 @@
           "java-int-overflow"
         ],
         "control-flow": [
-          "java-ref-arrays-the-lenses-t6",
-          "java-ref-arrays-the-lenses-t9",
-          "java-ref-arrays-index-handling-track-t4"
+          "java-ref-arrays-index-handling-track-t4",
+          "java-ref-arrays-index-handling-track-t16",
+          "java-ref-arrays-bridges-to-other-forms-t7"
         ],
         "functions": [
           "java-list-remove-index-vs-value",
-          "java-ref-arrays-curriculum-levels-l1",
-          "java-ref-arrays-curriculum-levels-l3"
+          "java-ref-arrays-bridges-to-other-forms-t5",
+          "java-ref-arrays-bridges-to-other-forms-p2"
         ],
         "collections": [
           "java-list-remove-index-vs-value",
@@ -492,33 +909,33 @@
         ],
         "strings-unicode": [
           "java-ref-arrays-the-lenses-p1",
-          "java-ref-arrays-the-lenses-t1",
-          "java-ref-arrays-bridges-to-other-forms-p1"
+          "java-ref-arrays-bridges-to-other-forms-p1",
+          "java-ref-arrays-bridges-to-other-forms-t5"
         ],
         "errors": [
           "java-ref-arrays-the-lenses-p2",
           "java-ref-arrays-index-handling-track-t1",
-          "java-ref-arrays-curriculum-levels-l0"
+          "java-ref-arrays-exercise-formats-p1"
         ],
         "modules-dependencies": [
           "java-ref-graphs-algorithm-choice-track-p1",
           "java-ref-graphs-when-to-model-it-as-a-graph-and-t1",
-          "java-ref-graphs-curriculum-levels-l6"
+          "java-ref-queues-deque-and-specialised-queues-tra-t6"
         ],
         "testing-debugging": [
-          "java-ref-arrays-the-lenses-t14",
           "java-ref-arrays-when-it-must-stay-an-array-and-w-t14",
-          "java-ref-arrays-curriculum-levels-p2"
+          "java-ref-arrays-curriculum-levels-p2",
+          "java-ref-arrays-bridges-to-other-forms-t4"
         ],
         "references-memory": [
           "java-integer-cache-equality",
-          "java-ref-arrays-the-lenses-t1",
-          "java-ref-arrays-the-lenses-t7"
+          "java-ref-arrays-the-lenses-p2",
+          "java-ref-arrays-index-handling-track-t5"
         ],
         "equality-ordering": [
           "java-integer-cache-equality",
           "java-ref-arrays-overview-p1",
-          "java-ref-arrays-the-lenses-t7"
+          "java-ref-arrays-the-lenses-p2"
         ],
         "complexity": [
           "java-list-remove-index-vs-value",
@@ -532,18 +949,18 @@
         ],
         "search-sort": [
           "java-int-overflow",
-          "java-ref-arrays-the-lenses-t13",
-          "java-ref-arrays-index-handling-track-t12"
+          "java-ref-arrays-index-handling-track-t12",
+          "java-ref-arrays-when-it-must-stay-an-array-and-w-t1"
         ],
         "linked-lists": [
-          "java-ref-classes-curriculum-levels-l5",
           "java-collections-program-to-interface",
-          "java-collections-null-policies"
+          "java-collections-null-policies",
+          "java-ref-collections-interface-map-track-t1"
         ],
         "stacks-queues": [
-          "java-ref-arrays-the-lenses-t13",
           "java-ref-arrays-when-it-must-stay-an-array-and-w-t18",
-          "java-ref-classes-the-lenses-t13"
+          "java-ref-classes-equality-and-hashing-track-t11",
+          "java-ref-classes-equality-and-hashing-track-p2"
         ],
         "trees-heaps": [
           "java-ref-arrays-when-it-must-stay-an-array-and-w-t6",
@@ -561,14 +978,14 @@
           "java-ref-algrecursion-fit-t2"
         ],
         "greedy-backtracking": [
-          "java-ref-grids-the-lenses-t4",
           "java-ref-grids-traversal-track-t7",
-          "java-ref-grids-curriculum-levels-l4"
+          "java-trie-xor",
+          "java-ref-stacks-lifo-patterns-track-t3"
         ],
         "boundary-cases": [
-          "java-ref-arrays-the-lenses-t10",
-          "java-ref-arrays-the-lenses-t11",
-          "java-ref-arrays-the-lenses-p2"
+          "java-ref-arrays-the-lenses-p2",
+          "java-ref-arrays-index-handling-track-p2",
+          "java-ref-arrays-gotcha-catalogue-p1"
         ]
       },
       "topics_not_evidenced_by_scan": [],
@@ -591,10 +1008,10 @@
           "result_count": 4,
           "scope_ok": true,
           "source_ids": [
-            "corpus-java-ref-classes-curriculum-levels-l6",
+            "corpus-java-ref-collections-choosing-a-collection-t15",
             "corpus-java-ref-collections-iteration-mutation-and-immutabil-t8",
-            "corpus-java-ref-classes-curriculum-levels-l2",
-            "corpus-java-ref-collections-choosing-a-collection-t15"
+            "corpus-java-ref-graphs-representations-and-bridges-t6",
+            "corpus-java-ref-classes-equality-and-hashing-track-t2"
           ]
         },
         {
@@ -604,8 +1021,8 @@
           "source_ids": [
             "corpus-java-ref-algsorting-notes-t7",
             "corpus-java-ref-grids-traversal-track-t7",
-            "corpus-java-ref-trees-curriculum-levels-l5",
-            "corpus-java-ref-grids-traversal-track-t10"
+            "corpus-java-ref-grids-traversal-track-t10",
+            "corpus-java-ref-algarrays-notes-t5"
           ]
         }
       ],
@@ -1182,7 +1599,7 @@
       "language": "javascript",
       "subject": "javascript",
       "records": 1903,
-      "reference_safe_records": 1574,
+      "reference_safe_records": 1115,
       "by_kind": {
         "concept": 135,
         "exercise": 41,
@@ -1197,18 +1614,18 @@
       "topic_evidence_ids": {
         "values-types": [
           "js-array-number-precision",
-          "js-ref-arrays-the-lenses-t1",
-          "js-ref-arrays-the-lenses-t9"
+          "js-ref-arrays-index-handling-track-t1",
+          "js-ref-arrays-index-handling-track-t17"
         ],
         "control-flow": [
           "js-array-remove-while-iterating",
-          "js-ref-arrays-the-lenses-t6",
-          "js-ref-arrays-the-lenses-t10"
+          "js-ref-arrays-index-handling-track-t2",
+          "js-ref-arrays-index-handling-track-t3"
         ],
         "functions": [
-          "js-ref-arrays-the-lenses-t10",
           "js-ref-arrays-index-handling-track-p2",
-          "js-ref-arrays-curriculum-levels-l1"
+          "js-graph-undirected-both-directions",
+          "js-graph-directed-cycle-three-states"
         ],
         "collections": [
           "js-array-remove-while-iterating",
@@ -1218,7 +1635,7 @@
         "strings-unicode": [
           "js-array-sort-comparator",
           "js-ref-arrays-overview-p1",
-          "js-ref-arrays-the-lenses-t8"
+          "js-ref-arrays-when-it-must-stay-an-array-t13"
         ],
         "errors": [
           "js-ref-maps-order-and-iteration-track-p1",
@@ -1230,19 +1647,19 @@
           "js-ref-graphs-when-to-model-it-as-a-graph-and-t13"
         ],
         "testing-debugging": [
-          "js-ref-arrays-the-lenses-t12",
-          "js-ref-arrays-the-lenses-t14",
-          "js-ref-arrays-when-it-must-stay-an-array-t12"
+          "js-ref-arrays-when-it-must-stay-an-array-t12",
+          "js-ref-graphs-exercise-formats-p2",
+          "js-ref-graphs-representations-and-bridges-t12"
         ],
         "references-memory": [
           "js-array-remove-while-iterating",
           "js-array-equality-and-copies",
-          "js-ref-arrays-the-lenses-t7"
+          "js-ref-arrays-index-handling-track-t3"
         ],
         "equality-ordering": [
           "js-array-sort-comparator",
           "js-array-equality-and-copies",
-          "js-ref-arrays-the-lenses-t7"
+          "js-ref-arrays-when-it-must-stay-an-array-t10"
         ],
         "complexity": [
           "js-array-remove-while-iterating",
@@ -1250,14 +1667,14 @@
           "js-array-equality-and-copies"
         ],
         "recursion": [
-          "js-ref-graphs-the-lenses-t6",
           "js-ref-graphs-representation-and-traversal-tra-t11",
-          "js-ref-graphs-when-to-model-it-as-a-graph-and-t8"
+          "js-ref-graphs-when-to-model-it-as-a-graph-and-t8",
+          "js-grid-iterative-flood-fill"
         ],
         "search-sort": [
           "js-array-sort-comparator",
-          "js-ref-arrays-the-lenses-t7",
-          "js-ref-arrays-the-lenses-t13"
+          "js-ref-arrays-index-handling-track-t13",
+          "js-ref-arrays-when-it-must-stay-an-array-t1"
         ],
         "linked-lists": [
           "js-ref-arrays-overview-p1",
@@ -1266,8 +1683,8 @@
         ],
         "stacks-queues": [
           "js-ref-arrays-overview-p1",
-          "js-ref-arrays-the-lenses-t13",
-          "js-ref-arrays-when-it-must-stay-an-array-t11"
+          "js-ref-arrays-when-it-must-stay-an-array-t11",
+          "js-ref-arrays-when-it-must-stay-an-array-t16"
         ],
         "trees-heaps": [
           "js-ref-arrays-when-it-must-stay-an-array-t7",
@@ -1285,13 +1702,13 @@
         ],
         "greedy-backtracking": [
           "js-array-equality-and-copies",
-          "js-ref-grids-the-lenses-t4",
-          "js-ref-grids-the-lenses-t13"
+          "js-ref-grids-traversal-track-t9",
+          "js-object-copy-shallow-deep"
         ],
         "boundary-cases": [
           "js-array-number-precision",
-          "js-ref-arrays-the-lenses-t11",
-          "js-ref-graphs-the-lenses-t11"
+          "js-ref-grids-coordinate-handling-track-t3",
+          "js-ref-grids-coordinate-handling-track-t12"
         ]
       },
       "topics_not_evidenced_by_scan": [],
@@ -1316,7 +1733,7 @@
           "source_ids": [
             "javascript-path-06-arrays",
             "corpus-js-ref-algsorting-notes-t7",
-            "corpus-js-ref-heaps-bridges-and-language-mapping-t10",
+            "javascript-path-08-sets",
             "javascript-path-08-sets"
           ]
         },
@@ -1326,9 +1743,9 @@
           "scope_ok": true,
           "source_ids": [
             "corpus-js-ref-grids-traversal-track-t12",
-            "corpus-js-ref-trees-curriculum-levels-l5",
             "corpus-js-ref-algsorting-notes-t7",
-            "corpus-js-ref-grids-traversal-track-t9"
+            "corpus-js-ref-grids-traversal-track-t9",
+            "corpus-js-ref-grids-traversal-track-t8"
           ]
         }
       ],
@@ -1340,10 +1757,10 @@
     {
       "language": "python",
       "subject": "embedded-python",
-      "records": 1102,
-      "reference_safe_records": 793,
+      "records": 1267,
+      "reference_safe_records": 859,
       "by_kind": {
-        "reference": 562,
+        "reference": 727,
         "concept": 165,
         "exercise": 198,
         "gotcha": 78,
@@ -1354,83 +1771,83 @@
       "topic_evidence_ids": {
         "values-types": [
           "ref-684779c93ce2ba30f3bf9035",
-          "ref-0084f4483116b08d8693055d",
-          "ref-ee845aced4bc00a309d56984"
+          "ref-7435abaad461638a4b4544b4",
+          "ref-868c9e7e7bc45774a804f039"
         ],
         "control-flow": [
-          "ref-408b363306cd6e37bfbe335c",
-          "ref-575d782eaced47e0a164f99f",
-          "ref-37769887760fb8ae1282d482"
+          "ref-0743a048b9468dfeacc28915",
+          "ref-3ad04493d412f4ba65dfaa08",
+          "ref-9bd1ca1251e8738c3a5872c4"
         ],
         "functions": [
-          "ref-9f8d10a44f63ccb25f6bdb80",
-          "ref-764a8cf9621c71d942912ce2",
-          "ref-53f75218b2feb83d8e4ecb9a"
+          "ref-868c9e7e7bc45774a804f039",
+          "ref-6d41a7ca41523195973377d4",
+          "ref-20bb3a81a8bbda4e179c1c7e"
         ],
         "collections": [
           "ref-684779c93ce2ba30f3bf9035",
           "ref-83571be7bbb1154cf1766119",
-          "ref-066c9ecc6a1e6300dae6ba0e"
+          "ref-0743a048b9468dfeacc28915"
         ],
         "strings-unicode": [
-          "ref-289830425b553ffbbb97fbcb",
-          "ref-e6969337547b87cc3ab1f0ee",
-          "ref-7ee17f4ddb1e9f3d82bce21e"
+          "ref-b4f0db00bdeae4108b3104c5",
+          "ref-13622f8f4033442cda409ee9",
+          "ref-558c9f7eca6b1f92ed4c12a6"
         ],
         "errors": [
-          "ref-f8d2a621f25578bb7f22a171",
-          "ref-00acd3991795ada03ebc1129",
-          "ref-d7a4ba1f2fa9d2890f49c390"
+          "ref-3df6f017df5e1429e91910e3",
+          "ref-7b1f58daed8b55c73f15ee2a",
+          "ref-29441987cd53fdd3087ca704"
         ],
         "modules-dependencies": [
-          "ref-408b363306cd6e37bfbe335c",
-          "ref-ee845aced4bc00a309d56984",
-          "ref-af9119ea2ec6f91034ef9960"
+          "ref-44aac563e56d69f94dd15045",
+          "ref-7435abaad461638a4b4544b4",
+          "ref-868c9e7e7bc45774a804f039"
         ],
         "testing-debugging": [
           "ref-684779c93ce2ba30f3bf9035",
           "ref-83571be7bbb1154cf1766119",
-          "ref-066c9ecc6a1e6300dae6ba0e"
+          "ref-8c24736950d63894c1702230"
         ],
         "references-memory": [
           "ref-684779c93ce2ba30f3bf9035",
-          "ref-83571be7bbb1154cf1766119",
-          "ref-066c9ecc6a1e6300dae6ba0e"
+          "ref-44aac563e56d69f94dd15045",
+          "ref-7435abaad461638a4b4544b4"
         ],
         "equality-ordering": [
-          "ref-3ae1b050937975a6b2b79cb5",
-          "ref-e6969337547b87cc3ab1f0ee",
-          "ref-d0d0228aabbed44bfaa63e5a"
+          "ref-13622f8f4033442cda409ee9",
+          "ref-e424369337a23c5448d3d0a6",
+          "ref-3628bbe6b2f74a164996b9d8"
         ],
         "complexity": [
-          "ref-ee845aced4bc00a309d56984",
-          "ref-9a7365124b7d44a0e6495e22",
-          "ref-8436a57074b2c0f3675e28e2"
+          "ref-7435abaad461638a4b4544b4",
+          "ref-868c9e7e7bc45774a804f039",
+          "ref-6d41a7ca41523195973377d4"
         ],
         "recursion": [],
         "search-sort": [],
         "linked-lists": [],
         "stacks-queues": [
           "ref-83571be7bbb1154cf1766119",
-          "ref-d513b273f33a08c9c2187457",
-          "ref-b676778101e19f9c78cb702c"
+          "ref-0743a048b9468dfeacc28915",
+          "ref-8c24736950d63894c1702230"
         ],
         "trees-heaps": [
-          "ref-f8d2a621f25578bb7f22a171",
-          "ref-d7a4ba1f2fa9d2890f49c390",
-          "ref-53b6a0e75c02453be8eefe2e"
+          "ref-c4f974ce5d28fc7faf903959",
+          "ref-3ad04493d412f4ba65dfaa08",
+          "ref-9bd1ca1251e8738c3a5872c4"
         ],
         "graphs": [
-          "ref-1b3f46a9f9a100ee855529f8",
-          "ref-3a5a1ebbc1e68b79f85d2828",
-          "ref-8f9981ad12d0e18dbcf9302d"
+          "ref-facdf8b1c85598f35b729fd7",
+          "ref-fd61033fc61e3c580280e644",
+          "ref-1b3f46a9f9a100ee855529f8"
         ],
         "dynamic-programming": [],
         "greedy-backtracking": [],
         "boundary-cases": [
           "ref-83571be7bbb1154cf1766119",
-          "ref-7aa0327ba163c839bef96c11",
-          "ref-528dc9644a2b056c10a7f0ef"
+          "ref-0743a048b9468dfeacc28915",
+          "ref-cbb552d433640f72cfecf51f"
         ]
       },
       "topics_not_evidenced_by_scan": [
@@ -1451,7 +1868,7 @@
             "ref-4143a85d20140ff34bb00ceb",
             "ref-6cdffdab57f1cc148cdf8e91",
             "ref-68277166bea29679f649670d",
-            "ref-b676778101e19f9c78cb702c"
+            "ref-9bd1ca1251e8738c3a5872c4"
           ]
         },
         {
@@ -1485,10 +1902,10 @@
     {
       "language": "python",
       "subject": "python",
-      "records": 397,
-      "reference_safe_records": 338,
+      "records": 443,
+      "reference_safe_records": 368,
       "by_kind": {
-        "reference": 276,
+        "reference": 322,
         "concept": 50,
         "exercise": 25,
         "gotcha": 30,
@@ -1584,13 +2001,13 @@
         ],
         "dynamic-programming": [
           "ref-0c65070cd0eb52949e82b073",
-          "ref-ef86b895c3b2b2401e4a5fa4",
-          "ref-1ce56a31600e3ce4dc472096"
+          "ref-785c4522ba8cb1273a27e7df",
+          "ref-40dc7fa34f259834fcb5d577"
         ],
         "greedy-backtracking": [
+          "ref-7fe338067ac3ab2881b0d262",
           "ref-0c65070cd0eb52949e82b073",
-          "ref-1473e4b224db9400d18f7935",
-          "ref-3cac4a1a1beee64d2cc22b1e"
+          "ref-785c4522ba8cb1273a27e7df"
         ],
         "boundary-cases": [
           "ref-6911ebb8878a785e136b9a6c",
@@ -1608,9 +2025,9 @@
           "scope_ok": true,
           "source_ids": [
             "python-fundamentals",
-            "ref-0ac896e1d86ba1863a3c881f",
-            "ref-4a0a96019dc832d471966616",
-            "ref-cb5ad4e4800db3726f5d215b"
+            "ref-c54682b00a76eaa2d977b230",
+            "ref-a748fb46295981b396cc0be9",
+            "ref-0ac896e1d86ba1863a3c881f"
           ]
         },
         {
@@ -1619,9 +2036,9 @@
           "scope_ok": true,
           "source_ids": [
             "ref-f750b5e9fffb468f0c0ef635",
+            "python-fundamentals",
             "ref-45e196168b15b8fce49df721",
-            "ref-da975126f0a5f1c5c861afc7",
-            "python-dicts-and-sets"
+            "ref-da975126f0a5f1c5c861afc7"
           ]
         },
         {
@@ -1631,8 +2048,8 @@
           "source_ids": [
             "ref-1cbeb050f8041ab482407772",
             "ref-31ba9f95e175418d541e8401",
-            "ref-4dd4e6a96c9968b33115fff7",
-            "ref-c741ac56a19be5c122d663a9"
+            "ref-c741ac56a19be5c122d663a9",
+            "ref-4dd4e6a96c9968b33115fff7"
           ]
         }
       ],
@@ -2103,10 +2520,10 @@
     {
       "language": "ruby",
       "subject": "ruby",
-      "records": 1179,
-      "reference_safe_records": 756,
+      "records": 1345,
+      "reference_safe_records": 835,
       "by_kind": {
-        "reference": 539,
+        "reference": 705,
         "concept": 161,
         "exercise": 192,
         "gotcha": 200,
@@ -2116,37 +2533,38 @@
       "explicit_version_metadata_records": 0,
       "topic_evidence_ids": {
         "values-types": [
-          "ref-662e5f7eb396faebb7968627",
-          "ref-16ff76c14e3c9f915da8c3f6",
-          "ref-7a40848e32f1602fee2fb620"
+          "ref-133df16e2707197f52b5b567",
+          "ref-5337a1c1e181684ad0ef48f6",
+          "ref-18be3079743ef43997f90115"
         ],
         "control-flow": [
-          "ref-af87144d1001216fd16d837b",
-          "ref-080c03bb6f7f95baab96c3dd",
-          "ref-b6c0becdebbae51e0b342a95"
+          "ref-8447c258b7471c30e1832aa3",
+          "ref-1bec3618574e5f59f8454d4f",
+          "ref-073afdc85478042ab9044774"
         ],
         "functions": [
-          "ref-12088bd6304dc77280de2d82",
-          "ref-662e5f7eb396faebb7968627",
-          "ref-d6b765912aa237621485e304"
+          "ref-133df16e2707197f52b5b567",
+          "ref-5337a1c1e181684ad0ef48f6",
+          "ref-18be3079743ef43997f90115"
         ],
         "collections": [
           "ref-5f1ebc9f62d058d47c67a67f",
-          "ref-12088bd6304dc77280de2d82",
-          "ref-b4a7e03184852ca092844172"
+          "ref-5337a1c1e181684ad0ef48f6",
+          "ref-18be3079743ef43997f90115"
         ],
         "strings-unicode": [
           "ref-5f1ebc9f62d058d47c67a67f",
-          "ref-2bb83b3d52070c0d79cd05e8",
-          "ref-8bb1a036fae754c1cfabd3d5"
+          "ref-133df16e2707197f52b5b567",
+          "ref-5337a1c1e181684ad0ef48f6"
         ],
         "errors": [
+          "ref-562e33144b462bd17946ff32",
           "ref-43d64f0c3a5d6b28b1dc2363"
         ],
         "modules-dependencies": [
+          "ref-03103e2421ebf0370e873028",
           "ref-d6b765912aa237621485e304",
-          "ref-985005e372a10e47dbeae3ba",
-          "ref-d6076cd9cfa19e8867bf5f5a"
+          "ref-50eb368a560ff327b57a3c4b"
         ],
         "testing-debugging": [
           "ref-5f1ebc9f62d058d47c67a67f",
@@ -2155,59 +2573,59 @@
         ],
         "references-memory": [
           "ref-5f1ebc9f62d058d47c67a67f",
-          "ref-12088bd6304dc77280de2d82",
-          "ref-b4a7e03184852ca092844172"
+          "ref-133df16e2707197f52b5b567",
+          "ref-5337a1c1e181684ad0ef48f6"
         ],
         "equality-ordering": [
           "ref-5f1ebc9f62d058d47c67a67f",
-          "ref-662e5f7eb396faebb7968627",
-          "ref-7bb64904e57e562d8695d736"
+          "ref-18be3079743ef43997f90115",
+          "ref-49fd749941d41a519c704ac8"
         ],
         "complexity": [
-          "ref-d1b320e22398240477fac7a2",
-          "ref-bc3fe09b7a51c91ffb6ac7ba",
-          "ref-f85a926ec6c6fd4a2d1eded1"
+          "ref-5337a1c1e181684ad0ef48f6",
+          "ref-18be3079743ef43997f90115",
+          "ref-49fd749941d41a519c704ac8"
         ],
         "recursion": [
-          "ref-b8098599c0d9b36ee902f080",
-          "ref-bc3fe09b7a51c91ffb6ac7ba",
-          "ref-3fdba271ce86507923ac59ef"
+          "ref-03103e2421ebf0370e873028",
+          "ref-5fdc91e1535f41d4e6e069e5",
+          "ref-b8098599c0d9b36ee902f080"
         ],
         "search-sort": [
-          "ref-b8098599c0d9b36ee902f080",
-          "ref-ea0f32a400fa4688040bd8bb",
-          "ref-388c4f796ac879e52c5e9d14"
+          "ref-5337a1c1e181684ad0ef48f6",
+          "ref-49fd749941d41a519c704ac8",
+          "ref-b8098599c0d9b36ee902f080"
         ],
         "linked-lists": [
           "ref-5655d0af9b4f3600c39247e9",
-          "ref-76a183f4e9b23548b9c80a1f",
-          "ref-41c7ea9bd492c8c1f5c47d8d"
+          "ref-6c8e993564768324cdd5540c",
+          "ref-106480a91704a32093bb56ae"
         ],
         "stacks-queues": [
           "ref-12088bd6304dc77280de2d82",
-          "ref-b4a7e03184852ca092844172",
-          "ref-7bb64904e57e562d8695d736"
+          "ref-92fc705c9407d968f7a06361",
+          "ref-817fb324e728b1cce7f3bf2d"
         ],
         "trees-heaps": [
-          "ref-b8098599c0d9b36ee902f080",
-          "ref-0b1407e021aa439d406042d6",
-          "ref-ab64ff4d8403ee273dd6cd7b"
+          "ref-d91f3def12e8d7710156c839",
+          "ref-7f0d0f328b5b723a2266027c",
+          "ref-1bec3618574e5f59f8454d4f"
         ],
         "graphs": [
+          "ref-7f6ab2f79b5a3b432f4c66c9",
           "ref-de479706f3f605ec830582b6",
-          "ref-4f26ae13a6ab4574345b0bfb",
-          "ref-d6325a59b74e654c7c48789e"
+          "ref-1311a3be84fffb103c80ecfd"
         ],
         "dynamic-programming": [],
         "greedy-backtracking": [
           "ref-51f7b73a6607daae10a23798",
-          "ref-bbc68715dd2a292121a1c702",
-          "ref-c23dae33a8c82410af5530d4"
+          "ref-f2cc327cbd7caa3ac023b602",
+          "ref-a3416d698b41d5da2a183009"
         ],
         "boundary-cases": [
-          "ref-d35b09582f7d8ce88228c01d",
-          "ref-dc3b2171f01f35e67dd693df",
-          "ref-09515fea66b3272597577a4d"
+          "ref-133df16e2707197f52b5b567",
+          "ref-5337a1c1e181684ad0ef48f6",
+          "ref-ef17aed7a67d5946171832e3"
         ]
       },
       "topics_not_evidenced_by_scan": [
@@ -2223,8 +2641,8 @@
           "source_ids": [
             "ref-e7c28c72ca20d7f940f0d261",
             "ref-c45549b3b6f003e48f28fe50",
-            "ref-04ac5de22be24f37f406bb18",
-            "ruby-fundamentals"
+            "ruby-fundamentals",
+            "ref-04ac5de22be24f37f406bb18"
           ]
         },
         {
@@ -2233,9 +2651,9 @@
           "scope_ok": true,
           "source_ids": [
             "ref-1a23f9f60a57bce9566359ff",
-            "ref-b8153bb5e56f7442b74fc93a",
-            "ref-ed9b0e0797962a72eed94e1b",
-            "ref-447ce2fa4c3c74df7730917f"
+            "ref-75e37a822c612e76e31a4d43",
+            "ruby-fundamentals",
+            "ref-b8153bb5e56f7442b74fc93a"
           ]
         },
         {
@@ -2245,8 +2663,8 @@
           "source_ids": [
             "ref-cb71a74ef68b29a63b6b138c",
             "ref-64fca048dd93dfe79cc208b7",
-            "ref-b8098599c0d9b36ee902f080",
-            "ref-bc42a4a723c139017a03e02b"
+            "ref-dc5da082beabe9271780d2f6",
+            "ref-b8098599c0d9b36ee902f080"
           ]
         }
       ],
@@ -2258,17 +2676,17 @@
     {
       "language": "rust",
       "subject": "rust",
-      "records": 3218,
-      "reference_safe_records": 1838,
+      "records": 3108,
+      "reference_safe_records": 1613,
       "by_kind": {
-        "reference": 688,
+        "reference": 693,
         "concept": 920,
-        "curriculum": 230,
+        "curriculum": 115,
         "exercise": 920,
         "gotcha": 460
       },
       "candidate_exercises": 920,
-      "explicit_version_metadata_records": 2875,
+      "explicit_version_metadata_records": 2760,
       "topic_evidence_ids": {
         "values-types": [
           "ref-279c5cdd3dfba63a768dd3e7",
@@ -2418,7 +2836,7 @@
       "language": "typescript",
       "subject": "typescript",
       "records": 1615,
-      "reference_safe_records": 1135,
+      "reference_safe_records": 1004,
       "by_kind": {
         "reference": 762,
         "concept": 281,
@@ -2521,7 +2939,7 @@
         "boundary-cases": [
           "ref-28f009aae051264ddefacca6",
           "ref-7f1aace20bec0246ec0ee94e",
-          "ref-375d40e28d7ba1d577441f13"
+          "ref-41974e011cab89d265fadf70"
         ]
       },
       "topics_not_evidenced_by_scan": [
@@ -2548,8 +2966,8 @@
           "source_ids": [
             "ref-9c5022ac8729fbcbf1557e63",
             "ref-2fda725e08ea8a66a8710f81",
-            "ref-eb0104c1284a33474bed1deb",
-            "ref-077453a081a7655432c7316a"
+            "ref-077453a081a7655432c7316a",
+            "ref-c615efb40e03a7acc866eec7"
           ]
         },
         {
@@ -2571,10 +2989,10 @@
     }
   ],
   "structural_findings": [],
-  "generated_at": "2026-10-16T04:01:53.258437+00:00",
+  "generated_at": "2026-10-18T03:25:20.402230+00:00",
   "corpus_sha256": {
-    "data/curriculum/java-javascript.jsonl": "e9f8a4a1734a73a01ffd388e41af694c104bc0a77594cf3a896212fd80ac4b72",
-    "data/reference_library/records.jsonl": "04ee7eab2248fb7fe9602c3521f3d2d59b83bafb395153a073c16ccdeaa2acd5"
+    "data/curriculum/java-javascript.jsonl": "74b8920357928774d1a24ae23991382f1799452401bbec0593588537b7d52610",
+    "data/reference_library/records.jsonl": "55e228ea5ba97d5e9957e564b017a503ebb23d859c61ab4589b534b42c37ac0e"
   },
   "authored_dsa_solution_sections": {
     "Python": 23,

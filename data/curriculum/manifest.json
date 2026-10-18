@@ -31,5 +31,7 @@
   },
   "source_verification": "Retained from source; not independently certified by this release.",
   "foundation_lessons": 24,
-  "foundation_test_cases": 144
+  "foundation_test_cases": 144,
+  "release_sha256": "b067d1067b0c7a301cdb86ea7386f9749e00c686464d522eefe94be871226315",
+  "correction_review": "2026-10-17; argument passing, map equivalence and JS layout wording; original source hash retained"
 }

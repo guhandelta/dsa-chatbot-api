@@ -281,5 +281,49 @@
       },
       "retrievable_count": 12
     }
+  },
+  {
+    "id": "tr-evt-07e6b51a758c",
+    "timestamp": "2026-10-18T12:49:47.004115+00:00",
+    "action": "import_gap_training_datasets",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/Users/guhaprasaanth/Projects/dsa-chatbot/current/Training Data/generated/knowledge-gap-fill-v1/all_records.jsonl",
+    "record_count": 190,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "completed_at": "2026-10-18T12:49:46.991171+00:00",
+      "dataset": "knowledge-gap-fill-v1",
+      "integration": "active_packaged_local_RAG",
+      "records_available": 204,
+      "new_records_added": 190,
+      "existing_records_reused": 14,
+      "subjects": 28,
+      "total_library_records": 15884,
+      "eligible_library_records": 10656,
+      "retrieval_cases": 60,
+      "expected_in_top_4": 52,
+      "scope_safety_passed": true,
+      "embedding_rebuild": "not_run",
+      "model_weight_training": "not_applicable_to_reference_ingestion",
+      "review_status": "source_linked_drafts_not_expert_certified"
+    }
+  },
+  {
+    "id": "tr-evt-85da8b6ef1a7",
+    "timestamp": "2026-10-18T13:16:12.293063+00:00",
+    "action": "repair_reference_sections",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "",
+    "record_count": 1074,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "archived_records": 737,
+      "report": "reports/knowledge-base-training-2026-10-18/PENDING_TASKS_RECHECK.md",
+      "semantic_index": "awaiting_explicit_provider_upload_approval"
+    }
   }
 ]
