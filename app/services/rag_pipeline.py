@@ -112,7 +112,17 @@ async def run_rag_chat(
         # or missing safety metadata. Approved DB projections are passed by router.
         vector = [d for d in vector if not str(d.metadata.get("problem_id", "")).startswith("upload:")
                   and not d.metadata.get("document_id") and not d.metadata.get("user_id")]
-        candidates = local + vector if focus_id else (uploaded_documents or []) + vector + local
+        from app.services.reference_library import current_document
+        vector = [current for d in vector if (current := current_document(d)) is not None]
+        from app.services.reference_semantics import search as reference_search, balanced_results
+        semantic = []
+        if track == 'language' and not focus_id:
+            try:
+                semantic = reference_search(message, language, subject)
+            except Exception:
+                logging.getLogger(__name__).warning('Curated semantic retrieval unavailable; using scoped fallback')
+        candidates = (local + vector if focus_id else list(balanced_results(
+            uploaded_documents or [], semantic, local, vector)))
         out, seen = [], set()
         for doc in candidates:
             meta = getattr(doc, "metadata", {})
@@ -125,6 +135,8 @@ async def run_rag_chat(
             if focus_id and meta.get("problem_id") != focus_id:
                 continue
             if subject and meta.get("subject") != subject:
+                continue
+            if track == 'language' and not subject and meta.get('subject', language) != language:
                 continue
             if doc.page_content not in seen:
                 out.append(doc)

@@ -14,10 +14,14 @@ from sqlalchemy import or_, select
 
 from app.db.models import KnowledgeDocument
 
-PROJECTION_VERSION = "upload-reference-v1"
+PROJECTION_VERSION = "upload-reference-v2"
 _LANGUAGES = (("javascript", r"javascript|\bjs\b"), ("typescript", r"typescript|\bts\b"),
               ("java", r"\bjava\b"), ("python", r"python"), ("rust", r"\brust\b"),
-              ("cpp", r"c\+\+|\bcpp\b"), ("go", r"\bgolang\b|\bgo\b"))
+              ("cpp", r"c\+\+|\bcpp\b"), ("go", r"\bgolang\b|\bgo\b"),
+              ("html", r"\bhtml(?:5)?\b|web apis"),
+              ("css", r"\bcss(?:3)?\b|\bsass\b|\bscss\b|\bbootstrap\b|\btailwind\b|\bbulma\b|\bshadcn\b"),
+              ("ruby", r"\bruby\b"), ("csharp", r"c#|\bcsharp\b"),
+              ("c", r"\bc(?:11|17|23)?\b"))
 # Stop, rather than merely removing a heading: PDF tables can continue many
 # pages after the heading and extraction can interleave columns/page furniture.
 _BOUNDARY = re.compile(r"^\s*(?:#{1,6}\s*|\d+[.)]\s*)?(?:gotcha|curriculum levels|exercise|workout|quiz|solution|answer|canonical|reference implementation|ready.to.ingest|chunk schema|ingestion checklist|snippet\s+result|example_good|expected(?:_output)?\s*:|test_cases\s*:)", re.I)
@@ -60,6 +64,11 @@ def reference_text(text: str) -> str:
 @lru_cache(maxsize=256)
 def project(doc_id: str, filename: str, text: str, track: str, explicit_language: str = "") -> tuple[Document, ...]:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from app.services.knowledge_hygiene import source_is_plan
+    if source_is_plan(filename):
+        return ()
+    # Undetermined uploads stay indexable for instructor management; learner
+    # retrieval requires an exact language match, so "und" never reaches chat.
     language = explicit_language or infer_language(filename) or "und"
     safe = reference_text(text)
     if not safe:

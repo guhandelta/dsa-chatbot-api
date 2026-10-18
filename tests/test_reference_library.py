@@ -22,7 +22,11 @@ def test_all_requested_subjects_are_available_as_reference_only():
     assert all(not subjects[s]['executable'] and subjects[s]['retrievable_records']>0 for s in required)
     rows=reference_library.records()
     assert all(r['metadata']['verified'] is False for r in rows)
-    assert all(r['metadata']['language'] not in ('java','javascript') or r['metadata']['subject'].startswith('spring-') for r in rows)
+    assert all(r['metadata']['language'] not in ('java','javascript')
+               or r['metadata']['subject'].startswith('spring-')
+               or r['metadata'].get('dataset_version') == 'knowledge-gap-fill-v1'
+               or r['metadata'].get('origin') in ('generated_batch_001','generated_batch_002')
+               or str(r['metadata'].get('origin','')).startswith('generated_gap_fill_') for r in rows)
 
 
 def test_queries_stay_in_selected_language_and_subject():

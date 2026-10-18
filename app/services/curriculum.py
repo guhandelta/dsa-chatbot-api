@@ -7,13 +7,25 @@ CORPUS_PATH = Path(__file__).resolve().parents[2] / "data" / "curriculum" / "jav
 RELEASE_LANGUAGES = ("javascript", "java")
 
 
-@lru_cache(maxsize=1)
+def version():
+    stat = CORPUS_PATH.stat()
+    return str(CORPUS_PATH), stat.st_mtime_ns, stat.st_size
+
+
 def records() -> list[dict]:
-    rows = [json.loads(line) for line in CORPUS_PATH.open(encoding="utf-8") if line.strip()]
+    return _records(*version())
+
+
+@lru_cache(maxsize=1)
+def _records(path, modified, size) -> list[dict]:
+    rows = [json.loads(line) for line in Path(path).open(encoding="utf-8") if line.strip()]
     ids = [r["id"] for r in rows]
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate curriculum IDs")
     return rows
+
+
+records.cache_clear = _records.cache_clear
 
 
 def concept_items() -> list[dict]:
@@ -27,11 +39,12 @@ def concept_document(content_id: str) -> str:
 
 def retrieval_documents():
     from langchain_core.documents import Document
+    from app.services.knowledge_hygiene import PUBLIC_REFERENCE_KINDS
     # Only explicit answer-free records are eligible. Exercise/gotcha answers
     # are preserved in the canonical file but never indexed into learner chat.
     for r in records():
         m = r["metadata"]
-        if m.get("contains_answer") is not False or m.get("kind") in ("exercise", "gotcha"):
+        if m.get("contains_answer") is not False or m.get("kind") not in PUBLIC_REFERENCE_KINDS:
             continue
         if m.get("language") not in RELEASE_LANGUAGES:
             continue

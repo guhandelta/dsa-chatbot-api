@@ -51,7 +51,8 @@ def _index(track: str, language: str, focus_id: str | None, subject: str | None 
 
 def search(query: str, track: str, language: str, focus_id: str | None = None, k: int = 4, subject: str | None = None):
     from app.services.reference_library import version
-    docs, counts, frequencies, avg = _index(track, language, focus_id, subject, version())
+    from app.services.curriculum import version as curriculum_version
+    docs, counts, frequencies, avg = _index(track, language, focus_id, subject, (version(), curriculum_version()))
     terms = set(tokens(query))
     ranked = []
     for i, c in enumerate(counts):

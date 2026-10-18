@@ -45,9 +45,59 @@ def _subjects(library_version):
 
 
 def eligible(row):
+    from app.services.knowledge_hygiene import quarantine_reason, PUBLIC_REFERENCE_KINDS
     m = row['metadata']
-    return (m.get('contains_answer') is False and m.get('kind') in ('concept','reference','curriculum','lens','exercise_format')
-            and bool(row['document'].strip()))
+    return (m.get('contains_answer') is False and m.get('kind') in PUBLIC_REFERENCE_KINDS
+            and bool(row['document'].strip()) and not quarantine_reason(row))
+
+
+def current_document(document):
+    """Replace stale reference vectors with current curated content, or drop them.
+
+    Re-embedding is unnecessary for enforcing removals/corrections. Ranking can
+    still be stale until the vector index is refreshed, so local search remains
+    available alongside it.
+    """
+    meta = document.metadata
+    rid = str(meta.get('problem_id', ''))
+    if not rid.startswith('ref-') and meta.get('source') != 'reference-library':
+        if rid.startswith('corpus-'):
+            from app.services.curriculum import records
+            from app.services.knowledge_hygiene import PUBLIC_REFERENCE_KINDS
+            row = next((r for r in records() if 'corpus-' + r['id'] == rid), None)
+            if not row or row['metadata'].get('contains_answer') is not False or row['metadata'].get('kind') not in PUBLIC_REFERENCE_KINDS:
+                return None
+            from langchain_core.documents import Document
+            return Document(page_content=row['document'], metadata={
+                **row['metadata'], 'problem_id': rid, 'track': 'language'})
+        if meta.get('catalog') == 'release-v1':
+            from app.services.content_catalog import find_path
+            from app.services.content_access import public_text
+            import re
+            path = find_path(rid)
+            if not path:
+                return None
+            current = re.sub(r'\s+', ' ', public_text(path.read_text())).strip()
+            old_chunk = re.sub(r'\s+', ' ', document.page_content).strip()
+            if not old_chunk or old_chunk not in current:
+                return None
+        return document
+    current = _by_id(version()).get(rid)
+    if current is None or not eligible(current):
+        return None
+    from langchain_core.documents import Document
+    return Document(page_content=current['document'], metadata={
+        **current['metadata'], 'problem_id': current['id']})
+
+
+@lru_cache(maxsize=1)
+def _by_id(library_version):
+    out = {}
+    for row in records():
+        out[row['id']] = row
+        for alias in row.get('duplicate_ids', []) + row.get('previous_ids', []):
+            out[alias] = row
+    return out
 
 
 def documents(language, subject=None):

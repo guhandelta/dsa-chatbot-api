@@ -72,3 +72,10 @@ def subscribe_user(db):
             await grant(db, user_id, language, days=42)
         await db.commit()
     return subscribe
+
+
+@pytest.fixture(autouse=True)
+def isolate_curated_semantic_provider(monkeypatch):
+    # Local maintenance may have published a real index. Unit tests must never
+    # send fixture questions to its provider; dedicated tests can override this.
+    monkeypatch.setattr('app.services.reference_semantics.search', lambda *a, **kw: [])
