@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Easy
+difficulty: Hard
 algorithms: balanced-bst
 category: Data Structure
 source: authored
 io_mode: function
 ---
-# Balanced search trees and ordered maps — Easy — Data Structure
+# Balanced search trees and ordered maps — Hard — Data Structure
 
 Self-balancing trees keep height O(log n) under any insertion order and support ordered queries (floor, ceiling, range) that hash tables cannot.
 

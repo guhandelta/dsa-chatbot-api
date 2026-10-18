@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Easy
+difficulty: Medium
 algorithms: lowest-common-ancestor
 category: Data Structure
 source: authored
 io_mode: function
 ---
-# Lowest common ancestor (LCA) — Easy — Data Structure
+# Lowest common ancestor (LCA) — Medium — Data Structure
 
 The lowest common ancestor of nodes p and q is the deepest node that has both as descendants, where a node counts as its own descendant. In a general binary tree, recurse: a node is the LCA if p and q are found in different subtrees, or if it is p or q itself and the other lies below it. In a BST, walk from the root: if both keys are smaller go left, if both are larger go right, otherwise the current node splits them and is the LCA. For many queries on a fixed tree, binary lifting stores every node's 2ʲ-th ancestor, lifts the deeper node to the same depth, then lifts both while their ancestors differ. The distance between two nodes is depth\[p\] + depth\[q\] − 2 × depth\[lca\].
 

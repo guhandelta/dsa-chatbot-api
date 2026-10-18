@@ -26,11 +26,11 @@ Meta: category=language-fundamentals | topic=python-fundamentals | languages=pyt
 
 - **Paradigm and typing:** multi-paradigm; dynamic, strong typing; optional type hints (`list[int]`, `dict[str, int]`) are not enforced at runtime.
 - **Execution and memory:** CPython compiles to bytecode and interprets it; reference counting plus a cycle-detecting garbage collector. Every value is a heap object; variables are references.
-- **Integers and overflow:** `int` is arbitrary precision, so it never overflows. `float` is IEEE-754 double.
+- **Integers and overflow:** `int` has arbitrary precision, subject to available memory; fixed-width integer overflow does not apply to ordinary Python integer arithmetic. `float` is IEEE-754 double.
 - **Division and modulo:** `/` returns float; `//` floors toward negative infinity (`-7 // 2 == -4`); `%` takes the sign of the divisor (`-7 % 3 == 2`).
 - **Strings:** immutable `str` of Unicode code points; O(1) indexing; build with `"".join(parts)`, since repeated `+=` can be O(n²).
-- **Equality:** `==` compares values via `__eq__`; `is` compares identity. Use `is` only for `None`.
-- **Functions and recursion:** first-class functions, closures, lambdas, generators (`yield`). Default recursion limit is 1,000 frames; raise with `sys.setrecursionlimit`, or convert to an explicit stack.
+- **Equality:** `==` compares values via `__eq__`; `is` compares identity. Use `is` for identity checks such as `None` or a deliberately created sentinel; use `==` for value equality.
+- **Functions and recursion:** first-class functions, closures, lambdas, generators (`yield`). Inspect the current interpreter recursion limit with `sys.getrecursionlimit()`. Increasing it is platform-dependent and an excessively high limit can crash the process; use an explicit stack for adversarial depth.
 - **Error handling:** exceptions with `try` / `except` / `finally`; `raise ValueError(...)`.
 - **Iteration idioms:** `enumerate`, `zip`, `range`, comprehensions (`[x*x for x in a if x]`), unpacking (`a, b = b, a`), `sorted(key=...)`.
 - **DSA pitfalls:** `[[0] * m] * n` aliases one row n times (use a comprehension); mutable default arguments (`def f(memo={})`) persist between calls; `list.pop(0)`, `list.insert(0, x)` and `x in list` are O(n).
@@ -40,12 +40,12 @@ Meta: category=language-fundamentals | topic=python-fundamentals | languages=pyt
 Meta: category=language-fundamentals | topic=javascript-fundamentals | languages=javascript | tags=typing, memory, numbers, strings, recursion, pitfalls
 
 - **Paradigm and typing:** multi-paradigm, prototype-based objects with `class` syntax; dynamic, weak typing with implicit coercion. TypeScript adds static types at compile time only.
-- **Execution and memory:** JIT-compiled (V8, SpiderMonkey); single-threaded event loop; generational garbage collector. Objects and arrays are passed by reference.
-- **Integers and overflow:** `number` is an IEEE-754 double; integers are exact only up to 2⁵³−1 (`Number.MAX_SAFE_INTEGER`). `BigInt` (`10n`) is arbitrary precision and cannot mix with `number` in arithmetic. Bitwise operators truncate to 32-bit signed integers.
-- **Division and modulo:** `/` is always floating point; integer division is `Math.trunc(a / b)` or `Math.floor(a / b)`; `%` takes the sign of the dividend (`-7 % 3 === -1`).
+- **Execution and memory:** Execution and garbage-collection details depend on the engine and host. Function arguments are passed by value; an object value refers to a shared object, so mutation can be visible to the caller while reassigning the parameter cannot reassign the caller's variable.
+- **Integers and overflow:** `number` is an IEEE-754 double; integers are exact only up to 2⁵³−1 (`Number.MAX_SAFE_INTEGER`). `BigInt` (`10n`) is arbitrary precision and cannot mix with `number` in arithmetic. Number bitwise operations use 32-bit integers; unsigned right shift (>>>) returns an unsigned result. BigInt supports its own bitwise operations, but not >>>.
+- **Division and modulo:** `number` division uses floating-point arithmetic; `bigint` division truncates toward zero; integer division is `Math.trunc(a / b)` or `Math.floor(a / b)`; `%` takes the sign of the dividend (`-7 % 3 === -1`).
 - **Strings:** immutable, UTF-16 code units; `s.length` counts units, not characters; `[...s]` iterates code points.
 - **Equality:** `===` compares without coercion (use it); `==` coerces (`"0" == 0` is true). Objects compare by reference. `NaN !== NaN`; use `Number.isNaN`.
-- **Functions and recursion:** first-class functions, closures, arrow functions, generators. No tail-call optimisation in V8; stack depth is roughly 10,000 frames.
+- **Functions and recursion:** first-class functions, closures, arrow functions, generators. Available recursion depth depends on the engine, stack configuration and function frame size; no portable fixed frame count is guaranteed.
 - **Error handling:** `try` / `catch` / `finally`; `throw new Error(...)`; async errors via rejected promises.
 - **Iteration idioms:** `for...of` (values), `for...in` (keys, avoid on arrays), `map` / `filter` / `reduce`, destructuring (`[a, b] = [b, a]`), spread.
 - **DSA pitfalls:** `arr.sort()` with no comparator sorts as strings; `Array.shift()` is O(n); `new Array(n).fill([])` shares one inner array (use `Array.from({ length: n }, () => [])`); plain objects coerce keys to strings, so prefer `Map` and `Set`.
@@ -60,7 +60,7 @@ Meta: category=language-fundamentals | topic=typescript-fundamentals | languages
 - **Division and modulo:** identical to JavaScript: `/` is floating point, `Math.trunc(a / b)` for integer division, `%` takes the sign of the dividend.
 - **Strings:** `string` type (UTF-16 at runtime); template literal types such as `` `${number},${number}` `` describe string patterns at compile time.
 - **Equality:** runtime equality is JavaScript's (`===`, objects by reference). Type compatibility is structural: two types with the same shape are interchangeable.
-- **Functions and recursion:** typed signatures, optional and default parameters, overloads, generic functions `<T>(x: T) => T`, arrow functions. Stack depth is the host engine's (roughly 10,000 frames in V8).
+- **Functions and recursion:** typed signatures, optional and default parameters, overloads, generic functions `<T>(x: T) => T`, arrow functions. Recursion capacity depends on the JavaScript host engine, frame size and stack configuration; TypeScript does not supply a separate runtime stack.
 - **Error handling:** `try` / `catch` / `finally`; under `strict`, the `catch` variable is `unknown` and must be narrowed (`if (e instanceof Error)`).
 - **Iteration idioms:** `for...of`, typed tuples (`[number, number]`), `readonly` arrays, `as const`, the `satisfies` operator, destructuring with types.
 - **DSA pitfalls:** types do not exist at runtime, so `as` casts and the non-null `!` operator silence errors without checking; `arr[i]` is typed `T` rather than `T | undefined` unless `noUncheckedIndexedAccess` is on; `Map.get` returns `V | undefined`; numeric `enum`s compile to runtime objects with reverse mappings (prefer union literal types); every JavaScript pitfall (string-based default sort, O(n) `shift`, shared `fill([])` rows) still applies.
@@ -75,7 +75,7 @@ Meta: category=language-fundamentals | topic=java-fundamentals | languages=java 
 - **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend; `Math.floorMod(a, b)` gives a non-negative result for positive b.
 - **Strings:** immutable `String` (UTF-16); `charAt(i)` is O(1); build with `StringBuilder`; `s.toCharArray()` for in-place work.
 - **Equality:** `==` compares primitives by value and objects by reference; use `.equals` for objects. `Integer` values outside −128..127 are distinct objects, so `==` on boxed integers is a common bug.
-- **Functions and recursion:** methods live in classes; lambdas implement functional interfaces (`Function`, `Comparator`). Default thread stack is about 512 KB–1 MB (roughly 10,000–20,000 frames); run deep recursion in a `Thread` with a larger stack size.
+- **Functions and recursion:** methods live in classes; lambdas implement functional interfaces (`Function`, `Comparator`). Recursion capacity depends on the JVM, thread kind, stack configuration and frame size. An explicit traversal stack avoids relying on an assumed recursive depth; a requested platform-thread stack size is implementation-dependent.
 - **Error handling:** checked and unchecked exceptions; `try` / `catch` / `finally`, try-with-resources.
 - **Iteration idioms:** enhanced `for (int x : arr)`, `IntStream.range`, streams (`list.stream().filter(...).toList()`), `var` for local type inference.
 - **DSA pitfalls:** comparator by subtraction (`(a, b) -> a - b`) overflows, so use `Integer.compare`; boxing in `List<Integer>` costs memory and speed; avoid legacy `Stack`, `Vector` and `Hashtable`.
@@ -86,29 +86,29 @@ Meta: category=language-fundamentals | topic=csharp-fundamentals | languages=csh
 
 - **Paradigm and typing:** object-oriented with strong functional features (LINQ, lambdas, pattern matching, records); static, strong typing; generics are reified, so `List<int>` stores unboxed ints.
 - **Execution and memory:** compiles to IL, JIT- or AOT-compiled on .NET; generational garbage collector. `struct` types are value types (copied); `class` types are reference types. `Span<T>` gives allocation-free slices.
-- **Integers and overflow:** `int` 32-bit, `long` 64-bit, plus unsigned `uint` / `ulong`; overflow wraps by default and throws inside a `checked { }` block. `System.Numerics.BigInteger` is arbitrary precision.
-- **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend; use `((a % b) + b) % b` for a non-negative result.
+- **Integers and overflow:** `int` 32-bit, `long` 64-bit, plus unsigned `uint` / `ulong`; Nonconstant integral overflow follows the checked context and compiler configuration: unchecked arithmetic wraps, while checked arithmetic throws. Constant expressions also have compile-time overflow rules. `System.Numerics.BigInteger` is arbitrary precision.
+- **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend; For a positive divisor `b`, compute `r = a % b` and add `b` only when `r < 0`; adding `b` unconditionally can overflow a fixed-width type.
 - **Strings:** immutable `string` (UTF-16); build with `StringBuilder`; `ReadOnlySpan<char>` for substring work without copying.
 - **Equality:** `==` compares values for primitives, strings and records, and references for ordinary classes unless overloaded; `Equals` and `GetHashCode` must be overridden together.
-- **Functions and recursion:** methods, lambdas, delegates (`Func<T, TResult>`), local functions, iterators (`yield return`). The main thread stack is 1 MB on Windows and follows ulimit -s (usually 8 MB) on Linux; deep recursion risks `StackOverflowException`, which cannot be caught.
+- **Functions and recursion:** methods, lambdas, delegates (`Func<T, TResult>`), local functions, iterators (`yield return`). Stack capacity depends on the runtime, operating system and thread configuration; do not assume a portable recursion depth. Prefer an explicit traversal stack when input depth is unbounded.
 - **Error handling:** unchecked exceptions only; `try` / `catch` / `finally`; `using` for disposal.
 - **Iteration idioms:** `foreach`, LINQ (`nums.Where(x => x > 0).Select(x => x * x)`), tuples and deconstruction (`(a, b) = (b, a)`), ranges and indices (`arr[^1]`, `arr[1..3]`).
-- **DSA pitfalls:** LINQ in hot loops allocates and is slower than plain loops; `List<T>.RemoveAt(0)` is O(n); `Dictionary` indexer throws `KeyNotFoundException` on a missing key, so use `TryGetValue`; `SortedList<K,V>` inserts are O(n) (use `SortedDictionary` for many inserts).
+- **DSA pitfalls:** LINQ cost depends on the operators, enumeration and materialization; inspect allocations and repeated enumeration rather than assuming every query has the same overhead; `List<T>.RemoveAt(0)` is O(n); `Dictionary` indexer throws `KeyNotFoundException` on a missing key, so use `TryGetValue`; `SortedList<K,V>` inserts are O(n) (use `SortedDictionary` for many inserts).
 
 ### C fundamentals
 
 Meta: category=language-fundamentals | topic=c-fundamentals | languages=c | tags=typing, memory, pointers, integers, strings, pitfalls
 
 - **Paradigm and typing:** procedural; static, weak typing with implicit conversions; no generics (use `void *` plus element size, or macros).
-- **Execution and memory:** compiled to native code; manual memory management with `malloc` / `calloc` / `realloc` / `free`. Locals live on the stack (typically 1–8 MB); arrays decay to pointers when passed to functions, so length is passed separately.
+- **Execution and memory:** compiled to native code; manual memory management with `malloc` / `calloc` / `realloc` / `free`. Automatic storage is commonly implemented with a stack, but C does not prescribe a stack size or physical placement for every local. Array parameters are adjusted to pointer types, so pass the required length separately.
 - **Integers and overflow:** sizes are platform-defined; use `<stdint.h>` (`int32_t`, `int64_t`, `uint64_t`). Signed overflow is undefined behaviour; unsigned overflow wraps modulo 2ⁿ.
 - **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend; division by zero is undefined behaviour.
-- **Strings:** `char` arrays terminated by `'\0'`; `strlen` is O(n); use `snprintf` and `strncpy` over unbounded `sprintf` and `strcpy`.
+- **Strings:** `char` arrays terminated by `'\0'`; `strlen` is O(n); Use explicit destination capacities and check truncation/results. `strncpy` does not guarantee a terminating null byte when the source length reaches the count; it is not a generally safe drop-in replacement for `strcpy`.
 - **Equality:** `==` compares scalars and pointer addresses; compare strings with `strcmp` and memory with `memcmp`; structs cannot be compared with `==`.
 - **Functions and recursion:** function pointers enable callbacks (`qsort` comparators); no closures. Recursion depth is limited only by stack size; no guaranteed tail-call optimisation.
 - **Error handling:** return codes, `errno`, and `NULL` pointers; no exceptions.
 - **Iteration idioms:** index loops `for (size_t i = 0; i < n; i++)`, pointer walking `for (int *p = a; p < a + n; p++)`.
-- **DSA pitfalls:** every allocation needs a matching `free` and a `NULL` check; large local arrays overflow the stack (allocate statically or on the heap); `qsort` comparators should return `(a > b) - (a < b)`, not `a - b`; test with `-fsanitize=address,undefined`.
+- **DSA pitfalls:** check allocation failure and define ownership so allocated storage is eventually freed once; large local arrays overflow the stack (allocate statically or on the heap); `qsort` comparators should return `(a > b) - (a < b)`, not `a - b`; test with `-fsanitize=address,undefined`.
 
 ### C++ fundamentals
 
@@ -120,7 +120,7 @@ Meta: category=language-fundamentals | topic=cpp-fundamentals | languages=cpp | 
 - **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend.
 - **Strings:** mutable `std::string` of bytes; `std::string_view` for non-owning slices; `+=` with `reserve` for building.
 - **Equality:** `==` compares values for standard types; custom types define `operator==`, or `= default` the C++20 `operator<=>` for all comparisons.
-- **Functions and recursion:** free functions, member functions, lambdas with captures (`[&]`, `[=]`), `std::function`. Recursion depth limited by stack size; recursive lambdas need `std::function` or C++23 deducing `this`.
+- **Functions and recursion:** free functions, member functions, lambdas with captures (`[&]`, `[=]`), `std::function`. Recursion depth limited by stack size; Recursive lambdas can use an explicit self parameter, a suitable wrapper such as `std::function`, or C++23 explicit object parameters; these choices have different type and overhead trade-offs.
 - **Error handling:** exceptions (`throw`, `try`, `catch`), `std::optional` and `std::expected` (C++23) for recoverable failures.
 - **Iteration idioms:** range-for `for (auto& x : v)`, structured bindings `auto [k, v] = pair`, `<algorithm>` and C++20 ranges (`std::ranges::sort(v)`).
 - **DSA pitfalls:** `map[key]` inserts a default when missing (use `find` or `contains`); `vector` growth invalidates iterators, pointers and references; `v.size() - 1` wraps when empty because `size()` is unsigned; comparators must be strict weak orderings (`<`, not `<=`); `unordered_map` with default hashing can be attacked by crafted keys.
@@ -131,11 +131,11 @@ Meta: category=language-fundamentals | topic=go-fundamentals | languages=go | ta
 
 - **Paradigm and typing:** imperative with composition instead of inheritance (struct embedding) and implicitly satisfied interfaces; static, strong typing with local inference (`x := 5`); generics with type parameters and constraints (`[T cmp.Ordered]`). No implicit numeric conversions.
 - **Execution and memory:** compiled to native code; concurrent garbage collector; escape analysis decides stack or heap allocation. Assignment copies values, including arrays and structs; slices, maps and channels are small headers that share their underlying data.
-- **Integers and overflow:** `int` and `uint` are 64-bit on 64-bit platforms; sized types `int8`…`int64`, `uint8`…`uint64`. Overflow wraps silently (defined behaviour, not undefined). `math/big` is arbitrary precision; untyped constants are exact at compile time.
-- **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend (`-7 % 3 == -1`); use `((a % b) + b) % b` for a non-negative result.
+- **Integers and overflow:** `int` and `uint` are implementation-specific 32- or 64-bit types; sized types `int8`…`int64`, `uint8`…`uint64`. Overflow wraps silently (defined behaviour, not undefined). `math/big` is arbitrary precision; untyped constants are exact at compile time.
+- **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend (`-7 % 3 == -1`); For a positive divisor `b`, compute `r := a % b` and add `b` only when `r < 0`, avoiding an unnecessary potentially overflowing addition.
 - **Strings:** immutable byte sequences, conventionally UTF-8; `s[i]` is a byte; `for i, r := range s` yields runes (code points); `[]byte(s)` and `[]rune(s)` copy; build with `strings.Builder`.
 - **Equality:** `==` works on comparable types (numbers, strings, booleans, pointers, channels, arrays, and structs of comparable fields); slices, maps and functions compare only with `nil`, so use `slices.Equal`, `maps.Equal` or `reflect.DeepEqual`.
-- **Functions and recursion:** first-class functions, closures, multiple return values, variadic parameters, `defer`. Goroutine stacks start small and grow on demand up to 1 GB on 64-bit systems, so deep recursion rarely overflows; there is no tail-call optimisation. A recursive closure must be declared first: `var dfs func(int) int; dfs = func(u int) int { ... }`.
+- **Functions and recursion:** first-class functions, closures, multiple return values, variadic parameters, `defer`. Goroutine stacks can grow, but remain subject to runtime and resource limits; unbounded recursion can still fail. Do not depend on a fixed recursion depth or on tail-call elimination. A recursive closure must be declared first: `var dfs func(int) int; dfs = func(u int) int { ... }`.
 - **Error handling:** errors are returned values (`v, err := f(); if err != nil { ... }`); `panic` and `recover` are reserved for unrecoverable bugs.
 - **Iteration idioms:** `for i, v := range slice`, `for k, v := range m`, `for i := range n` (Go 1.22+), range-over-function iterators (Go 1.23+), built-in `min`, `max`, `clear`, and the `slices` and `maps` packages.
 - **DSA pitfalls:** `append` may write into a shared backing array, so two slices cut from one base can overwrite each other (copy, or use a full slice expression `a[lo:hi:hi]`); a 2D grid needs `make` for every row; reading a missing map key returns the zero value (use `v, ok := m[k]`); writing to a nil map panics; `for _, v := range structs` copies each element; map iteration order is randomised.
@@ -146,14 +146,14 @@ Meta: category=language-fundamentals | topic=rust-fundamentals | languages=rust 
 
 - **Paradigm and typing:** multi-paradigm with traits instead of inheritance; static, strong typing with inference; generics are monomorphised; `Option<T>` replaces null.
 - **Execution and memory:** compiled to native code; no garbage collector. Ownership rules: each value has one owner, dropped when the owner leaves scope; borrowing allows many `&T` or one `&mut T` at a time, checked at compile time. `Box<T>` for heap allocation, `Rc<RefCell<T>>` for shared mutable ownership.
-- **Integers and overflow:** explicit widths (`i32`, `i64`, `u64`, `usize` for indices); overflow panics in debug builds and wraps in release. Use `checked_add`, `wrapping_add`, `saturating_add` to choose. No implicit numeric conversions; cast with `as`.
+- **Integers and overflow:** explicit widths (`i32`, `i64`, `u64`, `usize` for indices); Runtime integer overflow panics when overflow checks are enabled and wraps when they are disabled. Cargo defaults enable checks in dev and disable them in release, but profiles can override this. Use `checked_add`, `wrapping_add`, `saturating_add` to choose. No implicit numeric conversions; cast with `as`.
 - **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend; `rem_euclid` gives a non-negative result.
 - **Strings:** `String` (owned) and `&str` (borrowed), always valid UTF-8; `s[i]` is not allowed, so use `s.as_bytes()[i]` for ASCII or `s.chars()` for characters.
 - **Equality:** `==` via the `PartialEq` trait; `#[derive(PartialEq, Eq, Hash, PartialOrd, Ord)]` generates comparisons. `f64` is only `PartialOrd`, so floats need `total_cmp` to sort.
-- **Functions and recursion:** closures (`|x| x + 1`) implement `Fn`, `FnMut` or `FnOnce`; iterators are lazy and zero-cost. Main thread stack is 8 MB on Linux; spawned threads default to 2 MB (set with `std::thread::Builder::stack_size`).
+- **Functions and recursion:** closures (`|x| x + 1`) implement `Fn`, `FnMut` or `FnOnce`; iterators are lazy and zero-cost. Main-thread stack size is determined outside Rust. Spawned-thread defaults depend on the platform and can change; configure supported spawned threads with `std::thread::Builder::stack_size` rather than assuming a portable depth.
 - **Error handling:** `Result<T, E>` with the `?` operator; `panic!` for unrecoverable bugs.
 - **Iteration idioms:** `for x in &v`, `iter().enumerate()`, `zip`, `map` / `filter` / `collect`, `windows(k)`, `chunks(k)`, `rev()`.
-- **DSA pitfalls:** two mutable references into one `Vec` are rejected, so use indices or `split_at_mut`; subtracting below zero on `usize` panics; `HashMap` iteration order is random per run (use `BTreeMap` for deterministic output); trees and graphs with back-pointers are easiest as index-based arenas (`Vec<Node>` with `usize` ids).
+- **DSA pitfalls:** two mutable references into one `Vec` are rejected, so use indices or `split_at_mut`; subtracting below zero on `usize` follows the configured overflow checks; use `checked_sub` when underflow must be handled explicitly; `HashMap` iteration order is random per run (use `BTreeMap` for deterministic output); trees and graphs with back-pointers are easiest as index-based arenas (`Vec<Node>` with `usize` ids).
 
 ### Ruby fundamentals
 
@@ -161,11 +161,11 @@ Meta: category=language-fundamentals | topic=ruby-fundamentals | languages=ruby 
 
 - **Paradigm and typing:** pure object-oriented (every value is an object, including integers and `nil`) with functional blocks; dynamic, strong typing with duck typing; optional RBS type signatures.
 - **Execution and memory:** interpreted by CRuby's YARV virtual machine, with the optional YJIT compiler; generational, incremental garbage collector. Variables hold references.
-- **Integers and overflow:** `Integer` is arbitrary precision and never overflows; `Float` is IEEE-754 double; `Rational` for exact fractions.
+- **Integers and overflow:** `Integer` has arbitrary precision subject to available memory; `Float` is IEEE-754 double; `Rational` for exact fractions.
 - **Division and modulo:** integer `/` floors toward negative infinity (`-7 / 2 == -4`); `%` takes the sign of the divisor (`-7 % 3 == 2`); `fdiv` returns a float.
 - **Strings:** mutable `String` (UTF-8 by default); `<<` appends in place, while `+` allocates a new string; `freeze` makes a string immutable; symbols (`:name`) are immutable interned identifiers, ideal as hash keys.
 - **Equality:** `==` compares values; `equal?` compares identity; `eql?` is used by `Hash` (so `1.eql?(1.0)` is false); `<=>` is the three-way comparison used by sorting.
-- **Functions and recursion:** methods, blocks (`{ |x| ... }`), procs and lambdas; `yield` calls the block. Default recursion depth is roughly 10,000 frames (`SystemStackError` beyond); tail-call optimisation is off by default.
+- **Functions and recursion:** methods, blocks (`{ |x| ... }`), procs and lambdas; `yield` calls the block. Recursion capacity is implementation- and configuration-dependent; do not teach a fixed frame count. Use an explicit traversal stack for input-controlled depth.
 - **Error handling:** `begin` / `rescue` / `ensure`; `raise ArgumentError, "msg"`.
 - **Iteration idioms:** `each`, `each_with_index`, `map`, `select`, `reduce` / `inject`, `times`, `upto`, `each_cons(k)` for sliding windows, `each_slice(k)` for chunks, parallel assignment (`a, b = b, a`).
 - **DSA pitfalls:** `Array.new(n, [])` shares one inner array (use `Array.new(n) { [] }`); `Hash.new([])` shares one default array (use `Hash.new { |h, k| h[k] = [] }`); `array.shift` is O(1) amortised in CRuby but `array.delete_at(0)` in loops is not; `array.include?` is O(n), so use `Set`.

@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Easy
+difficulty: Medium
 algorithms: monotonic-stack
 category: Data Structure
 source: authored
 io_mode: function
 ---
-# Monotonic stack and monotonic deque — Easy — Data Structure
+# Monotonic stack and monotonic deque — Medium — Data Structure
 
 A monotonic stack keeps elements in sorted order by popping everything that would break the order before each push. Every index is pushed and popped once, so a full pass is O(n). It answers next greater or smaller element, daily temperatures, and largest rectangle in a histogram. A monotonic deque applies the same rule with removal from the front when indices leave the window, giving sliding-window maximum in O(n).
 

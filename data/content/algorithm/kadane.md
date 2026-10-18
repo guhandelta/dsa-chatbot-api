@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Hard
+difficulty: Medium
 algorithms: kadane
 category: Paradigm
 source: authored
 io_mode: function
 ---
-# Kadane's maximum subarray — Hard — Paradigm
+# Kadane's maximum subarray — Medium — Paradigm
 
 Kadane's algorithm tracks the best sum of a subarray ending at the current index: either extend the previous subarray or start fresh at the current element. The global maximum of those values is the answer. For maximum product, track both the maximum and minimum ending here, since a negative number swaps them. For a circular array, the answer is the larger of the normal maximum and total sum minus the minimum subarray (unless all values are negative).
 

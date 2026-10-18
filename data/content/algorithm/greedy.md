@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Hard
+difficulty: Medium
 algorithms: greedy
 category: Paradigm
 source: authored
 io_mode: function
 ---
-# Greedy algorithms — Hard — Paradigm
+# Greedy algorithms — Medium — Paradigm
 
 A greedy algorithm commits to the locally best choice at each step and never revisits it. It is correct only when an exchange argument shows that replacing any optimal solution's choice with the greedy choice never makes it worse; otherwise use dynamic programming.
 

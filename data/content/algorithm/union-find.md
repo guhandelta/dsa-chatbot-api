@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Easy
+difficulty: Medium
 algorithms: union-find
 category: Data Structure
 source: authored
 io_mode: function
 ---
-# Union-find (disjoint set union) — Easy — Data Structure
+# Union-find (disjoint set union) — Medium — Data Structure
 
 Union-find tracks which elements belong to the same group under merges. `find` returns a group's representative; `union` links two representatives. Path compression (or path halving) flattens trees during `find`, and union by size attaches the smaller tree under the larger; together they make each operation O(α(n)), where α is the inverse Ackermann function (≤ 4 for any practical n). Uses: Kruskal's MST, cycle detection in undirected graphs, number of connected components, accounts merge, redundant connection.
 

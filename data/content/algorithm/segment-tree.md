@@ -1,12 +1,12 @@
 ---
 track: algorithm
-difficulty: Easy
+difficulty: Hard
 algorithms: segment-tree
 category: Data Structure
 source: authored
 io_mode: function
 ---
-# Segment tree — Easy — Data Structure
+# Segment tree — Hard — Data Structure
 
 A segment tree stores an aggregate (sum, min, max, gcd) for every range in a binary partition of the array. Any range query combines O(log n) stored nodes; a point update refreshes one leaf-to-root path. Lazy propagation defers range updates so they also cost O(log n). Choose it over a Fenwick tree when the operation is not invertible (min, max).
 

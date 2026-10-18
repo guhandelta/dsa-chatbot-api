@@ -14,7 +14,7 @@ io_mode: function
 - **Division and modulo:** integer `/` truncates toward zero; `%` takes the sign of the dividend.
 - **Strings:** mutable `std::string` of bytes; `std::string_view` for non-owning slices; `+=` with `reserve` for building.
 - **Equality:** `==` compares values for standard types; custom types define `operator==`, or `= default` the C++20 `operator<=>` for all comparisons.
-- **Functions and recursion:** free functions, member functions, lambdas with captures (`[&]`, `[=]`), `std::function`. Recursion depth limited by stack size; recursive lambdas need `std::function` or C++23 deducing `this`.
+- **Functions and recursion:** free functions, member functions, lambdas with captures (`[&]`, `[=]`), `std::function`. Recursion depth limited by stack size; Recursive lambdas can use an explicit self parameter, a suitable wrapper such as `std::function`, or C++23 explicit object parameters; these choices have different type and overhead trade-offs.
 - **Error handling:** exceptions (`throw`, `try`, `catch`), `std::optional` and `std::expected` (C++23) for recoverable failures.
 - **Iteration idioms:** range-for `for (auto& x : v)`, structured bindings `auto [k, v] = pair`, `<algorithm>` and C++20 ranges (`std::ranges::sort(v)`).
 - **DSA pitfalls:** `map[key]` inserts a default when missing (use `find` or `contains`); `vector` growth invalidates iterators, pointers and references; `v.size() - 1` wraps when empty because `size()` is unsigned; comparators must be strict weak orderings (`<`, not `<=`); `unordered_map` with default hashing can be attacked by crafted keys.
