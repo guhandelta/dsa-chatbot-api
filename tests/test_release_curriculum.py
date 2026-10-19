@@ -8,12 +8,12 @@ from app.services.content_catalog import filter_content, load_test_cases
 from app.services.content_access import evaluation_completed, solution_document
 from app.services.code_runner import available_languages, run_suite
 
-PATH = re.compile(r"^(java|javascript)-path-\d{2}-")
+PATH = re.compile(r"^(java|javascript|python)-path-\d{2}-")
 LESSONS = [c for c in filter_content(track="language") if PATH.match(c.id)]
 
 
 def test_common_curriculum_is_complete_and_ordered():
-    for lang in ("javascript", "java"):
+    for lang in ("javascript", "java", "python"):
         rows = sorted([c for c in LESSONS if c.language == lang], key=lambda c: c.order)
         assert [c.order for c in rows] == list(range(1,13))
         for i, item in enumerate(rows):
@@ -21,7 +21,12 @@ def test_common_curriculum_is_complete_and_ordered():
             assert item.prerequisites == ([rows[i-1].id] if i else [])
             cases, expected, fns, _ = load_test_cases(item.id)
             assert len(cases) == len(expected) == 6 and fns[lang]
-    assert [c.id.split('-path-')[1] for c in sorted(LESSONS,key=lambda c:c.order) if c.language=='java'] == [c.id.split('-path-')[1] for c in sorted(LESSONS,key=lambda c:c.order) if c.language=='javascript']
+    spine = lambda lang: [c.id.split('-path-')[1] for c in sorted(LESSONS, key=lambda c: c.order) if c.language == lang]
+    assert spine('java') == spine('javascript') == spine('python')
+    # The tests are language-neutral JSON, so every port grades the same contract.
+    for java in (c for c in LESSONS if c.language == 'java'):
+        for other in ('javascript', 'python'):
+            assert load_test_cases(java.id)[:2] == load_test_cases(java.id.replace('java-', other + '-', 1))[:2]
 
 
 @pytest.mark.parametrize("item", LESSONS, ids=lambda c: c.id)
