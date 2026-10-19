@@ -54,7 +54,7 @@ async def test_readiness_lists_every_language(client, db):
     headers, _ = await register(client, db)
     body = (await client.get('/study/readiness', headers=headers)).json()
     verdicts = {r['language']: r['verdict'] for r in body['languages']}
-    assert verdicts['python'] == verdicts['java'] == verdicts['javascript'] == 'launch-ready'
+    assert verdicts['python'] == verdicts['java'] == verdicts['javascript'] == 'next-wave'
     assert verdicts['typescript'] == verdicts['ruby'] == 'quiz-led'
     assert body['levels']['L4'] == 'Language mastery'
 
@@ -63,7 +63,7 @@ async def test_path_lesson_and_access(client, db):
     headers, _ = await register(client, db)
     path = (await client.get('/study/path', headers=headers, params={'language': 'python'})).json()
     assert path['current_id'] == 'python:stage-01' and path['label'] == 'Python'
-    assert path['readiness']['verdict'] == 'launch-ready' and len(path['nodes']) == 20
+    assert path['readiness']['verdict'] == 'next-wave' and len(path['nodes']) == 20
     assert (await client.get('/study/path', headers=headers, params={'language': 'rust'})).status_code == 403
     stage = (await client.get('/study/nodes/python:stage-07/lesson', headers=headers,
                               params={'language': 'python'})).json()
@@ -272,10 +272,11 @@ async def test_what_next_follows_progress_and_weak_spots(client, db):
     checks = (await get()).json()
     assert checks['kind'] == 'quiz' and checks['node_id'] == 'python:stage-02' and '2 of 3' in checks['reason']
     rust = (await get('rust')).json()
-    assert rust['kind'] == 'lesson' and rust['node_id'] == 'rust:stage-01'
+    assert rust['kind'] == 'content-gap' and rust['status'] == 'blocked' and rust['node_id'] == 'rust:stage-01'
 
 
-async def test_what_next_reviews_a_weak_concept_first(client, db):
+async def test_what_next_reviews_a_weak_concept_first(client, db, monkeypatch):
+    monkeypatch.setattr("app.services.quiz.judge_provider", lambda: None)
     headers, uid = await register(client, db, 'weak-next@example.com')
     started = (await client.post('/study/quiz', headers=headers, json={'language': 'python', 'node_id': 'python:stage-06', 'count': 1})).json()
     await client.post(f"/study/quiz/{started['quiz_id']}/answer", headers=headers,
@@ -297,7 +298,7 @@ async def test_what_next_after_the_whole_path(db, monkeypatch):
     async def finished(session, user_id, language):
         state = await real(session, user_id, language)
         for node in state['nodes']:
-            node['complete'] = True
+            node.update(complete=True, coverage_ready=True, missing_content=[])
         return {**state, 'current_id': None}
 
     monkeypatch.setattr(study_room.learning_path, 'progress', finished)
@@ -309,7 +310,7 @@ async def test_what_next_after_the_whole_path(db, monkeypatch):
     assert (await study_room.recommend(db, user.id, 'python'))['kind'] == 'done'
 
 
-async def test_a_node_without_graded_work_recommends_its_lesson(db, monkeypatch):
+async def test_a_node_without_graded_work_reports_a_content_blocker(db, monkeypatch):
     user = User(email='lesson@example.com', hashed_password='x')
     db.add(user)
     await db.flush()
@@ -317,17 +318,20 @@ async def test_a_node_without_graded_work_recommends_its_lesson(db, monkeypatch)
 
     async def lesson_only(session, user_id, language):
         state = await real(session, user_id, language)
-        state['nodes'][0].update(exercise_id=None, checks_available=0)
+        state['nodes'][0].update(exercise_id=None, checks_available=0,
+                                 missing_content=['exercise', 'checks'], coverage_ready=False)
         return state
 
     monkeypatch.setattr(study_room.learning_path, 'progress', lesson_only)
     step = await study_room.recommend(db, user.id, 'python')
-    assert step['kind'] == 'lesson' and step['link']['search'] == {'mode': 'explain', 'focus': 'python:stage-01'}
+    assert step['kind'] == 'content-gap' and step['status'] == 'blocked'
+    assert step['missing_content'] == ['exercise', 'checks'] and step['link'] is None
 
 
-async def test_focus_falls_back_to_the_language_when_nothing_is_available(db):
+async def test_focus_keeps_unavailable_curriculum_visible(db):
     focus = await study_room.resolve_focus(db, 'nobody', 'rust', None)
-    assert focus == {'kind': 'language', 'id': None, 'title': 'Rust', 'node': None, 'auto': True}
+    assert focus['kind'] == 'node' and focus['id'] == 'rust:stage-01'
+    assert not focus['node']['coverage_ready']
     assert study_room.focus_context('rust', focus, 'ownership borrow')
 
 
@@ -339,8 +343,10 @@ def test_module_lesson_skips_rows_that_are_no_longer_eligible(monkeypatch):
 
 # ---------------------------------------------------------------- quiz + insights over HTTP
 
-async def test_quiz_endpoints_grade_every_format(client, db):
+async def test_quiz_endpoints_grade_every_format(client, db, monkeypatch):
     from app.services import quiz
+    # Exercise the local rubric; provider grading has its own isolated tests.
+    monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
     headers, uid = await register(client, db, 'quiz@example.com')
     started = await client.post('/study/quiz', headers=headers, json={'language': 'python', 'node_id': 'python:stage-06', 'count': 6})
     assert started.status_code == 200, started.text
@@ -353,7 +359,8 @@ async def test_quiz_endpoints_grade_every_format(client, db):
                               json={'item_id': entry['id'], 'response': response})
         assert r.status_code == 200 and r.json()['correct'], (entry['id'], r.text)
     summary = (await client.get(f"/study/quiz/{body['quiz_id']}", headers=headers)).json()
-    assert summary['complete'] and summary['mastered'] and summary['correct'] == 6
+    assert summary['complete'] and summary['assessment_passed'] and summary['correct'] == 6
+    assert not summary['mastered']  # the stage exercise still needs to pass
     insight = (await client.get('/study/insights', headers=headers, params={'language': 'python'})).json()
     assert insight['weak_concepts'] == [] and len(insight['responses']) == 2
     await db.execute(update(Subscription).where(Subscription.user_id == uid, Subscription.language == 'python')
@@ -375,3 +382,38 @@ async def test_free_pool_counts_refunds_back(db):
     await db.flush()
     assert await study_room.free_used_today(db, user.id) == 1
     assert await study_room.message_price(db, user.id) == 0
+
+
+async def test_missing_spine_blocks_advanced_work_and_weak_review(db, monkeypatch):
+    from app.services import learning_path, quiz
+    user = User(email='blocked-spine@example.com', hashed_password='x')
+    db.add(user)
+    await db.flush()
+    monkeypatch.setattr(learning_path, 'stage_exercise_id', lambda *args: None)
+    monkeypatch.setattr(learning_path, '_quiz_count', lambda language, node: 3)
+
+    async def advanced_weak(*args, **kwargs):
+        return [{'concept': 'advanced', 'misses': 2, 'correct': 0}]
+
+    monkeypatch.setattr(quiz, 'weak_concepts', advanced_weak)
+    db.add(QuizSession(user_id=user.id, language='python', node_id='python:stage-01',
+                       total=3, answered=3, score=3, completed_at=datetime.now(timezone.utc)))
+    await db.flush()
+    state = await learning_path.progress(db, user.id, 'python')
+    assert state['nodes'][0]['assessment_passed']
+    assert not state['nodes'][0]['complete'] and not state['nodes'][0]['mastered']
+    assert state['current_id'] == 'python:stage-01'
+    step = await study_room.recommend(db, user.id, 'python')
+    assert step['kind'] == 'content-gap' and step['status'] == 'blocked'
+    assert step['node_id'] == 'python:stage-01'
+    assert step['missing_content'] == ['stage_lesson', 'exercise']
+    assert step['link'] is None
+
+
+async def test_lessons_only_path_reports_content_gap_instead_of_done(db, monkeypatch):
+    from app.services import learning_path
+    monkeypatch.setattr(learning_path, 'stage_exercise_id', lambda *args: None)
+    monkeypatch.setattr(learning_path, '_quiz_count', lambda *args: 0)
+    step = await study_room.recommend(db, 'nobody', 'python')
+    assert step['kind'] == 'content-gap' and step['node_id'] == 'python:stage-01'
+    assert step['missing_content'] == ['stage_lesson', 'exercise', 'checks']

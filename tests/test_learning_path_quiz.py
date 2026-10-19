@@ -74,7 +74,7 @@ def test_node_for_exercise_maps_a_stage_file_back_to_its_language():
 
 
 @pytest.mark.parametrize('language,runner,verdict', [
-    ('python', True, 'launch-ready'), ('typescript', False, 'quiz-led'),
+    ('python', True, 'next-wave'), ('typescript', False, 'quiz-led'),
     ('c', True, 'next-wave'), ('go', False, 'needs-authoring'),
 ])
 def test_readiness_reflects_existing_content(monkeypatch, language, runner, verdict):
@@ -115,11 +115,12 @@ async def test_a_low_quiz_score_does_not_master_the_node(db):
     assert node['check_score'] == pytest.approx(1 / 3) and not node['complete']
 
 
-async def test_a_language_with_no_content_has_no_current_node(db, monkeypatch):
+async def test_a_language_without_assessments_keeps_unavailable_nodes_visible(db, monkeypatch):
     user = await make_user(db, 'none@example.com')
     monkeypatch.setattr(lp, 'DEPTH_MODULES', {})
     state = await lp.progress(db, user.id, 'go')
-    assert state['current_id'] is None and state['total'] == 0
+    assert state['current_id'] == 'go:stage-01' and state['total'] == 12
+    assert state['available_total'] == 0 and not state['curriculum_complete']
 
 
 # ---------------------------------------------------------------- the bank
@@ -326,7 +327,7 @@ async def test_start_rejects_unknown_nodes_and_empty_pools(db):
         assert err.value.status_code == status
     with pytest.raises(HTTPException) as err:
         await quiz.start(db, user, 'rust', None, 3)
-    assert err.value.status_code == 409 and 'this language' in err.value.detail
+    assert err.value.status_code == 409 and 'Values and arithmetic' in err.value.detail
 
 
 async def test_answer_guards(db, monkeypatch):
@@ -418,3 +419,125 @@ async def test_a_quiz_answer_can_complete_a_streak(db, monkeypatch):
     await db.flush()
     result = await quiz.answer(db, user, row.id, 'py-s01-mcq', 1)
     assert [r['reason'] for r in result['rewards']] == ['earn:streak'] and not result['complete']
+
+
+@pytest.mark.parametrize('node_id,level', [('python:stage-06', 'L1'),
+                                         ('python:module-asyncio', 'L4')])
+def test_pool_filters_levels_without_remapping_or_mutating_items(monkeypatch, node_id, level):
+    bank = {}
+    for source in ('authored', 'knowledge-base'):
+        for value in ('L0', 'L1', 'L2', 'L3', 'L4', None, 'unknown'):
+            key = f'{source}-{value}'
+            bank[key] = {'id': key, 'node_id': node_id, 'source': source, 'level': value}
+    bank['other'] = {'id': 'other', 'node_id': 'python:stage-01', 'level': 'L0', 'source': 'authored'}
+    monkeypatch.setattr(quiz, 'items', lambda language: bank)
+    selected = quiz.pool('python', node_id)
+    expected = {key for key, entry in bank.items() if entry['node_id'] == node_id and
+                ((entry['level'] in lp.LEVEL_LABELS and entry['level'] <= level) or
+                 (entry['source'] == 'authored' and entry['level'] not in lp.LEVEL_LABELS))}
+    assert {entry['id'] for entry in selected} == expected
+    assert all(entry['node_id'] == node_id and entry['level'] <= level for entry in selected)
+    assert next(entry for entry in selected if entry['id'] == 'authored-unknown')['level'] == level
+    assert bank['authored-unknown']['level'] == 'unknown'
+    assert quiz.pool_size('python', {'id': node_id}) == len(selected)
+    assert quiz.pool('python', 'python:stage-99') == []
+
+
+def test_coverage_requires_stage_content_and_each_module_assessment(monkeypatch):
+    monkeypatch.setattr(lp, 'stage_exercise_id', lambda language, stage: None)
+    monkeypatch.setattr(lp, '_quiz_count', lambda language, node: 1 if node['order'] == 1 else 0)
+    monkeypatch.setattr(lp, 'module_sources', lambda *args: [{'id': 'reference', 'title': 'Reference'}])
+    monkeypatch.setattr('app.services.code_runner.available_languages', lambda: {'python': True})
+    path = lp.nodes('python')
+    assert path[0]['lesson_ids'] == ['python-fundamentals']
+    assert path[0]['missing_content'] == ['stage_lesson', 'exercise']
+    assert path[1]['missing_content'] == ['stage_lesson', 'exercise', 'checks']
+    assert path[-1]['missing_content'] == ['module_assessment']
+    report = lp.readiness('python')
+    assert not report['coverage_ready'] and report['verdict'] != 'launch-ready'
+    assert report['spine_checks'] == 1 and report['depth_assessments'] == 0
+    assert len(report['missing_content']) == len(path)
+
+
+async def test_exhausted_available_work_does_not_complete_missing_curriculum(db, monkeypatch):
+    user = await make_user(db, 'partial@example.com')
+    monkeypatch.setattr(lp, '_quiz_count', lambda language, node: 1 if node['order'] == 1 else 0)
+    monkeypatch.setattr(lp, 'stage_exercise_id', lambda *args: None)
+    db.add(QuizSession(user_id=user.id, language='python', node_id='python:stage-01', total=1,
+                       answered=1, score=1, completed_at=datetime.now(timezone.utc)))
+    await db.flush()
+    state = await lp.progress(db, user.id, 'python')
+    assert state['completed'] == 0 and state['available_total'] == 1
+    assert state['nodes'][0]['assessment_passed'] and not state['nodes'][0]['mastered']
+    assert state['total'] == len(state['nodes']) > state['completed']
+    assert state['current_id'] == 'python:stage-01'
+    assert not state['curriculum_complete'] and not state['coverage_ready']
+
+
+async def test_start_rejects_a_pool_containing_only_advanced_checks(db, monkeypatch):
+    user = await make_user(db, 'advanced@example.com')
+    monkeypatch.setattr(quiz, 'items', lambda language: {'advanced': {
+        'id': 'advanced', 'node_id': 'python:stage-01', 'level': 'L4', 'source': 'knowledge-base'}})
+    with pytest.raises(HTTPException) as error:
+        await quiz.start(db, user, 'python', 'python:stage-01', 3)
+    assert error.value.status_code == 409
+
+
+def test_public_authored_level_inference_is_consistent_for_session_replay():
+    entry = {**item('python', 'py-s01-mcq'), 'level': 'unknown'}
+    assert quiz.public(entry)['level'] == 'L1'
+    assert entry['level'] == 'unknown'
+    assert quiz.public({**entry, 'level': 'L0'})['level'] == 'L0'
+
+
+def test_launch_ready_requires_coverage_at_every_node(monkeypatch):
+    monkeypatch.setattr(lp, 'stage_exercise_id', lambda language, stage: f'exercise-{stage.number}')
+    monkeypatch.setattr(lp, '_quiz_count', lambda *args: 3)
+    monkeypatch.setattr(lp, 'module_sources', lambda *args: [{'id': 'reference', 'title': 'Reference'}])
+    monkeypatch.setattr('app.services.code_runner.available_languages', lambda: {'python': True})
+    report = lp.readiness('python')
+    assert report['coverage_ready'] and report['verdict'] == 'launch-ready'
+    assert report['missing_content'] == []
+    assert report['spine_checks'] == 12
+    assert report['depth_assessments'] == report['depth_total']
+
+
+@pytest.mark.parametrize('language', ['c', 'typescript'])
+async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language):
+    from app.db.models import Transaction
+    user = await make_user(db, f'quiz-only-{language}@example.com')
+    node = lp.find_node(language, f'{language}:stage-01')
+    assert node['checks_available'] > 0 and node['exercise_id'] is None
+    assert 'stage_lesson' in node['missing_content'] and 'exercise' in node['missing_content']
+    started = await quiz.start(db, user, language, node['id'], 1)
+    full = quiz.items(language)[started['items'][0]['id']]
+    result = await quiz.answer(db, user, started['quiz_id'], full['id'], full['answer'])
+    assert result['correct'] and result['complete']
+    assert not any(reward['reason'] == 'earn:stage' for reward in result['rewards'])
+    state = await lp.progress(db, user.id, language)
+    stage = state['nodes'][0]
+    assert stage['checks_passed'] and stage['assessment_passed']
+    assert not stage['complete'] and not stage['mastered']
+    assert state['completed'] == 0 and state['completed_stages'] == []
+    assert state['current_id'] == node['id']
+    assert await lp.reward_completed_stages(db, user.id, language) == []
+    assert await db.scalar(select(func.count()).select_from(Transaction).where(
+        Transaction.user_id == user.id, Transaction.reason == 'earn:stage')) == 0
+    summary = await quiz.summary(db, user, started['quiz_id'])
+    assert summary['complete'] and summary['assessment_passed'] and not summary['mastered']
+
+
+@pytest.mark.parametrize('has_lesson', [False, True])
+async def test_module_mastery_requires_a_lesson_and_passed_checks(db, monkeypatch, has_lesson):
+    user = await make_user(db, f'module-coverage-{has_lesson}@example.com')
+    monkeypatch.setattr(lp, 'module_sources', lambda *args: [{'id': 'lesson', 'title': 'Lesson'}] if has_lesson else [])
+    monkeypatch.setattr(lp, '_quiz_count', lambda *args: 3)
+    node_id = 'python:module-typing'
+    db.add(QuizSession(user_id=user.id, language='python', node_id=node_id, total=3,
+                       answered=3, score=2, completed_at=datetime.now(timezone.utc)))
+    await db.flush()
+    state = await lp.progress(db, user.id, 'python')
+    node = next(n for n in state['nodes'] if n['id'] == node_id)
+    assert node['checks_passed'] and node['assessment_passed']
+    assert node['complete'] is has_lesson and node['mastered'] is has_lesson
+    assert node['coverage_ready'] is has_lesson

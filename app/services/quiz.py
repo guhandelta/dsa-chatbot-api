@@ -163,8 +163,36 @@ def items(language: str) -> dict[str, dict]:
     return {item["id"]: item for item in (*_authored(language, _bank_version(language)), *kb)}
 
 
+def _node_level(language: str, node_id: str) -> str | None:
+    # Avoid nodes(), which counts quiz pools itself.
+    from app.services.learning_path import DEPTH_MODULES, SPINE, module_node_id, stage_node_id
+    for stage in SPINE:
+        if stage_node_id(language, stage) == node_id:
+            return stage.level
+    for module in DEPTH_MODULES.get(language, ()):
+        if module_node_id(language, module) == node_id:
+            return module.level
+    return None
+
+
 def pool(language: str, node_id: str) -> list[dict]:
-    return [i for i in items(language).values() if i["node_id"] == node_id]
+    """Mapped checks no harder than the node; infer unknown authored levels only."""
+    from app.services.learning_path import LEVEL_LABELS
+    level = _node_level(language, node_id)
+    if level is None:
+        return []
+    out = []
+    for item in items(language).values():
+        if item["node_id"] != node_id:
+            continue
+        item_level = item.get("level")
+        if item_level not in LEVEL_LABELS:
+            if item.get("source") != "authored":
+                continue
+            item_level = level
+        if item_level <= level:
+            out.append({**item, "level": item_level})
+    return out
 
 
 def pool_size(language: str, node: dict) -> int:
@@ -175,6 +203,10 @@ def public(item: dict) -> dict:
     """What the learner sees before answering: never the key or the tests."""
     view = {k: item[k] for k in ("id", "type", "prompt", "concept", "source") if k in item}
     view["level"] = item.get("level")
+    if item.get("source") == "authored":
+        from app.services.learning_path import LEVEL_LABELS
+        if view["level"] not in LEVEL_LABELS:
+            view["level"] = _node_level(item["language"], item["node_id"])
     for key in ("code", "choices", "starter"):
         if key in item:
             view[key] = item[key]
@@ -466,12 +498,16 @@ async def summary(session: AsyncSession, user: User, quiz_id: str) -> dict:
     answers = (await session.scalars(select(QuizAnswer).where(QuizAnswer.quiz_id == quiz_id)
                                      .order_by(QuizAnswer.created_at))).all()
     by_id = items(quiz.language)
-    from app.services.learning_path import MASTERY_RATIO
+    from app.services.learning_path import MASTERY_RATIO, progress
+    assessment_passed = bool(quiz.total) and quiz.completed_at is not None and quiz.score / quiz.total >= MASTERY_RATIO
+    state = await progress(session, user.id, quiz.language)
+    node = next((n for n in state["nodes"] if n["id"] == quiz.node_id), None)
     return {
         "quiz_id": quiz.id, "node_id": quiz.node_id, "language": quiz.language,
         "total": quiz.total, "answered": quiz.answered, "correct": quiz.correct,
         "score": round(quiz.score, 3), "complete": quiz.completed_at is not None,
-        "mastered": bool(quiz.total) and quiz.completed_at is not None and quiz.score / quiz.total >= MASTERY_RATIO,
+        "assessment_passed": assessment_passed,
+        "mastered": assessment_passed and node is not None and node["complete"],
         "items": [public(by_id[i]) for i in json.loads(quiz.items_json) if i in by_id],
         "answers": [{"item_id": a.item_id, "type": a.item_type, "concept": a.concept, "correct": a.correct,
                      "score": a.score, "feedback": a.feedback, "grading": a.grading} for a in answers],

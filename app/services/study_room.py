@@ -292,6 +292,20 @@ async def recommend(session: AsyncSession, user_id: str, language: str) -> dict:
     state = await learning_path.progress(session, user_id, language)
     nodes = {n["id"]: n for n in state["nodes"]}
     current = nodes.get(state["current_id"]) if state["current_id"] else None
+    # Recompute from ordered nodes so a stale current_id cannot bypass gaps.
+    blocker = next((n for n in state["nodes"] if n.get("missing_content")), None)
+    if blocker and (current is None or blocker["order"] <= current["order"]):
+        current = blocker
+    if current and current.get("missing_content"):
+        return {"kind": "content-gap", "status": "blocked", "id": current["id"],
+                "node_id": current["id"], "title": f"Content needed: {current['title']}",
+                "reason": "This node needs authored content before the curriculum can continue: "
+                          + ", ".join(current["missing_content"]) + ".",
+                "missing_content": current["missing_content"], "link": None}
+    if not state["nodes"]:
+        return {"kind": "content-gap", "status": "blocked", "id": None, "node_id": None,
+                "title": "Curriculum unavailable", "reason": "This curriculum needs authoring.",
+                "missing_content": ["curriculum"], "link": None}
     weak = await quiz.weak_concepts(session, user_id, language, limit=1)
     solved = await learning_path.passed_exercises(session, user_id, language)
 
@@ -302,16 +316,12 @@ async def recommend(session: AsyncSession, user_id: str, language: str) -> dict:
 
     if weak:
         concept = weak[0]["concept"]
-        review = next((n for n in state["nodes"] if n["checks_available"] and any(
+        review = next((n for n in state["nodes"] if n["checks_available"]
+                       and (blocker is None or n["order"] < blocker["order"]) and any(
             i["concept"] == concept for i in quiz.pool(language, n["id"]))), None)
         if review:
             return quiz_step(review, f'You have missed "{concept}" more often than you got it right. '
                                      "A short review quiz will check it again.", review=True)
-    if state["total"] == 0:
-        first = state["nodes"][0]
-        return {"kind": "lesson", "id": first["id"], "title": f"Lesson: {first['title']}", "node_id": first["id"],
-                "reason": "This path has lessons but no graded checks or exercises yet, so start reading here.",
-                "link": {"to": "/chat", "search": {"mode": "explain", "focus": first["id"]}}}
     if current is None:
         node = next((n for n in reversed(state["nodes"]) if n["practice"]), None)
         problem = next((p for p in (node["practice"] if node else []) if p["id"] not in solved), None)

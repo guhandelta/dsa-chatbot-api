@@ -11,10 +11,10 @@ language fundamentals page, and knowledge-base rows whose data structure
 matches the stage. Depth modules draw their lessons from the language's
 reference rows (including the gap-fill references) by keyword.
 
-Mastery rule: a node is complete when its graded exercise has passed AND its
-checks score at least two thirds. A node that has only one of the two is
-judged on that one; a node with neither is shown as not yet available and is
-skipped when choosing the learner's current position.
+Mastery requires complete authored coverage. Stages need a stage lesson,
+passed graded exercise, and checks scoring at least two thirds. Modules need
+a lesson and checks scoring at least two thirds. Missing content blocks
+mastery, advancement, and stage rewards even when available assessments pass.
 """
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -286,6 +286,20 @@ def nodes(language: str) -> list[dict]:
         })
     for node in out:
         node["checks_available"] = _quiz_count(language, node)
+        # Shared fundamentals supplement, but do not replace, stage lessons.
+        missing = []
+        if node["kind"] == "stage":
+            if not node["exercise_id"]:
+                missing.extend(["stage_lesson", "exercise"])
+            if not node["checks_available"]:
+                missing.append("checks")
+        else:
+            if not node["lesson_ids"]:
+                missing.append("module_lesson")
+            if not node["checks_available"]:
+                missing.append("module_assessment")
+        node["missing_content"] = missing
+        node["coverage_ready"] = not missing
     return out
 
 
@@ -311,7 +325,8 @@ def readiness(language: str) -> dict:
     depth = sum(1 for n in modules if n["lesson_ids"])
     quiz_items = sum(n["checks_available"] for n in path)
     runner = language in RUNNABLE and bool(available_languages().get(language))
-    if spine == len(SPINE) and runner and quiz_items:
+    coverage_ready = bool(path) and all(n["coverage_ready"] for n in path)
+    if coverage_ready and runner:
         verdict = "launch-ready"
     elif not runner and quiz_items:
         verdict = "quiz-led"
@@ -322,7 +337,12 @@ def readiness(language: str) -> dict:
     return {"language": language, "label": LANGUAGE_LABELS.get(language, language),
             "spine_stages": spine, "spine_total": len(SPINE), "depth_lessons": depth,
             "depth_total": len(modules), "quiz_items": quiz_items, "runner": runner,
-            "verdict": verdict}
+            "verdict": verdict, "coverage_ready": coverage_ready,
+            "missing_content": [{"node_id": n["id"], "missing": n["missing_content"]}
+                                for n in path if n["missing_content"]],
+            "spine_lessons": spine,
+            "spine_checks": sum(n["kind"] == "stage" and n["checks_available"] > 0 for n in path),
+            "depth_assessments": sum(n["checks_available"] > 0 for n in modules)}
 
 
 async def passed_exercises(session: AsyncSession, user_id: str, language: str) -> set[str]:
@@ -344,19 +364,28 @@ async def progress(session: AsyncSession, user_id: str, language: str) -> dict:
         score = checks.get(node["id"])
         checks_passed = score is not None and score >= MASTERY_RATIO
         available = has_exercise or has_checks
-        complete = available and (exercise_passed or not has_exercise) and (checks_passed or not has_checks)
+        assessment_passed = available and (exercise_passed or not has_exercise) and (checks_passed or not has_checks)
+        complete = node["coverage_ready"] and assessment_passed
         path.append({**node, "available": available, "exercise_passed": exercise_passed,
-                     "check_score": score, "checks_passed": checks_passed, "complete": complete,
+                     "check_score": score, "checks_passed": checks_passed,
+                     "assessment_passed": assessment_passed, "complete": complete, "mastered": complete,
                      "status": "complete" if complete else "in-progress"
                      if (exercise_passed or score is not None) else "not-started" if available else "unavailable"})
     countable = [n for n in path if n["available"]]
-    current = next((n for n in countable if not n["complete"]), None)
+    # Missing prerequisites block later stages and depth modules, even when
+    # the learner has passed all assessments currently authored for a node.
+    current = next((n for n in path if not n["complete"] or not n["coverage_ready"]), None)
     done = sum(n["complete"] for n in countable)
     return {
         "language": language, "nodes": path, "current_id": current["id"] if current else None,
-        "completed": done, "total": len(countable),
+        "completed": done, "total": len(path), "available_total": len(countable),
+        "unavailable_total": len(path) - len(countable),
+        "coverage_ready": bool(path) and all(n["coverage_ready"] for n in path),
+        "curriculum_complete": bool(path) and all(n["complete"] and n["coverage_ready"] for n in path),
         "completed_stages": [n["stage"] for n in path if n["kind"] == "stage" and n["complete"]],
-        "mastery_rule": "Pass the graded exercise and score at least 2 of 3 on the checks.",
+        "mastery_rule": "Stages require a stage-specific lesson, a passed graded exercise, and at least "
+                        "two thirds on the checks. Modules require a lesson and at least two thirds "
+                        "on the checks. Missing content prevents mastery and stage rewards.",
     }
 
 
