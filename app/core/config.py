@@ -86,6 +86,17 @@ class Settings(BaseSettings):
     chat_cost: int = 1
     analyze_cost: int = 5
     mentor_cost: int = 2
+    # Mentor hint tiers up to and including this one are free on every
+    # problem (Orient, Probe the gap); higher tiers cost `mentor_cost`.
+    free_hint_tiers: int = Field(default=2, ge=0, le=4)
+    # Study Room: a daily free pool of messages, then `study_message_cost`.
+    study_daily_free_messages: int = Field(default=5, ge=0)
+    study_message_cost: int = Field(default=1, ge=0)
+    # Earn-back rewards for independent work.
+    reward_independent_solve: int = Field(default=3, ge=0)
+    reward_streak: int = Field(default=5, ge=0)
+    reward_streak_days: int = Field(default=7, ge=2)
+    reward_stage_complete: int = Field(default=10, ge=0)
 
     # Stripe — checkout is hosted by Stripe; no card data reaches this server
     stripe_webhook_secret: str = ""

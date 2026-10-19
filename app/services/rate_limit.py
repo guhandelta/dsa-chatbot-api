@@ -61,9 +61,12 @@ class RateLimitExceeded(Exception):
 # Maps an action to the transaction `reason` values that represent it.
 # Refunds carry the "refund:" prefix and are excluded, so a failed request the
 # user was reimbursed for does not consume their budget.
+# Free uses (tiers 1-2, the Study Room daily pool) write a zero-amount
+# "free:" row so they count against the same budget as paid ones.
 _REASONS: dict[str, tuple[str, ...]] = {
     "attempt": ("analyze",),
-    "hint": ("mentor",),
+    "hint": ("mentor", "free:mentor"),
+    "study": ("study", "free:study"),
 }
 
 
@@ -75,6 +78,8 @@ def _limit_for(kind: str) -> int:
         return settings.chats_per_hour
     if kind == "hint":
         return settings.hints_per_hour
+    if kind == "study":
+        return settings.chats_per_hour
     return settings.submissions_per_hour
 
 
@@ -82,8 +87,8 @@ async def count_recent(session: AsyncSession, user_id: str, kind: str,
                        hours: int = 1) -> int:
     """Debits of this action type in the rolling window.
 
-    `amount < 0` restricts the count to debits, so refunds and admin credits
-    never inflate a user's usage.
+    `amount <= 0` restricts the count to debits and zero-amount free uses, so
+    refunds and admin credits never inflate a user's usage.
     """
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     reasons = _REASONS.get(kind, (kind,))
@@ -93,7 +98,7 @@ async def count_recent(session: AsyncSession, user_id: str, kind: str,
         .where(
             Transaction.user_id == user_id,
             Transaction.reason.in_(reasons),
-            Transaction.amount < 0,
+            Transaction.amount <= 0,
             Transaction.created_at >= cutoff,
         )
     )
@@ -112,7 +117,8 @@ async def enforce_rate_limit(session: AsyncSession, user_id: str, kind: str) -> 
 
     used = await count_recent(session, user_id, kind)
     if used >= limit:
-        noun = "submissions" if kind == "attempt" else "chat turns" if kind == "chat" else "mentor questions"
+        noun = ("submissions" if kind == "attempt" else "chat turns" if kind in ("chat", "study")
+                else "mentor questions")
         raise RateLimitExceeded(
             f"You've made {used} {noun} in the past hour, which is the limit "
             f"({limit}). This resets on a rolling basis — try again shortly. "

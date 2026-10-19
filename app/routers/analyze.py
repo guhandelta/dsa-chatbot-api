@@ -41,16 +41,22 @@ def validate_problem(problem_id,language):
         raise HTTPException(400,'Choose the exercise language before submitting.')
 
 
-async def save_evaluation(session,user_id,problem_id,language,evidence):
+async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_out=None):
     from app.graphs.practice import classify_outcome
     algorithms=next((c.algorithms for c in filter_content() if c.id==problem_id),[])
     outcome,category,detail=classify_outcome(evidence)
+    from app.services import rewards
     completed=evaluation_completed(evidence or {},language)
+    solved=completed and outcome=='passed'
+    first_solve=solved and not await rewards.has_solved(session,user_id,problem_id,language)
     if completed:
         await learning_profile.record_event(session,user_id,problem_id,kind='evaluated',language=language,algorithms=algorithms)
     await learning_profile.record_event(session,user_id,problem_id,
-        kind='solved' if completed and outcome=='passed' else 'attempt',language=language,
+        kind='solved' if solved else 'attempt',language=language,
         algorithms=algorithms,error_category=category,detail=detail)
+    earned=await rewards.after_solve(session,user_id,problem_id,language,first_solve=first_solve) if solved else []
+    if rewards_out is not None:
+        rewards_out.extend(earned)
     return completed
 
 
@@ -75,8 +81,11 @@ async def analyze(request:AnalyzeRequest,current_user:User=Depends(get_current_u
                 language=request.language,provider=request.provider,
                 **({"recalled_moment": recalled} if recalled else {}))
         await trace_store.save(session,t)
-        completed=await save_evaluation(session,current_user.id,request.problem_id,request.language,evidence)
-        return AnalyzeResponse(analysis=analysis,peppercorns_remaining=balance,
+        earned=[]
+        completed=await save_evaluation(session,current_user.id,request.problem_id,request.language,evidence,earned)
+        if earned:
+            balance=earned[-1]['balance']
+        return AnalyzeResponse(analysis=analysis,peppercorns_remaining=balance,rewards=earned,
             execution=evidence.get('curated'),evidence=evidence,solution_available=completed)
     return await perform(session,current_user.id,'analyze',idempotency_key,request.model_dump(),
                          settings.analyze_cost,'analyze',work,prepare=prepare)

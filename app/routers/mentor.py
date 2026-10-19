@@ -1,5 +1,5 @@
 # /mentor — Socratic guidance. Requires a subscription for the language the
-# learner is coding in, and costs peppercorns per turn.
+# learner is coding in. Tiers 1-2 are free on every problem; 3-4 cost peppercorns.
 import logging
 from datetime import datetime, timedelta, timezone
 
@@ -15,7 +15,7 @@ from app.models.schemas import MentorRequest, MentorResponse
 from app.services import entitlements, learning_profile, trace_store
 from app.services.tracing import span, trace
 from app.services.content_catalog import filter_content
-from app.services.mentor import MAX_TIER, TIERS, mentor_reply, step_back_offer
+from app.services.mentor import MAX_TIER, TIERS, hint_cost, mentor_reply, pricing, step_back_offer
 from app.services.peppercorns import InsufficientPeppercornsError, credit, debit
 from app.services.rate_limit import RateLimitExceeded, enforce_rate_limit
 from app.services.strikes import AccountSuspendedError, assert_active
@@ -88,9 +88,15 @@ async def ask(request: MentorRequest, current_user: User = Depends(get_current_u
             await enforce_rate_limit(session,current_user.id,'hint')
         except RateLimitExceeded as exc:
             raise HTTPException(429,str(exc))
-    async def work(balance):
-        algorithms=_algorithms_for(request.problem_id)
+    tier=1
+    async def price(_operation):
+        # Under the per-user lock, so the charged tier matches the one served.
+        nonlocal tier
         tier=await _current_tier(session,current_user.id,request.problem_id,request.language)
+        return hint_cost(tier)
+    async def work(balance):
+        from app.services.operations import current_balance
+        algorithms=_algorithms_for(request.problem_id)
         recalled=await learning_profile.recall_similar_moment(session,current_user.id,algorithms,request.problem_id,request.language)
         profile=await learning_profile.build_profile(session,current_user.id)
         async with trace('mentor',user_id=current_user.id,problem_id=request.problem_id,language=request.language,tier=tier) as t:
@@ -102,9 +108,23 @@ async def ask(request: MentorRequest, current_user: User = Depends(get_current_u
             language=request.language,algorithms=algorithms,hint_tier=tier,reasoning=request.reasoning)
         return MentorResponse(reply=reply,hint_tier=tier,tier_label=TIERS[tier][0],
             recalled_moment=recalled,step_back_offer=step_back_offer(request.problem_id,algorithms) if tier>=MAX_TIER else None,
-            peppercorns_remaining=balance)
+            peppercorns_remaining=balance if balance is not None else await current_balance(session,current_user.id),
+            peppercorns_charged=hint_cost(tier),next_hint_cost=hint_cost(min(tier+1,MAX_TIER)))
     return await perform(session,current_user.id,'mentor',idempotency_key,request.model_dump(),
-                         settings.mentor_cost,'mentor',work,prepare=prepare)
+                         price,'mentor',work,prepare=prepare)
+
+
+@router.get("/next-hint")
+async def next_hint(
+    problem_id: str,
+    language: str = "python",
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    """The tier and price of the learner's next hint on this problem."""
+    from app.services.language_access import require_content
+    await require_content(session, current_user, problem_id, language)
+    return pricing(await _current_tier(session, current_user.id, problem_id, language))
 
 
 @router.post("/reflect")

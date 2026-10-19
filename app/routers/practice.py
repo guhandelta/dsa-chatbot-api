@@ -96,7 +96,10 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
     from app.services.operations import operation_id
     idempotency_key = idempotency_key or str(uuid.uuid4())
     lock_token = operation_id(uid, 'practice:' + sid, idempotency_key)
-    cost=settings.analyze_cost if request.action=='submit' else settings.mentor_cost if request.action=='hint' else 0
+    async def hint_price(_operation):
+        from app.services.mentor import hint_cost
+        return hint_cost(await _current_tier(session,uid,pid,lang))
+    cost=settings.analyze_cost if request.action=='submit' else hint_price if request.action=='hint' else 0
     reason='analyze' if request.action=='submit' else 'mentor' if request.action=='hint' else 'practice'
     async def prepare():
         nonlocal acquired
@@ -136,15 +139,23 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             if any(i.value.get('awaiting')=='reflection' for t in current.tasks for i in t.interrupts):
                 payload={'reasoning':''}
         state=await graph(session).ainvoke(Command(resume=payload),config,durability='sync')
+        earned=[]
         if request.action=='submit':
-            available=await save_evaluation(session,user.id,pid,lang,state.get('evidence') or {})
+            available=await save_evaluation(session,user.id,pid,lang,state.get('evidence') or {},earned)
+            if earned:balance=earned[-1]['balance']
         else:available=False
         if request.action=='hint':
             await learning_profile.record_event(session,user.id,pid,kind='hint',language=lang,algorithms=_algorithms_for(pid),hint_tier=payload['hint_tier'],reasoning=request.reasoning)
         if request.action=='reflect':
             await learning_profile.record_event(session,user.id,pid,kind='reflection',language=lang,algorithms=_algorithms_for(pid),reasoning=request.reasoning)
         await session.execute(update(PracticeSession).where(PracticeSession.id==sid,PracticeSession.busy_token==lock_token).values(busy=False,busy_token='',status='active' if pending_interrupt(state) else 'completed'))
-        result=render(sid,state,balance);result['solution_available']=available
+        result=render(sid,state,balance);result['solution_available']=available;result['rewards']=earned
+        if request.action=='hint':
+            from app.services.mentor import MAX_TIER,hint_cost
+            from app.services.operations import current_balance
+            result.update(peppercorns_charged=hint_cost(payload['hint_tier']),
+                          next_hint_cost=hint_cost(min(payload['hint_tier']+1,MAX_TIER)))
+            if balance is None:result['peppercorns_remaining']=await current_balance(session,uid)
         return result
     try:
         response = await perform(session,uid,'practice:'+sid,idempotency_key,request.model_dump(),cost,reason,work,prepare=prepare)

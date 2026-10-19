@@ -16,7 +16,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select, update
 
-from app.db.models import ServiceOperation, User
+from app.db.models import ServiceOperation, Transaction, User
 from app.services.peppercorns import debit, credit, InsufficientPeppercornsError
 
 logger = logging.getLogger(__name__)
@@ -62,6 +62,7 @@ async def perform(session, user_id, scope, key, payload, amount, reason, work, *
     except IntegrityError:
         await session.rollback()
         raise HTTPException(409,"This request is already processing. Retry with the same key.",headers={"Retry-After":"2"})
+    free_reserved=False
     try:
         # Serialize per-user preflight/rate-limit/debit decisions on both
         # supported databases, closing the count-before-debit race.
@@ -70,7 +71,17 @@ async def perform(session, user_id, scope, key, payload, amount, reason, work, *
         if status!='active':raise HTTPException(403,'This account is suspended.')
         if prepare:
             await prepare()
+        priced=callable(amount)
+        if priced:
+            # Priced under the per-user lock, e.g. by hint tier or free pool.
+            amount=await amount(op_id)
         balance=await debit(session,user_id,amount,reason) if amount else None
+        if priced and not amount:
+            # A zero-amount ledger row records the free use, so rate limits and
+            # daily allowances count it exactly like a paid one.
+            session.add(Transaction(user_id=user_id,amount=0,reason='free:'+reason,
+                                    balance_after=await current_balance(session,user_id)))
+            free_reserved=True
         op.amount=amount
         await session.commit()  # receipt and debit become durable together
         response=await work(balance)
@@ -96,6 +107,9 @@ async def perform(session, user_id, scope, key, payload, amount, reason, work, *
                 ).returning(ServiceOperation.amount))).scalar_one_or_none()
             if amount_to_refund:
                 await credit(session,user_id,amount_to_refund,'refund:'+reason)
+            elif free_reserved and amount_to_refund is not None:
+                session.add(Transaction(user_id=user_id,amount=0,reason='refund:free:'+reason,
+                                        balance_after=await current_balance(session,user_id)))
             await session.commit()
         await asyncio.shield(settle())
         if isinstance(error,(asyncio.CancelledError,KeyboardInterrupt,SystemExit)):
@@ -103,6 +117,11 @@ async def perform(session, user_id, scope, key, payload, amount, reason, work, *
         if status==502:
             logger.exception('Service operation failed: %s',scope)
         raise HTTPException(status,detail)
+
+
+async def current_balance(session,user_id):
+    """Balance for responses where a free action made no debit."""
+    return int(await session.scalar(select(User.peppercorns).where(User.id==user_id)) or 0)
 
 
 async def recover_expired_scope(session,user_id,scope):

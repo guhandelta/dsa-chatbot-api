@@ -186,15 +186,22 @@ async def test_step_back_offered_at_top_tier(client, db, stub_llm, subscribe_use
     assert offer["easier_problem"] or offer["concept"]
 
 
-async def test_mentor_charges_peppercorns_per_turn(client, db, stub_llm, subscribe_user):
+async def test_mentor_tiers_one_and_two_are_free_then_charged(client, db, stub_llm, subscribe_user):
     body = await _register(client, "flow8@x.com", subscribe_user=subscribe_user)
     h = {"Authorization": f"Bearer {body['access_token']}"}
     start = body["user"]["peppercorns"]
     await entitlements.grant(db, body["user"]["id"], "python", days=30)
     await db.commit()
-
-    r = await client.post("/mentor/ask", headers=h, json={
-        "problem_id": "two-sum", "language": "python", "reasoning": "thinking",
-    })
     from app.core.config import settings
-    assert r.json()["peppercorns_remaining"] == start - settings.mentor_cost
+
+    seen = []
+    for _ in range(4):
+        r = await client.post("/mentor/ask", headers=h, json={
+            "problem_id": "two-sum", "language": "python", "reasoning": "thinking",
+        })
+        assert r.status_code == 200
+        seen.append((r.json()["hint_tier"], r.json()["peppercorns_charged"],
+                     r.json()["peppercorns_remaining"], r.json()["next_hint_cost"]))
+    cost = settings.mentor_cost
+    assert seen == [(1, 0, start, 0), (2, 0, start, cost),
+                    (3, cost, start - cost, cost), (4, cost, start - 2 * cost, cost)]

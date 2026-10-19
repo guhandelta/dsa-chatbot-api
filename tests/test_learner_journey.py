@@ -54,12 +54,16 @@ async def test_fail_hint_resume_pass_reveal_reflect_with_real_execution(client,d
     assert (await client.post(path,headers=headers,json={'action':'reflect','reasoning':'Claimed success'})).status_code==409
     hinted=await client.post(path,headers={**headers,'Idempotency-Key':'hint'},json={'action':'hint','reasoning':'I added price and quantity, but the totals differ.'})
     assert hinted.status_code==200 and hinted.json()['hint_tier']==1,hinted.text
+    assert hinted.json()['peppercorns_charged']==0 and hinted.json()['next_hint_cost']==0
+    assert hinted.json()['peppercorns_remaining']==settings.signup_bonus-settings.analyze_cost
     resumed=await client.get(f'/practice/sessions/{sid}',headers=headers)
     assert resumed.json()['attempts']==1 and resumed.json()['awaiting']=='learner'
     submission={'action':'submit','code':right}
     passed=await client.post(path,headers={**headers,'Idempotency-Key':'right'},json=submission)
     assert passed.status_code==200,passed.text
     assert passed.json()['outcome']=='passed' and passed.json()['awaiting']=='reflection'
+    assert [r['reason'] for r in passed.json()['rewards']]==['earn:independent_solve']
+    assert passed.json()['peppercorns_remaining']==settings.signup_bonus-2*settings.analyze_cost+settings.reward_independent_solve
     retry=await client.post(path,headers={**headers,'Idempotency-Key':'right'},json=submission)
     assert retry.json()==passed.json()
     assert (await client.get(f'/problems/{pid}/solution',headers=headers,params={'language':language})).status_code==200
@@ -69,4 +73,6 @@ async def test_fail_hint_resume_pass_reveal_reflect_with_real_execution(client,d
     assert profile['solved']==1
     assert await db.scalar(select(func.count()).select_from(LearningEvent).where(LearningEvent.user_id==uid,LearningEvent.kind=='reflection'))==1
     remaining=(await client.get('/auth/me',headers=headers)).json()['peppercorns']
-    assert remaining==settings.signup_bonus-2*settings.analyze_cost-settings.mentor_cost
+    # The tier-1 hint was free and the first solve used no paid tier, so it
+    # earned the independent-solve reward back.
+    assert remaining==settings.signup_bonus-2*settings.analyze_cost+settings.reward_independent_solve

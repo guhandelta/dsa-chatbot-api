@@ -13,6 +13,7 @@ page. Not the answer, and not a dead end either.
 import logging
 import re
 
+from app.core.config import settings
 from app.services.content_catalog import filter_content, read_content
 from app.services.llm_router import get_llm
 
@@ -34,6 +35,23 @@ TIERS = {
 }
 
 MAX_TIER = 4
+
+
+def hint_cost(tier: int) -> int:
+    """Peppercorns for a hint at this tier.
+
+    The first tiers (Orient, Probe the gap) are free on every problem: they
+    are the cheapest and most educational nudges. Only the stronger tiers are
+    charged, which rewards independent thinking rather than taxing it.
+    """
+    return 0 if tier <= settings.free_hint_tiers else settings.mentor_cost
+
+
+def pricing(tier: int) -> dict:
+    """What the learner pays for a hint at `tier`, for display before asking."""
+    tier = max(1, min(tier, MAX_TIER))
+    return {"tier": tier, "tier_label": TIERS[tier][0], "cost": hint_cost(tier),
+            "free_tiers": settings.free_hint_tiers, "max_tier": MAX_TIER}
 
 _SYSTEM = """You are a Socratic DSA mentor. You are helping a learner think, not
 giving them answers.

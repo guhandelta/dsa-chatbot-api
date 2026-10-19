@@ -2,7 +2,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
@@ -52,6 +52,21 @@ class Transaction(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     user: Mapped["User"] = relationship(back_populates="transactions")
+
+
+class RewardGrant(Base):
+    """One earn-back reward, at most once per key (e.g. a first independent
+    solve, a completed stage, a streak day). The unique key is what makes a
+    retried request or a recomputed progress view unable to pay twice."""
+
+    __tablename__ = "reward_grants"
+    __table_args__ = (UniqueConstraint("user_id", "key", name="uq_reward_grants_user_key"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    key: Mapped[str] = mapped_column(String(200), nullable=False)
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
 
 class AdminAuditEvent(Base):

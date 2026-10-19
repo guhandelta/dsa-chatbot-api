@@ -177,6 +177,8 @@ class AnalyzeResponse(BaseModel):
     # Full verification evidence: curated cases, fuzzing, complexity.
     # The UI shows this so feedback is auditable rather than taken on faith.
     evidence: Optional[dict] = None
+    # Earn-back peppercorns this evaluation unlocked (independent solve, streak).
+    rewards: list[dict] = []
 
 
 # ---------- Training (instructor/admin) ----------
@@ -233,6 +235,9 @@ class MentorResponse(BaseModel):
     recalled_moment: Optional[str] = None      # their own earlier reasoning
     step_back_offer: Optional[dict] = None     # an easier problem or the concept
     peppercorns_remaining: int
+    # What this hint cost (0 for the free tiers) and what the next one will.
+    peppercorns_charged: int = 0
+    next_hint_cost: int = 0
 
 
 class SubscriptionOut(BaseModel):
