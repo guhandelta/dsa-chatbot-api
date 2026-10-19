@@ -24,6 +24,7 @@ from app.routers import (
     mentor,
     problems,
     practice,
+    study,
     subscriptions,
     tracks,
     training,
@@ -63,6 +64,7 @@ app.include_router(problems.router)
 app.include_router(practice.router)
 app.include_router(tracks.router)
 app.include_router(mentor.router)
+app.include_router(study.router)
 app.include_router(subscriptions.router)
 app.include_router(training.router)
 app.include_router(admin.router)

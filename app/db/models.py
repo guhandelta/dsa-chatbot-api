@@ -111,6 +111,23 @@ class QuizAnswer(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
 
 
+class StudyNote(Base):
+    """Something a Study Room session produced for the learner to keep: a
+    takeaway card, a logged misconception, or a side-by-side comparison."""
+
+    __tablename__ = "study_notes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    node_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    # "explain" | "debug" | "compare"
+    mode: Mapped[str] = mapped_column(String(20), nullable=False)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    body_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
 class AdminAuditEvent(Base):
     __tablename__ = "admin_audit_events"
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)

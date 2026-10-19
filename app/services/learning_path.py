@@ -325,7 +325,7 @@ def readiness(language: str) -> dict:
             "verdict": verdict}
 
 
-async def _passed_exercises(session: AsyncSession, user_id: str, language: str) -> set[str]:
+async def passed_exercises(session: AsyncSession, user_id: str, language: str) -> set[str]:
     return set((await session.scalars(select(LearningEvent.problem_id).where(
         LearningEvent.user_id == user_id, LearningEvent.language == language,
         LearningEvent.kind == "solved"))).all())
@@ -334,7 +334,7 @@ async def _passed_exercises(session: AsyncSession, user_id: str, language: str) 
 async def progress(session: AsyncSession, user_id: str, language: str) -> dict:
     """The learner's position: per-node mastery and the current node."""
     from app.services import quiz
-    passed = await _passed_exercises(session, user_id, language)
+    passed = await passed_exercises(session, user_id, language)
     checks = await quiz.best_scores(session, user_id, language)
     path = []
     for node in nodes(language):
