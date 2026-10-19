@@ -1,0 +1,2175 @@
+{
+  "schema_version": 1,
+  "status": "draft",
+  "audit": {
+    "reference_rows": 15265,
+    "curriculum_rows": 4280,
+    "eligible_language_reference_rows": 6477,
+    "eligible_language_curriculum_rows": 2613,
+    "excluded_subjects": [
+      {
+        "subject": "bootstrap",
+        "language": "css",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 95
+      },
+      {
+        "subject": "bulma",
+        "language": "css",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 42
+      },
+      {
+        "subject": "embedded-c",
+        "language": "c",
+        "classification": "embedded",
+        "eligible_rows": 1448
+      },
+      {
+        "subject": "embedded-python",
+        "language": "python",
+        "classification": "embedded",
+        "eligible_rows": 829
+      },
+      {
+        "subject": "python-django",
+        "language": "python",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 321
+      },
+      {
+        "subject": "python-fastapi",
+        "language": "python",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 320
+      },
+      {
+        "subject": "python-flask",
+        "language": "python",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 320
+      },
+      {
+        "subject": "sass",
+        "language": "css",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 35
+      },
+      {
+        "subject": "shadcn",
+        "language": "css",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 73
+      },
+      {
+        "subject": "spring-boot",
+        "language": "java",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 6
+      },
+      {
+        "subject": "spring-core",
+        "language": "java",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 4
+      },
+      {
+        "subject": "spring-data",
+        "language": "java",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 5
+      },
+      {
+        "subject": "spring-mvc",
+        "language": "java",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 6
+      },
+      {
+        "subject": "spring-security",
+        "language": "java",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 4
+      },
+      {
+        "subject": "spring-testing",
+        "language": "java",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 4
+      },
+      {
+        "subject": "tailwind",
+        "language": "css",
+        "classification": "framework_or_preprocessor",
+        "eligible_rows": 48
+      }
+    ]
+  },
+  "courses": [
+    {
+      "id": "c",
+      "language": "c",
+      "title": "C: source-backed draft course",
+      "description": "Build a small graph library with explicit allocation ownership and atomic edge insertion.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "c-00",
+          "title": "C foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how C represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the C overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "c-fundamentals",
+              "title": "C fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/c-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "c-01",
+          "title": "Translation units and storage",
+          "objectives": [
+            "Explain separate compilation and distinguish object storage durations."
+          ],
+          "practice_brief": "Split a tiny program into a header and two translation units; annotate the lifetime of every shared object.",
+          "prerequisites": [
+            "c-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-c-translation-units-headers-and-storage-duration",
+              "title": "Translation units headers and storage duration",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/13-c.md"
+            }
+          ]
+        },
+        {
+          "id": "c-02",
+          "title": "Bounds and representation",
+          "objectives": [
+            "Identify valid pointer ranges and reserve space for string termination."
+          ],
+          "practice_brief": "Design a bounded string-copy interface and enumerate empty, full and unterminated input cases.",
+          "prerequisites": [
+            "c-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-c-pointer-bounds-strings-and-integer-conversions",
+              "title": "Pointer bounds strings and integer conversions",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/13-c.md"
+            }
+          ]
+        },
+        {
+          "id": "c-03",
+          "title": "Allocation and ownership",
+          "objectives": [
+            "Check allocation-size arithmetic and assign one cleanup owner per allocation."
+          ],
+          "practice_brief": "Draft a growable buffer contract with allocation-failure and partial-initialization paths.",
+          "prerequisites": [
+            "c-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-c-allocation-size-overflow-and-cleanup-ownership",
+              "title": "Allocation size overflow and cleanup ownership",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/13-c.md"
+            }
+          ]
+        },
+        {
+          "id": "c-04",
+          "title": "Failure reporting",
+          "objectives": [
+            "Interpret failure sentinels before reading errno or stream state."
+          ],
+          "practice_brief": "Write a file-reading interface brief that distinguishes end of file, read failure and caller misuse.",
+          "prerequisites": [
+            "c-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-c-error-return-contracts-errno-and-stream-state",
+              "title": "Error return contracts errno and stream state",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/13-c.md"
+            }
+          ]
+        },
+        {
+          "id": "c-05",
+          "title": "Atomic graph mutation",
+          "objectives": [
+            "Preserve symmetric adjacency when either allocation fails."
+          ],
+          "practice_brief": "Trace both allocation failures during edge insertion and document the unchanged-state guarantee.",
+          "prerequisites": [
+            "c-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-c-atomic-undirected-adjacency-insertion-on-allocation-failure",
+              "title": "Atomic undirected adjacency insertion on allocation failure",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/13-c.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A failure-safe adjacency-list library",
+        "brief": "Build a small graph library with explicit allocation ownership and atomic edge insertion.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 796,
+        "curriculum_rows": 0,
+        "selected_sources": 6,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "cpp",
+      "language": "cpp",
+      "title": "C++: source-backed draft course",
+      "description": "Build an indexed collection whose views, mutation rules and exception guarantees are documented.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "cpp-00",
+          "title": "C++ foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how C++ represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the C++ overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "cpp-fundamentals",
+              "title": "C++ fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/cpp-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "cpp-01",
+          "title": "Declarations and initialization",
+          "objectives": [
+            "Distinguish overload selection, initialization forms and value categories."
+          ],
+          "practice_brief": "Compare brace and parenthesis initialization for a small class and explain the selected constructors.",
+          "prerequisites": [
+            "cpp-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-cpp-declarations-overloads-value-categories-and-initialization",
+              "title": "Declarations overloads value categories and initialization",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/16-cpp.md"
+            }
+          ]
+        },
+        {
+          "id": "cpp-02",
+          "title": "RAII and borrowed views",
+          "objectives": [
+            "Separate owner lifetime from the lifetime of a span or string_view."
+          ],
+          "practice_brief": "Design an owning text store and a view API; identify which operations invalidate each view.",
+          "prerequisites": [
+            "cpp-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-cpp-object-lifetime-raii-references-and-views",
+              "title": "Object lifetime RAII references and views",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/16-cpp.md"
+            }
+          ]
+        },
+        {
+          "id": "cpp-03",
+          "title": "Moves and failure guarantees",
+          "objectives": [
+            "Explain what std::move permits and state a compound operation\u2019s exception guarantee."
+          ],
+          "practice_brief": "Specify a collection update under throwing element construction and track valid moved-from objects.",
+          "prerequisites": [
+            "cpp-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-cpp-moves-copies-and-exception-guarantees",
+              "title": "Moves copies and exception guarantees",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/16-cpp.md"
+            }
+          ]
+        },
+        {
+          "id": "cpp-04",
+          "title": "Containers and ordering",
+          "objectives": [
+            "Apply iterator invalidation rules and strict weak ordering."
+          ],
+          "practice_brief": "Choose a container for an index and write comparator boundary cases without subtraction overflow.",
+          "prerequisites": [
+            "cpp-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-cpp-container-invalidation-comparator-contracts-and-complexity",
+              "title": "Container invalidation comparator contracts and complexity",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/16-cpp.md"
+            }
+          ]
+        },
+        {
+          "id": "cpp-05",
+          "title": "Generic APIs",
+          "objectives": [
+            "Use constraints to express generic requirements and interpret deduction failures."
+          ],
+          "practice_brief": "Specify a constrained search helper and record examples that should and should not compile.",
+          "prerequisites": [
+            "cpp-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-cpp-templates-concepts-deduction-and-diagnostics",
+              "title": "Templates concepts deduction and diagnostics",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/16-cpp.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "An owning indexed collection",
+        "brief": "Build an indexed collection whose views, mutation rules and exception guarantees are documented.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 341,
+        "curriculum_rows": 0,
+        "selected_sources": 6,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "csharp",
+      "language": "csharp",
+      "title": "C#: source-backed draft course",
+      "description": "Process records with explicit null validation, collection semantics and deterministic disposal.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "csharp-00",
+          "title": "C# foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how C# represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the C# overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "csharp-fundamentals",
+              "title": "C# fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/csharp-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "csharp-01",
+          "title": "Projects and runtime boundaries",
+          "objectives": [
+            "Distinguish SDK, target framework and language-version settings."
+          ],
+          "practice_brief": "Create a project checklist that records effective SDK, target framework and build inputs.",
+          "prerequisites": [
+            "csharp-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-csharp-project-sdk-v1",
+              "title": "C# projects and the .NET SDK",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        },
+        {
+          "id": "csharp-02",
+          "title": "Nullability and values",
+          "objectives": [
+            "Separate nullable analysis from runtime boundary validation."
+          ],
+          "practice_brief": "Design an input API that permits optional fields and rejects required null values at runtime.",
+          "prerequisites": [
+            "csharp-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-csharp-nullable-reference-types-v1",
+              "title": "C# nullable reference types: annotations and analysis",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        },
+        {
+          "id": "csharp-03",
+          "title": "Collections and equality",
+          "objectives": [
+            "Choose generic collection and comparer contracts for an indexed model."
+          ],
+          "practice_brief": "Specify duplicate-key handling and equality cases for a typed record index.",
+          "prerequisites": [
+            "csharp-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-csharp-generics-collections-comparers-and-pattern-matching",
+              "title": "Generics collections comparers and pattern matching",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/21-csharp.md"
+            }
+          ]
+        },
+        {
+          "id": "csharp-04",
+          "title": "LINQ execution",
+          "objectives": [
+            "Explain deferred execution and the effects of repeated enumeration."
+          ],
+          "practice_brief": "Trace a query before and after source mutation; choose where materialization is required.",
+          "prerequisites": [
+            "csharp-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-csharp-linq-deferred-repeated-and-provider-execution",
+              "title": "LINQ deferred repeated and provider execution",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/21-csharp.md"
+            }
+          ]
+        },
+        {
+          "id": "csharp-05",
+          "title": "Resource lifetime",
+          "objectives": [
+            "Assign disposal ownership and distinguish using from await using."
+          ],
+          "practice_brief": "Outline a reader pipeline with cleanup on success and exception and no use after disposal.",
+          "prerequisites": [
+            "csharp-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-csharp-disposal-v1",
+              "title": "C# deterministic resource disposal",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        },
+        {
+          "id": "csharp-06",
+          "title": "Async failure and cancellation",
+          "objectives": [
+            "Observe task failures and propagate cooperative cancellation."
+          ],
+          "practice_brief": "Design cancellation and fault paths for the record tool without blocking on Result.",
+          "prerequisites": [
+            "csharp-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-csharp-async-await-v1",
+              "title": "C# asynchronous methods with async and await",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A cancellable record-processing tool",
+        "brief": "Process records with explicit null validation, collection semantics and deterministic disposal.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 25,
+        "curriculum_rows": 0,
+        "selected_sources": 7,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "go",
+      "language": "go",
+      "title": "Go: source-backed draft course",
+      "description": "Build a package-based indexer with explicit slice ownership, error contracts and worker shutdown.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "go-00",
+          "title": "Go foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how Go represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the Go overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "go-fundamentals",
+              "title": "Go fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/go-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "go-01",
+          "title": "Modules and packages",
+          "objectives": [
+            "Distinguish module identity, package imports and exported identifiers."
+          ],
+          "practice_brief": "Sketch a two-package module and diagnose a mismatched import path from its go.mod.",
+          "prerequisites": [
+            "go-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-go-modules-packages-v1",
+              "title": "Go modules, packages, and dependency versions",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        },
+        {
+          "id": "go-02",
+          "title": "Slices and aliasing",
+          "objectives": [
+            "Explain shared backing storage and use the slice returned by append."
+          ],
+          "practice_brief": "Trace overlapping slices and specify when the indexer must copy input storage.",
+          "prerequisites": [
+            "go-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-go-slices-sharing-v1",
+              "title": "Go slices: length, capacity, and shared storage",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        },
+        {
+          "id": "go-03",
+          "title": "Interfaces and errors",
+          "objectives": [
+            "Explain typed-nil interfaces and preserve inspectable wrapped errors."
+          ],
+          "practice_brief": "Design a small consumer-side interface and error contract with errors.Is/As cases.",
+          "prerequisites": [
+            "go-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-go-interfaces-errors-v1",
+              "title": "Go interfaces and error handling",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_001"
+            }
+          ]
+        },
+        {
+          "id": "go-04",
+          "title": "Maps and absence",
+          "objectives": [
+            "Distinguish missing keys from zero values and avoid iteration-order assumptions."
+          ],
+          "practice_brief": "Specify an index update operation with missing-key, duplicate-key and iteration cases.",
+          "prerequisites": [
+            "go-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-go-map-absence-mutation-and-iteration",
+              "title": "Map absence mutation and iteration",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/20-go.md"
+            }
+          ]
+        },
+        {
+          "id": "go-05",
+          "title": "Channels and ownership",
+          "objectives": [
+            "Assign channel closure and goroutine lifecycle responsibility."
+          ],
+          "practice_brief": "Draw the indexer worker shutdown sequence and account for blocked senders and receivers.",
+          "prerequisites": [
+            "go-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-go-channels-select-closure-and-goroutine-ownership",
+              "title": "Channels select closure and goroutine ownership",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/20-go.md"
+            }
+          ]
+        },
+        {
+          "id": "go-06",
+          "title": "Cancellation and synchronization",
+          "objectives": [
+            "Propagate cancellation and identify synchronization boundaries."
+          ],
+          "practice_brief": "Write a bounded worker plan with cancellation during input, processing and result delivery.",
+          "prerequisites": [
+            "go-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-go-context-cancellation-synchronization-and-memory-model",
+              "title": "Context cancellation synchronization and memory model",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/20-go.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A bounded concurrent indexer",
+        "brief": "Build a package-based indexer with explicit slice ownership, error contracts and worker shutdown.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 28,
+        "curriculum_rows": 0,
+        "selected_sources": 7,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "java",
+      "language": "java",
+      "title": "Java: source-backed draft course",
+      "description": "Analyze records with stable equality, single-use streams and owned executor lifecycles.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "java-00",
+          "title": "Java foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how Java represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior.",
+            "Write a conditional, a terminating loop and a small function using the dedicated beginner readings."
+          ],
+          "practice_brief": "Use the Java overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "java-fundamentals",
+              "title": "Java fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/java-fundamentals.md"
+            },
+            {
+              "id": "java-path-01-values",
+              "title": "Java values",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/java-path-01-values.md"
+            },
+            {
+              "id": "java-path-02-conditions",
+              "title": "Java conditions",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/java-path-02-conditions.md"
+            },
+            {
+              "id": "java-path-03-loops",
+              "title": "Java loops",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/java-path-03-loops.md"
+            },
+            {
+              "id": "java-path-04-functions",
+              "title": "Java functions",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/java-path-04-functions.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "java-01",
+          "title": "Packages and modules",
+          "objectives": [
+            "Separate package access, module exports and reflective opens."
+          ],
+          "practice_brief": "Sketch two modules and diagnose why a public class is still inaccessible.",
+          "prerequisites": [
+            "java-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-java-modules-packages-v1",
+              "title": "Java packages and modules: separate organization and access controls",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_002"
+            }
+          ]
+        },
+        {
+          "id": "java-02",
+          "title": "Collections and equality",
+          "objectives": [
+            "Keep equality, hashing and ordering contracts consistent.",
+            "Explain the assigned array-mutation reading and trace its index/value or shifting behavior."
+          ],
+          "practice_brief": "Design a record key and list duplicate, mutable-key and comparator edge cases.",
+          "prerequisites": [
+            "java-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-java-equality-ordering-hashing-and-collection-complexity",
+              "title": "Equality ordering hashing and collection complexity",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/01-java.md"
+            },
+            {
+              "id": "corpus-java-list-remove-index-vs-value",
+              "title": "List<Integer>.remove(int) removes by index, remove(Object) by value",
+              "kind": "concept",
+              "collection": "curriculum",
+              "origin": "java_arrays"
+            }
+          ]
+        },
+        {
+          "id": "java-03",
+          "title": "Generics and API variance",
+          "objectives": [
+            "Explain invariant generic types and bounded producer/consumer APIs."
+          ],
+          "practice_brief": "Specify a collection-copy API and document accepted and rejected type relationships.",
+          "prerequisites": [
+            "java-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-java-generics-invariance-and-bounded-wildcards",
+              "title": "Generics invariance and bounded wildcards",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/01-java.md"
+            }
+          ]
+        },
+        {
+          "id": "java-04",
+          "title": "Cleanup and exceptions",
+          "objectives": [
+            "Explain reverse close order and primary versus suppressed failures."
+          ],
+          "practice_brief": "Trace two resources when processing and close both fail; document ownership.",
+          "prerequisites": [
+            "java-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-java-resource-lifetime-v1",
+              "title": "Java resource lifetime and try-with-resources",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_002"
+            }
+          ]
+        },
+        {
+          "id": "java-05",
+          "title": "Stream pipelines",
+          "objectives": [
+            "Distinguish lazy intermediate operations from terminal consumption."
+          ],
+          "practice_brief": "Design a reduction without shared mutation and identify why stream reuse is invalid.",
+          "prerequisites": [
+            "java-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-java-streams-v1",
+              "title": "Java Stream API: lazy pipelines and safe behavior",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_002"
+            }
+          ]
+        },
+        {
+          "id": "java-06",
+          "title": "Executor lifecycle",
+          "objectives": [
+            "Observe task failures and assign executor shutdown responsibility."
+          ],
+          "practice_brief": "Plan bounded batch submission with interruption and shutdown paths.",
+          "prerequisites": [
+            "java-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-java-concurrency-executor-v1",
+              "title": "Java concurrency: tasks, executors, and lifecycle",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_002"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A resource-safe batch analyzer",
+        "brief": "Analyze records with stable equality, single-use streams and owned executor lifecycles.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 26,
+        "curriculum_rows": 1498,
+        "selected_sources": 12,
+        "foundational_status": "draft_beginner_readings"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched."
+      ]
+    },
+    {
+      "id": "javascript",
+      "language": "javascript",
+      "title": "JavaScript: source-backed draft course",
+      "description": "Build a modular search workflow with explicit state ownership, cancellation and host boundaries.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "javascript-00",
+          "title": "JavaScript foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how JavaScript represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior.",
+            "Write a conditional, a terminating loop and a small function using the dedicated beginner readings."
+          ],
+          "practice_brief": "Use the JavaScript overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "javascript-fundamentals",
+              "title": "JavaScript fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/javascript-fundamentals.md"
+            },
+            {
+              "id": "javascript-path-01-values",
+              "title": "JavaScript values",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/javascript-path-01-values.md"
+            },
+            {
+              "id": "javascript-path-02-conditions",
+              "title": "JavaScript conditions",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/javascript-path-02-conditions.md"
+            },
+            {
+              "id": "javascript-path-03-loops",
+              "title": "JavaScript loops",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/javascript-path-03-loops.md"
+            },
+            {
+              "id": "javascript-path-04-functions",
+              "title": "JavaScript functions",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/javascript-path-04-functions.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "javascript-01",
+          "title": "Modules and hosts",
+          "objectives": [
+            "Separate live module bindings from host-defined module resolution."
+          ],
+          "practice_brief": "Specify module imports for one chosen host and describe a dynamic-import failure path.",
+          "prerequisites": [
+            "javascript-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-javascript-modules-v1",
+              "title": "JavaScript modules: exports, resolution, and loading",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_002"
+            }
+          ]
+        },
+        {
+          "id": "javascript-02",
+          "title": "Closures and retained state",
+          "objectives": [
+            "Trace captured bindings and identify retained objects."
+          ],
+          "practice_brief": "Design independent search sessions and explain how callbacks retain and release session state.",
+          "prerequisites": [
+            "javascript-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-javascript-closures-capture-bindings-and-preserve-reachable-state",
+              "title": "Closures capture bindings and preserve reachable state",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/08-javascript.md"
+            }
+          ]
+        },
+        {
+          "id": "javascript-03",
+          "title": "Receivers and prototypes",
+          "objectives": [
+            "Explain receiver loss and own versus inherited properties."
+          ],
+          "practice_brief": "Trace an extracted method and design a safe callback with explicit receiver behavior.",
+          "prerequisites": [
+            "javascript-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-javascript-this-binding-prototypes-and-property-lookup",
+              "title": "This binding prototypes and property lookup",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/08-javascript.md"
+            }
+          ]
+        },
+        {
+          "id": "javascript-04",
+          "title": "Representation and operation costs",
+          "objectives": [
+            "Distinguish sparse slots and account for Unicode representation.",
+            "Explain the assigned array-mutation reading and trace its index/value or shifting behavior."
+          ],
+          "practice_brief": "Define search input behavior for holes, empty values and supplementary Unicode characters.",
+          "prerequisites": [
+            "javascript-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-javascript-sparse-arrays-unicode-and-operation-costs",
+              "title": "Sparse arrays Unicode and operation costs",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/08-javascript.md"
+            },
+            {
+              "id": "corpus-js-array-remove-while-iterating",
+              "title": "Removing elements while looping",
+              "kind": "concept",
+              "collection": "curriculum",
+              "origin": "js_arrays"
+            }
+          ]
+        },
+        {
+          "id": "javascript-05",
+          "title": "Promises and error propagation",
+          "objectives": [
+            "Explain promise continuations and propagate asynchronous failures."
+          ],
+          "practice_brief": "Trace independent requests under Promise.all and describe rejection without assuming cancellation.",
+          "prerequisites": [
+            "javascript-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "generated-javascript-promises-async-v1",
+              "title": "JavaScript promises, async functions, and error flow",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated_batch_002"
+            }
+          ]
+        },
+        {
+          "id": "javascript-06",
+          "title": "Cancellation and fetch boundaries",
+          "objectives": [
+            "Separate cancellation, transport failure and HTTP response handling."
+          ],
+          "practice_brief": "Design latest-request-wins search behavior with AbortSignal and stale-result protection.",
+          "prerequisites": [
+            "javascript-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-javascript-async-cancellation-and-fetch-error-boundaries",
+              "title": "Async cancellation and fetch error boundaries",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/08-javascript.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "An asynchronous searchable view",
+        "brief": "Build a modular search workflow with explicit state ownership, cancellation and host boundaries.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 26,
+        "curriculum_rows": 1115,
+        "selected_sources": 12,
+        "foundational_status": "draft_beginner_readings"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched."
+      ]
+    },
+    {
+      "id": "python",
+      "language": "python",
+      "title": "Python: source-backed draft course",
+      "description": "Build a packaged summarizer with lazy input, isolated state and deterministic cleanup.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "python-00",
+          "title": "Python foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how Python represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior.",
+            "Write a conditional, a terminating loop and a small function using the dedicated beginner readings."
+          ],
+          "practice_brief": "Use the Python overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "python-fundamentals",
+              "title": "Python fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/python-fundamentals.md"
+            },
+            {
+              "id": "python-path-01-values",
+              "title": "Python values",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/python-path-01-values.md"
+            },
+            {
+              "id": "python-path-02-conditions",
+              "title": "Python conditions",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/python-path-02-conditions.md"
+            },
+            {
+              "id": "python-path-03-loops",
+              "title": "Python loops",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/python-path-03-loops.md"
+            },
+            {
+              "id": "python-path-04-functions",
+              "title": "Python functions",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/python-path-04-functions.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "python-01",
+          "title": "Environments and imports",
+          "objectives": [
+            "Distinguish interpreter selection, dependency installation and import resolution."
+          ],
+          "practice_brief": "Record a reproducible environment and diagnose an import using the wrong interpreter.",
+          "prerequisites": [
+            "python-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-python-virtual-environments-packaging-and-imports",
+              "title": "Virtual environments packaging and imports",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/09-python.md"
+            }
+          ]
+        },
+        {
+          "id": "python-02",
+          "title": "Arguments and shared defaults",
+          "objectives": [
+            "Explain argument binding and definition-time default evaluation."
+          ],
+          "practice_brief": "Specify a session function whose optional collection does not leak state between calls.",
+          "prerequisites": [
+            "python-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-python-argument-binding-defaults-and-shared-mutable-state",
+              "title": "Argument binding defaults and shared mutable state",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/09-python.md"
+            }
+          ]
+        },
+        {
+          "id": "python-03",
+          "title": "Iteration and exhaustion",
+          "objectives": [
+            "Separate iterable factories from single-use iterator state."
+          ],
+          "practice_brief": "Design a lazy summarizer input and explain behavior after partial and repeated consumption.",
+          "prerequisites": [
+            "python-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-python-iterators-generators-and-exhaustion",
+              "title": "Iterators generators and exhaustion",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/09-python.md"
+            }
+          ]
+        },
+        {
+          "id": "python-04",
+          "title": "Cleanup and exceptions",
+          "objectives": [
+            "Describe context-manager exit and exception propagation."
+          ],
+          "practice_brief": "Plan file ownership and cleanup when parsing fails halfway through a stream.",
+          "prerequisites": [
+            "python-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-python-context-managers-exception-propagation-and-cleanup",
+              "title": "Context managers exception propagation and cleanup",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/09-python.md"
+            }
+          ]
+        },
+        {
+          "id": "python-05",
+          "title": "Data models and validation",
+          "objectives": [
+            "Separate generated dataclass methods and type hints from runtime validation."
+          ],
+          "practice_brief": "Specify a record model with independent mutable fields and explicit external-input checks.",
+          "prerequisites": [
+            "python-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-python-dataclasses-typing-and-validation-boundaries",
+              "title": "Dataclasses typing and validation boundaries",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/09-python.md"
+            }
+          ]
+        },
+        {
+          "id": "python-06",
+          "title": "Async task ownership",
+          "objectives": [
+            "Identify blocking operations and define task cancellation cleanup."
+          ],
+          "practice_brief": "Extend the summarizer plan with concurrent I/O while preserving failure and cleanup behavior.",
+          "prerequisites": [
+            "python-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-python-asyncio-tasks-blocking-code-and-cancellation",
+              "title": "Asyncio tasks blocking code and cancellation",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/09-python.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A streaming record summarizer",
+        "brief": "Build a packaged summarizer with lazy input, isolated state and deterministic cleanup.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 434,
+        "curriculum_rows": 0,
+        "selected_sources": 11,
+        "foundational_status": "draft_beginner_readings"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched."
+      ]
+    },
+    {
+      "id": "ruby",
+      "language": "ruby",
+      "title": "Ruby: source-backed draft course",
+      "description": "Build a bundled report tool with callable contracts, stable Hash keys and independently owned state.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "ruby-00",
+          "title": "Ruby foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how Ruby represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the Ruby overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "ruby-fundamentals",
+              "title": "Ruby fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/ruby-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "ruby-01",
+          "title": "Bundler and isolated checks",
+          "objectives": [
+            "Separate declared requirements from locked resolution and isolate example state."
+          ],
+          "practice_brief": "Specify bundle execution and fixtures without relying on global gems or test order.",
+          "prerequisites": [
+            "ruby-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-ruby-bundler-gemfile-lockfiles-and-rspec-boundaries",
+              "title": "Bundler Gemfile lockfiles and RSpec boundaries",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/18-ruby.md"
+            }
+          ]
+        },
+        {
+          "id": "ruby-02",
+          "title": "Blocks and callable control flow",
+          "objectives": [
+            "Explain arity and return behavior for blocks, Procs and lambdas."
+          ],
+          "practice_brief": "Choose a callable contract for deferred report filters and trace an escaping return.",
+          "prerequisites": [
+            "ruby-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-ruby-blocks-procs-lambdas-and-return-behavior",
+              "title": "Blocks Procs lambdas and return behavior",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/18-ruby.md"
+            }
+          ]
+        },
+        {
+          "id": "ruby-03",
+          "title": "Modules and mutation",
+          "objectives": [
+            "Inspect method lookup and distinguish shallow freezing from recursive immutability."
+          ],
+          "practice_brief": "Design a reporting mixin and document which objects each method can mutate.",
+          "prerequisites": [
+            "ruby-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-ruby-modules-method-lookup-and-mutation-contracts",
+              "title": "Modules method lookup and mutation contracts",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/18-ruby.md"
+            }
+          ]
+        },
+        {
+          "id": "ruby-04",
+          "title": "Enumerable and key stability",
+          "objectives": [
+            "Separate lazy iteration from concurrency and preserve Hash-key stability."
+          ],
+          "practice_brief": "Plan a lazy report pipeline and compare allocations with eager materialization.",
+          "prerequisites": [
+            "ruby-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-ruby-enumerable-lazy-iteration-hash-keys-and-fibers",
+              "title": "Enumerable lazy iteration Hash keys and Fibers",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/18-ruby.md"
+            }
+          ]
+        },
+        {
+          "id": "ruby-05",
+          "title": "Dynamic-programming state ownership",
+          "objectives": [
+            "Allocate independent mutable DP rows and include all state in memoization keys."
+          ],
+          "practice_brief": "Design a small inventory allocation planner with independent rows and explicit state dependencies.",
+          "prerequisites": [
+            "ruby-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-ruby-ruby-dynamic-programming-state-ownership-and-costs",
+              "title": "Ruby dynamic programming state ownership and costs",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/18-ruby.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A lazy inventory report",
+        "brief": "Build a bundled report tool with callable contracts, stable Hash keys and independently owned state.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 827,
+        "curriculum_rows": 0,
+        "selected_sources": 6,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "rust",
+      "language": "rust",
+      "title": "Rust: source-backed draft course",
+      "description": "Build a graph explorer with explicit ownership, borrowed query results and documented shared-state contracts.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit text and run a local program; begin with the foundations module. Prior programming literacy is recommended for the compact overview."
+      ],
+      "modules": [
+        {
+          "id": "rust-00",
+          "title": "Rust foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how Rust represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the Rust overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "rust-fundamentals",
+              "title": "Rust fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/rust-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "rust-01",
+          "title": "Cargo and version provenance",
+          "objectives": [
+            "Distinguish edition, compiler, dependency and optimization-profile effects."
+          ],
+          "practice_brief": "Record a project baseline and a benchmark plan that does not treat debug timings as a language guarantee.",
+          "prerequisites": [
+            "rust-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-rust-edition-compiler-cargo-profiles-and-algorithm-claims",
+              "title": "Edition compiler Cargo profiles and algorithm claims",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/17-rust.md"
+            }
+          ]
+        },
+        {
+          "id": "rust-02",
+          "title": "Ownership and borrow diagnostics",
+          "objectives": [
+            "Trace moves and conflicting borrows before choosing a repair."
+          ],
+          "practice_brief": "Annotate owners and borrows in a graph API and explain one repair without blindly cloning.",
+          "prerequisites": [
+            "rust-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-rust-ownership-moves-borrows-and-diagnostic-repair",
+              "title": "Ownership moves borrows and diagnostic repair",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/17-rust.md"
+            }
+          ]
+        },
+        {
+          "id": "rust-03",
+          "title": "Lifetimes and trait bounds",
+          "objectives": [
+            "Relate returned references to input lifetimes and explain trait requirements."
+          ],
+          "practice_brief": "Specify a borrowed lookup result and show why it cannot outlive graph storage.",
+          "prerequisites": [
+            "rust-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-rust-lifetimes-trait-bounds-and-borrowed-return-values",
+              "title": "Lifetimes trait bounds and borrowed return values",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/17-rust.md"
+            }
+          ]
+        },
+        {
+          "id": "rust-04",
+          "title": "Interior mutability and sharing",
+          "objectives": [
+            "Distinguish runtime borrow checking, reference counting and thread-safety bounds."
+          ],
+          "practice_brief": "Compare a single-threaded shared model with a synchronized threaded model and state each invariant.",
+          "prerequisites": [
+            "rust-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-rust-interior-mutability-send-sync-and-shared-state",
+              "title": "Interior mutability Send Sync and shared state",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/17-rust.md"
+            }
+          ]
+        },
+        {
+          "id": "rust-05",
+          "title": "Traversal state and partial failure",
+          "objectives": [
+            "Define discovery state and account for frontier ownership and partial failure."
+          ],
+          "practice_brief": "Specify graph exploration for cycles, disconnected vertices and a failed expansion.",
+          "prerequisites": [
+            "rust-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-rust-shared-traversal-discovery-state-and-partial-failure",
+              "title": "Traversal discovery state and partial failure",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/29-shared.md"
+            }
+          ]
+        },
+        {
+          "id": "rust-06",
+          "title": "Unsafe boundaries",
+          "objectives": [
+            "Identify caller obligations at unsafe and FFI boundaries."
+          ],
+          "practice_brief": "Write a boundary contract for an optional foreign graph importer without claiming safe syntax proves validity.",
+          "prerequisites": [
+            "rust-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-rust-unsafe-contracts-ffi-and-representation",
+              "title": "Unsafe contracts FFI and representation",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/17-rust.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A borrowing-aware graph explorer",
+        "brief": "Build a graph explorer with explicit ownership, borrowed query results and documented shared-state contracts.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 1629,
+        "curriculum_rows": 0,
+        "selected_sources": 7,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "typescript",
+      "language": "typescript",
+      "title": "TypeScript: source-backed draft course",
+      "description": "Build a typed explorer that validates unknown input and models state transitions exhaustively.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "JavaScript basics before the TypeScript type-system sequence."
+      ],
+      "modules": [
+        {
+          "id": "typescript-00",
+          "title": "TypeScript foundations: values, functions and iteration",
+          "objectives": [
+            "Identify how TypeScript represents values, strings, equality and function calls.",
+            "Trace the reference\u2019s iteration idiom and explain its mutation or ownership behavior."
+          ],
+          "practice_brief": "Use the TypeScript overview to annotate a short sequence-processing function: input types, iteration, equality and failure path. Record syntax you still need to learn before proceeding.",
+          "prerequisites": [],
+          "sources": [
+            {
+              "id": "typescript-fundamentals",
+              "title": "TypeScript fundamentals",
+              "kind": "reference",
+              "collection": "content_catalog",
+              "origin": "data/content/language/typescript-fundamentals.md"
+            }
+          ],
+          "source_status": "available"
+        },
+        {
+          "id": "typescript-01",
+          "title": "Compiler and module configuration",
+          "objectives": [
+            "Separate emitted target, module resolution and strictness settings."
+          ],
+          "practice_brief": "Record a tsconfig baseline and explain a library type available without matching runtime support.",
+          "prerequisites": [
+            "typescript-00"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-typescript-tsconfig-target-strictness-modules-and-declarations",
+              "title": "Tsconfig target strictness modules and declarations",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/19-typescript.md"
+            }
+          ]
+        },
+        {
+          "id": "typescript-02",
+          "title": "Erasure and external data",
+          "objectives": [
+            "Explain erased types and validate external unknown values."
+          ],
+          "practice_brief": "Specify an input parser that rejects malformed records instead of asserting their type.",
+          "prerequisites": [
+            "typescript-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-typescript-type-erasure-assertions-enums-and-external-data",
+              "title": "Type erasure assertions enums and external data",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/19-typescript.md"
+            }
+          ]
+        },
+        {
+          "id": "typescript-03",
+          "title": "Narrowing and exhaustive states",
+          "objectives": [
+            "Model alternatives with discriminants and check exhaustive branches."
+          ],
+          "practice_brief": "Design loading, success and failure states and describe the compiler response to a new variant.",
+          "prerequisites": [
+            "typescript-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-typescript-discriminated-unions-narrowing-and-exhaustiveness",
+              "title": "Discriminated unions narrowing and exhaustiveness",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/19-typescript.md"
+            }
+          ]
+        },
+        {
+          "id": "typescript-04",
+          "title": "Generic transformations",
+          "objectives": [
+            "Preserve relationships using constraints and distinguish type computation from runtime work."
+          ],
+          "practice_brief": "Specify a typed record projection and boundary cases for optional fields.",
+          "prerequisites": [
+            "typescript-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-typescript-generic-constraints-mapped-and-conditional-types",
+              "title": "Generic constraints mapped and conditional types",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/19-typescript.md"
+            }
+          ]
+        },
+        {
+          "id": "typescript-05",
+          "title": "Function compatibility",
+          "objectives": [
+            "Explain structural compatibility and callback variance limits."
+          ],
+          "practice_brief": "Compare callback signatures under the selected strictness settings and identify unsafe assumptions.",
+          "prerequisites": [
+            "typescript-04"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-typescript-function-variance-structural-compatibility-and-soundness-limits",
+              "title": "Function variance structural compatibility and soundness limits",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/19-typescript.md"
+            }
+          ]
+        },
+        {
+          "id": "typescript-06",
+          "title": "Explicit dynamic-programming states",
+          "objectives": [
+            "Separate uncomputed states from legitimate zero and unreachable results."
+          ],
+          "practice_brief": "Design a memo table with explicit state variants and trace dependency order.",
+          "prerequisites": [
+            "typescript-05"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-typescript-dynamic-programming-with-explicit-unknown-states",
+              "title": "Dynamic programming with explicit unknown states",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/19-typescript.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A typed external-data explorer",
+        "brief": "Build a typed explorer that validates unknown input and models state transitions exhaustively.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 1290,
+        "curriculum_rows": 0,
+        "selected_sources": 7,
+        "foundational_status": "draft_compact_overview"
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched.",
+        "Foundations are a compact orientation, not a complete syntax tutorial; step-by-step beginner exercises remain missing."
+      ]
+    },
+    {
+      "id": "html",
+      "language": "html",
+      "title": "HTML: source-backed draft course",
+      "description": "Author a semantic registration page with labeled controls, usable errors and documented browser boundaries.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Ability to edit a text file and inspect a browser DOM; no programming prerequisite."
+      ],
+      "modules": [
+        {
+          "id": "html-01",
+          "title": "Parsed structure and attributes",
+          "objectives": [
+            "Distinguish source markup, repaired DOM, boolean attributes and live properties."
+          ],
+          "practice_brief": "Inspect invalid nesting and disabled=\"false\" in a local page; record source versus parsed behavior.",
+          "prerequisites": [],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-html-element-content-models-attributes-and-live-properties",
+              "title": "Element content models attributes and live properties",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/22-html.md"
+            }
+          ]
+        },
+        {
+          "id": "html-02",
+          "title": "Native semantics and keyboard access",
+          "objectives": [
+            "Choose native controls and explain why ARIA does not supply interaction."
+          ],
+          "practice_brief": "Outline headings and landmarks and walk through keyboard focus without hiding the focused element.",
+          "prerequisites": [
+            "html-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-html-native-semantics-keyboard-focus-and-aria",
+              "title": "Native semantics keyboard focus and ARIA",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/22-html.md"
+            }
+          ]
+        },
+        {
+          "id": "html-03",
+          "title": "Forms and validation boundaries",
+          "objectives": [
+            "Associate persistent labels and distinguish browser validation from server checks."
+          ],
+          "practice_brief": "Design named controls, autocomplete and associated errors; document bypassed client validation.",
+          "prerequisites": [
+            "html-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-html-forms-labels-validation-and-server-boundaries",
+              "title": "Forms labels validation and server boundaries",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/22-html.md"
+            }
+          ]
+        },
+        {
+          "id": "html-04",
+          "title": "Lifecycle and capabilities",
+          "objectives": [
+            "Separate HTML semantics, DOM APIs and permission-dependent capabilities."
+          ],
+          "practice_brief": "Write a script-loading and fallback plan that leaves the form usable when an optional API is absent.",
+          "prerequisites": [
+            "html-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-html-html-dom-apis-lifecycle-permissions-and-compatibility",
+              "title": "HTML DOM APIs lifecycle permissions and compatibility",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/22-html.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "An accessible registration document",
+        "brief": "Author a semantic registration page with labeled controls, usable errors and documented browser boundaries.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 255,
+        "curriculum_rows": 0,
+        "selected_sources": 4
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched."
+      ]
+    },
+    {
+      "id": "css",
+      "language": "css",
+      "title": "CSS: source-backed draft course",
+      "description": "Style a semantic form with a deliberate cascade, content-driven layout and usable fallback behavior.",
+      "status": "draft",
+      "assessment_status": "missing",
+      "prerequisites": [
+        "Basic HTML structure and browser style inspection."
+      ],
+      "modules": [
+        {
+          "id": "css-01",
+          "title": "Cascade and value stages",
+          "objectives": [
+            "Resolve declarations using cascade order before specificity and separate inheritance."
+          ],
+          "practice_brief": "Design a layer policy and explain one conflicting declaration through computed and used values.",
+          "prerequisites": [],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-css-cascade-layers-specificity-inheritance-and-values",
+              "title": "Cascade layers specificity inheritance and values",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/23-css.md"
+            }
+          ]
+        },
+        {
+          "id": "css-02",
+          "title": "Selectors and interaction states",
+          "objectives": [
+            "Distinguish selector relationships, media queries and container queries."
+          ],
+          "practice_brief": "Specify focus, hover and reduced-motion states plus a content-driven responsive breakpoint.",
+          "prerequisites": [
+            "css-01"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-css-selectors-responsive-queries-and-interaction-states",
+              "title": "Selectors responsive queries and interaction states",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/23-css.md"
+            }
+          ]
+        },
+        {
+          "id": "css-03",
+          "title": "Box constraints and layout",
+          "objectives": [
+            "Diagnose intrinsic sizing and automatic minimum constraints in flex and grid."
+          ],
+          "practice_brief": "Plan a form layout with long unbroken content and document the intended overflow and shrink behavior.",
+          "prerequisites": [
+            "css-02"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-css-box-sizing-intrinsic-sizes-flex-and-grid-constraints",
+              "title": "Box sizing intrinsic sizes flex and grid constraints",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/23-css.md"
+            }
+          ]
+        },
+        {
+          "id": "css-04",
+          "title": "Progressive enhancement and support",
+          "objectives": [
+            "Separate recognized syntax from demonstrated behavior on a browser baseline."
+          ],
+          "practice_brief": "Specify a baseline layout and optional @supports enhancement; include zoom, keyboard and overflow checks.",
+          "prerequisites": [
+            "css-03"
+          ],
+          "source_status": "available",
+          "sources": [
+            {
+              "id": "ref-gapfill-v1-css-browser-support-progressive-enhancement-and-feature-status",
+              "title": "Browser support progressive enhancement and feature status",
+              "kind": "reference",
+              "collection": "reference_library",
+              "origin": "generated/knowledge-gap-fill-v1/sources/23-css.md"
+            }
+          ]
+        }
+      ],
+      "capstone": {
+        "title": "A resilient responsive form layout",
+        "brief": "Style a semantic form with a deliberate cascade, content-driven layout and usable fallback behavior.",
+        "deliverables": [
+          "An implementation or authored web document with a short design rationale.",
+          "A record of boundary cases, observed behavior and unresolved limitations."
+        ],
+        "assessment_status": "missing"
+      },
+      "coverage": {
+        "reference_rows": 800,
+        "curriculum_rows": 0,
+        "selected_sources": 4
+      },
+      "limitations": [
+        "Draft lesson sequence, not a validated full curriculum.",
+        "Practice briefs and capstone have no reviewed assessment bank, scoring rubric or execution certification.",
+        "Selected local reference rows are learner-eligible, not independently certified; external citations were not fetched."
+      ]
+    }
+  ]
+}
