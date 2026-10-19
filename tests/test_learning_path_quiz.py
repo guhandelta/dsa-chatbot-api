@@ -176,7 +176,9 @@ def test_draw_mixes_formats_and_puts_weak_concepts_first():
     candidates = quiz.pool('python', 'python:stage-06')
     drawn = quiz.draw(candidates, 4, seed='s')
     assert len({i['type'] for i in drawn}) == 4
-    assert [i['type'] for i in drawn] == list(quiz.DRAW_ORDER[:4])
+    # Short quizzes rotate their starting format, so every format gets drawn.
+    seen = {i['type'] for seed in range(30) for i in quiz.draw(candidates, 5, seed=str(seed))}
+    assert seen == set(quiz.TYPES)
     assert len(quiz.draw(candidates, 50, seed='s')) == len(candidates)
     weak = quiz.draw(candidates, 1, weak={'list-multiplication'}, seed='s')
     assert weak[0]['concept'] == 'list-multiplication'

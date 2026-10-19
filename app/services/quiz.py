@@ -194,9 +194,13 @@ def draw(candidates: list[dict], count: int, weak: set[str] = frozenset(), seed:
     for bucket in by_type.values():
         rng.shuffle(bucket)
         bucket.sort(key=lambda i: i["concept"] not in weak)
-    chosen = []
+    # Rotate the starting format so short quizzes still reach every format.
+    start = rng.randrange(len(DRAW_ORDER))
+    order = DRAW_ORDER[start:] + DRAW_ORDER[:start]
+    # Weak concepts come first (one per format), then the formats in turn.
+    chosen = [by_type[k].pop(0) for k in order if by_type[k] and by_type[k][0]["concept"] in weak][:count]
     while len(chosen) < count and any(by_type.values()):
-        for kind in DRAW_ORDER:
+        for kind in order:
             if by_type[kind] and len(chosen) < count:
                 chosen.append(by_type[kind].pop(0))
     return chosen
