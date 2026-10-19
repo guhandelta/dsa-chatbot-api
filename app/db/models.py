@@ -176,6 +176,8 @@ class ChatThread(Base):
     language: Mapped[str] = mapped_column(String(32), nullable=False, default="")
     subject: Mapped[str] = mapped_column(String(80), nullable=False, default="")
     track: Mapped[str] = mapped_column(String(20), nullable=False, default="dsa")
+    study_focus_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    compare_language: Mapped[str] = mapped_column(String(32), nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     user: Mapped["User"] = relationship(back_populates="threads")

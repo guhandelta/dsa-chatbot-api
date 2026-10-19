@@ -116,6 +116,12 @@ async def _thread(session: AsyncSession, user: User, request: StudyMessage) -> C
         raise HTTPException(404, "Thread not found")
     if (thread.language, thread.track) != (request.language, "study-" + request.mode):
         raise HTTPException(409, "Start a new conversation when changing language or mode.")
+    if not thread.study_focus_id:
+        raise HTTPException(409, "This older conversation has no saved focus. Start a new conversation.")
+    if thread.study_focus_id and request.focus_id and thread.study_focus_id != request.focus_id:
+        raise HTTPException(409, "Start a new conversation when changing focus.")
+    if thread.compare_language and thread.compare_language != request.compare_language:
+        raise HTTPException(409, "Start a new conversation when changing comparison language.")
     return thread
 
 
@@ -137,8 +143,9 @@ async def message(request: StudyMessage, user: User = Depends(get_current_user),
     if request.mode == "debug" and not (request.code.strip() and request.error.strip()):
         raise HTTPException(422, "Paste your code and the actual error or output.")
     provider = "auto" if user.role == "student" else request.provider
-    await _thread(session, user, request)
-    focus = await study_room.resolve_focus(session, user.id, request.language, request.focus_id)
+    existing_thread = await _thread(session, user, request)
+    focus_id = (existing_thread.study_focus_id if existing_thread else None) or request.focus_id
+    focus = await study_room.resolve_focus(session, user.id, request.language, focus_id)
 
     async def prepare():
         if provider == "auto" and not configured_providers():
@@ -200,6 +207,8 @@ async def message(request: StudyMessage, user: User = Depends(get_current_user),
                                 track="study-" + request.mode)
             session.add(thread)
             await session.flush()
+        thread.study_focus_id = focus["id"] or ""
+        thread.compare_language = request.compare_language or ""
         stored = request.message if request.mode != "debug" else user_text
         session.add_all([ChatMessage(thread_id=thread.id, role="user", content=stored),
                          ChatMessage(thread_id=thread.id, role="assistant", content=answer)])
@@ -226,7 +235,7 @@ async def resolve_debug(request: DebugResolution, user: User = Depends(get_curre
     await require_language(session, user, thread.language)
     first = await session.scalar(select(ChatMessage.content).where(
         ChatMessage.thread_id == thread.id, ChatMessage.role == "user").order_by(ChatMessage.created_at).limit(1))
-    note = await study_room.save_note(session, user.id, thread.language, None, "debug", "Misconception logged",
+    note = await study_room.save_note(session, user.id, thread.language, thread.study_focus_id or None, "debug", "Misconception logged",
                                       {"thread_id": thread.id, "what_i_thought": first or "", "my_fix": request.fix})
     await session.commit()
     return study_room.note_view(note)
