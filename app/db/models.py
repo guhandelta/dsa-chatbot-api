@@ -69,6 +69,48 @@ class RewardGrant(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
 
+class QuizSession(Base):
+    """One Study Room quiz: the items drawn for a path node and the running score.
+    Answers live server-side only; the client never receives an answer key."""
+
+    __tablename__ = "quiz_sessions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    node_id: Mapped[str] = mapped_column(String(120), index=True, nullable=False)
+    items_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    answered: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    correct: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Sum of per-item scores; free-text answers can earn partial credit.
+    score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class QuizAnswer(Base):
+    """The learner's own answer to one quiz item, kept so typed responses can
+    show how they understand a concept and where the weak spots are."""
+
+    __tablename__ = "quiz_answers"
+    __table_args__ = (UniqueConstraint("quiz_id", "item_id", name="uq_quiz_answers_quiz_item"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    quiz_id: Mapped[str] = mapped_column(ForeignKey("quiz_sessions.id"), index=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    item_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    item_type: Mapped[str] = mapped_column(String(20), nullable=False)
+    concept: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    response: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    correct: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    feedback: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    grading: Mapped[str] = mapped_column(String(20), nullable=False, default="")
+    misconception: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
 class AdminAuditEvent(Base):
     __tablename__ = "admin_audit_events"
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)

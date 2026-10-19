@@ -6,7 +6,7 @@ charging them for help.
 
   - solving a problem for the first time without the paid hint tiers
   - each `reward_streak_days`-day run of consecutive active days
-  - completing a curriculum stage
+  - completing a curriculum stage (exercise passed and checks mastered)
 
 Every grant is keyed and recorded in `reward_grants` with a unique
 (user, key) constraint, so a retried request or a recomputed progress view can
@@ -19,7 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.db.models import LearningEvent, RewardGrant
+from app.db.models import LearningEvent, QuizAnswer, RewardGrant
 from app.services.peppercorns import credit
 
 
@@ -66,12 +66,14 @@ def _day(value: datetime) -> date:
 
 
 async def active_run(session: AsyncSession, user_id: str, today: date | None = None) -> int:
-    """Consecutive UTC days with learning activity, ending today."""
+    """Consecutive UTC days with learning activity (events or quiz answers), ending today."""
     today = today or datetime.now(timezone.utc).date()
     since = datetime.combine(today - timedelta(days=366), datetime.min.time(), tzinfo=timezone.utc)
     stamps = (await session.scalars(select(LearningEvent.created_at).where(
         LearningEvent.user_id == user_id, LearningEvent.created_at >= since))).all()
-    days = {_day(t) for t in stamps}
+    answers = (await session.scalars(select(QuizAnswer.created_at).where(
+        QuizAnswer.user_id == user_id, QuizAnswer.created_at >= since))).all()
+    days = {_day(t) for t in (*stamps, *answers)}
     run = 0
     while today - timedelta(days=run) in days:
         run += 1
@@ -95,4 +97,6 @@ async def after_solve(session: AsyncSession, user_id: str, problem_id: str, lang
     if first_solve:
         earned.append(await independent_solve(session, user_id, problem_id, language))
     earned.append(await streak(session, user_id))
+    from app.services import learning_path
+    earned.extend(await learning_path.reward_completed_stages(session, user_id, language))
     return [e for e in earned if e]

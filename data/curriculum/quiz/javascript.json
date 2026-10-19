@@ -1,0 +1,1061 @@
+{
+ "language": "javascript",
+ "version": 1,
+ "note": "Authored Study Room quiz items. Code items are validated by execution.",
+ "items": [
+  {
+   "id": "js-s01-code",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "coercion",
+   "code": "console.log('3' + 4, '3' * 4)",
+   "prompt": "What does this print?",
+   "choices": [
+    "7 12",
+    "34 12",
+    "34 34",
+    "7 34"
+   ],
+   "answer": 1,
+   "explanation": "+ with a string concatenates; * converts both operands to numbers."
+  },
+  {
+   "id": "js-s01-short",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "floating-point",
+   "code": "console.log(0.1 + 0.2 === 0.3, Math.round(2.5), 7 % -3)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "false 3 1",
+   "explanation": "0.1 + 0.2 is 0.30000000000000004; Math.round rounds .5 up; % takes the sign of the dividend."
+  },
+  {
+   "id": "js-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "coercion",
+   "prompt": "total(a, b) receives two numeric strings such as '3' and '4' and must return their numeric sum. Fix it.",
+   "code": "function total(a, b) {\n  return a + b;\n}",
+   "fn": "total",
+   "solution": "function total(a, b) {\n  return Number(a) + Number(b);\n}",
+   "tests": [
+    {
+     "args": [
+      "3",
+      "4"
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      "0",
+      "0"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "10",
+      "-2"
+     ],
+     "expected": 8
+    },
+    {
+     "args": [
+      "1",
+      "1"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "100",
+      "1"
+     ],
+     "expected": 101
+    },
+    {
+     "args": [
+      "-5",
+      "5"
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "+ concatenates strings; convert with Number() first."
+  },
+  {
+   "id": "js-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "loose-equality",
+   "code": "console.log(0 == '', 0 === '', null == undefined)",
+   "prompt": "What does this print?",
+   "choices": [
+    "true false true",
+    "false false true",
+    "true true false",
+    "false false false"
+   ],
+   "answer": 0,
+   "explanation": "== coerces '' to 0 and treats null and undefined as equal; === never coerces."
+  },
+  {
+   "id": "js-s02-short",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "nullish",
+   "code": "const n = 0;\nconsole.log(n || 5, n ?? 5)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "5 0",
+   "explanation": "|| replaces any falsy value; ?? replaces only null and undefined."
+  },
+  {
+   "id": "js-s02-fix",
+   "node": "stage-02",
+   "type": "fix_bug",
+   "concept": "nullish",
+   "prompt": "withDefault(value) should return value unless it is null, in which case return 10. Zero is a valid value. Fix it.",
+   "code": "function withDefault(value) {\n  return value || 10;\n}",
+   "fn": "withDefault",
+   "solution": "function withDefault(value) {\n  return value ?? 10;\n}",
+   "tests": [
+    {
+     "args": [
+      null
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "|| treats 0 as missing; ?? only replaces null or undefined."
+  },
+  {
+   "id": "js-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "for-in-vs-of",
+   "code": "const xs = [10, 20];\nconst out = [];\nfor (const k in xs) out.push(k);\nfor (const v of xs) out.push(v);\nconsole.log(out.join(','))",
+   "prompt": "What does this print?",
+   "choices": [
+    "0,1,10,20",
+    "10,20,10,20",
+    "0,1,0,1",
+    "10,20,0,1"
+   ],
+   "answer": 0,
+   "explanation": "for...in iterates keys (as strings); for...of iterates values."
+  },
+  {
+   "id": "js-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "closure-loop",
+   "code": "const fs = [];\nfor (let i = 0; i < 3; i++) fs.push(() => i);\nconsole.log(fs.map(f => f()).join(' '))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "0 1 2",
+   "explanation": "let creates a new binding per iteration, so each closure keeps its own i."
+  },
+  {
+   "id": "js-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "off-by-one",
+   "prompt": "sumTo(n) should return 1 + 2 + ... + n. It is off by one. Fix it.",
+   "code": "function sumTo(n) {\n  let total = 0;\n  for (let i = 1; i < n; i++) total += i;\n  return total;\n}",
+   "fn": "sumTo",
+   "solution": "function sumTo(n) {\n  let total = 0;\n  for (let i = 1; i <= n; i++) total += i;\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 5050
+    }
+   ],
+   "explanation": "Use <= so the loop includes n."
+  },
+  {
+   "id": "js-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "default-parameters",
+   "code": "function f(a, b = a * 2) { return a + b; }\nconsole.log(f(1), f(1, 0), f(1, undefined))",
+   "prompt": "What does this print?",
+   "choices": [
+    "3 1 3",
+    "3 1 NaN",
+    "3 3 3",
+    "2 1 3"
+   ],
+   "answer": 0,
+   "explanation": "Defaults apply when the argument is missing or undefined, but not for 0."
+  },
+  {
+   "id": "js-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "return",
+   "code": "function f() {\n  return\n    42;\n}\nconsole.log(f())",
+   "prompt": "Type exactly what this prints.",
+   "answer": "undefined",
+   "explanation": "Automatic semicolon insertion ends the return statement at the line break."
+  },
+  {
+   "id": "js-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "contracts",
+   "prompt": "distance(a, b) must return a non-negative distance. Fix it.",
+   "code": "function distance(a, b) {\n  return a - b;\n}",
+   "fn": "distance",
+   "solution": "function distance(a, b) {\n  return Math.abs(a - b);\n}",
+   "tests": [
+    {
+     "args": [
+      2,
+      5
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      5,
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      0,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -3,
+      4
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      -8,
+      -2
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      10,
+      -10
+     ],
+     "expected": 20
+    }
+   ],
+   "explanation": "Math.abs makes the result independent of argument order."
+  },
+  {
+   "id": "js-s05-code",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "utf16",
+   "code": "console.log('héllo'.length, '😀'.length, [...'😀'].length)",
+   "prompt": "What does this print?",
+   "choices": [
+    "5 1 1",
+    "5 2 1",
+    "6 2 2",
+    "5 2 2"
+   ],
+   "answer": 1,
+   "explanation": "length counts UTF-16 code units; the emoji is two units but one code point when spread."
+  },
+  {
+   "id": "js-s05-short",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "immutability",
+   "code": "const s = 'abc';\ns[0] = 'z';\nconsole.log(s, s.toUpperCase())",
+   "prompt": "Type exactly what this prints.",
+   "answer": "abc ABC",
+   "explanation": "Strings are immutable; the index assignment is ignored (outside strict mode)."
+  },
+  {
+   "id": "js-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "iteration",
+   "prompt": "countVowels(text) should count a, e, i, o, u. It reads past the end and miscounts. Fix it.",
+   "code": "function countVowels(text) {\n  let n = 0;\n  for (let i = 1; i <= text.length; i++) if ('aeiou'.includes(text[i])) n++;\n  return n;\n}",
+   "fn": "countVowels",
+   "solution": "function countVowels(text) {\n  let n = 0;\n  for (let i = 0; i < text.length; i++) if ('aeiou'.includes(text[i])) n++;\n  return n;\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      "rhythm"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "aeiou"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "banana"
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Indices run 0 through length - 1."
+  },
+  {
+   "id": "js-s06-code",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "sort-default",
+   "code": "console.log([10, 9, 1].sort().join(','))",
+   "prompt": "What does this print?",
+   "choices": [
+    "1,9,10",
+    "1,10,9",
+    "10,9,1",
+    "9,10,1"
+   ],
+   "answer": 1,
+   "explanation": "Default sort compares strings, so '10' sorts before '9'. Pass (a, b) => a - b for numbers."
+  },
+  {
+   "id": "js-s06-short",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "array-aliasing",
+   "code": "const a = [1, 2];\nconst b = a;\nconst c = [...a];\nb.push(3);\nconsole.log(a.length, c.length)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 2",
+   "explanation": "b is the same array as a; the spread made c a separate copy."
+  },
+  {
+   "id": "js-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "sort-default",
+   "prompt": "sortedCopy(values) should return a new array of numbers sorted ascending without changing values. Fix it.",
+   "code": "function sortedCopy(values) {\n  return values.sort();\n}",
+   "fn": "sortedCopy",
+   "solution": "function sortedCopy(values) {\n  return [...values].sort((a, b) => a - b);\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       10,
+       9,
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      9,
+      10
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       -10
+      ]
+     ],
+     "expected": [
+      -10,
+      -1
+     ]
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      2
+     ]
+    }
+   ],
+   "explanation": "Copy before sorting and pass a numeric comparator."
+  },
+  {
+   "id": "js-s07-code",
+   "node": "stage-07",
+   "type": "mcq_code",
+   "concept": "object-keys",
+   "code": "const o = {};\no[1] = 'a';\no['1'] = 'b';\nconst m = new Map([[1, 'a'], ['1', 'b']]);\nconsole.log(Object.keys(o).length, m.size)",
+   "prompt": "What does this print?",
+   "choices": [
+    "2 2",
+    "1 2",
+    "1 1",
+    "2 1"
+   ],
+   "answer": 1,
+   "explanation": "Object keys are strings, so 1 and '1' collide. Map keeps the number and the string apart."
+  },
+  {
+   "id": "js-s07-short",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "map-get",
+   "code": "const m = new Map();\nm.set('a', (m.get('a') ?? 0) + 1);\nconsole.log(m.get('a'), m.get('b'))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1 undefined",
+   "explanation": "get on a missing key returns undefined; ?? supplied 0 for the first count."
+  },
+  {
+   "id": "js-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "missing-key",
+   "prompt": "countTarget(words, target) builds a frequency Map. Counts come out as NaN. Fix it.",
+   "code": "function countTarget(words, target) {\n  const counts = new Map();\n  for (const w of words) counts.set(w, counts.get(w) + 1);\n  return counts.get(target) ?? 0;\n}",
+   "fn": "countTarget",
+   "solution": "function countTarget(words, target) {\n  const counts = new Map();\n  for (const w of words) counts.set(w, (counts.get(w) ?? 0) + 1);\n  return counts.get(target) ?? 0;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      "a"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b"
+      ],
+      "c"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x",
+       "x"
+      ],
+      "x"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "aa",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "undefined + 1 is NaN; default the missing count to 0."
+  },
+  {
+   "id": "js-s08-code",
+   "node": "stage-08",
+   "type": "mcq_code",
+   "concept": "set-object-keys",
+   "code": "const s = new Set([1, 1, '1', {}, {}]);\nconsole.log(s.size)",
+   "prompt": "What does this print?",
+   "choices": [
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "answer": 2,
+   "explanation": "1 is stored once, '1' is a different value, and each {} literal is a distinct object: 4 entries."
+  },
+  {
+   "id": "js-s08-short",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "set-membership",
+   "code": "const seen = new Set();\nconsole.log(seen.add(2).has(2), seen.has('2'))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "true false",
+   "explanation": "add returns the set, so has can be chained; '2' is a different value from 2."
+  },
+  {
+   "id": "js-s08-fix",
+   "node": "stage-08",
+   "type": "fix_bug",
+   "concept": "membership",
+   "prompt": "uniqueCount(values) should return the number of distinct numbers. It returns the full length. Fix it.",
+   "code": "function uniqueCount(values) {\n  const seen = new Set();\n  let n = 0;\n  for (const v of values) { seen.add(v); n++; }\n  return n;\n}",
+   "fn": "uniqueCount",
+   "solution": "function uniqueCount(values) {\n  return new Set(values).size;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       -1,
+       0,
+       -1
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       6,
+       6
+      ]
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "The set's size is the distinct count."
+  },
+  {
+   "id": "js-s09-code",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "this-binding",
+   "code": "const counter = { n: 1, get() { return this.n; } };\nconst g = counter.get;\nconsole.log(counter.get(), typeof g.call({ n: 5 }))",
+   "prompt": "What does this print?",
+   "choices": [
+    "1 number",
+    "1 undefined",
+    "undefined number",
+    "1 object"
+   ],
+   "answer": 0,
+   "explanation": "this depends on how a function is called; call({ n: 5 }) binds this explicitly and returns 5, a number."
+  },
+  {
+   "id": "js-s09-short",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "shallow-copy",
+   "code": "const a = { tags: ['x'] };\nconst b = { ...a };\nb.tags.push('y');\nconsole.log(a.tags.length)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "Spread copies one level; both objects still share the tags array."
+  },
+  {
+   "id": "js-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "shared-state",
+   "prompt": "finalBalance(initial, changes) must start each call from initial. A module-level account leaks state between calls. Fix it.",
+   "code": "const account = { balance: 0 };\nfunction finalBalance(initial, changes) {\n  account.balance += initial;\n  for (const c of changes) account.balance += c;\n  return account.balance;\n}",
+   "fn": "finalBalance",
+   "solution": "function finalBalance(initial, changes) {\n  const account = { balance: initial };\n  for (const c of changes) account.balance += c;\n  return account.balance;\n}",
+   "tests": [
+    {
+     "args": [
+      0,
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      [
+       5,
+       -3
+      ]
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      0,
+      [
+       -5
+      ]
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      7,
+      [
+       0,
+       0
+      ]
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      -2,
+      [
+       2
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      100,
+      [
+       -20,
+       -30,
+       10
+      ]
+     ],
+     "expected": 60
+    }
+   ],
+   "explanation": "Create the account inside the call so each call has its own state."
+  },
+  {
+   "id": "js-s10-code",
+   "node": "stage-10",
+   "type": "mcq_code",
+   "concept": "out-of-range",
+   "code": "const xs = [1, 2];\nconsole.log(xs[5], xs.at(-1))",
+   "prompt": "What does this print?",
+   "choices": [
+    "RangeError",
+    "undefined 2",
+    "null 2",
+    "undefined undefined"
+   ],
+   "answer": 1,
+   "explanation": "Out-of-range reads return undefined rather than throwing; at(-1) reads from the end."
+  },
+  {
+   "id": "js-s10-short",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "parse",
+   "code": "console.log(Number('12a'), parseInt('12a', 10), Number(''))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "NaN 12 0",
+   "explanation": "Number rejects trailing junk, parseInt stops at it, and Number('') is 0."
+  },
+  {
+   "id": "js-s10-fix",
+   "node": "stage-10",
+   "type": "fix_bug",
+   "concept": "validation",
+   "prompt": "safeAt(values, index, fallback) must return fallback for any invalid index. It returns undefined. Fix it.",
+   "code": "function safeAt(values, index, fallback) {\n  return values[index];\n}",
+   "fn": "safeAt",
+   "solution": "function safeAt(values, index, fallback) {\n  if (index < 0 || index >= values.length) return fallback;\n  return values[index];\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      0,
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       2,
+       4
+      ],
+      0,
+      9
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       4
+      ],
+      1,
+      9
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       2,
+       4
+      ],
+      2,
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       2,
+       4
+      ],
+      -1,
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       7
+      ],
+      5,
+      0
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "Check both ends of the valid range before reading."
+  },
+  {
+   "id": "js-s11-code",
+   "node": "stage-11",
+   "type": "mcq_code",
+   "concept": "recursion-trace",
+   "code": "const f = (xs) => xs.length === 0 ? 0 : xs[0] + f(xs.slice(1));\nconsole.log(f([1, 2, 3, 4]))",
+   "prompt": "What does this print?",
+   "choices": [
+    "4",
+    "10",
+    "24",
+    "1"
+   ],
+   "answer": 1,
+   "explanation": "f sums the array recursively: 1 + 2 + 3 + 4 = 10."
+  },
+  {
+   "id": "js-s11-short",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "base-case",
+   "code": "function depth(n) { return n <= 0 ? 0 : 1 + depth(n - 2); }\nconsole.log(depth(5), depth(4))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 2",
+   "explanation": "5 -> 3 -> 1 -> -1 takes three steps; 4 -> 2 -> 0 takes two."
+  },
+  {
+   "id": "js-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "integer-division",
+   "prompt": "digitSum(n) should sum the decimal digits of n recursively. It never terminates properly because n / 10 is not an integer. Fix it.",
+   "code": "function digitSum(n) {\n  if (n < 10) return n;\n  return n % 10 + digitSum(n / 10);\n}",
+   "fn": "digitSum",
+   "solution": "function digitSum(n) {\n  if (n < 10) return n;\n  return n % 10 + digitSum(Math.floor(n / 10));\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      123
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      909
+     ],
+     "expected": 18
+    },
+    {
+     "args": [
+      1000000
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "JavaScript / is floating point; floor it to drop the last digit."
+  },
+  {
+   "id": "js-s12-code",
+   "node": "stage-12",
+   "type": "mcq_code",
+   "concept": "complexity",
+   "code": "function hasDup(xs) {\n  return xs.some((x, i) => xs.indexOf(x) !== i);\n}",
+   "prompt": "What is the time complexity of hasDup for n elements?",
+   "choices": [
+    "O(n)",
+    "O(n log n)",
+    "O(n²)",
+    "O(1)"
+   ],
+   "answer": 2,
+   "explanation": "indexOf scans the array for each element, so the work is quadratic. A Set makes it O(n)."
+  },
+  {
+   "id": "js-s12-short",
+   "node": "stage-12",
+   "type": "short_answer",
+   "concept": "shift-cost",
+   "code": "const q = [1, 2, 3];\nq.push(4);\nconsole.log(q.shift(), q.length)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1 3",
+   "explanation": "shift removes from the front (and re-indexes, which is O(n) for large arrays)."
+  },
+  {
+   "id": "js-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "one-pass",
+   "prompt": "hasPair(values, target) must not pair an element with itself. Fix it.",
+   "code": "function hasPair(values, target) {\n  const seen = new Set(values);\n  for (const v of values) if (seen.has(target - v)) return true;\n  return false;\n}",
+   "fn": "hasPair",
+   "solution": "function hasPair(values, target) {\n  const seen = new Set();\n  for (const v of values) {\n    if (seen.has(target - v)) return true;\n    seen.add(v);\n  }\n  return false;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      2
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      2
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       1
+      ],
+      2
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       2,
+       7,
+       11
+      ],
+      9
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      9
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      6
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "Check before adding so the set only contains earlier elements."
+  }
+ ]
+}

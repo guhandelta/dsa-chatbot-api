@@ -1,0 +1,2643 @@
+{
+ "language": "python",
+ "version": 1,
+ "note": "Authored Study Room quiz items. Code items are validated by execution.",
+ "items": [
+  {
+   "id": "py-s01-mcq",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "floor-division",
+   "prompt": "Which expression evaluates to the int 3?",
+   "choices": [
+    "7 / 2",
+    "7 // 2",
+    "int('3.5')",
+    "round(3.5)"
+   ],
+   "answer": 1,
+   "explanation": "7 // 2 floors to the int 3. 7 / 2 is the float 3.5, int('3.5') raises ValueError, and round(3.5) rounds half to even, giving 4."
+  },
+  {
+   "id": "py-s01-code",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "floor-division",
+   "code": "print(-7 // 2, -7 % 2)",
+   "prompt": "What does this print?",
+   "choices": [
+    "-3 -1",
+    "-4 1",
+    "-3 1",
+    "-4 -1"
+   ],
+   "answer": 1,
+   "explanation": "// floors toward negative infinity, so -7 // 2 is -4, and % follows so that (-4 * 2) + 1 == -7."
+  },
+  {
+   "id": "py-s01-short",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "truthiness",
+   "code": "values = [0, '', 'a', [], [0], None]\nprint(sum(1 for v in values if v))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "Only 'a' and [0] are truthy. 0, '', [] and None are falsy; a list containing a falsy value is still a non-empty list."
+  },
+  {
+   "id": "py-s01-explain",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "int-size",
+   "prompt": "In your own words: why does 10 ** 30 work in Python without overflowing, when the same value would overflow a 64-bit int in Java or C?",
+   "answer": "Python ints are arbitrary precision: the interpreter grows the number's storage as needed, so very large results are exact. Java and C use fixed-width integers that wrap or overflow when a value exceeds 64 bits. The trade-off is that big Python ints use more memory and get slower as they grow.",
+   "keywords": [
+    [
+     "arbitrary",
+     "unbounded",
+     "unlimited",
+     "any size",
+     "grow"
+    ],
+    [
+     "fixed",
+     "64",
+     "width",
+     "bits"
+    ],
+    [
+     "overflow",
+     "wrap"
+    ]
+   ]
+  },
+  {
+   "id": "py-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "floor-division",
+   "prompt": "average_minutes(total, days) should return the whole number of minutes per day (rounded down), as an int. It returns a float. Fix it.",
+   "code": "def average_minutes(total, days):\n    return total / days",
+   "fn": "average_minutes",
+   "solution": "def average_minutes(total, days):\n    return total // days",
+   "tests": [
+    {
+     "args": [
+      120,
+      4
+     ],
+     "expected": 30
+    },
+    {
+     "args": [
+      7,
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      0,
+      5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      59,
+      60
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1000,
+      3
+     ],
+     "expected": 333
+    },
+    {
+     "args": [
+      9,
+      9
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "/ always returns a float, so 120 / 4 is 30.0. Floor division // keeps the result an int."
+  },
+  {
+   "id": "py-s01-write",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "arithmetic",
+   "prompt": "Write seconds_to_minutes(seconds) that returns a tuple (minutes, seconds) for a non-negative int, e.g. 125 -> (2, 5). Use // and %.",
+   "starter": "def seconds_to_minutes(seconds):\n    # return (minutes, remaining_seconds)\n    pass",
+   "fn": "seconds_to_minutes",
+   "solution": "def seconds_to_minutes(seconds):\n    return seconds // 60, seconds % 60",
+   "tests": [
+    {
+     "args": [
+      125
+     ],
+     "expected": [
+      2,
+      5
+     ]
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": [
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      59
+     ],
+     "expected": [
+      0,
+      59
+     ]
+    },
+    {
+     "args": [
+      60
+     ],
+     "expected": [
+      1,
+      0
+     ]
+    },
+    {
+     "args": [
+      3601
+     ],
+     "expected": [
+      60,
+      1
+     ]
+    },
+    {
+     "args": [
+      61
+     ],
+     "expected": [
+      1,
+      1
+     ]
+    }
+   ],
+   "explanation": "divmod(seconds, 60) or the pair seconds // 60, seconds % 60 gives both parts."
+  },
+  {
+   "id": "py-s02-mcq",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "chained-comparison",
+   "prompt": "What does 1 < x < 5 mean in Python?",
+   "choices": [
+    "(1 < x) < 5, comparing a bool with 5",
+    "1 < x and x < 5",
+    "1 < x or x < 5",
+    "A SyntaxError"
+   ],
+   "answer": 1,
+   "explanation": "Python chains comparisons: a < b < c means a < b and b < c, evaluating b once."
+  },
+  {
+   "id": "py-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "short-circuit",
+   "code": "print(0 or 'x', 3 and 0, None or [])",
+   "prompt": "What does this print?",
+   "choices": [
+    "True False False",
+    "x 0 []",
+    "x 3 None",
+    "0 0 []"
+   ],
+   "answer": 1,
+   "explanation": "or returns the first truthy operand (or the last one), and returns the first falsy operand (or the last one). So 'x', 0 and []."
+  },
+  {
+   "id": "py-s02-short",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "is-vs-equals",
+   "code": "a = [1, 2]\nb = [1, 2]\nprint(a == b, a is b)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "True False",
+   "explanation": "== compares values, which are equal. is compares identity, and a and b are two separate list objects."
+  },
+  {
+   "id": "py-s02-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "boundaries",
+   "prompt": "A rule says 'ages 13 to 19 inclusive are teens'. Which comparison operators do you use, and which two ages would you test to be sure the boundaries are right?",
+   "answer": "Use 13 <= age <= 19 (or age >= 13 and age <= 19) because inclusive means both ends count. Test the boundary values themselves, 13 and 19, and ideally the values just outside, 12 and 20.",
+   "keywords": [
+    [
+     "<=",
+     ">=",
+     "inclusive",
+     "equal"
+    ],
+    [
+     "13"
+    ],
+    [
+     "19"
+    ]
+   ]
+  },
+  {
+   "id": "py-s02-fix",
+   "node": "stage-02",
+   "type": "fix_bug",
+   "concept": "boundaries",
+   "prompt": "is_teen(age) must return True for ages 13 through 19 inclusive. It gets the boundaries wrong. Fix it.",
+   "code": "def is_teen(age):\n    return 13 < age < 19",
+   "fn": "is_teen",
+   "solution": "def is_teen(age):\n    return 13 <= age <= 19",
+   "tests": [
+    {
+     "args": [
+      13
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      19
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      16
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      12
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      20
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "Inclusive boundaries need <=, otherwise 13 and 19 are rejected."
+  },
+  {
+   "id": "py-s02-write",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "conditions",
+   "prompt": "Write grade(score) that returns 'A' for 90 and above, 'B' for 80-89, 'C' for 70-79 and 'F' otherwise.",
+   "starter": "def grade(score):\n    pass",
+   "fn": "grade",
+   "solution": "def grade(score):\n    if score >= 90:\n        return 'A'\n    if score >= 80:\n        return 'B'\n    if score >= 70:\n        return 'C'\n    return 'F'",
+   "tests": [
+    {
+     "args": [
+      95
+     ],
+     "expected": "A"
+    },
+    {
+     "args": [
+      90
+     ],
+     "expected": "A"
+    },
+    {
+     "args": [
+      89
+     ],
+     "expected": "B"
+    },
+    {
+     "args": [
+      80
+     ],
+     "expected": "B"
+    },
+    {
+     "args": [
+      70
+     ],
+     "expected": "C"
+    },
+    {
+     "args": [
+      69
+     ],
+     "expected": "F"
+    }
+   ],
+   "explanation": "Check from the highest band down so each branch only needs a lower bound."
+  },
+  {
+   "id": "py-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "range",
+   "prompt": "Which values does range(2, 10, 3) produce?",
+   "choices": [
+    "2, 5, 8",
+    "2, 5, 8, 11",
+    "3, 6, 9",
+    "2, 4, 6, 8"
+   ],
+   "answer": 0,
+   "explanation": "range starts at 2 and adds 3 until it reaches the stop value 10, which is excluded."
+  },
+  {
+   "id": "py-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "loop-else",
+   "code": "for n in [3, 5, 7]:\n    if n % 2 == 0:\n        print('even')\n        break\nelse:\n    print('none')",
+   "prompt": "What does this print?",
+   "choices": [
+    "even",
+    "none",
+    "Nothing",
+    "even then none"
+   ],
+   "answer": 1,
+   "explanation": "A for loop's else runs when the loop finishes without break. No number is even, so it prints none."
+  },
+  {
+   "id": "py-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "accumulator",
+   "code": "total = 0\nfor i in range(4):\n    total += i\nprint(total)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6",
+   "explanation": "range(4) is 0, 1, 2, 3, which sum to 6."
+  },
+  {
+   "id": "py-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "off-by-one",
+   "prompt": "You want to add up 1 through n. A classmate writes for i in range(n). What goes wrong, and how would you check it on a small case?",
+   "answer": "range(n) runs 0 to n - 1, so it skips n and includes 0; the sum is short by n. Use range(1, n + 1). Check by tracing n = 1 (should be 1) and n = 0 (should be 0).",
+   "keywords": [
+    [
+     "n - 1",
+     "n-1",
+     "excluded",
+     "exclusive",
+     "stops before",
+     "skips"
+    ],
+    [
+     "n + 1",
+     "n+1"
+    ],
+    [
+     "trace",
+     "small",
+     "n = 1",
+     "n=1",
+     "check"
+    ]
+   ]
+  },
+  {
+   "id": "py-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "off-by-one",
+   "prompt": "sum_to(n) should return 1 + 2 + ... + n (0 for n = 0). It is off by one. Fix it.",
+   "code": "def sum_to(n):\n    total = 0\n    for i in range(n):\n        total += i\n    return total",
+   "fn": "sum_to",
+   "solution": "def sum_to(n):\n    total = 0\n    for i in range(1, n + 1):\n        total += i\n    return total",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 5050
+    }
+   ],
+   "explanation": "range(n) stops at n - 1. range(1, n + 1) visits exactly 1 through n."
+  },
+  {
+   "id": "py-s03-write",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "accumulator",
+   "prompt": "Write count_multiples(n, k) that returns how many numbers in 1..n are divisible by k, using a loop.",
+   "starter": "def count_multiples(n, k):\n    pass",
+   "fn": "count_multiples",
+   "solution": "def count_multiples(n, k):\n    count = 0\n    for i in range(1, n + 1):\n        if i % k == 0:\n            count += 1\n    return count",
+   "tests": [
+    {
+     "args": [
+      10,
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      0,
+      2
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1,
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      12,
+      4
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      7,
+      8
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      20,
+      5
+     ],
+     "expected": 4
+    }
+   ],
+   "explanation": "Keep a counter outside the loop and increase it when i % k == 0."
+  },
+  {
+   "id": "py-s04-mcq",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "return-vs-print",
+   "prompt": "A function prints its answer but has no return statement. What does calling it give back?",
+   "choices": [
+    "The printed text",
+    "None",
+    "0",
+    "An error"
+   ],
+   "answer": 1,
+   "explanation": "A function without return returns None. Printing only writes to output; it does not give the caller a value."
+  },
+  {
+   "id": "py-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "mutable-default",
+   "code": "def add(x, items=[]):\n    items.append(x)\n    return items\n\nadd(1)\nprint(add(2))",
+   "prompt": "What does this print?",
+   "choices": [
+    "[2]",
+    "[1, 2]",
+    "[1]",
+    "TypeError"
+   ],
+   "answer": 1,
+   "explanation": "The default list is created once when def runs, so both calls append to the same list. Use items=None and create a new list inside."
+  },
+  {
+   "id": "py-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "keyword-arguments",
+   "code": "def area(w, h=2):\n    return w * h\n\nprint(area(3), area(3, h=5), area(h=1, w=4))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6 15 4",
+   "explanation": "area(3) uses the default h=2; keyword arguments can be passed in any order."
+  },
+  {
+   "id": "py-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "mutable-default",
+   "prompt": "Why is def log(msg, history=[]) a bug waiting to happen, and what is the usual fix?",
+   "answer": "Default values are evaluated once, when the function is defined, so every call that omits history shares the same list and messages accumulate across calls. The fix is history=None and then history = [] inside the function when it is None.",
+   "keywords": [
+    [
+     "once",
+     "defined",
+     "definition",
+     "def time"
+    ],
+    [
+     "shared",
+     "same list",
+     "accumulate",
+     "persist",
+     "every call"
+    ],
+    [
+     "None"
+    ]
+   ]
+  },
+  {
+   "id": "py-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "mutable-default",
+   "prompt": "tagged(word, tags) returns a new list with word added. Calls that omit tags must each start from an empty list, but they share one. Fix it.",
+   "code": "def tagged(word, tags=[]):\n    tags.append(word)\n    return tags",
+   "fn": "tagged",
+   "solution": "def tagged(word, tags=None):\n    if tags is None:\n        tags = []\n    tags.append(word)\n    return tags",
+   "tests": [
+    {
+     "args": [
+      "a"
+     ],
+     "expected": [
+      "a"
+     ]
+    },
+    {
+     "args": [
+      "b"
+     ],
+     "expected": [
+      "b"
+     ]
+    },
+    {
+     "args": [
+      "c",
+      [
+       "x"
+      ]
+     ],
+     "expected": [
+      "x",
+      "c"
+     ]
+    },
+    {
+     "args": [
+      "d"
+     ],
+     "expected": [
+      "d"
+     ]
+    },
+    {
+     "args": [
+      "e",
+      []
+     ],
+     "expected": [
+      "e"
+     ]
+    },
+    {
+     "args": [
+      "f"
+     ],
+     "expected": [
+      "f"
+     ]
+    }
+   ],
+   "explanation": "Use None as the default and create the list inside the call."
+  },
+  {
+   "id": "py-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "contracts",
+   "prompt": "Write clamp(value, low, high) that returns value limited to the range [low, high]. Assume low <= high.",
+   "starter": "def clamp(value, low, high):\n    pass",
+   "fn": "clamp",
+   "solution": "def clamp(value, low, high):\n    return max(low, min(value, high))",
+   "tests": [
+    {
+     "args": [
+      5,
+      0,
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -3,
+      0,
+      10
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      99,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      0,
+      0,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      -5,
+      -10,
+      -1
+     ],
+     "expected": -5
+    }
+   ],
+   "explanation": "min caps the value at high, max lifts it to low."
+  },
+  {
+   "id": "py-s05-mcq",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "immutability",
+   "prompt": "name = 'ada'; name.upper(). What is name afterwards?",
+   "choices": [
+    "'ADA'",
+    "'ada'",
+    "None",
+    "It raises an error"
+   ],
+   "answer": 1,
+   "explanation": "Strings are immutable. upper() returns a new string, which was thrown away here."
+  },
+  {
+   "id": "py-s05-code",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "slicing",
+   "code": "s = 'python'\nprint(s[1:4], s[-2:], s[::-1][0])",
+   "prompt": "What does this print?",
+   "choices": [
+    "yth on n",
+    "pyt on n",
+    "yth on p",
+    "ytho n n"
+   ],
+   "answer": 0,
+   "explanation": "s[1:4] is indices 1-3 ('yth'), s[-2:] is the last two ('on') and the reversed string starts with 'n'."
+  },
+  {
+   "id": "py-s05-short",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "split-join",
+   "code": "words = 'a  b c'.split()\nprint('-'.join(words), len(words))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "a-b-c 3",
+   "explanation": "split() with no argument splits on runs of whitespace, so there are three words."
+  },
+  {
+   "id": "py-s05-explain",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "string-building",
+   "prompt": "Why is building a long string with result += piece inside a loop often slower than collecting pieces in a list and calling ''.join(pieces)?",
+   "answer": "Strings are immutable, so each += may create a new string and copy everything built so far, which can make the loop quadratic. Appending to a list is amortised O(1) and join copies each piece once at the end, so the whole build is linear.",
+   "keywords": [
+    [
+     "immutable",
+     "new string",
+     "copy"
+    ],
+    [
+     "join"
+    ],
+    [
+     "quadratic",
+     "o(n^2)",
+     "o(n²)",
+     "linear",
+     "once"
+    ]
+   ]
+  },
+  {
+   "id": "py-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "immutability",
+   "prompt": "shout(text) should return text in upper case followed by '!'. It returns the original text. Fix it.",
+   "code": "def shout(text):\n    text.upper()\n    return text + '!'",
+   "fn": "shout",
+   "solution": "def shout(text):\n    return text.upper() + '!'",
+   "tests": [
+    {
+     "args": [
+      "hi"
+     ],
+     "expected": "HI!"
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": "!"
+    },
+    {
+     "args": [
+      "Ada"
+     ],
+     "expected": "ADA!"
+    },
+    {
+     "args": [
+      "a b"
+     ],
+     "expected": "A B!"
+    },
+    {
+     "args": [
+      "x"
+     ],
+     "expected": "X!"
+    },
+    {
+     "args": [
+      "ok"
+     ],
+     "expected": "OK!"
+    }
+   ],
+   "explanation": "upper() returns a new string; keep its result."
+  },
+  {
+   "id": "py-s05-write",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "iteration",
+   "prompt": "Write is_palindrome(text) that returns True when text reads the same forwards and backwards (case-sensitive).",
+   "starter": "def is_palindrome(text):\n    pass",
+   "fn": "is_palindrome",
+   "solution": "def is_palindrome(text):\n    return text == text[::-1]",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "abba"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "Aa"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "racecar"
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "A reversed slice text[::-1] makes the comparison one line; a two-index loop works too."
+  },
+  {
+   "id": "py-s06-mcq",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "aliasing",
+   "prompt": "b = a where a is a list. Which statement is true?",
+   "choices": [
+    "b is a copy of a",
+    "a and b name the same list",
+    "b is a tuple",
+    "b is an empty list"
+   ],
+   "answer": 1,
+   "explanation": "Assignment binds a second name to the same object; use a[:] or list(a) for a shallow copy."
+  },
+  {
+   "id": "py-s06-code",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "list-multiplication",
+   "code": "grid = [[0] * 2] * 2\ngrid[0][0] = 1\nprint(grid)",
+   "prompt": "What does this print?",
+   "choices": [
+    "[[1, 0], [0, 0]]",
+    "[[1, 0], [1, 0]]",
+    "[[1, 1], [0, 0]]",
+    "[[1, 1], [1, 1]]"
+   ],
+   "answer": 1,
+   "explanation": "* 2 repeats a reference to one inner list, so both rows change. Use [[0] * 2 for _ in range(2)]."
+  },
+  {
+   "id": "py-s06-short",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "slicing-copies",
+   "code": "a = [1, 2, 3]\nb = a[:]\nb.append(4)\nprint(len(a), len(b))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 4",
+   "explanation": "a[:] makes a new list, so appending to b does not change a."
+  },
+  {
+   "id": "py-s06-explain",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "aliasing",
+   "prompt": "A function receives a list and must not change the caller's list, but it needs to sort the values. What are two safe ways to do that, and why does values.sort() break the contract?",
+   "answer": "values.sort() sorts in place, so it mutates the caller's list through the shared reference. Safe options are sorted(values), which returns a new list, or copying first with values[:] / list(values) / values.copy() and sorting the copy.",
+   "keywords": [
+    [
+     "sorted("
+    ],
+    [
+     "copy",
+     "[:]",
+     "list("
+    ],
+    [
+     "in place",
+     "in-place",
+     "mutate",
+     "modif",
+     "same list",
+     "caller"
+    ]
+   ]
+  },
+  {
+   "id": "py-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "list-multiplication",
+   "prompt": "make_grid(rows, cols) should return a rows x cols grid of zeros whose rows are independent lists. Setting one cell currently changes every row. Fix it.",
+   "code": "def make_grid(rows, cols):\n    grid = [[0] * cols] * rows\n    if rows and cols:\n        grid[0][0] = 1\n    return grid",
+   "fn": "make_grid",
+   "solution": "def make_grid(rows, cols):\n    grid = [[0] * cols for _ in range(rows)]\n    if rows and cols:\n        grid[0][0] = 1\n    return grid",
+   "tests": [
+    {
+     "args": [
+      2,
+      2
+     ],
+     "expected": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    },
+    {
+     "args": [
+      1,
+      3
+     ],
+     "expected": [
+      [
+       1,
+       0,
+       0
+      ]
+     ]
+    },
+    {
+     "args": [
+      0,
+      3
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      3,
+      1
+     ],
+     "expected": [
+      [
+       1
+      ],
+      [
+       0
+      ],
+      [
+       0
+      ]
+     ]
+    },
+    {
+     "args": [
+      2,
+      0
+     ],
+     "expected": [
+      [],
+      []
+     ]
+    },
+    {
+     "args": [
+      3,
+      2
+     ],
+     "expected": [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       0
+      ]
+     ]
+    }
+   ],
+   "explanation": "The function marks the top-left cell to show whether rows are shared. A comprehension builds a new inner list per row."
+  },
+  {
+   "id": "py-s06-write",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "traversal",
+   "prompt": "Write running_max(values) that returns a new list where position i holds the largest value seen in values[0..i]. Do not modify values.",
+   "starter": "def running_max(values):\n    pass",
+   "fn": "running_max",
+   "solution": "def running_max(values):\n    out = []\n    best = None\n    for v in values:\n        best = v if best is None or v > best else best\n        out.append(best)\n    return out",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       3
+      ]
+     ],
+     "expected": [
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       2
+      ]
+     ],
+     "expected": [
+      1,
+      3,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       4,
+       3
+      ]
+     ],
+     "expected": [
+      5,
+      5,
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       -2,
+       -1,
+       -3
+      ]
+     ],
+     "expected": [
+      -2,
+      -1,
+      -1
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      1,
+      1,
+      2
+     ]
+    }
+   ],
+   "explanation": "Track the best value so far and append it at each step."
+  },
+  {
+   "id": "py-s07-mcq",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "missing-key",
+   "prompt": "counts = {}. Which line raises an exception?",
+   "choices": [
+    "counts.get('a', 0)",
+    "counts['a'] = 1",
+    "counts['a'] += 1",
+    "'a' in counts"
+   ],
+   "answer": 2,
+   "explanation": "counts['a'] += 1 reads counts['a'] first, which raises KeyError for a missing key."
+  },
+  {
+   "id": "py-s07-code",
+   "node": "stage-07",
+   "type": "mcq_code",
+   "concept": "defaultdict",
+   "code": "from collections import defaultdict\nd = defaultdict(int)\nif d['x'] == 0:\n    pass\nprint(len(d))",
+   "prompt": "What does this print?",
+   "choices": [
+    "0",
+    "1",
+    "KeyError",
+    "None"
+   ],
+   "answer": 1,
+   "explanation": "Reading a missing key from a defaultdict inserts it with the default, so the dict now has one key."
+  },
+  {
+   "id": "py-s07-short",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "counter",
+   "code": "from collections import Counter\nc = Counter('banana')\nprint(c['a'], c['z'], c.most_common(1)[0][0])",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 0 a",
+   "explanation": "Counter counts each letter; a missing key reads as 0 without being inserted, and 'a' is the most common."
+  },
+  {
+   "id": "py-s07-explain",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "dict-vs-list",
+   "prompt": "You need to check, many times, whether a username is already taken. Why is a dict or set better than a list for that, in terms of time complexity?",
+   "answer": "Membership in a list scans the elements, O(n) per lookup. A dict or set hashes the key and finds it in O(1) on average, so many lookups stay fast as the number of users grows.",
+   "keywords": [
+    [
+     "o(n)",
+     "scan",
+     "linear",
+     "every element"
+    ],
+    [
+     "o(1)",
+     "constant"
+    ],
+    [
+     "hash"
+    ]
+   ]
+  },
+  {
+   "id": "py-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "missing-key",
+   "prompt": "word_counts(words) should return a dict of how often each word appears. It crashes on the first new word. Fix it.",
+   "code": "def word_counts(words):\n    counts = {}\n    for w in words:\n        counts[w] += 1\n    return counts",
+   "fn": "word_counts",
+   "solution": "def word_counts(words):\n    counts = {}\n    for w in words:\n        counts[w] = counts.get(w, 0) + 1\n    return counts",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": {}
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": {
+      "a": 1
+     }
+    },
+    {
+     "args": [
+      [
+       "a",
+       "a"
+      ]
+     ],
+     "expected": {
+      "a": 2
+     }
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": {
+      "a": 2,
+      "b": 1
+     }
+    },
+    {
+     "args": [
+      [
+       "x",
+       "y"
+      ]
+     ],
+     "expected": {
+      "x": 1,
+      "y": 1
+     }
+    },
+    {
+     "args": [
+      [
+       "q",
+       "q",
+       "q",
+       "q"
+      ]
+     ],
+     "expected": {
+      "q": 4
+     }
+    }
+   ],
+   "explanation": "counts.get(w, 0) supplies a default for words not seen yet; Counter or defaultdict(int) also work."
+  },
+  {
+   "id": "py-s07-write",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "grouping",
+   "prompt": "Write first_index(values) returning a dict that maps each value to the index where it first appears.",
+   "starter": "def first_index(values):\n    pass",
+   "fn": "first_index",
+   "solution": "def first_index(values):\n    out = {}\n    for i, v in enumerate(values):\n        if v not in out:\n            out[v] = i\n    return out",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": {}
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": {
+      "a": 0
+     }
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": {
+      "a": 0,
+      "b": 1
+     }
+    },
+    {
+     "args": [
+      [
+       "z",
+       "z",
+       "z"
+      ]
+     ],
+     "expected": {
+      "z": 0
+     }
+    },
+    {
+     "args": [
+      [
+       "b",
+       "a"
+      ]
+     ],
+     "expected": {
+      "b": 0,
+      "a": 1
+     }
+    },
+    {
+     "args": [
+      [
+       "x",
+       "y",
+       "x",
+       "y",
+       "w"
+      ]
+     ],
+     "expected": {
+      "x": 0,
+      "y": 1,
+      "w": 4
+     }
+    }
+   ],
+   "explanation": "Only insert a key the first time; enumerate gives the index."
+  },
+  {
+   "id": "py-s08-mcq",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "hashability",
+   "prompt": "Which of these can be added to a set?",
+   "choices": [
+    "[1, 2]",
+    "{'a': 1}",
+    "(1, 2)",
+    "{1, 2}"
+   ],
+   "answer": 2,
+   "explanation": "Set elements must be hashable. Tuples of hashable values are; lists, dicts and sets are mutable and unhashable."
+  },
+  {
+   "id": "py-s08-code",
+   "node": "stage-08",
+   "type": "mcq_code",
+   "concept": "set-equality",
+   "code": "s = {1, 1.0, True, 2}\nprint(len(s))",
+   "prompt": "What does this print?",
+   "choices": [
+    "4",
+    "3",
+    "2",
+    "1"
+   ],
+   "answer": 2,
+   "explanation": "1, 1.0 and True are equal and hash the same, so they collapse into one element; the set is {1, 2}."
+  },
+  {
+   "id": "py-s08-short",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "set-operations",
+   "code": "a = {1, 2, 3}\nb = {2, 3, 4}\nprint(sorted(a & b), sorted(a - b))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[2, 3] [1]",
+   "explanation": "& is intersection and - is difference."
+  },
+  {
+   "id": "py-s08-explain",
+   "node": "stage-08",
+   "type": "explain",
+   "concept": "set-order",
+   "prompt": "Why should code not rely on the order in which it iterates over a set, and what would you do if you need a stable order?",
+   "answer": "Sets are hash-based and only guarantee membership, not ordering; the order depends on hash values and insertion history and can change between runs (string hashing is randomised). If order matters, sort the values or keep insertion order with a dict (dict.fromkeys) or a list.",
+   "keywords": [
+    [
+     "hash"
+    ],
+    [
+     "order",
+     "unordered",
+     "no guarantee"
+    ],
+    [
+     "sort",
+     "dict",
+     "list"
+    ]
+   ]
+  },
+  {
+   "id": "py-s08-fix",
+   "node": "stage-08",
+   "type": "fix_bug",
+   "concept": "hashability",
+   "prompt": "unique_pairs(pairs) receives a list of 2-item lists and should return how many distinct pairs there are. It raises TypeError. Fix it.",
+   "code": "def unique_pairs(pairs):\n    seen = set()\n    for p in pairs:\n        seen.add(p)\n    return len(seen)",
+   "fn": "unique_pairs",
+   "solution": "def unique_pairs(pairs):\n    seen = set()\n    for p in pairs:\n        seen.add(tuple(p))\n    return len(seen)",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       [
+        1,
+        2
+       ]
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        1,
+        1
+       ]
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       [
+        5,
+        6
+       ],
+       [
+        7,
+        8
+       ],
+       [
+        5,
+        6
+       ]
+      ]
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "Lists are unhashable; convert each pair to a tuple before adding it."
+  },
+  {
+   "id": "py-s08-write",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "membership",
+   "prompt": "Write first_repeat(values) that returns the first value that appears a second time while scanning left to right, or None if there is none.",
+   "starter": "def first_repeat(values):\n    pass",
+   "fn": "first_repeat",
+   "solution": "def first_repeat(values):\n    seen = set()\n    for v in values:\n        if v in seen:\n            return v\n        seen.add(v)\n    return None",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": null
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": null
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       1,
+       3
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       2,
+       2
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": null
+    }
+   ],
+   "explanation": "A set gives O(1) membership checks as you scan."
+  },
+  {
+   "id": "py-s09-mcq",
+   "node": "stage-09",
+   "type": "mcq",
+   "concept": "class-attribute",
+   "prompt": "class Bag: items = []. Two Bag() instances each call self.items.append(x). What happens?",
+   "choices": [
+    "Each bag has its own list",
+    "Both bags share one list",
+    "AttributeError",
+    "items becomes a tuple"
+   ],
+   "answer": 1,
+   "explanation": "items is a class attribute shared by all instances. Create per-instance state in __init__ with self.items = []."
+  },
+  {
+   "id": "py-s09-code",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "references",
+   "code": "class Box:\n    def __init__(self, v):\n        self.v = v\n\na = Box(1)\nb = a\nb.v = 5\nc = Box(1)\nprint(a.v, c.v)",
+   "prompt": "What does this print?",
+   "choices": [
+    "1 1",
+    "5 1",
+    "5 5",
+    "1 5"
+   ],
+   "answer": 1,
+   "explanation": "a and b name the same object, so a.v becomes 5. c is a separate object."
+  },
+  {
+   "id": "py-s09-short",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "dataclass",
+   "code": "from dataclasses import dataclass\n\n@dataclass\nclass P:\n    x: int\n    y: int = 0\n\nprint(P(1) == P(1, 0))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "True",
+   "explanation": "@dataclass generates __eq__ that compares fields, and y defaults to 0."
+  },
+  {
+   "id": "py-s09-explain",
+   "node": "stage-09",
+   "type": "explain",
+   "concept": "copy-vs-reference",
+   "prompt": "What is the difference between b = a, b = copy.copy(a) and b = copy.deepcopy(a) for an object that holds a list?",
+   "answer": "b = a makes another name for the same object. copy.copy makes a new outer object but its list attribute still refers to the same list (shallow). deepcopy recursively copies the nested list too, so changes to b's list do not affect a.",
+   "keywords": [
+    [
+     "same object",
+     "same reference",
+     "alias",
+     "another name"
+    ],
+    [
+     "shallow",
+     "same list",
+     "shared"
+    ],
+    [
+     "deep",
+     "recursive",
+     "nested"
+    ]
+   ]
+  },
+  {
+   "id": "py-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "class-attribute",
+   "prompt": "collect(groups) builds one Basket per group and returns each basket's item count. Baskets share one list, so the counts grow. Fix the class.",
+   "code": "def collect(groups):\n    class Basket:\n        items = []\n        def add(self, x):\n            self.items.append(x)\n    out = []\n    for group in groups:\n        b = Basket()\n        for x in group:\n            b.add(x)\n        out.append(len(b.items))\n    return out",
+   "fn": "collect",
+   "solution": "def collect(groups):\n    class Basket:\n        def __init__(self):\n            self.items = []\n        def add(self, x):\n            self.items.append(x)\n    out = []\n    for group in groups:\n        b = Basket()\n        for x in group:\n            b.add(x)\n        out.append(len(b.items))\n    return out",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       [
+        1
+       ]
+      ]
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        1
+       ],
+       [
+        2
+       ]
+      ]
+     ],
+     "expected": [
+      1,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        1,
+        2
+       ],
+       [
+        3
+       ]
+      ]
+     ],
+     "expected": [
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       [],
+       [
+        1,
+        2,
+        3
+       ]
+      ]
+     ],
+     "expected": [
+      0,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        1
+       ],
+       [],
+       [
+        1
+       ]
+      ]
+     ],
+     "expected": [
+      1,
+      0,
+      1
+     ]
+    }
+   ],
+   "explanation": "Move items into __init__ so every Basket gets its own list."
+  },
+  {
+   "id": "py-s09-write",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "state",
+   "prompt": "Write simulate(ops) for a stack held in an object: each op is ['push', n] or ['pop']. Return the stack's contents (bottom first) after all ops. Popping an empty stack does nothing.",
+   "starter": "def simulate(ops):\n    pass",
+   "fn": "simulate",
+   "solution": "def simulate(ops):\n    class Stack:\n        def __init__(self):\n            self.items = []\n    s = Stack()\n    for op in ops:\n        if op[0] == 'push':\n            s.items.append(op[1])\n        elif s.items:\n            s.items.pop()\n    return s.items",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       [
+        "push",
+        1
+       ]
+      ]
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        "push",
+        1
+       ],
+       [
+        "pop"
+       ]
+      ]
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       [
+        "pop"
+       ]
+      ]
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       [
+        "push",
+        1
+       ],
+       [
+        "push",
+        2
+       ],
+       [
+        "pop"
+       ],
+       [
+        "push",
+        3
+       ]
+      ]
+     ],
+     "expected": [
+      1,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        "push",
+        5
+       ],
+       [
+        "push",
+        6
+       ]
+      ]
+     ],
+     "expected": [
+      5,
+      6
+     ]
+    }
+   ],
+   "explanation": "Keep the list as the object's state and check for emptiness before popping."
+  },
+  {
+   "id": "py-s10-mcq",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "negative-index",
+   "prompt": "values = [4, 5, 6]. What does values[-1] do?",
+   "choices": [
+    "Raises IndexError",
+    "Returns 6",
+    "Returns 4",
+    "Returns None"
+   ],
+   "answer": 1,
+   "explanation": "Negative indices count from the end, so -1 is the last element. That is why index validation must check index >= 0 explicitly."
+  },
+  {
+   "id": "py-s10-code",
+   "node": "stage-10",
+   "type": "mcq_code",
+   "concept": "exceptions",
+   "code": "def parse(s):\n    try:\n        return int(s)\n    except ValueError:\n        return -1\n\nprint(parse('12'), parse('x'), parse(' 7 '))",
+   "prompt": "What does this print?",
+   "choices": [
+    "12 -1 -1",
+    "12 -1 7",
+    "12 x 7",
+    "ValueError"
+   ],
+   "answer": 1,
+   "explanation": "int() ignores surrounding whitespace, so ' 7 ' parses; 'x' raises ValueError, which is caught."
+  },
+  {
+   "id": "py-s10-short",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "dict-get",
+   "code": "settings = {'size': 3}\nprint(settings.get('size', 1), settings.get('mode', 'auto'))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 auto",
+   "explanation": "get returns the stored value when the key exists and the fallback otherwise."
+  },
+  {
+   "id": "py-s10-explain",
+   "node": "stage-10",
+   "type": "explain",
+   "concept": "failure-contracts",
+   "prompt": "When is returning a fallback value better than raising an exception for invalid input, and what is the risk of wrapping a whole function in a bare except?",
+   "answer": "A fallback suits cases where invalid input is expected and the caller has a sensible default, so every input has a defined result. Raising is better when the caller must notice the problem. A bare except catches everything, including unrelated bugs, KeyboardInterrupt and typos, so real defects are silently hidden.",
+   "keywords": [
+    [
+     "fallback",
+     "default"
+    ],
+    [
+     "raise",
+     "exception",
+     "error"
+    ],
+    [
+     "hide",
+     "hides",
+     "mask",
+     "swallow",
+     "everything",
+     "unrelated"
+    ]
+   ]
+  },
+  {
+   "id": "py-s10-fix",
+   "node": "stage-10",
+   "type": "fix_bug",
+   "concept": "negative-index",
+   "prompt": "item_or(values, index, fallback) must return fallback for any index outside 0..len(values)-1, including negative ones. Negative indices slip through. Fix it.",
+   "code": "def item_or(values, index, fallback):\n    if index >= len(values):\n        return fallback\n    return values[index]",
+   "fn": "item_or",
+   "solution": "def item_or(values, index, fallback):\n    if not 0 <= index < len(values):\n        return fallback\n    return values[index]",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      0,
+      9
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      1,
+      9
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      2,
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      -1,
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [],
+      0,
+      7
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      [
+       5
+      ],
+      -2,
+      0
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "Check both ends: 0 <= index < len(values)."
+  },
+  {
+   "id": "py-s10-write",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "validation",
+   "prompt": "Write parse_age(text) that returns the int age for strings of digits from '0' to '150', and -1 for anything else (empty, non-digits, or out of range).",
+   "starter": "def parse_age(text):\n    pass",
+   "fn": "parse_age",
+   "solution": "def parse_age(text):\n    if not text.isdigit():\n        return -1\n    age = int(text)\n    return age if age <= 150 else -1",
+   "tests": [
+    {
+     "args": [
+      "42"
+     ],
+     "expected": 42
+    },
+    {
+     "args": [
+      "0"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "150"
+     ],
+     "expected": 150
+    },
+    {
+     "args": [
+      "151"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "4x"
+     ],
+     "expected": -1
+    }
+   ],
+   "explanation": "Validate the format first (isdigit), then the range."
+  },
+  {
+   "id": "py-s11-mcq",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "recursion-limit",
+   "prompt": "A recursive function calls itself 50,000 levels deep in CPython with default settings. What happens?",
+   "choices": [
+    "It runs normally",
+    "RecursionError",
+    "It returns None",
+    "It is automatically turned into a loop"
+   ],
+   "answer": 1,
+   "explanation": "CPython's default recursion limit is about 1000 frames and it does not optimise tail calls. Use a loop or an explicit stack."
+  },
+  {
+   "id": "py-s11-code",
+   "node": "stage-11",
+   "type": "mcq_code",
+   "concept": "base-case",
+   "code": "def f(n):\n    if n <= 1:\n        return n\n    return f(n - 1) + f(n - 2)\n\nprint(f(6))",
+   "prompt": "What does this print?",
+   "choices": [
+    "6",
+    "8",
+    "13",
+    "5"
+   ],
+   "answer": 1,
+   "explanation": "f is Fibonacci: 0, 1, 1, 2, 3, 5, 8, so f(6) is 8."
+  },
+  {
+   "id": "py-s11-short",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "call-stack",
+   "code": "def depth(xs):\n    if not xs:\n        return 0\n    return 1 + depth(xs[1:])\n\nprint(depth([7, 8, 9]))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3",
+   "explanation": "Each call removes one element until the base case returns 0; three calls each add 1."
+  },
+  {
+   "id": "py-s11-explain",
+   "node": "stage-11",
+   "type": "explain",
+   "concept": "memoisation",
+   "prompt": "Why is the naive recursive Fibonacci slow, and how does functools.lru_cache change its running time?",
+   "answer": "The naive version recomputes the same subproblems again and again, so the number of calls grows exponentially. lru_cache stores each result after the first call, so every n is computed once and the run time becomes linear in n.",
+   "keywords": [
+    [
+     "repeat",
+     "recompute",
+     "same subproblem",
+     "again"
+    ],
+    [
+     "exponential",
+     "2^n",
+     "2**n"
+    ],
+    [
+     "cache",
+     "memo",
+     "store",
+     "once",
+     "linear"
+    ]
+   ]
+  },
+  {
+   "id": "py-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "base-case",
+   "prompt": "power(base, exp) should return base ** exp for exp >= 0 using recursion. It never stops for exp = 0. Fix it.",
+   "code": "def power(base, exp):\n    if exp == 1:\n        return base\n    return base * power(base, exp - 1)",
+   "fn": "power",
+   "solution": "def power(base, exp):\n    if exp == 0:\n        return 1\n    return base * power(base, exp - 1)",
+   "tests": [
+    {
+     "args": [
+      2,
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2,
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      2,
+      10
+     ],
+     "expected": 1024
+    },
+    {
+     "args": [
+      5,
+      3
+     ],
+     "expected": 125
+    },
+    {
+     "args": [
+      0,
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      7,
+      2
+     ],
+     "expected": 49
+    }
+   ],
+   "explanation": "The base case must cover the smallest valid input, exp == 0, which returns 1."
+  },
+  {
+   "id": "py-s11-write",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "recursion",
+   "prompt": "Write flatten(items) that returns a flat list of all non-list values in a nested list, in order, using recursion. Example: [1, [2, [3]], 4] -> [1, 2, 3, 4].",
+   "starter": "def flatten(items):\n    pass",
+   "fn": "flatten",
+   "solution": "def flatten(items):\n    out = []\n    for x in items:\n        if isinstance(x, list):\n            out.extend(flatten(x))\n        else:\n            out.append(x)\n    return out",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       [
+        2,
+        [
+         3
+        ]
+       ],
+       4
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       [
+        []
+       ]
+      ]
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       [
+        1,
+        2
+       ],
+       [
+        3
+       ]
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       [
+        0,
+        [
+         0
+        ]
+       ]
+      ]
+     ],
+     "expected": [
+      0,
+      0,
+      0
+     ]
+    }
+   ],
+   "explanation": "Recurse into lists and append everything else."
+  },
+  {
+   "id": "py-s12-mcq",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "deque",
+   "prompt": "You process a queue by repeatedly removing the first element. Which choice keeps each removal O(1)?",
+   "choices": [
+    "list.pop(0)",
+    "collections.deque.popleft()",
+    "del list[0]",
+    "list.remove(list[0])"
+   ],
+   "answer": 1,
+   "explanation": "Removing from the front of a list shifts every element, O(n). A deque removes from either end in O(1)."
+  },
+  {
+   "id": "py-s12-code",
+   "node": "stage-12",
+   "type": "mcq_code",
+   "concept": "nested-loops",
+   "code": "def pairs(n):\n    count = 0\n    for i in range(n):\n        for j in range(i + 1, n):\n            count += 1\n    return count\n\nprint(pairs(5))",
+   "prompt": "What does this print, and how does the work grow?",
+   "choices": [
+    "10, O(n²)",
+    "25, O(n²)",
+    "5, O(n)",
+    "10, O(n log n)"
+   ],
+   "answer": 0,
+   "explanation": "It counts every pair i < j: 5 * 4 / 2 = 10. The nested loops make the work grow quadratically."
+  },
+  {
+   "id": "py-s12-short",
+   "node": "stage-12",
+   "type": "short_answer",
+   "concept": "heapq",
+   "code": "import heapq\nh = [5, 1, 4]\nheapq.heapify(h)\nheapq.heappush(h, 0)\nprint(heapq.heappop(h), heapq.heappop(h))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "0 1",
+   "explanation": "heapq is a min-heap, so pops return the smallest remaining values."
+  },
+  {
+   "id": "py-s12-explain",
+   "node": "stage-12",
+   "type": "explain",
+   "concept": "one-pass",
+   "prompt": "Describe how a set lets you decide whether any two numbers in a list sum to a target in one pass, and state the time and space complexity.",
+   "answer": "Walk the list once. For each value, check whether target - value is already in the set of values seen so far; if yes, a pair exists. Otherwise add the value and continue. Each set operation is O(1) on average, so the time is O(n) and the extra space is O(n) for the set.",
+   "keywords": [
+    [
+     "target - ",
+     "target-",
+     "complement"
+    ],
+    [
+     "seen",
+     "set"
+    ],
+    [
+     "o(n)",
+     "linear"
+    ]
+   ]
+  },
+  {
+   "id": "py-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "one-pass",
+   "prompt": "has_pair(values, target) should return True when two elements at different indices sum to target. It wrongly pairs an element with itself. Fix it.",
+   "code": "def has_pair(values, target):\n    seen = set(values)\n    for v in values:\n        if target - v in seen:\n            return True\n    return False",
+   "fn": "has_pair",
+   "solution": "def has_pair(values, target):\n    seen = set()\n    for v in values:\n        if target - v in seen:\n            return True\n        seen.add(v)\n    return False",
+   "tests": [
+    {
+     "args": [
+      [
+       1
+      ],
+      2
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       1
+      ],
+      2
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       2,
+       7,
+       11
+      ],
+      9
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      6
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      7
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "Add each value after checking it, so the set only holds earlier indices."
+  },
+  {
+   "id": "py-s12-write",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "complexity",
+   "prompt": "Write top_k(values, k) returning the k largest values in descending order. Aim for better than sorting everything when k is small (heapq.nlargest is fine).",
+   "starter": "def top_k(values, k):\n    pass",
+   "fn": "top_k",
+   "solution": "def top_k(values, k):\n    import heapq\n    return heapq.nlargest(k, values)",
+   "tests": [
+    {
+     "args": [
+      [],
+      2
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       5
+      ],
+      1
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       5,
+       3
+      ],
+      2
+     ],
+     "expected": [
+      5,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       4,
+       4,
+       1
+      ],
+      2
+     ],
+     "expected": [
+      4,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      0
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       9,
+       1,
+       8,
+       2,
+       7
+      ],
+      3
+     ],
+     "expected": [
+      9,
+      8,
+      7
+     ]
+    }
+   ],
+   "explanation": "heapq.nlargest keeps a heap of size k, O(n log k) instead of O(n log n)."
+  },
+  {
+   "id": "py-m-gen-code",
+   "node": "module-iterators-generators",
+   "type": "mcq_code",
+   "concept": "generator-exhaustion",
+   "code": "g = (x * 2 for x in range(3))\nprint(sum(g), sum(g))",
+   "prompt": "What does this print?",
+   "choices": [
+    "6 6",
+    "6 0",
+    "0 6",
+    "TypeError"
+   ],
+   "answer": 1,
+   "explanation": "A generator can be consumed once. The second sum sees an exhausted generator and returns 0."
+  },
+  {
+   "id": "py-m-gen-write",
+   "node": "module-iterators-generators",
+   "type": "write_snippet",
+   "concept": "yield",
+   "prompt": "Write evens_up_to(n) that returns a list built from a generator function you define inside it, which yields the even numbers from 0 to n inclusive.",
+   "starter": "def evens_up_to(n):\n    def gen():\n        pass  # yield values here\n    return list(gen())",
+   "fn": "evens_up_to",
+   "solution": "def evens_up_to(n):\n    def gen():\n        for i in range(0, n + 1, 2):\n            yield i\n    return list(gen())",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": [
+      0
+     ]
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": [
+      0
+     ]
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": [
+      0,
+      2,
+      4
+     ]
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": [
+      0,
+      2,
+      4
+     ]
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      8
+     ],
+     "expected": [
+      0,
+      2,
+      4,
+      6,
+      8
+     ]
+    }
+   ],
+   "explanation": "yield turns the inner function into a generator; list() drains it."
+  },
+  {
+   "id": "py-m-ctx-mcq",
+   "node": "module-context-managers",
+   "type": "mcq",
+   "concept": "with-statement",
+   "prompt": "Inside with open(path) as f:, the block raises an exception. What happens to the file?",
+   "choices": [
+    "It stays open until garbage collection",
+    "It is closed before the exception propagates",
+    "The exception is swallowed",
+    "The file is deleted"
+   ],
+   "answer": 1,
+   "explanation": "The context manager's __exit__ runs on the way out of the block, even on exceptions, so the file is closed and the exception continues."
+  },
+  {
+   "id": "py-m-ctx-explain",
+   "node": "module-context-managers",
+   "type": "explain",
+   "concept": "context-manager",
+   "prompt": "What problem does a context manager solve compared with calling acquire() and release() yourself?",
+   "answer": "It guarantees cleanup: __exit__ (or the code after yield in contextlib.contextmanager) runs however the block ends, including returns and exceptions, so resources such as files and locks are always released. Manual release calls are easy to skip on an error path.",
+   "keywords": [
+    [
+     "cleanup",
+     "release",
+     "close"
+    ],
+    [
+     "exception",
+     "error",
+     "always",
+     "however"
+    ],
+    [
+     "__exit__",
+     "with",
+     "finally"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-dc-code",
+   "node": "module-dataclasses",
+   "type": "mcq_code",
+   "concept": "dataclass-defaults",
+   "code": "from dataclasses import dataclass, field\n\n@dataclass\nclass Team:\n    names: list = field(default_factory=list)\n\na, b = Team(), Team()\na.names.append('x')\nprint(len(b.names))",
+   "prompt": "What does this print?",
+   "choices": [
+    "0",
+    "1",
+    "ValueError",
+    "None"
+   ],
+   "answer": 0,
+   "explanation": "default_factory builds a new list per instance, avoiding the shared mutable default."
+  },
+  {
+   "id": "py-m-exc-code",
+   "node": "module-exceptions",
+   "type": "mcq_code",
+   "concept": "finally",
+   "code": "def f():\n    try:\n        return 'try'\n    finally:\n        print('cleanup', end=' ')\n\nprint(f())",
+   "prompt": "What does this print?",
+   "choices": [
+    "try",
+    "cleanup try",
+    "try cleanup",
+    "cleanup"
+   ],
+   "answer": 1,
+   "explanation": "finally runs before the function actually returns, so 'cleanup ' is printed first, then the returned 'try'."
+  }
+ ]
+}

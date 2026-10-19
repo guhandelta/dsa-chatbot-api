@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import LearningEvent
+from app.db.models import LearningEvent, QuizAnswer
 
 # Human-readable category -> the transferable lesson behind it.
 CATEGORY_LESSON = {
@@ -290,9 +290,23 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
             }
             for e in events
         ],
+        # Study Room quiz answers, including the learner's typed explanations.
+        "quiz_answers": [
+            {
+                "item_id": a.item_id, "type": a.item_type, "concept": a.concept,
+                "response": a.response, "correct": a.correct, "score": a.score,
+                "feedback": a.feedback, "misconception": a.misconception,
+                "created_at": a.created_at.isoformat(),
+            }
+            for a in (await session.scalars(select(QuizAnswer).where(
+                QuizAnswer.user_id == user_id).order_by(QuizAnswer.created_at.desc()))).all()
+        ],
     }
 
 
 async def delete_profile(session: AsyncSession, user_id: str) -> int:
+    """Erase learning events and quiz answers. Returns the learning-event count."""
     result = await session.execute(delete(LearningEvent).where(LearningEvent.user_id == user_id))
+    from app.services.quiz import delete_for_user
+    await delete_for_user(session, user_id)
     return result.rowcount

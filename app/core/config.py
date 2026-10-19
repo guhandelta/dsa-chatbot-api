@@ -97,6 +97,9 @@ class Settings(BaseSettings):
     reward_streak: int = Field(default=5, ge=0)
     reward_streak_days: int = Field(default=7, ge=2)
     reward_stage_complete: int = Field(default=10, ge=0)
+    # Quiz answers are free; these hourly caps bound grading and execution cost.
+    quiz_answers_per_hour: int = 120
+    quiz_code_runs_per_hour: int = 30
 
     # Stripe — checkout is hosted by Stripe; no card data reaches this server
     stripe_webhook_secret: str = ""
