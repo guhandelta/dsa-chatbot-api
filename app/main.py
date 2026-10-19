@@ -57,7 +57,9 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(learn.router)
+app.include_router(learn.router, prefix="/teach")
+# Existing clients keep working; new documentation and the UI use /teach.
+app.include_router(learn.router, prefix="/learn", include_in_schema=False)
 app.include_router(chat.router)
 app.include_router(analyze.router)
 app.include_router(problems.router)

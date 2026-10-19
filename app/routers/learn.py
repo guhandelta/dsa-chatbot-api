@@ -1,4 +1,4 @@
-# /learn endpoints — instructors and admins feed extra reference documents
+# /teach endpoints — instructors and admins feed extra reference documents
 # (.txt, .md, .pdf, .docx, .doc) or pasted notes into the RAG knowledge base.
 #
 # Uploaded material is retrieved for EVERY learner's chat, which makes it a
@@ -36,7 +36,7 @@ from app.services.knowledge_base import index_uploaded_document, UploadIndexErro
 from app.services.maintenance import queue_cleanup, drain_cleanup
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/learn", tags=["learn"])
+router = APIRouter(tags=["teach"])
 
 # "custom" is retrieved alongside whichever track the learner is chatting in.
 ALLOWED_TRACKS = {"dsa", "algorithm", "language", "custom"}
