@@ -234,6 +234,15 @@ async def test_compare_needs_two_languages_and_saves_a_side_by_side_note(client,
     assert note['body']['comparison'].startswith('| Aspect')
 
 
+def test_compare_context_leads_with_both_lessons_for_a_shared_stage():
+    from app.services import learning_path
+    focus = {'kind': 'node', 'node': learning_path.find_node('python', 'python:stage-06')}
+    first, second = study_room.compare_context('python', 'javascript', 'copy a list', focus)
+    assert first.startswith('# Python: Lists') and second.startswith('# JavaScript: Arrays')
+    module = {'kind': 'node', 'node': learning_path.find_node('python', 'python:module-dataclasses')}
+    assert not study_room.compare_context('python', 'javascript', 'copy a list', module)[0].startswith('#')
+
+
 def test_compare_context_matches_the_same_concept_family():
     first, second = study_room.compare_context('java', 'javascript', 'map getOrDefault missing key default value')
     assert first.startswith('Java') and second.startswith('JavaScript')
@@ -247,6 +256,7 @@ async def test_what_next_follows_progress_and_weak_spots(client, db):
     get = lambda lang='python': client.get('/study/next', headers=headers, params={'language': lang})
     first = (await get()).json()
     assert first['kind'] == 'quiz' and first['node_id'] == 'python:stage-01'
+    assert first['title'] == 'Quick check: Values and arithmetic'
     db.add(QuizSession(user_id=uid, language='python', node_id='python:stage-01', total=3, answered=3,
                        score=3.0, completed_at=datetime.now(timezone.utc)))
     await db.commit()
@@ -272,6 +282,7 @@ async def test_what_next_reviews_a_weak_concept_first(client, db):
                       json={'item_id': started['items'][0]['id'], 'response': '0'})
     nxt = (await client.get('/study/next', headers=headers, params={'language': 'python'})).json()
     assert nxt['kind'] == 'quiz' and nxt['node_id'] == 'python:stage-06' and 'missed' in nxt['reason']
+    assert nxt['title'] == 'Review quiz: Arrays and lists'
 
 
 async def test_what_next_after_the_whole_path(db, monkeypatch):

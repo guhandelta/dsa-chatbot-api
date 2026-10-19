@@ -172,7 +172,7 @@ async def message(request: StudyMessage, user: User = Depends(get_current_user),
             system = study_room.debug_prompt(request.language, focus, tier)
             user_text = study_room.debug_message(request.message, request.code, request.error)
         else:
-            contexts = study_room.compare_context(request.language, request.compare_language, request.message)
+            contexts = study_room.compare_context(request.language, request.compare_language, request.message, focus)
             system = study_room.compare_prompt(request.language, request.compare_language, focus, contexts)
             user_text = request.message
 

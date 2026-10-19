@@ -28,6 +28,8 @@ from app.services import learning_path
 
 MODES = ("explain", "debug", "compare")
 _TAKEAWAY = re.compile(r"\n*TAKEAWAY\s*\nConcept:\s*(.+?)\nExample:\s*(.+?)\nPitfall:\s*(.+?)\s*\Z", re.S)
+_QUESTION_WORDS = set("""the and for how does what when why which with into from that this then than are was
+can you your about work works happen happens another other between does doing use using""".split())
 _CODE_LIKE = re.compile(r"```|~~~|^\s*(?:def |function |class |public |const |let |var |return |fn |#include)", re.M)
 
 
@@ -209,13 +211,14 @@ def debug_message(message: str, code: str, error: str) -> str:
             f"The actual error or output:\n```\n{error[:2000]}\n```")
 
 
-def compare_context(first: str, second: str, question: str) -> tuple[str, str]:
+def compare_context(first: str, second: str, question: str, focus: dict | None = None) -> tuple[str, str]:
     """Concept rows for the same idea in both languages (by concept family or
-    data structure), falling back to the best keyword match in each."""
+    data structure), falling back to the best keyword match in each. When the
+    focus is a shared stage, both languages' lessons for that stage lead."""
     from app.services.curriculum import records as corpus
     from app.services.curriculum_search import tokens
     from app.services.reference_library import eligible, records
-    terms = set(tokens(question))
+    terms = {t for t in tokens(question) if len(t) > 2 and t not in _QUESTION_WORDS}
 
     def candidates(language):
         for row in (*corpus(), *records()):
@@ -230,7 +233,9 @@ def compare_context(first: str, second: str, question: str) -> tuple[str, str]:
         for row in rows:
             meta = row["metadata"]
             keys = {meta.get("concept_family"), meta.get("data_structure_id"), meta.get("data_structure")} - {None}
-            overlap = len(terms & set(tokens(row["document"][:600])))
+            title, _, body = row["document"][:600].partition("\n")
+            # A match in the title line (the concept itself) outweighs one in the body.
+            overlap = 3 * len(terms & set(tokens(title))) + len(terms & set(tokens(body)))
             scored.append(((family in keys) if family else False, overlap, row))
         scored.sort(key=lambda s: (s[0], s[1]), reverse=True)
         return scored[0][2] if scored and (scored[0][0] or scored[0][1]) else None
@@ -242,7 +247,13 @@ def compare_context(first: str, second: str, question: str) -> tuple[str, str]:
         family = meta.get("concept_family") or meta.get("data_structure_id") or meta.get("data_structure")
     second_row = best(list(candidates(second)), family)
     pick = lambda row: row["document"][:2500] if row else "(No reference found; answer from general knowledge and say so.)"
-    return pick(first_row), pick(second_row)
+    lessons = ["", ""]
+    node = (focus or {}).get("node")
+    if node and node["kind"] == "stage":
+        twin = learning_path.find_node(second, f"{second}:stage-{node['stage']:02d}")
+        lessons = [lesson_markdown(first, node)[:2500], lesson_markdown(second, twin)[:2500]]
+    return ("\n\n".join(x for x in (lessons[0], pick(first_row)) if x),
+            "\n\n".join(x for x in (lessons[1], pick(second_row)) if x))
 
 
 def compare_prompt(first: str, second: str, focus: dict, contexts: tuple[str, str]) -> str:
@@ -284,8 +295,9 @@ async def recommend(session: AsyncSession, user_id: str, language: str) -> dict:
     weak = await quiz.weak_concepts(session, user_id, language, limit=1)
     solved = await learning_path.passed_exercises(session, user_id, language)
 
-    def quiz_step(node, reason):
-        return {"kind": "quiz", "id": node["id"], "title": f"Review quiz: {node['title']}", "reason": reason,
+    def quiz_step(node, reason, review=False):
+        title = f"{'Review quiz' if review else 'Quick check'}: {node['title']}"
+        return {"kind": "quiz", "id": node["id"], "title": title, "reason": reason,
                 "node_id": node["id"], "link": {"to": "/chat", "search": {"mode": "quiz", "focus": node["id"]}}}
 
     if weak:
@@ -294,7 +306,7 @@ async def recommend(session: AsyncSession, user_id: str, language: str) -> dict:
             i["concept"] == concept for i in quiz.pool(language, n["id"]))), None)
         if review:
             return quiz_step(review, f'You have missed "{concept}" more often than you got it right. '
-                                     "A short review quiz will check it again.")
+                                     "A short review quiz will check it again.", review=True)
     if state["total"] == 0:
         first = state["nodes"][0]
         return {"kind": "lesson", "id": first["id"], "title": f"Lesson: {first['title']}", "node_id": first["id"],
