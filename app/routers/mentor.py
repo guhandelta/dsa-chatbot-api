@@ -1,7 +1,7 @@
 # /mentor — Socratic guidance. Requires a subscription for the language the
 # learner is coding in. Tiers 1-2 are free on every problem; 3-4 cost peppercorns.
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import select
@@ -33,28 +33,8 @@ def _algorithms_for(problem_id: str) -> list[str]:
 
 async def _current_tier(session: AsyncSession, user_id: str, problem_id: str,
                         language: str = "python", *, now: datetime | None = None) -> int:
-    """Fixed six-week cycles anchored to the first hint for this scope.
-
-    A new session, subscription renewal, or recent hint never shifts the reset.
-    Language switching has its own hint history. Timestamps are interpreted in UTC.
-    """
-    now = now or datetime.now(timezone.utc)
-    if now.tzinfo is None:
-        now = now.replace(tzinfo=timezone.utc)
-    times = list((await session.scalars(select(LearningEvent.created_at).where(
-        LearningEvent.user_id == user_id,
-        LearningEvent.problem_id == problem_id,
-        LearningEvent.language == language,
-        LearningEvent.kind == "hint",
-        LearningEvent.created_at <= now,
-    ).order_by(LearningEvent.created_at))).all())
-    if not times:
-        return 1
-    times = [t.replace(tzinfo=timezone.utc) if t.tzinfo is None else t for t in times]
-    duration = timedelta(hours=settings.hint_tier_reset_hours)
-    anchor = times[0]
-    cycle_start = anchor + ((now - anchor) // duration) * duration
-    return min(sum(t >= cycle_start for t in times) + 1, MAX_TIER)
+    from app.services.hint_billing import current_tier
+    return await current_tier(session, user_id, problem_id, language, now=now)
 
 
 @router.get("/entitlement")
@@ -89,11 +69,17 @@ async def ask(request: MentorRequest, current_user: User = Depends(get_current_u
         except RateLimitExceeded as exc:
             raise HTTPException(429,str(exc))
     tier=1
+    _operation_id=None
+    profile_generation=None
     async def price(_operation):
         # Under the per-user lock, so the charged tier matches the one served.
-        nonlocal tier
-        tier=await _current_tier(session,current_user.id,request.problem_id,request.language)
-        return hint_cost(tier)
+        nonlocal tier, _operation_id, profile_generation
+        _operation_id = _operation
+        profile_generation = await session.scalar(select(User.profile_generation).where(User.id == current_user.id))
+        from app.services.hint_billing import reserve
+        tier, cost = await reserve(session, current_user.id, request.problem_id,
+                                   request.language, _operation, request.max_hint_cost)
+        return cost
     async def work(balance):
         from app.services.operations import current_balance
         algorithms=_algorithms_for(request.problem_id)
@@ -105,7 +91,8 @@ async def ask(request: MentorRequest, current_user: User = Depends(get_current_u
                 recalled_moment=recalled,profile_summary=profile.summary() if profile.total_attempts else '')
         await trace_store.save(session,t)
         await learning_profile.record_event(session,current_user.id,request.problem_id,kind='hint',
-            language=request.language,algorithms=algorithms,hint_tier=tier,reasoning=request.reasoning)
+            language=request.language,algorithms=algorithms,hint_tier=tier,reasoning=request.reasoning,
+            billing_operation_id=_operation_id,expected_generation=profile_generation)
         return MentorResponse(reply=reply,hint_tier=tier,tier_label=TIERS[tier][0],
             recalled_moment=recalled,step_back_offer=step_back_offer(request.problem_id,algorithms) if tier>=MAX_TIER else None,
             peppercorns_remaining=balance if balance is not None else await current_balance(session,current_user.id),

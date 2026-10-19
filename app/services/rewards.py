@@ -53,7 +53,14 @@ async def independent_solve(session: AsyncSession, user_id: str, problem_id: str
         LearningEvent.user_id == user_id, LearningEvent.problem_id == problem_id,
         LearningEvent.language == language, LearningEvent.kind == "hint",
         LearningEvent.hint_tier > settings.free_hint_tiers))
-    if paid_hints:
+    from app.db.models import HintUsage, ServiceOperation
+    from app.services.hint_billing import valid_usage
+    billed_hints = await session.scalar(select(func.count()).select_from(HintUsage).outerjoin(
+        ServiceOperation, ServiceOperation.id == HintUsage.operation_id).where(
+        HintUsage.user_id == user_id, HintUsage.problem_id == problem_id,
+        HintUsage.language == language, HintUsage.tier > settings.free_hint_tiers,
+        valid_usage(include_pending=False)))
+    if paid_hints or billed_hints:
         return None
     return await grant_once(session, user_id, f"solve:{language}:{problem_id}",
                             settings.reward_independent_solve, "earn:independent_solve")

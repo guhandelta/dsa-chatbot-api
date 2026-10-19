@@ -177,13 +177,34 @@ async def record_event(
     session: AsyncSession, user_id: str, problem_id: str, kind: str,
     language: str = "python", algorithms: list[str] | None = None,
     error_category: str = "", detail: str = "", hint_tier: int = 0,
-    reasoning: str = "",
+    reasoning: str = "", billing_operation_id: str | None = None,
+    expected_generation: int | None = None,
 ) -> None:
-    session.add(LearningEvent(
+    if expected_generation is not None:
+        from sqlalchemy import update
+        from app.db.models import User
+        # Hold the erasure lock through the event/receipt commit. An old hint
+        # may finish, but must not restore reasoning erased while it ran.
+        await session.execute(update(User).where(User.id == user_id).values(peppercorns=User.peppercorns))
+        generation = await session.scalar(select(User.profile_generation).where(User.id == user_id))
+        if generation != expected_generation:
+            return
+    event = LearningEvent(
         user_id=user_id, problem_id=problem_id, kind=kind, language=language,
         algorithms=",".join(algorithms or []), error_category=error_category,
         detail=detail[:1000], hint_tier=hint_tier, reasoning=reasoning[:2000],
-    ))
+    )
+    session.add(event)
+    if kind == "hint":
+        from app.db.models import HintUsage
+        await session.flush()
+        usage = await session.scalar(select(HintUsage).where(
+            HintUsage.operation_id == billing_operation_id)) if billing_operation_id else None
+        if usage is not None:
+            usage.event_id = event.id
+        else:
+            session.add(HintUsage(user_id=user_id, problem_id=problem_id, language=language,
+                                  tier=hint_tier, event_id=event.id, created_at=event.created_at))
 
 
 async def _events(session: AsyncSession, user_id: str, limit: int = 500) -> list[LearningEvent]:
@@ -306,6 +327,11 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
 
 async def delete_profile(session: AsyncSession, user_id: str) -> int:
     """Erase learning events and quiz answers. Returns the learning-event count."""
+    from sqlalchemy import update
+    from app.db.models import User
+    from app.services.hint_billing import preserve_legacy
+    await session.execute(update(User).where(User.id == user_id).values(profile_generation=User.profile_generation + 1))
+    await preserve_legacy(session, user_id)
     result = await session.execute(delete(LearningEvent).where(LearningEvent.user_id == user_id))
     from app.services.quiz import delete_for_user
     await delete_for_user(session, user_id)

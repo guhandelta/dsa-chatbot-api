@@ -25,6 +25,7 @@ class User(Base):
     # Current balance is denormalized for fast reads; the Transaction table
     # is the source-of-truth ledger and every change writes both.
     peppercorns: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    profile_generation: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     # "student" | "instructor" | "admin" — only instructor/admin may train the bot
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="student")
     # Chosen once, respected across every track and mode
@@ -52,6 +53,24 @@ class Transaction(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     user: Mapped["User"] = relationship(back_populates="transactions")
+
+
+class HintUsage(Base):
+    """Minimal billing history, independent of erasable learning-profile text.
+
+    A reservation commits with the service debit; failed operations do not
+    consume a tier. Legacy events are linked by ID to avoid double counting.
+    """
+    __tablename__ = "hint_usage"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    problem_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    tier: Mapped[int] = mapped_column(Integer, nullable=False)
+    operation_id: Mapped[str | None] = mapped_column(ForeignKey("service_operations.id"), unique=True)
+    event_id: Mapped[str | None] = mapped_column(String(36), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
 
 class RewardGrant(Base):

@@ -226,6 +226,7 @@ class MentorRequest(BaseModel):
     reasoning: str = Field(min_length=1, max_length=4000)
     current_code: str = Field(default="", max_length=20000)
     provider: Provider = "openai"
+    max_hint_cost: int | None = Field(default=None, ge=0)
 
 
 class MentorResponse(BaseModel):

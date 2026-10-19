@@ -32,6 +32,7 @@ class ActionRequest(BaseModel):
     action:Literal['submit','hint','reflect','quit']
     code:str=Field(default='',max_length=20000)
     reasoning:str=Field(default='',max_length=4000)
+    max_hint_cost:int|None=Field(default=None,ge=0)
 
 
 def active(user):
@@ -96,9 +97,14 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
     from app.services.operations import operation_id
     idempotency_key = idempotency_key or str(uuid.uuid4())
     lock_token = operation_id(uid, 'practice:' + sid, idempotency_key)
+    reserved_tier = 1
+    profile_generation = None
     async def hint_price(_operation):
-        from app.services.mentor import hint_cost
-        return hint_cost(await _current_tier(session,uid,pid,lang))
+        nonlocal reserved_tier, profile_generation
+        profile_generation = await session.scalar(select(User.profile_generation).where(User.id == uid))
+        from app.services.hint_billing import reserve
+        reserved_tier, price = await reserve(session, uid, pid, lang, _operation, request.max_hint_cost)
+        return price
     cost=settings.analyze_cost if request.action=='submit' else hint_price if request.action=='hint' else 0
     reason='analyze' if request.action=='submit' else 'mentor' if request.action=='hint' else 'practice'
     async def prepare():
@@ -129,7 +135,7 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
         if request.action=='submit':
             payload['recalled_moment'] = await learning_profile.recall_similar_moment(session,user.id,_algorithms_for(pid),pid,lang)
         if request.action=='hint':
-            payload.update(hint_tier=await _current_tier(session,user.id,pid,lang),
+            payload.update(hint_tier=reserved_tier,
                 recalled_moment=await learning_profile.recall_similar_moment(session,user.id,_algorithms_for(pid),pid,lang),
                 profile_summary=(await learning_profile.build_profile(session,user.id)).summary())
         config=thread_config(user.id,pid,sid)
@@ -145,7 +151,9 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             if earned:balance=earned[-1]['balance']
         else:available=False
         if request.action=='hint':
-            await learning_profile.record_event(session,user.id,pid,kind='hint',language=lang,algorithms=_algorithms_for(pid),hint_tier=payload['hint_tier'],reasoning=request.reasoning)
+            await learning_profile.record_event(session,user.id,pid,kind='hint',language=lang,
+                algorithms=_algorithms_for(pid),hint_tier=payload['hint_tier'],reasoning=request.reasoning,
+                billing_operation_id=lock_token,expected_generation=profile_generation)
         if request.action=='reflect':
             await learning_profile.record_event(session,user.id,pid,kind='reflection',language=lang,algorithms=_algorithms_for(pid),reasoning=request.reasoning)
         await session.execute(update(PracticeSession).where(PracticeSession.id==sid,PracticeSession.busy_token==lock_token).values(busy=False,busy_token='',status='active' if pending_interrupt(state) else 'completed'))
