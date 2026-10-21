@@ -1,0 +1,867 @@
+{
+ "language": "ruby",
+ "version": 1,
+ "note": "Authored Study Room quiz items for Ruby. short_answer snippets were validated by execution (Ruby 2.6.10 locally) and are written to print the same output on Ruby 2.6 and 3.x; RSpec and Bundler multiple-choice items are grounded in the knowledge base and were not executed (no RSpec or network access).",
+ "items": [
+  {
+   "id": "rb-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "times-range",
+   "prompt": "Which expression produces exactly the integers 0, 1 and 2, in that order?",
+   "choices": [
+    "1.upto(3).to_a",
+    "(0..3).to_a",
+    "(1..3).to_a",
+    "3.times.to_a"
+   ],
+   "answer": 3,
+   "explanation": "3.times visits 0 through n - 1, so it yields [0, 1, 2]. (1..3) and 1.upto(3) start at 1, and (0..3) includes the end value 3."
+  },
+  {
+   "id": "rb-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "exclusive-range",
+   "code": "total = 0\n(1...4).each { |i| total += i }\nputs total",
+   "prompt": "What does this print?",
+   "choices": [
+    "10",
+    "3",
+    "6",
+    "0"
+   ],
+   "answer": 2,
+   "explanation": "(1...4) excludes the end, so the block sees 1, 2 and 3 and total is 6. The inclusive range 1..4 would give 10."
+  },
+  {
+   "id": "rb-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "closure-accumulator",
+   "code": "count = 0\n5.times { |i| count += i }\nputs count",
+   "prompt": "Type exactly what this prints.",
+   "answer": "10",
+   "explanation": "5.times yields 0, 1, 2, 3, 4, and the block updates the outer local count: 0 + 1 + 2 + 3 + 4 = 10."
+  },
+  {
+   "id": "rb-s03-scope",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "block-local",
+   "code": "[1, 2].each { |x| last = x }\nputs defined?(last).inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "nil",
+   "explanation": "A variable first assigned inside a block is local to that block. After the block ends, last is not defined, so defined?(last) is nil and inspect prints nil."
+  },
+  {
+   "id": "rb-s03-empty",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "empty-range",
+   "prompt": "What happens when the block of (1..0).each { |i| ... } is evaluated?",
+   "choices": [
+    "It runs once with i equal to 1",
+    "It raises ArgumentError because the range is backwards",
+    "It runs once with i equal to 0",
+    "It never runs, because the range is empty"
+   ],
+   "answer": 3,
+   "explanation": "A range whose start is past its end contains no elements, so each does not call the block. That is why a sum over 1..n with n = 0 leaves the accumulator at its starting value."
+  },
+  {
+   "id": "rb-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "accumulator",
+   "prompt": "In your own words: why must the accumulator for a running total be assigned before the loop rather than inside the block?",
+   "answer": "A block is a closure: it can read and update locals that already exist outside it. A variable first assigned inside the block is created fresh on every iteration and disappears when the block ends, so the total would restart each time and could not be read after the loop. Assigning the accumulator before the loop gives every iteration the same variable to update.",
+   "keywords": [
+    [
+     "closure",
+     "outer",
+     "outside",
+     "enclosing",
+     "before"
+    ],
+    [
+     "fresh",
+     "new each",
+     "every iteration",
+     "each iteration",
+     "restart",
+     "reset"
+    ],
+    [
+     "scope",
+     "local",
+     "disappear",
+     "not visible",
+     "after the block"
+    ]
+   ]
+  },
+  {
+   "id": "rb-s04-mcq",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "implicit-return",
+   "prompt": "A method is defined as def f(x); puts x * 2; end. What does r hold after r = f(4)?",
+   "choices": [
+    "4",
+    "\"8\"",
+    "8",
+    "nil"
+   ],
+   "answer": 3,
+   "explanation": "puts prints 8 but returns nil, and a method returns the value of its last expression. A method meant to return a result must end with the value itself."
+  },
+  {
+   "id": "rb-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "implicit-return",
+   "code": "def grade(score)\n  if score >= 50\n    \"pass\"\n  end\nend\np grade(10)",
+   "prompt": "What does this print?",
+   "choices": [
+    "nil",
+    "false",
+    "pass",
+    "An error"
+   ],
+   "answer": 0,
+   "explanation": "When score is below 50 the if has no else branch, so the method's last expression evaluates to nil and p prints nil."
+  },
+  {
+   "id": "rb-s04-arity",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "strict-arity",
+   "code": "def add(a, b)\n  a + b\nend\nbegin\n  add(1)\nrescue ArgumentError => e\n  puts e.message\nend",
+   "prompt": "Type exactly what this prints (the message is one line).",
+   "answer": "wrong number of arguments (given 1, expected 2)",
+   "explanation": "A method checks its argument count strictly and raises ArgumentError when the call does not match the parameters."
+  },
+  {
+   "id": "rb-s04-early",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "early-return",
+   "code": "def first_even(list)\n  list.each { |x| return x if x.even? }\n  nil\nend\np first_even([3, 4, 6])",
+   "prompt": "Type exactly what this prints.",
+   "answer": "4",
+   "explanation": "return inside the block leaves first_even itself as soon as 4 is found, so the final nil is never reached."
+  },
+  {
+   "id": "rb-s04-ref",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "argument-references",
+   "code": "def add_item(list)\n  list << 9\nend\na = [1]\nadd_item(a)\np a",
+   "prompt": "What does this print?",
+   "choices": [
+    "[1]",
+    "nil",
+    "[1, 9]",
+    "[9]"
+   ],
+   "answer": 2,
+   "explanation": "Arguments are passed as references to the same array. << changes that shared object, so the caller's array now contains 9 as well."
+  },
+  {
+   "id": "rb-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "return-vs-print",
+   "prompt": "In your own words: why does a function that prints its answer fail a test that checks its return value, and how does Ruby decide what a method returns?",
+   "answer": "A caller or test receives the value a method returns, not text written to the screen. puts writes output and returns nil. In Ruby the return value is the value of the last evaluated expression (or the value given to return), so the method must finish with the result itself.",
+   "keywords": [
+    [
+     "return",
+     "returns",
+     "value"
+    ],
+    [
+     "last expression",
+     "last evaluated",
+     "last line",
+     "implicit"
+    ],
+    [
+     "nil",
+     "puts",
+     "print"
+    ]
+   ]
+  },
+  {
+   "id": "rb-m-blocks-mcq",
+   "node": "module-blocks-procs-lambdas",
+   "type": "mcq",
+   "concept": "lambda-return",
+   "prompt": "Inside a lambda, what does a return statement do?",
+   "choices": [
+    "Returns from the method that defined the lambda",
+    "Raises LocalJumpError",
+    "Stops the whole program",
+    "Returns from the lambda only, and the method continues"
+   ],
+   "answer": 3,
+   "explanation": "A lambda behaves like a method: return leaves just the lambda with its value. A return inside a plain proc instead tries to return from the method where the proc was defined."
+  },
+  {
+   "id": "rb-m-blocks-prec",
+   "node": "module-blocks-procs-lambdas",
+   "type": "mcq",
+   "concept": "block-binding",
+   "prompt": "In Ruby, what does puts [1, 2].map do |x| x * 2 end print?",
+   "choices": [
+    "An Enumerator object",
+    "2 and 4 on separate lines",
+    "Nothing, because do ... end is a syntax error here",
+    "[2, 4]"
+   ],
+   "answer": 0,
+   "explanation": "do ... end binds to the outermost call, puts, not to map. map therefore gets no block and returns an Enumerator, which puts prints. Braces bind to the nearest call, so puts [1, 2].map { |x| x * 2 } prints the doubled numbers."
+  },
+  {
+   "id": "rb-m-blocks-lambda-arity",
+   "node": "module-blocks-procs-lambdas",
+   "type": "mcq_code",
+   "concept": "lambda-arity",
+   "code": "l = ->(a, b) { a }\nl.call(1)",
+   "prompt": "What happens when this code runs?",
+   "choices": [
+    "It returns 1",
+    "It returns nil",
+    "It raises ArgumentError",
+    "It raises LocalJumpError"
+   ],
+   "answer": 2,
+   "explanation": "A lambda checks its arguments strictly, like a method, so calling a two-parameter lambda with one argument raises ArgumentError. A proc would fill the missing argument with nil."
+  },
+  {
+   "id": "rb-m-blocks-proc-arity",
+   "node": "module-blocks-procs-lambdas",
+   "type": "short_answer",
+   "concept": "proc-arity",
+   "code": "pr = proc { |a, b| \"#{a.inspect},#{b.inspect}\" }\nputs pr.call(1)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1,nil",
+   "explanation": "A proc is lenient: a missing argument becomes nil and an extra argument would be dropped. A lambda with the same parameters would raise ArgumentError."
+  },
+  {
+   "id": "rb-m-blocks-proc-return",
+   "node": "module-blocks-procs-lambdas",
+   "type": "short_answer",
+   "concept": "proc-return",
+   "code": "def run\n  pr = proc { return 1 }\n  pr.call\n  2\nend\nputs run",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1",
+   "explanation": "return in a proc returns from the method where the proc was defined. run therefore returns 1 and never reaches the 2. With a lambda the result would be 2."
+  },
+  {
+   "id": "rb-m-blocks-closure",
+   "node": "module-blocks-procs-lambdas",
+   "type": "short_answer",
+   "concept": "closure",
+   "code": "def make_counter\n  count = 0\n  -> { count += 1 }\nend\nc = make_counter\nc.call\nc.call\nputs c.call",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3",
+   "explanation": "The lambda is a closure that keeps access to the local count after make_counter has returned. Each call updates the same variable, so the third call returns 3."
+  },
+  {
+   "id": "rb-m-blocks-explain",
+   "node": "module-blocks-procs-lambdas",
+   "type": "explain",
+   "concept": "proc-vs-lambda",
+   "prompt": "In your own words: name two differences between a proc and a lambda, and say when a closure's captured variable can surprise you.",
+   "answer": "A lambda checks its argument count strictly and raises ArgumentError, while a proc is lenient: missing arguments become nil and extras are dropped. return inside a lambda leaves only the lambda, but return inside a proc returns from the method that defined it and raises LocalJumpError if that method has already finished. Closures capture variables rather than copies, so a mutation made by one callable is visible to the others that share it.",
+   "keywords": [
+    [
+     "arity",
+     "lenient",
+     "strict",
+     "nil"
+    ],
+    [
+     "return in",
+     "return inside",
+     "return from",
+     "returns from",
+     "return leaves",
+     "return exits",
+     "returning from"
+    ],
+    [
+     "enclosing",
+     "defined",
+     "defining",
+     "LocalJumpError",
+     "leaves the method",
+     "returns from the method"
+    ]
+   ]
+  },
+  {
+   "id": "rb-m-enum-lazy",
+   "node": "module-enumerable-lazy",
+   "type": "short_answer",
+   "concept": "lazy-early-stop",
+   "code": "seen = []\nr = (1..Float::INFINITY).lazy.map { |x| seen << x; x * x }.select(&:even?).first(2)\nputs r.inspect + \" \" + seen.inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[4, 16] [1, 2, 3, 4]",
+   "explanation": "A lazy chain pushes one element at a time through map and select and stops as soon as first(2) has two results. The squares 4 and 16 are the even ones, and map only ran for 1, 2, 3 and 4."
+  },
+  {
+   "id": "rb-m-enum-eager",
+   "node": "module-enumerable-lazy",
+   "type": "mcq",
+   "concept": "lazy-vs-eager",
+   "prompt": "What happens with (1..Float::INFINITY).map { |x| x * 2 }.first(3)?",
+   "choices": [
+    "It returns an Enumerator::Lazy",
+    "It raises StopIteration",
+    "It never returns, because map is eager and builds the whole result first",
+    "It returns [2, 4, 6] immediately, because first(3) only needs three items"
+   ],
+   "answer": 2,
+   "explanation": "Without lazy, map is eager: it builds the complete result array before first can take three items, and an infinite range never finishes. Adding .lazy makes the chain stop early."
+  },
+  {
+   "id": "rb-m-enum-cons",
+   "node": "module-enumerable-lazy",
+   "type": "mcq_code",
+   "concept": "each-cons",
+   "code": "p [1, 2, 3, 4].each_cons(3).to_a",
+   "prompt": "What does this print?",
+   "choices": [
+    "[[1, 2, 3], [4]]",
+    "[[1, 2, 3, 4]]",
+    "[[1, 2, 3], [2, 3, 4]]",
+    "[[1, 2], [2, 3], [3, 4]]"
+   ],
+   "answer": 2,
+   "explanation": "each_cons(3) yields overlapping windows of three, here [1, 2, 3] and [2, 3, 4]. each_slice(3) would give disjoint chunks instead."
+  },
+  {
+   "id": "rb-m-enum-shared-array",
+   "node": "module-enumerable-lazy",
+   "type": "short_answer",
+   "concept": "array-new-shared",
+   "code": "grid = Array.new(3, [])\ngrid[0] << 1\nputs grid.inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[[1], [1], [1]]",
+   "explanation": "Array.new(3, []) puts the same array object in all three slots. Appending through one slot changes it everywhere; Array.new(3) { [] } builds independent rows."
+  },
+  {
+   "id": "rb-m-enum-shared-default",
+   "node": "module-enumerable-lazy",
+   "type": "short_answer",
+   "concept": "hash-default-shared",
+   "code": "h = Hash.new([])\nh[:a] << 1\nputs h.size.to_s + \" \" + h[:b].inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "0 [1]",
+   "explanation": "Hash.new([]) returns one shared default array and does not store it. The append changes that default, so h stays empty but any missing key now reads [1]. Hash.new { |hash, key| hash[key] = [] } stores a fresh array."
+  },
+  {
+   "id": "rb-m-enum-next",
+   "node": "module-enumerable-lazy",
+   "type": "short_answer",
+   "concept": "stop-iteration",
+   "code": "e = [10, 20].each\nout = []\nloop { out << e.next }\nputs out.inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[10, 20]",
+   "explanation": "Enumerator#next raises StopIteration after the last element, and loop rescues that exception and ends quietly, so both elements were collected."
+  },
+  {
+   "id": "rb-m-enum-explain",
+   "node": "module-enumerable-lazy",
+   "type": "explain",
+   "concept": "lazy-trade-off",
+   "prompt": "In your own words: when does a lazy chain help, and when is the eager version usually better?",
+   "answer": "A lazy chain processes one element at a time and stops as soon as it has enough results, so it works with infinite or very large sources and avoids building intermediate arrays. It adds per-element overhead, so for small finite collections the eager version is usually faster and simpler. Lazy evaluation is about deferring work, not about running blocking operations asynchronously.",
+   "keywords": [
+    [
+     "lazy",
+     "one at a time",
+     "deferred",
+     "on demand"
+    ],
+    [
+     "infinite",
+     "stop early",
+     "stops early",
+     "early",
+     "large"
+    ],
+    [
+     "overhead",
+     "small",
+     "eager",
+     "intermediate"
+    ]
+   ]
+  },
+  {
+   "id": "rb-m-lookup-prepend",
+   "node": "module-method-lookup-modules",
+   "type": "short_answer",
+   "concept": "prepend-super",
+   "code": "module Loud\n  def speak\n    \"LOUD \" + super\n  end\nend\nclass Animal\n  def speak\n    \"hi\"\n  end\nend\nclass Dog < Animal\n  prepend Loud\nend\nputs Dog.new.speak",
+   "prompt": "Type exactly what this prints.",
+   "answer": "LOUD hi",
+   "explanation": "prepend puts Loud before Dog in the lookup chain, so Loud#speak runs first and its super continues up the chain to Animal#speak."
+  },
+  {
+   "id": "rb-m-lookup-ancestors",
+   "node": "module-method-lookup-modules",
+   "type": "short_answer",
+   "concept": "ancestors",
+   "code": "module Loud; end\nclass Animal; end\nclass Dog < Animal\n  prepend Loud\nend\nputs Dog.ancestors.first(3).inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[Loud, Dog, Animal]",
+   "explanation": "ancestors lists the lookup order. A prepended module comes before the class, then the class, then its superclass. An included module would appear after the class."
+  },
+  {
+   "id": "rb-m-lookup-include",
+   "node": "module-method-lookup-modules",
+   "type": "mcq",
+   "concept": "include-precedence",
+   "prompt": "A class defines hello and also includes a module that defines hello. Which one runs for an instance of the class?",
+   "choices": [
+    "Ruby raises an ambiguity error",
+    "The module's hello, because modules are searched before the class that includes them",
+    "The class's own hello, because include puts the module after the class in lookup",
+    "Whichever file was loaded first"
+   ],
+   "answer": 2,
+   "explanation": "include inserts the module after the class in the ancestors chain, so lookup finds the class's own method first. prepend would place the module before the class."
+  },
+  {
+   "id": "rb-m-lookup-extend",
+   "node": "module-method-lookup-modules",
+   "type": "mcq_code",
+   "concept": "extend",
+   "code": "module Greeter\n  def hi\n    \"hi\"\n  end\nend\nclass A\n  extend Greeter\nend\np [A.respond_to?(:hi), A.new.respond_to?(:hi)]",
+   "prompt": "What does this print?",
+   "choices": [
+    "[true, true]",
+    "[false, true]",
+    "[true, false]",
+    "[false, false]"
+   ],
+   "answer": 2,
+   "explanation": "extend adds the module's methods to that one object's singleton class. For a class they become class methods, so A responds to hi but instances of A do not."
+  },
+  {
+   "id": "rb-m-lookup-enumerable",
+   "node": "module-method-lookup-modules",
+   "type": "mcq",
+   "concept": "enumerable-contract",
+   "prompt": "Which single method must a class define to gain map, select and min_by by including Enumerable?",
+   "choices": [
+    "size",
+    "<=>",
+    "each",
+    "to_a"
+   ],
+   "answer": 2,
+   "explanation": "Enumerable is built on each: define each and the module supplies map, select, sort, min_by, each_slice, lazy and more. <=> is the contract for Comparable, and min, max and sort additionally need <=> on the elements."
+  },
+  {
+   "id": "rb-m-lookup-comparable",
+   "node": "module-method-lookup-modules",
+   "type": "short_answer",
+   "concept": "comparable",
+   "code": "class V\n  include Comparable\n  attr_reader :n\n  def initialize(n)\n    @n = n\n  end\n  def <=>(other)\n    n <=> other.n\n  end\nend\nputs [V.new(2) > V.new(1), V.new(1) == V.new(1)].inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[true, true]",
+   "explanation": "Comparable derives <, >, ==, between? and clamp from the single <=> method, so both comparisons are true."
+  },
+  {
+   "id": "rb-m-lookup-super",
+   "node": "module-method-lookup-modules",
+   "type": "mcq_code",
+   "concept": "super-arguments",
+   "code": "class A\n  def m(x = 5)\n    x\n  end\nend\nclass B1 < A\n  def m(x = 7)\n    super()\n  end\nend\nclass B2 < A\n  def m(x = 7)\n    super\n  end\nend\np [B1.new.m, B2.new.m]",
+   "prompt": "What does this print?",
+   "choices": [
+    "[5, 5]",
+    "[7, 5]",
+    "[5, 7]",
+    "[7, 7]"
+   ],
+   "answer": 2,
+   "explanation": "super() passes no arguments, so A#m uses its default 5. A bare super passes the current method's arguments along, including the default 7 that B2 received, so it gives 7."
+  },
+  {
+   "id": "rb-m-lookup-explain",
+   "node": "module-method-lookup-modules",
+   "type": "explain",
+   "concept": "method-lookup",
+   "prompt": "In your own words: describe how Ruby finds the method for obj.foo, and what happens if it finds nothing.",
+   "answer": "Ruby searches the receiver's singleton class, then its class, then the modules and superclasses listed by the class's ancestors, in order, and runs the first foo it finds. include places a module after the class and prepend places it before. If no foo is found, Ruby calls method_missing, which by default raises NoMethodError.",
+   "keywords": [
+    [
+     "singleton",
+     "class",
+     "receiver"
+    ],
+    [
+     "ancestors",
+     "ancestor",
+     "chain",
+     "order"
+    ],
+    [
+     "method_missing",
+     "NoMethodError"
+    ]
+   ]
+  },
+  {
+   "id": "rb-m-mut-alias",
+   "node": "module-mutation",
+   "type": "short_answer",
+   "concept": "shared-reference",
+   "code": "a = \"hi\"\nb = a\nb << \"!\"\nputs a",
+   "prompt": "Type exactly what this prints.",
+   "answer": "hi!",
+   "explanation": "Assignment copies the reference, not the string. << mutates the one shared object, so a sees the change too."
+  },
+  {
+   "id": "rb-m-mut-bang-nil",
+   "node": "module-mutation",
+   "type": "short_answer",
+   "concept": "bang-returns-nil",
+   "code": "puts \"ABC\".upcase!.inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "nil",
+   "explanation": "Many bang methods return nil when they changed nothing. The string was already uppercase, so upcase! returns nil, which is why you should not chain on a bang method."
+  },
+  {
+   "id": "rb-m-mut-freeze",
+   "node": "module-mutation",
+   "type": "mcq_code",
+   "concept": "shallow-freeze",
+   "code": "list = [\"a\"].freeze\nlist[0] << \"b\"\np list",
+   "prompt": "What does this print?",
+   "choices": [
+    "[\"a\"]",
+    "[\"ab\"]",
+    "FrozenError",
+    "[\"a\", \"b\"]"
+   ],
+   "answer": 1,
+   "explanation": "freeze only freezes the array itself. The string inside is still mutable and << changes it, so the array prints [\"ab\"]. Appending to the array would raise FrozenError."
+  },
+  {
+   "id": "rb-m-mut-dup",
+   "node": "module-mutation",
+   "type": "short_answer",
+   "concept": "shallow-copy",
+   "code": "grid = [[1], [2]]\ncopy = grid.dup\ncopy[0] << 9\nputs grid.inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[[1, 9], [2]]",
+   "explanation": "dup is shallow: the new outer array holds the same inner arrays. Mutating an inner array through the copy is visible in the original. Use grid.map(&:dup) for an independent 2-D array."
+  },
+  {
+   "id": "rb-m-mut-key",
+   "node": "module-mutation",
+   "type": "mcq_code",
+   "concept": "mutable-hash-key",
+   "code": "key = [1, 2]\nh = { key => :x }\nkey << 3\np h[key]",
+   "prompt": "What does this print?",
+   "choices": [
+    "nil",
+    "[1, 2, 3]",
+    "Error",
+    ":x"
+   ],
+   "answer": 0,
+   "explanation": "A Hash finds keys using hash and eql?. After the array key is mutated its hash changes, so the stored entry is not found by either the old or the new contents until rehash is called. Use frozen or immutable keys."
+  },
+  {
+   "id": "rb-m-mut-append",
+   "node": "module-mutation",
+   "type": "short_answer",
+   "concept": "mutating-vs-rebinding",
+   "code": "def add_bang(s)\n  s << \"!\"\nend\ndef add_plus(s)\n  s += \"!\"\nend\na = \"x\"\nb = \"y\"\nadd_bang(a)\nadd_plus(b)\nputs a + b",
+   "prompt": "Type exactly what this prints.",
+   "answer": "x!y",
+   "explanation": "<< changes the caller's string. s += \"!\" builds a new string and only rebinds the local parameter, so the caller's b is unchanged."
+  },
+  {
+   "id": "rb-m-mut-eql",
+   "node": "module-mutation",
+   "type": "mcq",
+   "concept": "hash-key-equality",
+   "prompt": "After h = { 1 => :a }, what does h[1.0] return?",
+   "choices": [
+    ":a",
+    "KeyError",
+    "1",
+    "nil"
+   ],
+   "answer": 3,
+   "explanation": "A Hash compares keys with eql?, and 1.eql?(1.0) is false even though 1 == 1.0 is true. The lookup finds nothing, and [] returns nil rather than raising."
+  },
+  {
+   "id": "rb-m-mut-explain",
+   "node": "module-mutation",
+   "type": "explain",
+   "concept": "freeze-depth",
+   "prompt": "In your own words: does freezing an object make everything it references immutable? How would you make a nested structure truly safe to share?",
+   "answer": "No. freeze is shallow: it blocks changes to that object only, while the objects it references can still be mutated. For a nested structure you must freeze the inner objects too, or copy them deeply, instead of assuming the outer freeze protects them.",
+   "keywords": [
+    [
+     "shallow",
+     "only the outer",
+     "not recursive",
+     "not recursively",
+     "does not"
+    ],
+    [
+     "inner",
+     "nested",
+     "referenced",
+     "contents",
+     "elements"
+    ],
+    [
+     "freeze each",
+     "freeze the inner",
+     "deep",
+     "copy",
+     "dup"
+    ]
+   ]
+  },
+  {
+   "id": "rb-m-bundler-requirement",
+   "node": "module-bundler",
+   "type": "short_answer",
+   "concept": "pessimistic-operator",
+   "code": "r1 = Gem::Requirement.new(\"~> 1.16.2\")\nr2 = Gem::Requirement.new(\"~> 1.16\")\nputs [r1.satisfied_by?(Gem::Version.new(\"1.16.9\")), r1.satisfied_by?(Gem::Version.new(\"1.17.0\")), r2.satisfied_by?(Gem::Version.new(\"1.99.0\"))].inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[true, false, true]",
+   "explanation": "~> 1.16.2 means at least 1.16.2 and below 1.17, so 1.17.0 is excluded. ~> 1.16 means at least 1.16 and below 2.0, so 1.99.0 is allowed."
+  },
+  {
+   "id": "rb-m-bundler-exec",
+   "node": "module-bundler",
+   "type": "mcq",
+   "concept": "bundle-exec",
+   "prompt": "Why run bundle exec rspec instead of plain rspec in a Bundler project?",
+   "choices": [
+    "It makes the tests run faster because the gem load path is cached between runs",
+    "It runs the command using the locked gem versions, not globally installed ones",
+    "It ignores Gemfile.lock and resolves the newest versions available",
+    "It installs any missing gems before running the command, then runs it"
+   ],
+   "answer": 1,
+   "explanation": "bundle exec puts the locked gem versions on the load path. Without it, a newer globally installed version may run, causing works-on-my-machine differences."
+  },
+  {
+   "id": "rb-m-bundler-lock",
+   "node": "module-bundler",
+   "type": "mcq",
+   "concept": "lockfile",
+   "prompt": "Who normally commits Gemfile.lock?",
+   "choices": [
+    "Only projects that avoid native extensions or compiled C code",
+    "Application projects, so every machine uses the same versions",
+    "Only library authors, who publish it together with the gem",
+    "Nobody, it is generated per machine and never kept in version control"
+   ],
+   "answer": 1,
+   "explanation": "Applications commit Gemfile.lock so each environment resolves to the same exact gem versions. Library authors often leave it out because the library's users resolve their own versions."
+  },
+  {
+   "id": "rb-m-bundler-update",
+   "node": "module-bundler",
+   "type": "mcq",
+   "concept": "bundle-update",
+   "prompt": "A Gemfile.lock already lists every gem. What does bundle install do, compared with bundle update rspec-core?",
+   "choices": [
+    "bundle install installs the versions the lock file lists; bundle update rspec-core deliberately moves that gem to newer allowed versions",
+    "bundle install ignores the lock file and installs whatever versions are newest, while bundle update only re-reads the Gemfile",
+    "bundle update rspec-core only prints a list of gems that have newer versions, while bundle install upgrades each of them",
+    "Both resolve the Gemfile again and move every gem to the newest version available, so they differ only in speed"
+   ],
+   "answer": 0,
+   "explanation": "bundle install resolves only new or changed entries and otherwise uses the lock file. bundle update gemname is the deliberate move to newer allowed versions; bundle outdated is the command that only lists them."
+  },
+  {
+   "id": "rb-m-bundler-native",
+   "node": "module-bundler",
+   "type": "mcq",
+   "concept": "native-extensions",
+   "prompt": "A gem fails to install with an error mentioning extconf.rb and make. What does this usually mean?",
+   "choices": [
+    "A compiler or system library needed to build a native extension is missing",
+    "Gemfile.lock is out of date and has to be regenerated by hand",
+    "The gem is incompatible with bundle exec and must be run without it",
+    "The Gemfile has a syntax error that stops the compiler from starting"
+   ],
+   "answer": 0,
+   "explanation": "Some gems compile C code at install time. Errors that mention extconf.rb or make usually point to a missing compiler or library rather than a Ruby problem."
+  },
+  {
+   "id": "rb-m-bundler-ruby-version",
+   "node": "module-bundler",
+   "type": "mcq",
+   "concept": "ruby-version",
+   "prompt": "You switch the project to a different Ruby version with your version manager. What must you do before running the project?",
+   "choices": [
+    "Run rspec --init",
+    "Run bundle install again, since gems are installed per Ruby version",
+    "Nothing, because gems are shared across all Ruby versions",
+    "Delete Gemfile"
+   ],
+   "answer": 1,
+   "explanation": "Gems are installed per Ruby version, so switching versions means installing the bundle again for the new one."
+  },
+  {
+   "id": "rb-m-bundler-explain",
+   "node": "module-bundler",
+   "type": "explain",
+   "concept": "reproducibility",
+   "prompt": "In your own words: what do the Gemfile and Gemfile.lock each record, and why does that help a team?",
+   "answer": "The Gemfile declares which gems the project needs and their version requirements and sources. Gemfile.lock records the exact resolved versions of every gem, including indirect dependencies. Committing the lock file for an application makes every machine and deployment load the same versions, so results are reproducible.",
+   "keywords": [
+    [
+     "Gemfile",
+     "declares",
+     "requirements",
+     "requirement",
+     "needs"
+    ],
+    [
+     "lock",
+     "exact",
+     "resolved",
+     "pinned"
+    ],
+    [
+     "same versions",
+     "same gems",
+     "reproducible",
+     "consistent",
+     "every machine",
+     "team"
+    ]
+   ]
+  },
+  {
+   "id": "rb-m-rspec-block",
+   "node": "module-rspec",
+   "type": "mcq_code",
+   "concept": "raise-error-block",
+   "code": "it \"rejects out-of-range vertices\" do\n  expect(graph.add_edge(0, 5)).to raise_error(ArgumentError)\nend",
+   "prompt": "What is wrong with this example?",
+   "choices": [
+    "expect cannot take a method call as its argument, only a local variable or a literal value",
+    "The call runs before expect sees it, so the error escapes; raise_error needs a block",
+    "raise_error is not an RSpec matcher, so the example fails to load before it runs",
+    "ArgumentError cannot be matched by a matcher, only by a rescue clause inside the example"
+   ],
+   "answer": 1,
+   "explanation": "expect(value) evaluates its argument first. A matcher such as raise_error has to run the code itself, so it needs expect { ... } with braces. Parentheses are for values."
+  },
+  {
+   "id": "rb-m-rspec-before-all",
+   "node": "module-rspec",
+   "type": "mcq",
+   "concept": "before-all",
+   "prompt": "Why can before(:all) make examples depend on each other?",
+   "choices": [
+    "It runs once, so state it creates is shared and leaks between examples",
+    "It disables random order, so examples always run in file order",
+    "It is skipped whenever an earlier example in the group has failed",
+    "It runs after every example instead of before it, so cleanup is missed"
+   ],
+   "answer": 0,
+   "explanation": "before(:all) (before(:context)) runs once for the group. before(:each), the default, runs before every example. Mutable state built once can leak between examples."
+  },
+  {
+   "id": "rb-m-rspec-let",
+   "node": "module-rspec",
+   "type": "mcq",
+   "concept": "let-memoization",
+   "prompt": "Which statement about let and let! is correct?",
+   "choices": [
+    "let is evaluated before every example, let! only when referenced",
+    "let is lazy and memoized per example, while let! runs before each example",
+    "let values persist across all examples",
+    "let! is lazy and memoized, let always runs first"
+   ],
+   "answer": 1,
+   "explanation": "let is lazy and memoized per example, evaluated on first use. let! is evaluated before each example."
+  },
+  {
+   "id": "rb-m-rspec-float",
+   "node": "module-rspec",
+   "type": "short_answer",
+   "concept": "float-matchers",
+   "code": "puts [0.1 + 0.2 == 0.3, (0.1 + 0.2 - 0.3).abs < 1e-9].inspect",
+   "prompt": "Type exactly what this prints.",
+   "answer": "[false, true]",
+   "explanation": "Binary floating point cannot represent 0.1 + 0.2 exactly, so == fails while a tolerance check passes. That is why RSpec provides be_within(delta).of(x) for floats."
+  },
+  {
+   "id": "rb-m-rspec-order",
+   "node": "module-rspec",
+   "type": "mcq",
+   "concept": "order-insensitive",
+   "prompt": "The problem allows results in any order. Which matcher expresses that?",
+   "choices": [
+    "be_empty",
+    "contain_exactly",
+    "equal",
+    "eq"
+   ],
+   "answer": 1,
+   "explanation": "contain_exactly (also spelled match_array) compares elements without regard to order. eq uses ==, so a different order of the same elements would fail, and equal tests identity."
+  },
+  {
+   "id": "rb-m-rspec-line",
+   "node": "module-rspec",
+   "type": "mcq",
+   "concept": "run-one-example",
+   "prompt": "How do you run only the example that starts at line 12 of spec/graph_spec.rb?",
+   "choices": [
+    "rspec spec/graph_spec.rb#12",
+    "bundle exec ruby spec/graph_spec.rb 12",
+    "rspec spec/graph_spec.rb:12",
+    "rspec spec/graph_spec.rb --line 12-only"
+   ],
+   "answer": 2,
+   "explanation": "A file path followed by :line runs the example defined at that line."
+  },
+  {
+   "id": "rb-m-rspec-explain",
+   "node": "module-rspec",
+   "type": "explain",
+   "concept": "random-order",
+   "prompt": "In your own words: a spec passes alone but fails in some runs when the whole suite is randomised. What is the likely cause and how do you reproduce it?",
+   "answer": "The examples probably share state, for example through before(:all), a constant or a global, so the result depends on the order they run in. Randomised runs print a seed, so rerun with that seed to get the same order and reproduce the failure, then remove the shared state.",
+   "keywords": [
+    [
+     "shared",
+     "state",
+     "leak",
+     "depend"
+    ],
+    [
+     "order",
+     "random"
+    ],
+    [
+     "seed"
+    ]
+   ]
+  }
+ ]
+}

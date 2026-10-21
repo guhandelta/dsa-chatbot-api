@@ -1,0 +1,1182 @@
+{
+ "language": "c",
+ "version": 1,
+ "note": "Authored Study Room quiz items for C. Code items (fix_bug, write_snippet) are validated by execution: every reference solution passes its tests in the sandbox runner, every buggy snippet fails them, and every short_answer and mcq_code program was compiled with -Wall -Wextra -Wpedantic -fsanitize=undefined and its output compared with the stated answer.",
+ "items": [
+  {
+   "id": "c-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "loop-bounds",
+   "prompt": "A function must add the integers 1 through n inclusive. Which loop header visits exactly those values?",
+   "choices": [
+    "for (long long i = 1; i < n; i++)",
+    "for (long long i = 1; i <= n; i++)",
+    "for (long long i = 0; i < n; i++)",
+    "for (long long i = 1; i <= n + 1; i++)"
+   ],
+   "answer": 1,
+   "explanation": "Starting at 1 and testing i <= n visits 1, 2, ..., n. i < n stops one value early, starting at 0 and testing i < n visits 0 through n - 1, and i <= n + 1 visits n + 1 as well."
+  },
+  {
+   "id": "c-s03-mcq-init",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "accumulator-init",
+   "prompt": "Inside a function you write `long long total;` with no initializer and then run `total += x;` in a loop. What is the status of the first `+=`?",
+   "choices": [
+    "total starts at 0 because C zero-fills local variables",
+    "total keeps the value it had at the end of the previous call to the function",
+    "It reads an indeterminate value, which is a bug",
+    "The compiler refuses to compile a variable that has no initial value"
+   ],
+   "answer": 2,
+   "explanation": "Automatic (local, non-static) variables are not initialized: they hold an indeterminate value until you assign one, and reading it is a bug. Only static-duration variables start at zero. Write `long long total = 0;`."
+  },
+  {
+   "id": "c-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "loop-trace",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int count = 0;\n    for (int i = 10; i > 0; i -= 4) {\n        count++;\n    }\n    printf(\"%d\\n\", count);\n    return 0;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "2",
+    "4",
+    "10",
+    "3"
+   ],
+   "answer": 3,
+   "explanation": "i takes the values 10, 6 and 2; the next value, -2, fails the condition i > 0. The body runs three times."
+  },
+  {
+   "id": "c-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "continue",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n    for (int i = 1; i <= 5; i++) {\n        if (i % 2 == 0) {\n            continue;\n        }\n        total += i;\n    }\n    printf(\"%d\\n\", total);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "9",
+   "explanation": "continue skips the rest of the body for even i, so only 1, 3 and 5 are added: 1 + 3 + 5 = 9."
+  },
+  {
+   "id": "c-s03-short-countdown",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "unsigned-countdown",
+   "code": "#include <stdio.h>\n#include <stddef.h>\n\nint main(void) {\n    for (size_t i = 3; i-- > 0; ) {\n        printf(\"%zu \", i);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints (spacing is ignored).",
+   "answer": "2 1 0",
+   "explanation": "The condition i-- > 0 compares the old value with 0 and then decrements, so the body sees 2, 1, 0 and the loop ends when i was 0. This is the safe way to count down with an unsigned type, which can never be negative; `i >= 0` would be always true."
+  },
+  {
+   "id": "c-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "accumulator",
+   "prompt": "In your own words: what is an accumulator in a loop, what must you decide before the first iteration, and what does it hold after each iteration?",
+   "answer": "An accumulator is a variable that carries the result for everything the loop has visited so far. It must be declared outside the loop and given an explicit initial value before the first iteration (for a sum, 0, because C does not initialize local variables), and after each iteration it holds the result for all the elements processed up to that point, which is the invariant that explains why the final value is correct.",
+   "keywords": [
+    [
+     "initial",
+     "initializ",
+     "initialis",
+     "start"
+    ],
+    [
+     "so far",
+     "after each",
+     "invariant",
+     "processed",
+     "visited",
+     "running"
+    ],
+    [
+     "outside",
+     "declared",
+     "zero",
+     "= 0",
+     "at 0",
+     "to 0",
+     "as 0"
+    ]
+   ]
+  },
+  {
+   "id": "c-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "loop-bounds",
+   "fn": "sum_of_evens",
+   "prompt": "This function should return the sum of the even integers from 2 through n inclusive (0 when n is below 2), but it gives wrong answers for some inputs. Fix it.",
+   "code": "long long sum_of_evens(long long n) {\n    long long total = 0;\n    for (long long i = 2; i < n; i += 2) {\n        total += i;\n    }\n    return total;\n}",
+   "solution": "long long sum_of_evens(long long n) {\n    long long total = 0;\n    for (long long i = 2; i <= n; i += 2) {\n        total += i;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      6
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 30
+    },
+    {
+     "args": [
+      11
+     ],
+     "expected": 30
+    }
+   ],
+   "explanation": "With i < n the loop never visits n itself, so an even n is left out. The condition must be i <= n."
+  },
+  {
+   "id": "c-s03-write",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "loop-count",
+   "fn": "count_multiples",
+   "prompt": "Write count_multiples(n, k): return how many integers from 1 through n are divisible by k. n is between 0 and 1000 and k is between 1 and 1000.",
+   "starter": "long long count_multiples(long long n, long long k) {\n    /* your code here */\n    return 0;\n}",
+   "solution": "long long count_multiples(long long n, long long k) {\n    long long count = 0;\n    for (long long i = 1; i <= n; i++) {\n        if (i % k == 0) {\n            count++;\n        }\n    }\n    return count;\n}",
+   "tests": [
+    {
+     "args": [
+      0,
+      3
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      9,
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      5,
+      7
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      7,
+      7
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      100,
+      1
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      1000,
+      10
+     ],
+     "expected": 100
+    }
+   ],
+   "explanation": "Visit every integer from 1 through n, test divisibility with the remainder operator, and count the matches in an accumulator that starts at 0."
+  },
+  {
+   "id": "c-s04-mcq",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "pass-by-value",
+   "prompt": "A caller has `long long x = 5;` and calls `bump(x);`, where `void bump(long long v) { v = v + 1; }`. What is the value of x after the call?",
+   "choices": [
+    "6, because v is another name for x",
+    "5, because v is a copy of x",
+    "Indeterminate, because bump returns no value",
+    "The program does not compile, because a parameter cannot be assigned"
+   ],
+   "answer": 1,
+   "explanation": "C passes arguments by value. v is a local copy initialized from x, so changing v leaves x untouched. To change the caller's variable the function must receive its address (a pointer)."
+  },
+  {
+   "id": "c-s04-mcq-return",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "return-paths",
+   "prompt": "A function declared `long long sign(long long v)` returns 1 when v > 0 and -1 when v < 0, but has no statement for v == 0, so control can reach the closing brace. What happens when it is called with 0 and the caller uses the result?",
+   "choices": [
+    "It returns 0 automatically",
+    "It returns the last value that was computed in the function",
+    "The program is rejected at link time",
+    "The behaviour is undefined"
+   ],
+   "answer": 3,
+   "explanation": "Using the value of a non-void call whose function ended without a return statement is undefined behaviour in C. Compilers diagnose the missing path with -Wreturn-type (the exercise runner turns it into an error). Make every path return a value."
+  },
+  {
+   "id": "c-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "call-trace",
+   "code": "#include <stdio.h>\n\nstatic int add(int a, int b) { return a + b; }\nstatic int twice(int v) { return add(v, v); }\n\nint main(void) {\n    printf(\"%d\\n\", twice(add(1, 2)));\n    return 0;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "12",
+    "9",
+    "3",
+    "6"
+   ],
+   "answer": 3,
+   "explanation": "The argument add(1, 2) is evaluated first and gives 3. twice(3) calls add(3, 3), which returns 6."
+  },
+  {
+   "id": "c-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "pass-by-value",
+   "code": "#include <stdio.h>\n\nstatic void tweak(int v, int* p) {\n    v += 10;\n    *p += v;\n}\n\nint main(void) {\n    int a = 1;\n    int b = 1;\n    tweak(a, &b);\n    printf(\"%d %d\\n\", a, b);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "1 12",
+   "explanation": "v is a copy of a: it becomes 11 inside the function, but a stays 1 in the caller. p holds the address of b, so *p += v updates the caller's variable: b becomes 1 + 11 = 12."
+  },
+  {
+   "id": "c-s04-short-division",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "integer-division",
+   "code": "#include <stdio.h>\n\nstatic int half(int v) {\n    return v / 2;\n}\n\nint main(void) {\n    printf(\"%d %d\\n\", half(7), half(-7));\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "3 -3",
+   "explanation": "Integer division in C truncates toward zero: 7 / 2 is 3 and -7 / 2 is -3 (not -4)."
+  },
+  {
+   "id": "c-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "output-parameters",
+   "prompt": "A function must give its caller two results, for example a quotient and a remainder. Because C passes arguments by value, how can it do this? Describe at least one approach.",
+   "answer": "A function can return only one value directly. It can return one result with return and write the other through a pointer parameter that the caller passes in (an output parameter), because the pointer is a copy of an address and writing through it changes the caller's variable. Alternatively it can return a struct that holds both values, or take two pointers and return a status code.",
+   "keywords": [
+    [
+     "pointer",
+     "address",
+     "&"
+    ],
+    [
+     "struct",
+     "output",
+     "out param",
+     "caller"
+    ],
+    [
+     "return a struct",
+     "returns a struct",
+     "return struct",
+     "returning a struct",
+     "by value",
+     "copy",
+     "single value",
+     "one value"
+    ]
+   ]
+  },
+  {
+   "id": "c-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "contracts",
+   "fn": "clamp",
+   "prompt": "clamp(value, low, high) should return low when value < low, high when value > high, and value otherwise (low <= high). It returns wrong results for values outside the range. Fix it.",
+   "code": "long long clamp(long long value, long long low, long long high) {\n    if (value < low) return high;\n    if (value > high) return low;\n    return value;\n}",
+   "solution": "long long clamp(long long value, long long low, long long high) {\n    if (value < low) return low;\n    if (value > high) return high;\n    return value;\n}",
+   "tests": [
+    {
+     "args": [
+      5,
+      1,
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      0,
+      1,
+      10
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      11,
+      1,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      1,
+      1,
+      10
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      10,
+      1,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      -7,
+      -5,
+      -2
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      3,
+      3,
+      3
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "The two out-of-range branches return the opposite bound. A value below low is replaced by low, and a value above high by high."
+  },
+  {
+   "id": "c-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "helper-functions",
+   "fn": "min_of_three",
+   "prompt": "Write a small helper function min2(a, b) that returns the smaller of two long long values, and use it to write min_of_three(a, b, c), which returns the smallest of three values. Both functions must be in your answer.",
+   "starter": "long long min_of_three(long long a, long long b, long long c) {\n    /* your code here */\n    return 0;\n}",
+   "solution": "static long long min2(long long a, long long b) {\n    return a < b ? a : b;\n}\n\nlong long min_of_three(long long a, long long b, long long c) {\n    return min2(min2(a, b), c);\n}",
+   "tests": [
+    {
+     "args": [
+      1,
+      2,
+      3
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      3,
+      2,
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2,
+      1,
+      3
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      5,
+      5,
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -1,
+      4,
+      -9
+     ],
+     "expected": -9
+    },
+    {
+     "args": [
+      0,
+      -2,
+      -2
+     ],
+     "expected": -2
+    }
+   ],
+   "explanation": "A helper defined before its use keeps each function to one purpose; min_of_three is the helper applied twice."
+  },
+  {
+   "id": "c-m-ownership-mcq",
+   "node": "module-ownership-cleanup",
+   "type": "mcq",
+   "concept": "realloc-failure",
+   "prompt": "Which fragment grows the heap array `arr` to `new_cap` elements without losing the old block when realloc fails?",
+   "choices": [
+    "arr = realloc(arr, new_cap * sizeof *arr);",
+    "free(arr);\narr = malloc(new_cap * sizeof *arr);\n/* arr may now be NULL */",
+    "realloc(arr, new_cap * sizeof *arr);\n/* keep using arr */",
+    "int* tmp = realloc(arr, new_cap * sizeof *arr);\nif (tmp != NULL) { arr = tmp; }"
+   ],
+   "answer": 3,
+   "explanation": "On failure realloc returns NULL and leaves the original block allocated. Assigning the result straight to arr overwrites the only pointer to that block and leaks it. A temporary lets you keep arr valid and report the failure. Ignoring the return value discards the possibly moved block."
+  },
+  {
+   "id": "c-m-ownership-mcq-free",
+   "node": "module-ownership-cleanup",
+   "type": "mcq",
+   "concept": "free-rules",
+   "prompt": "Which of these calls has defined behaviour?",
+   "choices": [
+    "free(p) a second time, after p was already freed",
+    "free(&local) where local is an automatic variable",
+    "free(p + 1) where p came from malloc(10)",
+    "free(NULL)"
+   ],
+   "answer": 3,
+   "explanation": "free(NULL) does nothing. Freeing a pointer twice, freeing something that was not returned by an allocation function (a local, or an interior pointer such as p + 1) is undefined behaviour."
+  },
+  {
+   "id": "c-m-ownership-code",
+   "node": "module-ownership-cleanup",
+   "type": "mcq_code",
+   "concept": "dangling-copies",
+   "code": "int* a = malloc(sizeof *a);\n*a = 1;\nint* b = a;\nfree(a);\na = NULL;",
+   "prompt": "After these statements, which description of b is correct?",
+   "choices": [
+    "b is NULL because a was set to NULL",
+    "b still points to a valid int that holds 1",
+    "b is a dangling pointer: dereferencing it is undefined",
+    "b must also be freed, because free(a) only released a's copy"
+   ],
+   "answer": 2,
+   "explanation": "free releases the block, not one particular variable. Every copy of the pointer, including b, now refers to storage whose lifetime ended. Setting a to NULL protects only the variable a, not copies of it, and freeing b would be a double free."
+  },
+  {
+   "id": "c-m-ownership-short",
+   "node": "module-ownership-cleanup",
+   "type": "short_answer",
+   "concept": "shallow-copy",
+   "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct {\n    int* p;\n} Box;\n\nint main(void) {\n    int* buf = malloc(sizeof *buf);\n    if (buf == NULL) return 1;\n    *buf = 1;\n    Box a = {buf};\n    Box b = a;\n    *b.p = 5;\n    printf(\"%d\\n\", *a.p);\n    free(buf);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "5",
+   "explanation": "Assigning a struct copies its members, and a pointer member is copied as an address, not as the memory it points to. a.p and b.p refer to the same int, so the write through b.p is visible through a.p. Only one free is needed and the owner must be decided: here buf."
+  },
+  {
+   "id": "c-m-ownership-short-calloc",
+   "node": "module-ownership-cleanup",
+   "type": "short_answer",
+   "concept": "allocation-size-overflow",
+   "code": "#include <stdint.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    size_t count = SIZE_MAX / sizeof(int) + 1;\n    int* p = calloc(count, sizeof *p);\n    printf(\"%d\\n\", p == NULL);\n    free(p);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "1",
+   "explanation": "count * sizeof(int) does not fit in size_t. calloc has to supply room for count elements of that size, so it detects the overflow instead of wrapping and fails with NULL (prints 1 on mainstream implementations). With malloc(count * sizeof *p) the product would silently wrap to a small number, so the caller has to test count <= SIZE_MAX / sizeof *p itself."
+  },
+  {
+   "id": "c-m-ownership-explain",
+   "node": "module-ownership-cleanup",
+   "type": "explain",
+   "concept": "cleanup-paths",
+   "prompt": "A constructor function allocates a struct, then allocates two buffers for it, and the second buffer's malloc fails. What must the function do before returning, and how can you structure the code so every error path does this correctly?",
+   "answer": "It must free exactly the resources it has already acquired (the first buffer and the struct), return a failure indicator such as NULL so the caller knows there is nothing to free, and never leave a partially built object visible. A reliable structure is a single cleanup path, for example goto labels in reverse order of acquisition or initializing all pointers to NULL and freeing them at one label because free(NULL) is harmless.",
+   "keywords": [
+    [
+     "free",
+     "release"
+    ],
+    [
+     "already",
+     "acquired",
+     "so far",
+     "first"
+    ],
+    [
+     "fail",
+     "NULL",
+     "error",
+     "return"
+    ],
+    [
+     "goto",
+     "single",
+     "one place",
+     "cleanup",
+     "label",
+     "reverse"
+    ]
+   ]
+  },
+  {
+   "id": "c-m-ownership-fix",
+   "node": "module-ownership-cleanup",
+   "type": "fix_bug",
+   "concept": "allocation-size-overflow",
+   "fn": "checked_bytes",
+   "prompt": "checked_bytes(count, elem_size) should return count * elem_size when both are positive and the product is at most 1000000000, and -1 otherwise (it is meant to guard an allocation size). It returns a small positive number for some huge counts. Fix it.",
+   "code": "long long checked_bytes(long long count, long long elem_size) {\n    if (count <= 0 || elem_size <= 0) return -1;\n    unsigned long long total = (unsigned long long)count * (unsigned long long)elem_size;\n    if (total > 1000000000ULL) return -1;\n    return (long long)total;\n}",
+   "solution": "long long checked_bytes(long long count, long long elem_size) {\n    if (count <= 0 || elem_size <= 0) return -1;\n    if (count > 1000000000LL / elem_size) return -1;\n    return count * elem_size;\n}",
+   "tests": [
+    {
+     "args": [
+      10,
+      8
+     ],
+     "expected": 80
+    },
+    {
+     "args": [
+      0,
+      8
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      -3,
+      4
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      125000000,
+      8
+     ],
+     "expected": 1000000000
+    },
+    {
+     "args": [
+      125000001,
+      8
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      4611686018427387905,
+      4
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      1,
+      1
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "Checking the product after multiplying is too late: the unsigned multiplication wraps modulo 2^64, so 4611686018427387905 * 4 becomes 4, which passes the limit. Test count against limit / elem_size before multiplying."
+  },
+  {
+   "id": "c-m-ownership-write",
+   "node": "module-ownership-cleanup",
+   "type": "write_snippet",
+   "concept": "ownership-transfer",
+   "fn": "with_appended",
+   "prompt": "Write with_appended(values, n, extra, returnSize): return a NEW heap array that holds the n elements of values followed by extra, and store its length in *returnSize. The caller will free the result. If allocation fails, return NULL and set *returnSize to 0. Do not modify values. (The array argument arrives as a pointer plus its length n.)",
+   "starter": "#include <stdlib.h>\n#include <string.h>\n\nlong long* with_appended(const long long* values, int n, long long extra, int* returnSize) {\n    /* your code here */\n    *returnSize = 0;\n    return NULL;\n}",
+   "solution": "#include <stdlib.h>\n#include <string.h>\n\nlong long* with_appended(const long long* values, int n, long long extra, int* returnSize) {\n    long long* out = malloc(((size_t)n + 1) * sizeof *out);\n    if (out == NULL) {\n        *returnSize = 0;\n        return NULL;\n    }\n    if (n > 0) {\n        memcpy(out, values, (size_t)n * sizeof *out);\n    }\n    out[n] = extra;\n    *returnSize = n + 1;\n    return out;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      7
+     ],
+     "expected": [
+      7
+     ]
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      2
+     ],
+     "expected": [
+      1,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      4
+     ],
+     "expected": [
+      1,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       5
+      ],
+      5
+     ],
+     "expected": [
+      5,
+      5,
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       0
+      ],
+      -2
+     ],
+     "expected": [
+      -1,
+      0,
+      -2
+     ]
+    },
+    {
+     "args": [
+      [
+       9,
+       8,
+       7,
+       6
+      ],
+      0
+     ],
+     "expected": [
+      9,
+      8,
+      7,
+      6,
+      0
+     ]
+    }
+   ],
+   "explanation": "Allocate n + 1 elements with the size tied to the element type, check for NULL, copy the n existing elements, append extra, and report the new length. Returning a new allocation transfers ownership to the caller."
+  },
+  {
+   "id": "c-m-strings-mcq",
+   "node": "module-strings-bounds",
+   "type": "mcq",
+   "concept": "strncpy-termination",
+   "prompt": "After `char dst[4]; strncpy(dst, \"abcd\", sizeof dst);` which statement is true?",
+   "choices": [
+    "dst holds the characters a, b, c, d and no terminator, so it is not a valid string",
+    "dst holds \"abc\" followed by a terminating zero byte, because strncpy reserves room for it",
+    "dst holds \"abcd\" because strncpy always terminates its result with a zero byte",
+    "The call is rejected at run time because the source is longer than the destination allows"
+   ],
+   "answer": 0,
+   "explanation": "strncpy copies at most n characters and writes no terminator when the source has n or more characters. With n equal to sizeof dst, all four bytes are letters. Terminate explicitly (dst[sizeof dst - 1] = '\\0') after copying at most sizeof dst - 1, or use snprintf."
+  },
+  {
+   "id": "c-m-strings-code",
+   "node": "module-strings-bounds",
+   "type": "mcq_code",
+   "concept": "sizeof-vs-strlen",
+   "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char s[] = \"hello\";\n    printf(\"%zu %zu\\n\", sizeof s, strlen(s));\n    return 0;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "5 5",
+    "6 6",
+    "6 5",
+    "5 6"
+   ],
+   "answer": 2,
+   "explanation": "The array holds the five letters and the terminating zero byte, so sizeof s is 6. strlen counts the characters before the terminator: 5."
+  },
+  {
+   "id": "c-m-strings-mcq-literal",
+   "node": "module-strings-bounds",
+   "type": "mcq",
+   "concept": "string-literals",
+   "prompt": "Which of these code fragments has defined behaviour?",
+   "choices": [
+    "char* s = \"abc\"; s[0] = 'x';",
+    "const char* s = \"abc\"; ((char*)s)[1] = 'x';",
+    "char* s = \"abc\"; strcpy(s, \"xyz\");",
+    "char s[] = \"abc\"; s[0] = 'x';"
+   ],
+   "answer": 3,
+   "explanation": "A string literal may be stored in read-only memory and modifying it is undefined behaviour, however the pointer is declared or cast. char s[] = \"abc\" creates a writable array that is initialized from the literal."
+  },
+  {
+   "id": "c-m-strings-mcq-snprintf",
+   "node": "module-strings-bounds",
+   "type": "mcq",
+   "concept": "truncation-detection",
+   "prompt": "`int n = snprintf(buf, size, \"%s\", src);` returns the length the full output would have had (n >= 0 here, size > 0). Which test reports that the output was truncated?",
+   "choices": [
+    "n > size",
+    "n == size - 1",
+    "(size_t)n >= size",
+    "buf[size - 1] != '\\0'"
+   ],
+   "answer": 2,
+   "explanation": "snprintf writes at most size - 1 characters plus a terminator, so the output fits exactly when n < size. n > size misses the case n == size, where the last character did not fit; n == size - 1 is the exact-fit case; buf[size - 1] is always the terminator after a truncating call."
+  },
+  {
+   "id": "c-m-strings-short",
+   "node": "module-strings-bounds",
+   "type": "short_answer",
+   "concept": "snprintf-truncation",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    char buf[8];\n    int n = snprintf(buf, sizeof buf, \"%s\", \"abcdefghij\");\n    printf(\"%s %d\\n\", buf, n);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "abcdefg 10",
+   "explanation": "snprintf stores at most sizeof buf - 1 = 7 characters and a terminator, so buf is \"abcdefg\". The return value is the length of the untruncated output, 10; since 10 >= 8, the caller can tell it was truncated."
+  },
+  {
+   "id": "c-m-strings-short-init",
+   "node": "module-strings-bounds",
+   "type": "short_answer",
+   "concept": "char-array-initializer",
+   "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char s[6] = \"ab\";\n    printf(\"%zu %zu %d\\n\", sizeof s, strlen(s), s[5]);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "6 2 0",
+   "explanation": "sizeof s is the array size, 6. The initializer sets the first elements and zeroes the rest, so the string ends after \"ab\": strlen is 2 and s[5] is 0."
+  },
+  {
+   "id": "c-m-strings-explain",
+   "node": "module-strings-bounds",
+   "type": "explain",
+   "concept": "strncpy-safety",
+   "prompt": "Why is `strncpy(dst, src, sizeof dst)` not a safe drop-in replacement for strcpy, and what would you do instead when copying into a fixed-size buffer?",
+   "answer": "strncpy copies at most n characters but writes no terminating zero byte when the source has n or more characters, so dst may not be a valid string and later string functions read past the array. It also pads short copies with zeros, which wastes work. Instead pass the capacity and use snprintf, which always terminates and returns the length it wanted so truncation can be detected, or check the length first and copy with memcpy, or terminate dst[size - 1] explicitly.",
+   "keywords": [
+    [
+     "terminat",
+     "null byte",
+     "nul ",
+     "zero byte"
+    ],
+    [
+     "snprintf",
+     "explicit",
+     "memcpy",
+     "check the length",
+     "strlen"
+    ],
+    [
+     "truncat",
+     "capacity",
+     "size",
+     "bound"
+    ]
+   ]
+  },
+  {
+   "id": "c-m-strings-fix",
+   "node": "module-strings-bounds",
+   "type": "fix_bug",
+   "concept": "size-t-arithmetic",
+   "fn": "last_char_code",
+   "prompt": "last_char_code(s) should return the character code of the last character of s as a nonnegative number, or -1 when s is the empty string. It misbehaves on the empty string. Fix it.",
+   "code": "#include <string.h>\n\nlong long last_char_code(const char* s) {\n    size_t n = strlen(s);\n    if (n - 1 >= 0) {\n        return (unsigned char)s[n - 1];\n    }\n    return -1;\n}",
+   "solution": "#include <string.h>\n\nlong long last_char_code(const char* s) {\n    size_t n = strlen(s);\n    if (n > 0) {\n        return (unsigned char)s[n - 1];\n    }\n    return -1;\n}",
+   "tests": [
+    {
+     "args": [
+      "a"
+     ],
+     "expected": 97
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": 111
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "xyz"
+     ],
+     "expected": 122
+    },
+    {
+     "args": [
+      "ab"
+     ],
+     "expected": 98
+    },
+    {
+     "args": [
+      "z"
+     ],
+     "expected": 122
+    }
+   ],
+   "explanation": "strlen returns size_t, which is unsigned: for the empty string n - 1 wraps to a huge value, so n - 1 >= 0 is always true and the code reads s[n - 1] before the start of the string. Test n > 0 instead."
+  },
+  {
+   "id": "c-m-strings-write",
+   "node": "module-strings-bounds",
+   "type": "write_snippet",
+   "concept": "bounded-copy",
+   "fn": "take_prefix",
+   "prompt": "Write take_prefix(s, n): return a NEW heap-allocated string that holds the first n characters of s, or all of s when it is shorter than n. If n is 0 or negative the result is the empty string. The result must always be properly terminated, and the caller will free it. Return NULL only if allocation fails.",
+   "starter": "#include <stdlib.h>\n#include <string.h>\n\nchar* take_prefix(const char* s, long long n) {\n    /* your code here */\n    return NULL;\n}",
+   "solution": "#include <stdlib.h>\n#include <string.h>\n\nchar* take_prefix(const char* s, long long n) {\n    size_t len = strlen(s);\n    size_t take = (n <= 0) ? 0 : ((unsigned long long)n < len ? (size_t)n : len);\n    char* out = malloc(take + 1);\n    if (out == NULL) {\n        return NULL;\n    }\n    memcpy(out, s, take);\n    out[take] = '\\0';\n    return out;\n}",
+   "tests": [
+    {
+     "args": [
+      "hello",
+      3
+     ],
+     "expected": "hel"
+    },
+    {
+     "args": [
+      "hi",
+      5
+     ],
+     "expected": "hi"
+    },
+    {
+     "args": [
+      "",
+      3
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "abc",
+      0
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "abc",
+      -1
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "abcdef",
+      6
+     ],
+     "expected": "abcdef"
+    }
+   ],
+   "explanation": "Compute how many characters to take (clamped to 0..strlen(s)), allocate that many plus one byte for the terminator, copy with memcpy and write the terminator explicitly."
+  },
+  {
+   "id": "c-m-errno-mcq",
+   "node": "module-errno",
+   "type": "mcq",
+   "concept": "errno-after-success",
+   "prompt": "After `FILE* f = fopen(path, \"r\");` returns a non-NULL pointer, a program runs `if (errno != 0) { report_failure(); }`. Why is that test unreliable?",
+   "choices": [
+    "Success does not clear errno, so a nonzero value may be left over from an earlier failure",
+    "errno is reset to 0 by every successful library call, so the test can never be true",
+    "errno can only be read once per program run, so a second test always sees zero",
+    "errno is only meaningful for functions that return a pointer, never for those that return an int"
+   ],
+   "answer": 0,
+   "explanation": "Functions that set errno do so when they fail; a successful call does not promise to clear it, so a stale nonzero value proves nothing. Check the documented failure return value first (NULL for fopen), and only then read errno."
+  },
+  {
+   "id": "c-m-errno-mcq-strtol",
+   "node": "module-errno",
+   "type": "mcq",
+   "concept": "strtol-errno",
+   "prompt": "Why do robust callers of strtol set `errno = 0;` immediately before the call?",
+   "choices": [
+    "strtol refuses to start parsing while errno holds a nonzero value from an earlier call",
+    "Setting errno to 0 is what makes the call safe to use from several threads at once",
+    "It tells strtol to store the position of the first unparsed character in endptr",
+    "LONG_MAX can be a real result or an overflow marker, and strtol never clears errno on success"
+   ],
+   "answer": 3,
+   "explanation": "The return value alone cannot separate a range error from a legitimate LONG_MAX. strtol sets errno to ERANGE on overflow but does not reset it on success, so clear it first and test it afterwards."
+  },
+  {
+   "id": "c-m-errno-mcq-feof",
+   "node": "module-errno",
+   "type": "mcq",
+   "concept": "feof-loop",
+   "prompt": "Which loop processes every line of the open stream f exactly once and then lets you tell end-of-file from a read error?",
+   "choices": [
+    "while (!feof(f)) {\n    fgets(buf, sizeof buf, f);\n    process(buf);\n}\nif (ferror(f)) { /* read error */ }",
+    "while (fgets(buf, sizeof buf, f) != NULL) {\n    process(buf);\n}\nif (ferror(f)) { /* read error */ }",
+    "do {\n    fgets(buf, sizeof buf, f);\n    process(buf);\n} while (!ferror(f));",
+    "while (errno == 0) {\n    fgets(buf, sizeof buf, f);\n    process(buf);\n}"
+   ],
+   "answer": 1,
+   "explanation": "feof becomes true only after a read has already tried to go past the end, so the first loop processes stale data after the last line. Loop on the return value of the read; afterwards ferror(f) distinguishes a read error from a normal end of file."
+  },
+  {
+   "id": "c-m-errno-code",
+   "node": "module-errno",
+   "type": "mcq_code",
+   "concept": "saving-errno",
+   "code": "int read_config(const char* path) {\n    FILE* f = fopen(path, \"r\");\n    if (f == NULL) {\n        fprintf(stderr, \"cannot open %s\\n\", path);\n        return -errno;\n    }\n    /* ... */\n    fclose(f);\n    return 0;\n}",
+   "prompt": "What is the weakness of `return -errno;` in this function?",
+   "choices": [
+    "fopen never sets errno on any platform, so the returned value is always 0 here",
+    "-errno is not a valid expression, because errno is a macro and cannot be negated",
+    "The fprintf call before errno is read may change it, so errno should be saved first",
+    "A function must return a positive number to signal an error, so the sign is wrong"
+   ],
+   "answer": 2,
+   "explanation": "Any library call in between, including fprintf, may change errno (even on success). Save it right after the failing call: `int saved = errno;`. (Which functions set errno is partly defined by C and partly by POSIX; fopen setting it is POSIX behaviour.)"
+  },
+  {
+   "id": "c-m-errno-short",
+   "node": "module-errno",
+   "type": "short_answer",
+   "concept": "strtol-endptr",
+   "code": "#include <errno.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    const char* text = \"12ab\";\n    char* end;\n    errno = 0;\n    long value = strtol(text, &end, 10);\n    printf(\"%ld %s %d\\n\", value, end, errno);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "12 ab 0",
+   "explanation": "strtol converts the leading digits and stops at the first character that cannot be part of the number, setting end to that position (\"ab\"). Trailing characters are not a range error, so errno stays 0: a robust parser must check *end != '\\0' itself."
+  },
+  {
+   "id": "c-m-errno-short-range",
+   "node": "module-errno",
+   "type": "short_answer",
+   "concept": "erange",
+   "code": "#include <errno.h>\n#include <limits.h>\n#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    char* end;\n    errno = 0;\n    long value = strtol(\"99999999999999999999\", &end, 10);\n    printf(\"%d %d\\n\", errno == ERANGE, value == LONG_MAX);\n    return 0;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "1 1",
+   "explanation": "The number is far larger than any long, so strtol sets errno to ERANGE and returns LONG_MAX. The return value alone would look like a legitimate LONG_MAX; errno (cleared before the call) is what reports the overflow."
+  },
+  {
+   "id": "c-m-errno-explain",
+   "node": "module-errno",
+   "type": "explain",
+   "concept": "error-contract",
+   "prompt": "A parsing function returns an int and returns 0 whenever the text is not a valid number. What is wrong with this design, and how would you redesign the contract?",
+   "answer": "Returning 0 on failure is ambiguous: the caller cannot tell the valid input \"0\" from an error, so a failure turns into a plausible result. Redesign it to report success separately: return a status code (or a bool) and deliver the number through an output pointer parameter, and document that the output is left unchanged on failure. Another option is a distinct sentinel that cannot be a valid result, if one exists.",
+   "keywords": [
+    [
+     "ambigu",
+     "cannot tell",
+     "indistinguishable",
+     "distinguish",
+     "plausible"
+    ],
+    [
+     "status",
+     "return code",
+     "error code",
+     "bool",
+     "success"
+    ],
+    [
+     "pointer",
+     "output",
+     "out param"
+    ]
+   ]
+  },
+  {
+   "id": "c-m-errno-fix",
+   "node": "module-errno",
+   "type": "fix_bug",
+   "concept": "strtol-checks",
+   "fn": "parse_or_default",
+   "prompt": "parse_or_default(text, fallback) should return the decimal value of text, or fallback when text has no digits, has any trailing characters after the number, or does not fit in a long long. (text never contains whitespace.) It accepts some invalid inputs. Fix it.",
+   "code": "#include <stdlib.h>\n\nlong long parse_or_default(const char* text, long long fallback) {\n    char* end;\n    long long value = strtoll(text, &end, 10);\n    if (end == text) return fallback;\n    return value;\n}",
+   "solution": "#include <errno.h>\n#include <stdlib.h>\n\nlong long parse_or_default(const char* text, long long fallback) {\n    char* end;\n    errno = 0;\n    long long value = strtoll(text, &end, 10);\n    if (end == text || *end != '\\0' || errno == ERANGE) return fallback;\n    return value;\n}",
+   "tests": [
+    {
+     "args": [
+      "42",
+      -1
+     ],
+     "expected": 42
+    },
+    {
+     "args": [
+      "",
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "12x",
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "-7",
+      0
+     ],
+     "expected": -7
+    },
+    {
+     "args": [
+      "99999999999999999999",
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "abc",
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      "0",
+      9
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "9223372036854775807",
+      -1
+     ],
+     "expected": 9223372036854775807
+    },
+    {
+     "args": [
+      "9223372036854775808",
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "-9223372036854775808",
+      5
+     ],
+     "expected": -9223372036854775808
+    }
+   ],
+   "explanation": "A complete strtoll check has three parts: no digits (end == text), trailing characters (*end != '\\0'), and a range error (errno == ERANGE, with errno cleared before the call)."
+  },
+  {
+   "id": "c-m-errno-write",
+   "node": "module-errno",
+   "type": "write_snippet",
+   "concept": "error-return-contract",
+   "fn": "digits_value",
+   "prompt": "Write digits_value(text): return the value of text, a non-empty string of decimal digits, or -1 on any error. Errors are: the empty string, any character that is not a digit, or a value greater than 1000000000. Detect the last error while accumulating, so that no intermediate result can overflow.",
+   "starter": "long long digits_value(const char* text) {\n    /* your code here */\n    return 0;\n}",
+   "solution": "long long digits_value(const char* text) {\n    if (text[0] == '\\0') {\n        return -1;\n    }\n    long long value = 0;\n    for (size_t i = 0; text[i] != '\\0'; i++) {\n        if (text[i] < '0' || text[i] > '9') {\n            return -1;\n        }\n        value = value * 10 + (text[i] - '0');\n        if (value > 1000000000LL) {\n            return -1;\n        }\n    }\n    return value;\n}",
+   "tests": [
+    {
+     "args": [
+      "123"
+     ],
+     "expected": 123
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "12a"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "0"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "1000000000"
+     ],
+     "expected": 1000000000
+    },
+    {
+     "args": [
+      "1000000001"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "99999999999999999999999"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "007"
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      "18446744073709551617"
+     ],
+     "expected": -1
+    }
+   ],
+   "explanation": "Return -1 for the empty string, test each character, and stop as soon as the value exceeds the limit. Because the value never exceeds 1000000000 before the next step, value * 10 + digit cannot overflow a long long."
+  }
+ ]
+}

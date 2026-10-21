@@ -27,7 +27,8 @@ def learner_document(content_id: str) -> str:
 def solution_document(content_id: str, language: str) -> str:
     body = read_content(content_id)
     labels = {"javascript": "JavaScript", "java": "Java", "python": "Python",
-              "cpp": "C++", "c": "C", "rust": "Rust"}
+              "cpp": "C++", "c": "C", "rust": "Rust", "typescript": "TypeScript",
+              "ruby": "Ruby", "go": "Go", "csharp": "C#"}
     label = labels.get(language)
     if not label:
         return ""

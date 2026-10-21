@@ -1,0 +1,888 @@
+{
+ "language": "typescript",
+ "version": 1,
+ "note": "Authored Study Room quiz items for the nodes that had no checks. short_answer snippets are type-checked with tsc --strict and executed with node by the verifier, and the expected output is compared exactly; mcq and mcq_code claims about compiler errors and output were checked by running tsc 5.4.5 and node. TypeScript has no runner in the app, so there are no fix_bug or write_snippet items.",
+ "items": [
+  {
+   "id": "ts-s02-mcq",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "chained-comparison",
+   "prompt": "A rule says a score is valid when it is at least 1 and at most 10. Which TypeScript condition expresses that rule and compiles?",
+   "choices": [
+    "1 <= score <= 10",
+    "score >= 1 || score <= 10",
+    "score >= 1 && score <= 10",
+    "score > 1 && score < 10"
+   ],
+   "answer": 2,
+   "explanation": "Each boundary needs its own comparison joined with &&. `1 <= score <= 10` compares a boolean with 10 and is a compile error (TS2365; in plain JavaScript it runs and is wrong). || is true for every number, and strict < and > exclude the boundary values 1 and 10."
+  },
+  {
+   "id": "ts-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "truthiness",
+   "code": "const a: number = 0;\nconst b: string = \"\";\nconst c: string = \"0\";\nconsole.log(Boolean(a), Boolean(b), Boolean(c));",
+   "prompt": "What does this print?",
+   "choices": [
+    "false false false",
+    "false false true",
+    "false true true",
+    "true false true"
+   ],
+   "answer": 1,
+   "explanation": "0 and the empty string are falsy, but the string \"0\" is a non-empty string and therefore truthy."
+  },
+  {
+   "id": "ts-s02-short",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "truthiness-narrowing",
+   "code": "function describe(count: number | undefined): string {\n  if (count) {\n    return \"has\";\n  }\n  return \"none\";\n}\nconsole.log(describe(0), describe(3), describe(undefined));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "none has none",
+   "explanation": "A truthiness test removes undefined, but it also treats the valid number 0 as false, so describe(0) takes the \"none\" branch. Test `count !== undefined` when 0 is a meaningful value."
+  },
+  {
+   "id": "ts-s02-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "truthiness-vs-explicit-test",
+   "prompt": "In your own words: a function takes `count: number | undefined`, and 0 is a valid count. Why is `if (count)` the wrong test, and what should you write instead?",
+   "answer": "A truthiness test removes undefined but also removes 0, because 0 is falsy, so a valid count of 0 is handled as if it were missing. Compare explicitly instead, for example `count !== undefined` (or `count != null` to cover null too), so only the missing case is excluded.",
+   "keywords": [
+    [
+     "0",
+     "zero"
+    ],
+    [
+     "falsy",
+     "truthy",
+     "truthiness"
+    ],
+    [
+     "undefined",
+     "!==",
+     "explicit",
+     "!= null",
+     "== null"
+    ]
+   ]
+  },
+  {
+   "id": "ts-s02-null",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "nullish-equality",
+   "prompt": "Given `x: number | null | undefined`, which condition is true when x is null or undefined, and false when x is 0?",
+   "choices": [
+    "!x",
+    "x === null",
+    "x === undefined",
+    "x == null"
+   ],
+   "answer": 3,
+   "explanation": "`x == null` is the one deliberate use of loose equality: it matches exactly null and undefined. `!x` is also true for 0, while `=== null` and `=== undefined` each cover only one of the two missing values."
+  },
+  {
+   "id": "ts-s02-short-circuit",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "short-circuit-operands",
+   "code": "console.log(\"a\" && 0 || \"b\");",
+   "prompt": "What does this print?",
+   "choices": [
+    "a",
+    "0",
+    "b",
+    "true"
+   ],
+   "answer": 2,
+   "explanation": "&& binds tighter than ||. \"a\" is truthy, so \"a\" && 0 evaluates to its right operand 0, and 0 is falsy, so 0 || \"b\" evaluates to \"b\". The operators return an operand, not necessarily a boolean."
+  },
+  {
+   "id": "ts-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "loop-bounds",
+   "prompt": "Which loop adds every integer from 1 through n, including n, to total?",
+   "choices": [
+    "for (let i = 1; i <= n; i++) total += i;",
+    "for (let i = 1; i < n; i++) total += i;",
+    "for (let i = 0; i < n; i++) total += i;",
+    "for (let i = 1; i <= n; i += 2) total += i;"
+   ],
+   "answer": 0,
+   "explanation": "Start at 1 and keep going while i <= n so n itself is visited. i < n stops one short, starting at 0 and using i < n visits 0 through n - 1, and i += 2 skips every other value."
+  },
+  {
+   "id": "ts-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "for-in-keys",
+   "code": "const xs: number[] = [10, 20];\nconst out: string[] = [];\nfor (const k in xs) {\n  out.push(k + 1);\n}\nconsole.log(out.join(\",\"));",
+   "prompt": "What does this print?",
+   "choices": [
+    "11,21",
+    "0,1",
+    "1,2",
+    "01,11"
+   ],
+   "answer": 3,
+   "explanation": "for...in yields the keys of the array, and keys are strings: \"0\" and \"1\". k + 1 therefore concatenates, giving \"01\" and \"11\". for...of would yield the elements 10 and 20."
+  },
+  {
+   "id": "ts-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "loop-trace",
+   "code": "let count = 0;\nfor (let i = 10; i > 0; i -= 3) {\n  count++;\n}\nconsole.log(count);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "4",
+   "explanation": "i takes the values 10, 7, 4 and 1; the next value, -2, fails the condition. The body runs four times."
+  },
+  {
+   "id": "ts-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "accumulator",
+   "prompt": "In your own words: what is an accumulator in a loop, why must it be declared before the loop, and how can you state what it holds at the start of each iteration?",
+   "answer": "An accumulator is a variable that holds the result for everything visited so far, such as a running total. It is declared and initialised before the loop so it survives every iteration instead of being recreated each time. At the start of each iteration it equals the answer for the items already processed, and the first iteration starts from the initial value, which must be the identity for the operation (0 for a sum).",
+   "keywords": [
+    [
+     "accumulator",
+     "running total",
+     "total",
+     "result so far"
+    ],
+    [
+     "before",
+     "outside",
+     "declare",
+     "initial",
+     "initialise",
+     "initialize"
+    ],
+    [
+     "each iteration",
+     "survive",
+     "every iteration",
+     "already",
+     "so far",
+     "visited"
+    ]
+   ]
+  },
+  {
+   "id": "ts-s03-type",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "accumulator-type-inference",
+   "prompt": "What does the compiler do with `let total = 0; total += \"1\";`?",
+   "choices": [
+    "It compiles and total becomes \"01\"",
+    "An error: total is inferred as number",
+    "It compiles and total becomes NaN",
+    "It compiles and total becomes 1"
+   ],
+   "answer": 1,
+   "explanation": "The initial value 0 gives total the type number, so assigning the string produced by += is error TS2322. Plain JavaScript would run it and produce the string \"01\"."
+  },
+  {
+   "id": "ts-s03-reduce",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "reduce-empty",
+   "code": "const xs: number[] = [];\nlet result = \"\";\ntry {\n  console.log(xs.reduce((a, b) => a + b));\n} catch (e) {\n  result = e instanceof Error ? e.name : \"other\";\n}\nconsole.log(result);",
+   "prompt": "What does this print?",
+   "choices": [
+    "0",
+    "undefined",
+    "TypeError",
+    "NaN"
+   ],
+   "answer": 2,
+   "explanation": "Without an initial value, reduce uses the first element as the accumulator, and an empty array has none: it throws a TypeError. The compiler does not warn. Passing 0 as the second argument fixes it."
+  },
+  {
+   "id": "ts-s04-arity",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "arity-checking",
+   "prompt": "A function is declared `function distance(a: number, b: number): number`. What happens to the call `distance(2)`?",
+   "choices": [
+    "It returns NaN at run time",
+    "It compiles and returns undefined",
+    "It substitutes 0 for the missing argument",
+    "A compile error: 2 arguments expected"
+   ],
+   "answer": 3,
+   "explanation": "TypeScript checks argument counts at compile time (TS2554: Expected 2 arguments, but got 1). Plain JavaScript would run the call with b as undefined and return NaN."
+  },
+  {
+   "id": "ts-s04-default",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "default-parameters",
+   "code": "function greet(name: string, punctuation: string = \"!\"): string {\n  return `Hi ${name}${punctuation}`;\n}\nconsole.log(greet(\"Ada\"), greet(\"Bo\", \"?\"));",
+   "prompt": "What does this print?",
+   "choices": [
+    "Hi Ada! Hi Bo?",
+    "Hi Adaundefined Hi Bo?",
+    "Hi Ada Hi Bo?",
+    "Hi Ada! Hi Bo!"
+   ],
+   "answer": 0,
+   "explanation": "A parameter with a default makes the argument optional: omitted, it takes the default \"!\"; supplied, the caller's value is used."
+  },
+  {
+   "id": "ts-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "pass-by-value",
+   "code": "function bump(n: number): number {\n  n += 1;\n  return n;\n}\nlet a = 5;\nconst b = bump(a);\nconsole.log(a, b);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "5 6",
+   "explanation": "A number argument is copied into the parameter, so changing n inside the function does not change the caller's a. The function communicates only through its return value."
+  },
+  {
+   "id": "ts-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "signature-contract",
+   "prompt": "In your own words: what does a TypeScript function signature promise to callers, and what part of that promise is still unchecked when the program runs?",
+   "answer": "The signature states the parameter types and the return type, and the compiler checks every call and every return statement against them at compile time. Types are erased from the emitted JavaScript, so nothing checks them at run time: data arriving through any, a cast or JSON can still break the contract, and validation has to be written as code.",
+   "keywords": [
+    [
+     "parameter",
+     "argument",
+     "signature",
+     "annotation",
+     "return type"
+    ],
+    [
+     "compile",
+     "compiler",
+     "checks",
+     "checked"
+    ],
+    [
+     "erased",
+     "runtime",
+     "run time",
+     "run-time",
+     "at run"
+    ]
+   ]
+  },
+  {
+   "id": "ts-s04-return",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "missing-return",
+   "prompt": "What does the compiler say about `function f(n: number): number { if (n > 0) { return n; } }`?",
+   "choices": [
+    "Nothing: a missing return gives 0 for a number",
+    "Nothing: it returns undefined, which is allowed",
+    "An error: the function lacks an ending return statement",
+    "An error: n must be a positive literal type"
+   ],
+   "answer": 2,
+   "explanation": "The declared return type is number, and not every path returns one. The compiler reports TS2366 (Function lacks ending return statement and return type does not include 'undefined')."
+  },
+  {
+   "id": "ts-s04-readonly",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "readonly-parameter",
+   "prompt": "Which parameter type tells callers that the function will not change the array they pass?",
+   "choices": [
+    "xs: Array<number>",
+    "xs: readonly number[]",
+    "xs: const number[]",
+    "xs: number[] | undefined"
+   ],
+   "answer": 1,
+   "explanation": "readonly number[] removes push, sort and the other mutating methods from the type, so the function cannot change its argument and callers can see that. Array<number> is the same mutable type as number[], and `const number[]` is not valid syntax."
+  },
+  {
+   "id": "ts-m-narrowing-mcq",
+   "node": "module-narrowing",
+   "type": "mcq",
+   "concept": "discriminated-union",
+   "prompt": "Given `type Result = { kind: \"found\"; index: number } | { kind: \"missing\" }` and `r: Result`, which test lets the next line read `r.index` without a compile error?",
+   "choices": [
+    "if (r.index !== undefined)",
+    "if (r.kind === \"found\")",
+    "if (typeof r === \"found\")",
+    "if (r instanceof Found)"
+   ],
+   "answer": 1,
+   "explanation": "Comparing the shared literal field narrows r to the member where kind is \"found\". Reading r.index to test it already fails because the missing member has no index property; typeof only returns type names, and Found is not a value."
+  },
+  {
+   "id": "ts-m-narrowing-code",
+   "node": "module-narrowing",
+   "type": "mcq_code",
+   "concept": "type-predicate-lies",
+   "code": "function isText(x: unknown): x is string {\n  return typeof x === \"number\";\n}\nconst v: unknown = 5;\nif (isText(v)) {\n  console.log(v.length);\n} else {\n  console.log(\"not text\");\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "not text",
+    "undefined",
+    "1",
+    "TypeError"
+   ],
+   "answer": 1,
+   "explanation": "The compiler trusts the predicate's claim and does not check its body. The body returns true for a number, so the branch runs with v treated as string; 5 has no length property, so the read gives undefined. A wrong predicate silently lies."
+  },
+  {
+   "id": "ts-m-narrowing-short",
+   "node": "module-narrowing",
+   "type": "short_answer",
+   "concept": "recursive-union",
+   "code": "type Tree = { kind: \"leaf\" } | { kind: \"inner\"; left: Tree; right: Tree };\nfunction depth(t: Tree): number {\n  return t.kind === \"leaf\" ? 0 : 1 + Math.max(depth(t.left), depth(t.right));\n}\nconst t: Tree = {\n  kind: \"inner\",\n  left: { kind: \"leaf\" },\n  right: { kind: \"inner\", left: { kind: \"leaf\" }, right: { kind: \"leaf\" } },\n};\nconsole.log(depth(t));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "The right subtree is an inner node whose children are leaves, so depth is 1 + max(0, 1 + max(0, 0)) = 2. Checking `t.kind` narrows t, which is what makes t.left and t.right legal on the inner branch."
+  },
+  {
+   "id": "ts-m-narrowing-in",
+   "node": "module-narrowing",
+   "type": "short_answer",
+   "concept": "in-operator",
+   "code": "type Circle = { radius: number };\ntype Square = { side: number };\nfunction area(s: Circle | Square): number {\n  return \"radius\" in s ? Math.round(Math.PI * s.radius ** 2) : s.side ** 2;\n}\nconsole.log(area({ radius: 1 }), area({ side: 3 }));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 9",
+   "explanation": "The `in` operator narrows the union: a circle of radius 1 has area pi, which Math.round turns into 3, and a square of side 3 has area 9."
+  },
+  {
+   "id": "ts-m-narrowing-explain",
+   "node": "module-narrowing",
+   "type": "explain",
+   "concept": "non-null-assertion",
+   "prompt": "In your own words: what does the non-null assertion `value!` do, and what happens at run time if the value really is null?",
+   "answer": "The `!` tells the compiler to treat the value as not null or undefined. It only changes the static type and generates no run-time check. If the value is null anyway, the program does not stop at the assertion; it fails later, typically with a TypeError at the point of use. Prefer narrowing with a real check, or an explicit check that throws a clear message.",
+   "keywords": [
+    [
+     "compiler",
+     "type checker",
+     "static",
+     "compile"
+    ],
+    [
+     "no check",
+     "no runtime",
+     "no run-time",
+     "not checked",
+     "nothing at run",
+     "does not check",
+     "generates no",
+     "no code"
+    ],
+    [
+     "TypeError",
+     "fails later",
+     "crash",
+     "later",
+     "use site",
+     "at use"
+    ]
+   ]
+  },
+  {
+   "id": "ts-m-narrowing-never",
+   "node": "module-narrowing",
+   "type": "mcq",
+   "concept": "exhaustiveness",
+   "prompt": "A switch over `s.kind` ends with `default: { const x: never = s; return x; }`. A third member is later added to the union and no case is written for it. What happens?",
+   "choices": [
+    "Nothing: never accepts any value",
+    "A run-time error appears only when the new kind occurs",
+    "A compile error at the assignment to never",
+    "The compiler adds the missing case automatically"
+   ],
+   "answer": 2,
+   "explanation": "In the default branch s still has the unhandled member's type, which is not assignable to never, so the compiler reports an error (TS2322) at that line. That is how a union change shows every switch that needs updating."
+  },
+  {
+   "id": "ts-m-narrowing-closure",
+   "node": "module-narrowing",
+   "type": "mcq_code",
+   "concept": "narrowing-reset",
+   "code": "type Box = { label: string | null };\nfunction size(b: Box): number {\n  if (b.label === null) {\n    return 0;\n  }\n  const read = () => b.label.length;\n  return read();\n}",
+   "prompt": "What does the compiler report for the arrow function?",
+   "choices": [
+    "That b.label is possibly null: the narrowing is not kept inside the callback",
+    "Nothing: the early return narrowed b.label everywhere in the function",
+    "That read is declared but never used",
+    "That b is not defined inside the arrow function"
+   ],
+   "answer": 0,
+   "explanation": "Narrowing applies at the point where the check ran. A callback may run later, after the property has changed, so the compiler does not keep the property narrowing there (error TS18047 under tsc 5.4). Copy the value into a const before the callback, or check inside it."
+  },
+  {
+   "id": "ts-m-generics-mcq",
+   "node": "module-generics-inference",
+   "type": "mcq",
+   "concept": "honest-return-type",
+   "prompt": "What is wrong with `function first<T>(xs: T[]): T { return xs[0]; }`?",
+   "choices": [
+    "It does not compile because T cannot be indexed",
+    "T is erased, so it returns undefined for every array",
+    "Its return type ignores that an empty array gives undefined",
+    "xs[0] returns a copy, so changes are lost"
+   ],
+   "answer": 2,
+   "explanation": "Reading xs[0] is typed T, but an empty array yields undefined at run time, so the declared return type lies and callers skip the check. Declare `T | undefined`, or require a non-empty tuple type."
+  },
+  {
+   "id": "ts-m-generics-pair",
+   "node": "module-generics-inference",
+   "type": "mcq",
+   "concept": "inference-candidates",
+   "prompt": "Given `function pair<T>(a: T, b: T): T[]`, what happens to the call `pair(1, \"a\")`?",
+   "choices": [
+    "A compile error: \"a\" is not assignable to number",
+    "T is inferred as string | number and it compiles",
+    "T is inferred as any",
+    "T is inferred as unknown and it compiles"
+   ],
+   "answer": 0,
+   "explanation": "Inference picks one candidate, number, from the first argument, and the second argument does not fit it. Writing `pair<string | number>(1, \"a\")` states the union explicitly."
+  },
+  {
+   "id": "ts-m-generics-short",
+   "node": "module-generics-inference",
+   "type": "short_answer",
+   "concept": "key-function",
+   "code": "function maxBy<T>(items: readonly T[], score: (item: T) => number): T | undefined {\n  let best: T | undefined = undefined;\n  let bestScore = -Infinity;\n  for (const item of items) {\n    const s = score(item);\n    if (s > bestScore) {\n      best = item;\n      bestScore = s;\n    }\n  }\n  return best;\n}\nconsole.log(maxBy([\"pear\", \"fig\", \"banana\"], (w) => w.length), maxBy<string>([], (w) => w.length));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "banana undefined",
+   "explanation": "T is inferred as string from the first argument, and the key function scores each word by length, so \"banana\" wins. The empty array has no best item, which is why the return type includes undefined."
+  },
+  {
+   "id": "ts-m-generics-variance",
+   "node": "module-generics-inference",
+   "type": "short_answer",
+   "concept": "array-covariance",
+   "code": "interface Animal { name: string }\ninterface Dog extends Animal { bark: () => string }\nconst dogs: Dog[] = [];\nconst animals: Animal[] = dogs;\nanimals.push({ name: \"cat\" });\nconsole.log(dogs.length);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1",
+   "explanation": "Mutable arrays are treated covariantly, so Dog[] is assignable to Animal[] and the push compiles, although dogs now holds a non-dog. This is a known unsoundness; use readonly Animal[] for inputs a function only reads."
+  },
+  {
+   "id": "ts-m-generics-explain",
+   "node": "module-generics-inference",
+   "type": "explain",
+   "concept": "comparator-vs-constraint",
+   "prompt": "In your own words: when writing a generic helper that must order items, why is it usually better to accept a comparator or key function than to constrain T to be comparable?",
+   "answer": "There is no single constraint that means orderable: the < operator works on number, bigint and string and some other types, and there is no type that captures exactly those. A comparator or key function parameter works for any T and for custom orderings (descending, by field), and the compiler infers T from the arguments without extra constraints.",
+   "keywords": [
+    [
+     "comparator",
+     "key function",
+     "callback",
+     "function parameter",
+     "score"
+    ],
+    [
+     "comparable",
+     "orderable",
+     "ordering",
+     "compare"
+    ],
+    [
+     "no single",
+     "constraint",
+     "number",
+     "bigint",
+     "string",
+     "any T"
+    ]
+   ]
+  },
+  {
+   "id": "ts-m-generics-literal",
+   "node": "module-generics-inference",
+   "type": "mcq",
+   "concept": "literal-widening",
+   "prompt": "What type does the compiler infer for `const xs = [1, 2];`?",
+   "choices": [
+    "readonly [1, 2]",
+    "[number, number]",
+    "(1 | 2)[]",
+    "number[]"
+   ],
+   "answer": 3,
+   "explanation": "An array literal is inferred as an array of the widened element type, number[], not as a tuple or a literal union. `as const` is what keeps the literal tuple type readonly [1, 2]."
+  },
+  {
+   "id": "ts-m-generics-keyof",
+   "node": "module-generics-inference",
+   "type": "mcq",
+   "concept": "keyof-constraint",
+   "prompt": "Given `function getProp<T, K extends keyof T>(o: T, k: K): T[K]`, what happens to `getProp({ name: \"a\" }, \"nmae\")`?",
+   "choices": [
+    "It returns undefined at run time with no compile error",
+    "The compiler rejects \"nmae\": K must be a key of the first argument",
+    "K is inferred as string, so the result type is widened to any",
+    "K is inferred as \"nmae\" and the result type is never"
+   ],
+   "answer": 1,
+   "explanation": "The constraint ties the key to the object's type, so a misspelled key is a compile error (TS2345: not assignable to parameter of type \"name\"). Without the constraint, the typo would only show up as undefined at run time."
+  },
+  {
+   "id": "ts-m-mapped-distribute",
+   "node": "module-mapped-conditional-types",
+   "type": "mcq",
+   "concept": "distributive-conditional",
+   "prompt": "Given `type ToArray<T> = T extends unknown ? T[] : never;`, which declaration fails to compile?",
+   "choices": [
+    "const a: ToArray<string | number> = [\"a\"];",
+    "const b: ToArray<string | number> = [\"a\", 1];",
+    "const c: ToArray<string> = [\"a\"];",
+    "const d: ToArray<number> = [1];"
+   ],
+   "answer": 1,
+   "explanation": "T is a naked type parameter, so the conditional distributes over the union: ToArray<string | number> is string[] | number[]. A mixed array fits neither member. Writing `[T] extends [unknown]` turns distribution off and gives (string | number)[]."
+  },
+  {
+   "id": "ts-m-mapped-readonly",
+   "node": "module-mapped-conditional-types",
+   "type": "mcq",
+   "concept": "mapped-modifiers",
+   "prompt": "Which mapped type, applied to a type with readonly properties, returns the same properties without readonly?",
+   "choices": [
+    "{ [K in keyof T]: Readonly<T[K]> }",
+    "{ readonly [K in keyof T]-?: T[K] }",
+    "{ [K in keyof T]+readonly: T[K] }",
+    "{ -readonly [K in keyof T]: T[K] }"
+   ],
+   "answer": 3,
+   "explanation": "The -readonly modifier removes the flag from every property. Mapping over keyof T otherwise preserves the modifiers; -? removes optionality, not readonly; and +readonly is not valid syntax."
+  },
+  {
+   "id": "ts-m-mapped-short",
+   "node": "module-mapped-conditional-types",
+   "type": "short_answer",
+   "concept": "types-are-erased",
+   "code": "type Flags = { dark: boolean; compact: boolean };\ntype Optional<T> = { [K in keyof T]?: T[K] };\nconst partial: Optional<Flags> = { dark: true };\nconsole.log(Object.keys(partial).length, \"compact\" in partial);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1 false",
+   "explanation": "Optional<Flags> makes each key optional in the type only. It is erased, so the object has exactly the one key written in the literal."
+  },
+  {
+   "id": "ts-m-mapped-exclude",
+   "node": "module-mapped-conditional-types",
+   "type": "short_answer",
+   "concept": "exclude-extract",
+   "code": "type Keep = Exclude<\"a\" | \"b\" | \"c\", \"b\">;\nconst keys: Keep[] = [\"a\", \"c\"];\nconsole.log(keys.join(\"\"));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "ac",
+   "explanation": "Exclude is a distributive conditional type: it removes \"b\" from the union, leaving \"a\" | \"c\". The array of those literals joins to \"ac\"."
+  },
+  {
+   "id": "ts-m-mapped-explain",
+   "node": "module-mapped-conditional-types",
+   "type": "explain",
+   "concept": "distribution",
+   "prompt": "In your own words: what does it mean that a conditional type distributes over a union, and how do you stop it?",
+   "answer": "When the checked type is a naked type parameter, a conditional type is applied to each member of a union separately and the results are joined, so ToArray<string | number> becomes string[] | number[]. To treat the union as a whole, wrap both sides in a tuple, as in [T] extends [U], which disables distribution.",
+   "keywords": [
+    [
+     "distribut",
+     "each member",
+     "each part",
+     "separately"
+    ],
+    [
+     "union"
+    ],
+    [
+     "tuple",
+     "wrap",
+     "brackets",
+     "[T]",
+     "naked"
+    ]
+   ]
+  },
+  {
+   "id": "ts-m-mapped-never",
+   "node": "module-mapped-conditional-types",
+   "type": "mcq",
+   "concept": "never-distributes",
+   "prompt": "Given `type IsString<T> = T extends string ? \"yes\" : \"no\";`, what is `IsString<never>`?",
+   "choices": [
+    "never",
+    "\"no\"",
+    "\"yes\"",
+    "\"yes\" | \"no\""
+   ],
+   "answer": 0,
+   "explanation": "never is the empty union, so distribution produces no members and the result is never, not \"no\". A non-distributive form such as `[T] extends [string]` gives \"yes\"."
+  },
+  {
+   "id": "ts-m-mapped-template",
+   "node": "module-mapped-conditional-types",
+   "type": "mcq",
+   "concept": "template-literal-runtime",
+   "prompt": "A function receives `s: string` read from user input and must pass it where the type `${number},${number}` is expected. What is needed?",
+   "choices": [
+    "Nothing: the compiler checks the string at run time",
+    "An `as` cast, which also validates the text when it runs",
+    "A run-time test of the text, such as a type guard",
+    "Changing the parameter to `any`"
+   ],
+   "answer": 2,
+   "explanation": "Template literal types exist only at compile time and do not validate strings created at run time. A cast silences the compiler without checking; a guard that actually tests the text makes the narrowing true."
+  },
+  {
+   "id": "ts-m-runtime-annotation",
+   "node": "module-runtime-boundary",
+   "type": "mcq",
+   "concept": "annotation-vs-check",
+   "prompt": "A program runs `const g: Graph = JSON.parse(text);`. What does the annotation `: Graph` do when the program runs?",
+   "choices": [
+    "It throws a TypeError if the shape is wrong",
+    "It converts the fields to match Graph",
+    "It removes properties that Graph does not declare",
+    "Nothing: types are erased, so the shape is not checked"
+   ],
+   "answer": 3,
+   "explanation": "JSON.parse returns any, and the annotation only tells the compiler what to assume. Type annotations are removed from the emitted JavaScript, so nothing verifies the parsed shape."
+  },
+  {
+   "id": "ts-m-runtime-cast",
+   "node": "module-runtime-boundary",
+   "type": "mcq_code",
+   "concept": "cast-vs-validation",
+   "code": "interface User { name: string; age: number }\nconst u = JSON.parse('{\"name\":\"Ada\"}') as User;\nconsole.log(u.age + 1);",
+   "prompt": "What does this print?",
+   "choices": [
+    "1",
+    "NaN",
+    "TypeError",
+    "It does not compile"
+   ],
+   "answer": 1,
+   "explanation": "The cast satisfies the compiler, but the parsed object has no age: u.age is undefined and undefined + 1 is NaN. A cast does not validate data; check the shape at the boundary."
+  },
+  {
+   "id": "ts-m-runtime-enum",
+   "node": "module-runtime-boundary",
+   "type": "short_answer",
+   "concept": "enum-emits-code",
+   "code": "enum Color { Red, Green }\nconsole.log(Color[0], Color.Green, Object.keys(Color).length);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "Red 1 4",
+   "explanation": "A numeric enum compiles to a real object with reverse mappings: Color[0] is \"Red\", Color.Green is 1, and the object has four keys (\"0\", \"1\", \"Red\", \"Green\")."
+  },
+  {
+   "id": "ts-m-runtime-guard",
+   "node": "module-runtime-boundary",
+   "type": "short_answer",
+   "concept": "validate-unknown",
+   "code": "function isAge(x: unknown): x is { age: number } {\n  if (typeof x !== \"object\" || x === null) return false;\n  return typeof (x as { age?: unknown }).age === \"number\";\n}\nconst v: unknown = JSON.parse('{\"age\":\"41\"}');\nconsole.log(isAge(v) ? v.age + 1 : \"invalid\");",
+   "prompt": "Type exactly what this prints.",
+   "answer": "invalid",
+   "explanation": "age is the string \"41\", so the runtime check typeof ... === \"number\" fails and the guard returns false. Parsing into unknown and validating before use keeps the wrong type from flowing on as a number."
+  },
+  {
+   "id": "ts-m-runtime-explain",
+   "node": "module-runtime-boundary",
+   "type": "explain",
+   "concept": "trust-boundary",
+   "prompt": "In your own words: why does TypeScript's compile-time checking not protect a program from malformed JSON, and what should the program do at that boundary?",
+   "answer": "Types are erased when the code is compiled to JavaScript, so nothing checks them at run time, and JSON.parse returns any, which switches checking off. Data from outside the program must be treated as unknown and validated with explicit checks or a schema, handling parse errors, and only then used as the typed value; a cast does not do this.",
+   "keywords": [
+    [
+     "erase",
+     "compile time",
+     "compile-time",
+     "no runtime",
+     "not at run",
+     "removed"
+    ],
+    [
+     "validate",
+     "check",
+     "guard",
+     "schema",
+     "parse"
+    ],
+    [
+     "unknown",
+     "any",
+     "cast",
+     "assertion"
+    ]
+   ]
+  },
+  {
+   "id": "ts-m-runtime-emit",
+   "node": "module-runtime-boundary",
+   "type": "mcq",
+   "concept": "erasable-syntax",
+   "prompt": "Which of these produces JavaScript code in the compiler's output, rather than being erased?",
+   "choices": [
+    "interface Dir { n: number }",
+    "type Dir = \"N\" | \"S\"",
+    "enum Dir { N, S }",
+    "a generic type parameter such as <T>"
+   ],
+   "answer": 2,
+   "explanation": "An enum creates a run-time object. Interfaces, type aliases and generic parameters exist only for the compiler and leave no output."
+  },
+  {
+   "id": "ts-m-runtime-parse",
+   "node": "module-runtime-boundary",
+   "type": "mcq",
+   "concept": "json-parse-failure",
+   "prompt": "What does `JSON.parse(\"\")` do?",
+   "choices": [
+    "Returns null",
+    "Throws a SyntaxError",
+    "Returns undefined",
+    "Returns an empty object"
+   ],
+   "answer": 1,
+   "explanation": "Invalid JSON, including an empty string, throws SyntaxError. Wrap the call in try/catch and return a structured result so the caller must handle failure."
+  },
+  {
+   "id": "ts-m-tsconfig-index",
+   "node": "module-tsconfig",
+   "type": "mcq",
+   "concept": "noUncheckedIndexedAccess",
+   "prompt": "Which compiler option makes `arr[i]` typed as `number | undefined` for a `number[]`?",
+   "choices": [
+    "strictNullChecks",
+    "noImplicitAny",
+    "noUncheckedIndexedAccess",
+    "strictFunctionTypes"
+   ],
+   "answer": 2,
+   "explanation": "noUncheckedIndexedAccess is a separate flag that is not part of the strict family. With only strict on, arr[i] is typed number even when the index is out of range."
+  },
+  {
+   "id": "ts-m-tsconfig-code",
+   "node": "module-tsconfig",
+   "type": "mcq_code",
+   "concept": "strict-scope",
+   "code": "// tsconfig.json: { \"compilerOptions\": { \"strict\": true } }\nconst nums: number[] = [];\nconst first: number = nums[0];",
+   "prompt": "What does the compiler report for this file?",
+   "choices": [
+    "Nothing: strict does not include noUncheckedIndexedAccess",
+    "An error: 'number | undefined' is not assignable to 'number'",
+    "An error: nums is implicitly any[]",
+    "Nothing, and it throws RangeError at run time"
+   ],
+   "answer": 0,
+   "explanation": "strict enables the strictness family but not noUncheckedIndexedAccess, so the index read is typed number and the file compiles; at run time first is undefined. Adding the separate flag turns the assignment into an error."
+  },
+  {
+   "id": "ts-m-tsconfig-short",
+   "node": "module-tsconfig",
+   "type": "short_answer",
+   "concept": "options-change-types-only",
+   "code": "const a: number[] = [1, 2];\nconst i: number = 5;\nconsole.log(typeof a[i], a[i] === undefined);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "undefined true",
+   "explanation": "Compiler options change what the type checker reports, not what the emitted JavaScript does. Even with noUncheckedIndexedAccess on, the out-of-range read is undefined at run time; the option only makes the type admit it."
+  },
+  {
+   "id": "ts-m-tsconfig-catch",
+   "node": "module-tsconfig",
+   "type": "short_answer",
+   "concept": "catch-unknown",
+   "code": "try {\n  throw \"boom\";\n} catch (e) {\n  console.log(e instanceof Error ? e.message : String(e));\n}",
+   "prompt": "Type exactly what this prints.",
+   "answer": "boom",
+   "explanation": "Under strict, the catch variable is unknown and must be narrowed. A thrown string is not an Error, so the code takes the String(e) branch and prints boom."
+  },
+  {
+   "id": "ts-m-tsconfig-explain",
+   "node": "module-tsconfig",
+   "type": "explain",
+   "concept": "target-vs-lib",
+   "prompt": "In your own words: what is the difference between the `target` and `lib` compiler options, and does either one add a missing API to the program at run time?",
+   "answer": "target selects the JavaScript language level the compiler emits, so newer syntax is downleveled for older targets. lib selects which built-in type declarations exist, such as ES2023 or DOM, so a method reported as missing usually means the lib is older than the API. Neither adds a runtime API or a polyfill; the host that runs the code must supply it.",
+   "keywords": [
+    [
+     "target"
+    ],
+    [
+     "lib"
+    ],
+    [
+     "syntax",
+     "emit",
+     "emitted",
+     "language level",
+     "downlevel"
+    ],
+    [
+     "declaration",
+     "type definitions",
+     "built-in types",
+     "type declarations"
+    ],
+    [
+     "not add",
+     "does not add",
+     "no polyfill",
+     "polyfill",
+     "runtime",
+     "host"
+    ]
+   ]
+  },
+  {
+   "id": "ts-m-tsconfig-cli",
+   "node": "module-tsconfig",
+   "type": "mcq",
+   "concept": "tsconfig-discovery",
+   "prompt": "A folder contains tsconfig.json with `strict: true` and a file m.ts. You run `tsc m.ts`. Which settings apply?",
+   "choices": [
+    "The strict setting from tsconfig.json applies",
+    "The file is skipped because a tsconfig exists",
+    "tsc stops with an error asking you to pass -p",
+    "tsconfig.json is ignored; default options apply"
+   ],
+   "answer": 3,
+   "explanation": "Passing files on the command line makes tsc ignore tsconfig.json. Running `tsc` with no file arguments, or `tsc -p .`, uses it."
+  },
+  {
+   "id": "ts-m-tsconfig-exact",
+   "node": "module-tsconfig",
+   "type": "mcq",
+   "concept": "exactOptionalPropertyTypes",
+   "prompt": "`const o: { a?: number } = { a: undefined };` compiles under strict. Which option makes it an error?",
+   "choices": [
+    "noImplicitAny",
+    "exactOptionalPropertyTypes",
+    "strictPropertyInitialization",
+    "useUnknownInCatchVariables"
+   ],
+   "answer": 1,
+   "explanation": "By default an optional property admits both a missing key and an explicit undefined. exactOptionalPropertyTypes separates them, so assigning undefined to a?: number is rejected."
+  },
+  {
+   "id": "ts-m-tsconfig-paths",
+   "node": "module-tsconfig",
+   "type": "mcq",
+   "concept": "paths-alias",
+   "prompt": "An import alias defined in tsconfig `paths` works in the editor but fails when the program runs. Why?",
+   "choices": [
+    "paths is a type-checking setting; the runtime or bundler needs the alias too",
+    "paths aliases only work when strict is on, because strict controls module resolution",
+    "The target option is set too low to understand alias syntax",
+    "The lib option does not include the module declarations"
+   ],
+   "answer": 0,
+   "explanation": "paths and baseUrl tell the compiler how to resolve imports; the tool that runs or bundles the code must be configured separately with the same aliases."
+  }
+ ]
+}

@@ -75,7 +75,7 @@ def test_node_for_exercise_maps_a_stage_file_back_to_its_language():
 
 @pytest.mark.parametrize('language,runner,verdict', [
     ('python', True, 'next-wave'), ('typescript', False, 'quiz-led'),
-    ('c', True, 'next-wave'), ('go', False, 'needs-authoring'),
+    ('c', True, 'launch-ready'), ('go', False, 'needs-authoring'),
 ])
 def test_readiness_reflects_existing_content(monkeypatch, language, runner, verdict):
     monkeypatch.setattr('app.services.code_runner.available_languages',
@@ -129,7 +129,7 @@ def test_authored_and_knowledge_base_items_are_both_used():
     python = quiz.items('python')
     assert {i['source'] for i in python.values()} == {'authored', 'knowledge-base'}
     assert {i['type'] for i in python.values()} == set(quiz.TYPES)
-    assert quiz.items('rust') == {}  # Rust rows carry no answer key to grade against
+    assert quiz.items('csharp') == {}  # no authored bank and no answer-keyed rows to grade against
     assert quiz._authored('go', quiz._bank_version('go')) == ()
 
 
@@ -326,7 +326,7 @@ async def test_start_rejects_unknown_nodes_and_empty_pools(db):
             await quiz.start(db, user, 'python', node_id, 3)
         assert err.value.status_code == status
     with pytest.raises(HTTPException) as err:
-        await quiz.start(db, user, 'rust', None, 3)
+        await quiz.start(db, user, 'go', None, 3)
     assert err.value.status_code == 409 and 'Values and arithmetic' in err.value.detail
 
 
@@ -503,8 +503,10 @@ def test_launch_ready_requires_coverage_at_every_node(monkeypatch):
 
 
 @pytest.mark.parametrize('language', ['c', 'typescript'])
-async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language):
+async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language, monkeypatch):
     from app.db.models import Transaction
+    # Both languages now ship stage files; simulate a stage that has checks only.
+    monkeypatch.setattr(lp, 'stage_exercise_id', lambda language, stage: None)
     user = await make_user(db, f'quiz-only-{language}@example.com')
     node = lp.find_node(language, f'{language}:stage-01')
     assert node['checks_available'] > 0 and node['exercise_id'] is None

@@ -1,0 +1,3802 @@
+{
+ "language": "rust",
+ "version": 1,
+ "note": "Authored Study Room quiz items. Code items (mcq_code, short_answer, fix_bug, write_snippet) were validated by compiling and running them with rustc --edition 2021 (the runner-based items through the app's own run_suite).",
+ "items": [
+  {
+   "id": "rs-s01-mcq",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "no-implicit-conversion",
+   "prompt": "Given `let a: i32 = 5;` and `let b: i64 = 10;`, what happens to `let c = a + b;`?",
+   "choices": [
+    "It compiles, but panics at run time because the widths differ.",
+    "c becomes 15 as an i64 because the narrower type is widened.",
+    "It is rejected at compile time with a mismatched-types error.",
+    "c becomes 15 as an i32 because the left operand decides the type."
+   ],
+   "answer": 2,
+   "explanation": "Rust performs no implicit numeric conversions. Mixing i32 and i64 is a compile error until one side is cast explicitly with `as`."
+  },
+  {
+   "id": "rs-s01-code",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "wrapping-arithmetic",
+   "code": "fn main() {\n    let x: u8 = 250;\n    println!(\"{}\", x.wrapping_add(10));\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "It panics with an overflow error.",
+    "4",
+    "260",
+    "255"
+   ],
+   "answer": 1,
+   "explanation": "`wrapping_add` chooses wrap-around explicitly: 250 + 10 = 260, and 260 - 256 = 4 for a u8. `saturating_add` would give 255 and `checked_add` would give None."
+  },
+  {
+   "id": "rs-s01-short",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "integer-division",
+   "code": "fn main() {\n    let a: i64 = -7;\n    println!(\"{} {}\", a / 2, a % 2);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "-3 -1",
+   "explanation": "Integer `/` truncates toward zero, so -7 / 2 is -3, and `%` takes the sign of the dividend, so -7 % 2 is -1. `rem_euclid` would give a non-negative remainder."
+  },
+  {
+   "id": "rs-s01-explain",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "block-value",
+   "prompt": "In your own words: why does `fn add_one(x: i64) -> i64 { x + 1; }` fail to compile, and what is the smallest change that fixes it?",
+   "answer": "A function body is a block, and a block's value is its final expression. The trailing semicolon turns `x + 1` into a statement, so the block's value becomes `()` (unit) instead of an i64, and the compiler reports mismatched types. Removing the semicolon makes `x + 1` the final expression and therefore the return value.",
+   "keywords": [
+    [
+     "semicolon"
+    ],
+    [
+     "()",
+     "unit",
+     "statement"
+    ],
+    [
+     "expression",
+     "final",
+     "last",
+     "return value"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "rem-euclid",
+   "prompt": "wrap_index(i, n) should map any integer i onto a position from 0 to n - 1 (n is positive), so -1 becomes n - 1. It returns negative values for negative i. Fix it.",
+   "code": "fn wrap_index(i: i64, n: i64) -> i64 {\n    i % n\n}",
+   "fn": "wrap_index",
+   "solution": "fn wrap_index(i: i64, n: i64) -> i64 {\n    i.rem_euclid(n)\n}",
+   "tests": [
+    {
+     "args": [
+      -1,
+      5
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      7,
+      5
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      -5,
+      5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      0,
+      3
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -7,
+      3
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      10,
+      4
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "`%` takes the sign of the dividend, so -1 % 5 is -1. `rem_euclid` always returns a value from 0 up to n - 1 for positive n."
+  },
+  {
+   "id": "rs-s01-write",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "checked-arithmetic",
+   "prompt": "Write safe_product(a, b) that returns a * b, or -1 when the product does not fit in an i64. Do not let it panic or wrap.",
+   "starter": "fn safe_product(a: i64, b: i64) -> i64 {\n    // return a * b, or -1 on overflow\n    todo!()\n}",
+   "fn": "safe_product",
+   "solution": "fn safe_product(a: i64, b: i64) -> i64 {\n    match a.checked_mul(b) {\n        Some(p) => p,\n        None => -1,\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      3,
+      4
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      4611686018427387904,
+      2
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      3037000500,
+      3037000500
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      3037000499,
+      3037000499
+     ],
+     "expected": 9223372030926249001
+    },
+    {
+     "args": [
+      -5,
+      4
+     ],
+     "expected": -20
+    },
+    {
+     "args": [
+      0,
+      9223372036854775807
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "`checked_mul` returns an Option: Some(product) when it fits and None on overflow. Matching on it lets you choose the failure value explicitly."
+  },
+  {
+   "id": "rs-s02-mcq",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "no-truthiness",
+   "prompt": "Given `let n: i64 = 5;`, which condition is accepted by the compiler?",
+   "choices": [
+    "`if n != 0 { ... }`",
+    "`if n { ... }`",
+    "`if !n { ... }`",
+    "`if n && 1 { ... }`"
+   ],
+   "answer": 0,
+   "explanation": "An `if` condition must be exactly a bool. `n != 0` is a bool. Rust has no truthiness, `!n` on an integer is a bitwise not that still yields an integer, and `&&` needs bool operands."
+  },
+  {
+   "id": "rs-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "short-circuit",
+   "code": "fn noisy(label: &str, value: bool) -> bool {\n    println!(\"{}\", label);\n    value\n}\n\nfn main() {\n    let r = noisy(\"A\", false) && noisy(\"B\", true);\n    println!(\"{}\", r);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "B, then A, then false",
+    "A, then B, then false",
+    "false only",
+    "A, then false"
+   ],
+   "answer": 3,
+   "explanation": "`&&` short-circuits: when the left side is false the right side is never evaluated, so \"B\" is not printed."
+  },
+  {
+   "id": "rs-s02-short",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "operator-precedence",
+   "code": "fn main() {\n    let x: i64 = 4;\n    println!(\"{} {}\", x % 2 == 0 || x > 10, !(x > 3) && true);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "true false",
+   "explanation": "`x % 2 == 0` is true, so the `||` is true. `x > 3` is true, `!` makes it false, and `false && true` is false."
+  },
+  {
+   "id": "rs-s02-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "chained-comparison",
+   "prompt": "In your own words: why is `low <= value <= high` rejected by Rust, and how do you write that range test?",
+   "answer": "Comparison operators cannot be chained in Rust; the parser rejects it. Write two separate comparisons and join them with `&&`, for example `low <= value && value <= high`, so that each boundary is tested on its own.",
+   "keywords": [
+    [
+     "chain",
+     "chained"
+    ],
+    [
+     "&&",
+     "and",
+     "join",
+     "combine"
+    ],
+    [
+     "separate",
+     "each",
+     "both",
+     "two"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s02-fix",
+   "node": "stage-02",
+   "type": "fix_bug",
+   "concept": "inclusive-boundary",
+   "prompt": "is_valid_hour(h) should be true for the hours 0 through 23 inclusive. It is wrong at the boundaries. Fix it.",
+   "code": "fn is_valid_hour(h: i64) -> bool {\n    h > 0 && h < 23\n}",
+   "fn": "is_valid_hour",
+   "solution": "fn is_valid_hour(h: i64) -> bool {\n    h >= 0 && h <= 23\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      23
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      12
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      24
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      22
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "Inclusive bounds need `>=` and `<=`. Test each boundary value (0 and 23) separately."
+  },
+  {
+   "id": "rs-s02-write",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "if-expression",
+   "prompt": "Write sign(n) that returns -1 for negative numbers, 0 for zero and 1 for positive numbers.",
+   "starter": "fn sign(n: i64) -> i64 {\n    // return -1, 0 or 1\n    todo!()\n}",
+   "fn": "sign",
+   "solution": "fn sign(n: i64) -> i64 {\n    if n < 0 {\n        -1\n    } else if n == 0 {\n        0\n    } else {\n        1\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      -5
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      9
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1000
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "`if` is an expression, so each branch can be the value of the function. All branches must have the same type."
+  },
+  {
+   "id": "rs-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "range-inclusive",
+   "prompt": "Which loop header visits exactly the integers 1, 2, 3 and 4?",
+   "choices": [
+    "`for i in 0..4`",
+    "`for i in 1..=3`",
+    "`for i in 1..4`",
+    "`for i in 1..=4`"
+   ],
+   "answer": 3,
+   "explanation": "`a..b` stops before b, while `a..=b` includes b. So `1..4` visits 1, 2, 3; `0..4` visits 0 through 3; and `1..=3` visits 1 through 3."
+  },
+  {
+   "id": "rs-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "range-off-by-one",
+   "code": "fn main() {\n    let mut a = 0;\n    for _ in 1..5 {\n        a += 1;\n    }\n    let mut b = 0;\n    for _ in 1..=5 {\n        b += 1;\n    }\n    println!(\"{} {}\", a, b);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "4 4",
+    "5 6",
+    "4 5",
+    "5 5"
+   ],
+   "answer": 2,
+   "explanation": "`1..5` yields 1, 2, 3, 4 (four iterations); `1..=5` yields five values."
+  },
+  {
+   "id": "rs-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "while-loop",
+   "code": "fn main() {\n    let mut x = 1;\n    let mut steps = 0;\n    while x < 100 {\n        x *= 3;\n        steps += 1;\n    }\n    println!(\"{} {}\", x, steps);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "243 5",
+   "explanation": "x goes 1, 3, 9, 27, 81, 243. The loop stops when x is no longer below 100, after five multiplications."
+  },
+  {
+   "id": "rs-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "mutable-accumulator",
+   "prompt": "In your own words: why must a running total that changes inside a `for` loop be declared with `let mut` and outside the loop?",
+   "answer": "Bindings are immutable by default, so `total += i` on a plain `let total = 0` is rejected (cannot assign twice to an immutable variable); the binding needs `mut`. It must be declared before the loop so it survives across iterations and can be returned afterwards; a variable declared inside the body is recreated on every iteration and goes out of scope.",
+   "keywords": [
+    [
+     "mut",
+     "mutable"
+    ],
+    [
+     "immutable",
+     "assign twice",
+     "default",
+     "cannot assign"
+    ],
+    [
+     "outside",
+     "before",
+     "survive",
+     "scope"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "range-inclusive",
+   "prompt": "sum_evens(limit) should return the sum of the even integers from 1 through limit, including limit itself when it is even. It is off by one. Fix it.",
+   "code": "fn sum_evens(limit: i64) -> i64 {\n    let mut total = 0;\n    for i in 1..limit {\n        if i % 2 == 0 {\n            total += i;\n        }\n    }\n    total\n}",
+   "fn": "sum_evens",
+   "solution": "fn sum_evens(limit: i64) -> i64 {\n    let mut total = 0;\n    for i in 1..=limit {\n        if i % 2 == 0 {\n            total += i;\n        }\n    }\n    total\n}",
+   "tests": [
+    {
+     "args": [
+      10
+     ],
+     "expected": 30
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 2550
+    }
+   ],
+   "explanation": "`1..limit` excludes limit. The inclusive range `1..=limit` visits it."
+  },
+  {
+   "id": "rs-s03-write",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "loop-accumulator",
+   "prompt": "Write factorial(n) for n from 0 to 20 using a loop. factorial(0) is 1.",
+   "starter": "fn factorial(n: i64) -> i64 {\n    // multiply 1 * 2 * ... * n\n    todo!()\n}",
+   "fn": "factorial",
+   "solution": "fn factorial(n: i64) -> i64 {\n    let mut result = 1;\n    for i in 1..=n {\n        result *= i;\n    }\n    result\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 120
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 3628800
+    },
+    {
+     "args": [
+      20
+     ],
+     "expected": 2432902008176640000
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    }
+   ],
+   "explanation": "Start the accumulator at 1, not 0, and multiply by each integer 1 through n. For n = 0 the range is empty and the answer stays 1. 20! still fits in an i64."
+  },
+  {
+   "id": "rs-s04-mcq",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "copy-parameters",
+   "prompt": "After `fn bump(mut x: i64) { x += 1; }` and `let n: i64 = 5; bump(n);`, what is the value of `n`?",
+   "choices": [
+    "5, because i64 is Copy and the function only changed its own copy",
+    "5, but only when the caller also declares `n` with `mut`",
+    "6, because the function received n itself and incremented it",
+    "The program does not compile because `n` is not declared `mut`"
+   ],
+   "answer": 0,
+   "explanation": "An i64 argument is copied into the parameter. `mut x` only makes that local copy mutable, so the caller's `n` stays 5; the call compiles because `n` is not modified."
+  },
+  {
+   "id": "rs-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "checked-subtraction",
+   "code": "fn main() {\n    println!(\"{:?} {:?}\", 3usize.checked_sub(5), 5usize.checked_sub(3));\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "None Some(2)",
+    "It panics with an overflow error.",
+    "Some(-2) Some(2)",
+    "0 2"
+   ],
+   "answer": 0,
+   "explanation": "`checked_sub` on an unsigned type returns None instead of underflowing, and Some(difference) when the subtraction is valid."
+  },
+  {
+   "id": "rs-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "early-return",
+   "code": "fn scale(x: i64) -> i64 {\n    if x < 0 {\n        return 0;\n    }\n    x * 2\n}\n\nfn main() {\n    println!(\"{} {} {}\", scale(-3), scale(0), scale(4));\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "0 0 8",
+   "explanation": "Negative input takes the early `return 0`. Zero and positive input reach the final expression `x * 2`, giving 0 and 8."
+  },
+  {
+   "id": "rs-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "parameter-copy",
+   "prompt": "In your own words: why does a function that does `x += 1` on its i64 parameter (declared `mut x`) not change the variable the caller passed in?",
+   "answer": "An i64 is a Copy type, so each call copies the argument's value into a fresh local parameter. `mut` only lets the function modify that local copy; the caller's variable is a separate storage location and keeps its value.",
+   "keywords": [
+    [
+     "copy",
+     "copied",
+     "copies"
+    ],
+    [
+     "local",
+     "own",
+     "separate",
+     "fresh"
+    ],
+    [
+     "parameter",
+     "argument"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "return-paths",
+   "prompt": "clamp(x, low, high) should limit x to the range from low to high. It returns the wrong value for inputs above the range. Fix it.",
+   "code": "fn clamp(x: i64, low: i64, high: i64) -> i64 {\n    if x < low {\n        return low;\n    }\n    if x > high {\n        return low;\n    }\n    x\n}",
+   "fn": "clamp",
+   "solution": "fn clamp(x: i64, low: i64, high: i64) -> i64 {\n    if x < low {\n        return low;\n    }\n    if x > high {\n        return high;\n    }\n    x\n}",
+   "tests": [
+    {
+     "args": [
+      5,
+      0,
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -3,
+      0,
+      10
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      15,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      0,
+      0,
+      10
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      -8,
+      -5,
+      -1
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      7,
+      -5,
+      -1
+     ],
+     "expected": -1
+    }
+   ],
+   "explanation": "The branch for x above the range must return the upper bound, not the lower one. Check each return path against its own condition."
+  },
+  {
+   "id": "rs-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "small-functions",
+   "prompt": "Write median_of_three(a, b, c) that returns the middle value of three integers (the one that is neither the smallest nor the largest).",
+   "starter": "fn median_of_three(a: i64, b: i64, c: i64) -> i64 {\n    // return the middle value\n    todo!()\n}",
+   "fn": "median_of_three",
+   "solution": "fn median_of_three(a: i64, b: i64, c: i64) -> i64 {\n    a.max(b).min(a.min(b).max(c))\n}",
+   "tests": [
+    {
+     "args": [
+      1,
+      2,
+      3
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      3,
+      2,
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      2,
+      3,
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      5,
+      5,
+      1
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -1,
+      -5,
+      -3
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      7,
+      7,
+      7
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "The median is the larger of the two smaller values, clamped by the larger of the two: `a.max(b).min(a.min(b).max(c))`. Sorting three numbers or comparing pairwise also works."
+  },
+  {
+   "id": "rs-s05-mcq",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "chars-vs-bytes",
+   "prompt": "For `let s = String::from(\"héllo\");`, which expression gives the number of characters (Unicode scalar values)?",
+   "choices": [
+    "`s.chars().count()`",
+    "`s.as_bytes().len()`",
+    "`s[..].size()`",
+    "`s.len()`"
+   ],
+   "answer": 0,
+   "explanation": "`len()` and `as_bytes().len()` count UTF-8 bytes ('é' takes two). `chars().count()` counts characters. `str` has no `size()` method."
+  },
+  {
+   "id": "rs-s05-code",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "chars-vs-bytes",
+   "code": "fn main() {\n    let s = \"héllo\";\n    println!(\"{} {}\", s.len(), s.chars().count());\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "5 5",
+    "6 6",
+    "5 6",
+    "6 5"
+   ],
+   "answer": 3,
+   "explanation": "The string has five characters but six bytes in UTF-8, because 'é' is encoded in two bytes."
+  },
+  {
+   "id": "rs-s05-short",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "string-iteration",
+   "code": "fn main() {\n    let s = String::from(\"rust\");\n    let t: String = s.chars().rev().collect();\n    println!(\"{}{}\", t, s.len());\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "tsur4",
+   "explanation": "`chars().rev().collect()` builds a new String \"tsur\"; the original `s` is unchanged and still has length 4."
+  },
+  {
+   "id": "rs-s05-explain",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "no-string-indexing",
+   "prompt": "In your own words: why can't you write `s[0]` on a Rust `String`, and what do you use instead?",
+   "answer": "Strings are always valid UTF-8, where a character can take more than one byte, so a byte position is not the same as a character position and integer indexing is not allowed. Use `s.chars()` to iterate characters (for example `.nth(i)`), or `s.as_bytes()[i]` when the text is known to be ASCII.",
+   "keywords": [
+    [
+     "utf-8",
+     "utf8",
+     "multi-byte",
+     "bytes",
+     "unicode"
+    ],
+    [
+     "chars",
+     "as_bytes",
+     "iterator",
+     "iterate",
+     "bytes()"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "char-literals",
+   "prompt": "count_a(text) should return how many times the letter 'a' appears in text. It does not compile. Fix it.",
+   "code": "fn count_a(text: String) -> i64 {\n    text.chars().filter(|c| c == 'a').count()\n}",
+   "fn": "count_a",
+   "solution": "fn count_a(text: String) -> i64 {\n    text.chars().filter(|&c| c == 'a').count() as i64\n}",
+   "tests": [
+    {
+     "args": [
+      "banana"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "xyz"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "aaa"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      "cat"
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "The filter closure receives `&char`, so compare after destructuring (`|&c|`), and `count()` is a usize that must be cast to the i64 return type with `as`."
+  },
+  {
+   "id": "rs-s05-write",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "string-comparison",
+   "prompt": "Write is_palindrome(text) that returns true when text (lowercase English letters only, possibly empty) reads the same forwards and backwards.",
+   "starter": "fn is_palindrome(text: String) -> bool {\n    // compare the text with itself reversed\n    todo!()\n}",
+   "fn": "is_palindrome",
+   "solution": "fn is_palindrome(text: String) -> bool {\n    let forward: Vec<char> = text.chars().collect();\n    let mut backward = forward.clone();\n    backward.reverse();\n    forward == backward\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "aba"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "abba"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "ab"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "abca"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "abcba"
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "Collect the characters, compare with the reversed sequence. The empty string and single characters are palindromes."
+  },
+  {
+   "id": "rs-s06-mcq",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "move-vs-alias",
+   "prompt": "After `let a = vec![1, 2]; let b = a;`, which statement is true?",
+   "choices": [
+    "The code is rejected because a Vec cannot be assigned.",
+    "`a` has been moved into `b` and can no longer be used.",
+    "`a` and `b` both refer to the same elements and either may be used.",
+    "`b` is an independent copy and `a` is still usable."
+   ],
+   "answer": 1,
+   "explanation": "Assigning a non-Copy value moves it. Using `a` afterwards is error E0382 (borrow of moved value). An independent copy needs `a.clone()`."
+  },
+  {
+   "id": "rs-s06-code",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "get-vs-index",
+   "code": "fn main() {\n    let v = vec![10, 20, 30];\n    println!(\"{:?} {:?}\", v.get(1), v.get(3));\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "20 None",
+    "Some(20) None",
+    "Some(30) None",
+    "Some(20) panic"
+   ],
+   "answer": 1,
+   "explanation": "`get(i)` returns an Option: Some(&value) for a valid index and None when it is out of range, instead of panicking like `v[3]` would."
+  },
+  {
+   "id": "rs-s06-short",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "vec-operations",
+   "code": "fn main() {\n    let mut v = vec![3, 1, 2];\n    v.push(9);\n    v.sort();\n    v.reverse();\n    println!(\"{:?}\", v);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "[9, 3, 2, 1]",
+   "explanation": "After push the vector is [3, 1, 2, 9]; sort gives [1, 2, 3, 9]; reverse gives [9, 3, 2, 1]."
+  },
+  {
+   "id": "rs-s06-explain",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "iteration-ownership",
+   "prompt": "In your own words: what is the difference between `for x in v` and `for x in &v` for a `Vec`, and what can you do with `v` afterwards in each case?",
+   "answer": "`for x in v` moves the vector into the loop: it consumes the Vec, so `v` cannot be used afterwards. `for x in &v` only borrows it, so the elements are visited by reference and `v` is still usable after the loop.",
+   "keywords": [
+    [
+     "move",
+     "moves",
+     "consume",
+     "consumes",
+     "ownership"
+    ],
+    [
+     "borrow",
+     "borrows",
+     "reference"
+    ],
+    [
+     "after",
+     "afterwards",
+     "again",
+     "still",
+     "later"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "use-after-move",
+   "prompt": "range_of(values) should return the largest element minus the smallest (0 for an empty vector). It does not compile. Fix it without cloning the vector.",
+   "code": "fn range_of(values: Vec<i64>) -> i64 {\n    if values.is_empty() {\n        return 0;\n    }\n    let mut max = values[0];\n    let mut min = values[0];\n    for v in values {\n        if v > max {\n            max = v;\n        }\n    }\n    for v in values {\n        if v < min {\n            min = v;\n        }\n    }\n    max - min\n}",
+   "fn": "range_of",
+   "solution": "fn range_of(values: Vec<i64>) -> i64 {\n    if values.is_empty() {\n        return 0;\n    }\n    let mut max = values[0];\n    let mut min = values[0];\n    for &v in &values {\n        if v > max {\n            max = v;\n        }\n    }\n    for &v in &values {\n        if v < min {\n            min = v;\n        }\n    }\n    max - min\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       9,
+       4
+      ]
+     ],
+     "expected": 8
+    },
+    {
+     "args": [
+      [
+       -3,
+       -1
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       2
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10,
+       -10
+      ]
+     ],
+     "expected": 20
+    }
+   ],
+   "explanation": "`for v in values` moves the vector, so the second loop uses a moved value (E0382). Iterating `&values` borrows it and leaves it available."
+  },
+  {
+   "id": "rs-s06-write",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "vec-building",
+   "prompt": "Write running_max(values) that returns a vector of the same length where element i is the maximum of values[0..=i]. An empty input gives an empty vector.",
+   "starter": "fn running_max(values: Vec<i64>) -> Vec<i64> {\n    // result[i] is the largest value seen up to and including i\n    todo!()\n}",
+   "fn": "running_max",
+   "solution": "fn running_max(values: Vec<i64>) -> Vec<i64> {\n    let mut result: Vec<i64> = Vec::new();\n    for v in values {\n        let best = match result.last() {\n            Some(&m) if m > v => m,\n            _ => v,\n        };\n        result.push(best);\n    }\n    result\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       3
+      ]
+     ],
+     "expected": [
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       2
+      ]
+     ],
+     "expected": [
+      1,
+      3,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       4,
+       3
+      ]
+     ],
+     "expected": [
+      5,
+      5,
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       -2,
+       -5,
+       0
+      ]
+     ],
+     "expected": [
+      -2,
+      -2,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      1,
+      1,
+      2
+     ]
+    }
+   ],
+   "explanation": "Keep the previous maximum (the last element already pushed) and push the larger of it and the current value."
+  },
+  {
+   "id": "rs-s07-mcq",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "map-lookup",
+   "prompt": "With `let m: HashMap<String, i64> = ...;` and no key \"zed\" stored, which expression does NOT panic?",
+   "choices": [
+    "`m.get(\"zed\").unwrap()`",
+    "`m.remove(\"zed\").unwrap()`",
+    "`m[\"zed\"]`",
+    "`m.get(\"zed\")`"
+   ],
+   "answer": 3,
+   "explanation": "`get` returns an Option (None for a missing key). Indexing with `m[\"zed\"]` panics with \"no entry found for key\", and unwrapping a None panics."
+  },
+  {
+   "id": "rs-s07-code",
+   "node": "stage-07",
+   "type": "mcq_code",
+   "concept": "entry-api",
+   "code": "use std::collections::HashMap;\n\nfn main() {\n    let mut m = HashMap::new();\n    for w in [\"a\", \"b\", \"a\"] {\n        *m.entry(w).or_insert(0) += 1;\n    }\n    println!(\"{} {}\", m[\"a\"], m.len());\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "2 3",
+    "3 2",
+    "2 2",
+    "1 2"
+   ],
+   "answer": 2,
+   "explanation": "`entry(w).or_insert(0)` creates the counter on first sight and returns a mutable reference to it. \"a\" is counted twice and there are two distinct keys."
+  },
+  {
+   "id": "rs-s07-short",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "insert-returns-old",
+   "code": "use std::collections::HashMap;\n\nfn main() {\n    let mut m: HashMap<String, i64> = HashMap::new();\n    m.insert(\"x\".to_string(), 1);\n    let old = m.insert(\"x\".to_string(), 5);\n    println!(\"{:?} {}\", old, m[\"x\"]);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "Some(1) 5",
+   "explanation": "`insert` on an existing key replaces the value and returns the previous one wrapped in Some."
+  },
+  {
+   "id": "rs-s07-explain",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "hashmap-order",
+   "prompt": "In your own words: why should a program that must print a map's contents in a reproducible order not iterate a `HashMap` directly, and what can it use instead?",
+   "answer": "HashMap iteration order is unspecified and can differ from run to run, so the output is not reproducible. Use a `BTreeMap`, which keeps keys sorted, or collect the keys and sort them before printing.",
+   "keywords": [
+    [
+     "unspecified",
+     "random",
+     "arbitrary",
+     "not guaranteed",
+     "varies",
+     "differ",
+     "unpredictable"
+    ],
+    [
+     "btreemap",
+     "sort",
+     "sorted",
+     "ordered"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "entry-api",
+   "prompt": "most_common_count(words) should return how many times the most frequent word appears (0 for an empty list). It does not compile. Fix it.",
+   "code": "use std::collections::HashMap;\n\nfn most_common_count(words: Vec<String>) -> i64 {\n    let mut counts: HashMap<String, i64> = HashMap::new();\n    for w in words {\n        counts[&w] += 1;\n    }\n    counts.values().copied().max().unwrap_or(0)\n}",
+   "fn": "most_common_count",
+   "solution": "use std::collections::HashMap;\n\nfn most_common_count(words: Vec<String>) -> i64 {\n    let mut counts: HashMap<String, i64> = HashMap::new();\n    for w in words {\n        *counts.entry(w).or_insert(0) += 1;\n    }\n    counts.values().copied().max().unwrap_or(0)\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "x",
+       "y",
+       "z"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "q",
+       "q",
+       "q",
+       "q"
+      ]
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "b",
+       "a",
+       "b"
+      ]
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "A HashMap cannot be modified through indexing (`counts[&w] += 1` is rejected), and a missing key would panic anyway. `entry(w).or_insert(0)` creates the counter when needed and returns a mutable reference."
+  },
+  {
+   "id": "rs-s07-write",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "seen-tracking",
+   "prompt": "Write first_repeat(words) that returns the first word that has already appeared earlier in the list when it is encountered, or an empty string when no word repeats.",
+   "starter": "fn first_repeat(words: Vec<String>) -> String {\n    // scan left to right; return the first word seen before\n    todo!()\n}",
+   "fn": "first_repeat",
+   "solution": "use std::collections::HashSet;\n\nfn first_repeat(words: Vec<String>) -> String {\n    let mut seen: HashSet<String> = HashSet::new();\n    for w in words {\n        if seen.contains(&w) {\n            return w;\n        }\n        seen.insert(w);\n    }\n    String::new()\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": "a"
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "c"
+      ]
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x"
+      ]
+     ],
+     "expected": "x"
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": "b"
+    },
+    {
+     "args": [
+      [
+       "p",
+       "q",
+       "r",
+       "q",
+       "p"
+      ]
+     ],
+     "expected": "q"
+    }
+   ],
+   "explanation": "Scan once with a set of words seen so far; the first word that is already in the set is the answer. Note `[a, b, b, a]` returns b because b repeats before a does."
+  },
+  {
+   "id": "rs-s08-mcq",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "set-insert",
+   "prompt": "What does `set.insert(5)` return when 5 is already in a `HashSet<i64>`?",
+   "choices": [
+    "`false`, and the set is unchanged",
+    "`true`, and the size grows",
+    "`Some(5)`, the old element",
+    "It panics because the element already exists"
+   ],
+   "answer": 0,
+   "explanation": "`HashSet::insert` returns a bool: true if the value was newly added, false if it was already present."
+  },
+  {
+   "id": "rs-s08-code",
+   "node": "stage-08",
+   "type": "mcq_code",
+   "concept": "set-operations",
+   "code": "use std::collections::HashSet;\n\nfn main() {\n    let a: HashSet<i64> = [1, 2, 3].into_iter().collect();\n    let b: HashSet<i64> = [2, 3, 4].into_iter().collect();\n    let mut both: Vec<i64> = a.intersection(&b).copied().collect();\n    both.sort();\n    println!(\"{:?}\", both);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "[1, 4]",
+    "[2, 3]",
+    "[2, 3, 3]",
+    "[1, 2, 3, 4]"
+   ],
+   "answer": 1,
+   "explanation": "The intersection holds the elements present in both sets. The iteration order of a hash set is unspecified, so the result is sorted before printing."
+  },
+  {
+   "id": "rs-s08-short",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "duplicates",
+   "code": "use std::collections::HashSet;\n\nfn main() {\n    let words = [\"to\", \"be\", \"or\", \"not\", \"to\", \"be\"];\n    let s: HashSet<&str> = words.iter().copied().collect();\n    println!(\"{} {}\", words.len(), s.len());\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "6 4",
+   "explanation": "The array has six words, but \"to\" and \"be\" repeat, leaving four distinct words in the set."
+  },
+  {
+   "id": "rs-s08-explain",
+   "node": "stage-08",
+   "type": "explain",
+   "concept": "hash-requirements",
+   "prompt": "In your own words: why can't an `f64` be stored in a `HashSet` directly, and what could you do instead?",
+   "answer": "Set elements must implement `Eq` and `Hash`. `f64` implements only `PartialEq`/`PartialOrd`, because NaN is not equal to itself, so it is not `Eq` and has no `Hash`; the `insert` method is unavailable. Use an integer representation of the value (for example its bit pattern) or a wrapper type that defines equality and hashing, or use a different structure.",
+   "keywords": [
+    [
+     "eq",
+     "partialeq",
+     "nan",
+     "equality",
+     "equal"
+    ],
+    [
+     "hash",
+     "hashing"
+    ],
+    [
+     "wrapper",
+     "bits",
+     "integer",
+     "convert",
+     "representation",
+     "btreeset",
+     "total_cmp"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s08-fix",
+   "node": "stage-08",
+   "type": "fix_bug",
+   "concept": "distinct-count",
+   "prompt": "count_new(values, known) should count the DISTINCT values in `values` that do not appear in `known`. It over-counts duplicates. Fix it.",
+   "code": "use std::collections::HashSet;\n\nfn count_new(values: Vec<i64>, known: Vec<i64>) -> i64 {\n    let known_set: HashSet<i64> = known.into_iter().collect();\n    let mut n = 0;\n    for v in values {\n        if !known_set.contains(&v) {\n            n += 1;\n        }\n    }\n    n\n}",
+   "fn": "count_new",
+   "solution": "use std::collections::HashSet;\n\nfn count_new(values: Vec<i64>, known: Vec<i64>) -> i64 {\n    let known_set: HashSet<i64> = known.into_iter().collect();\n    let mut fresh: HashSet<i64> = HashSet::new();\n    for v in values {\n        if !known_set.contains(&v) {\n            fresh.insert(v);\n        }\n    }\n    fresh.len() as i64\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       1,
+       2,
+       3
+      ],
+      [
+       2
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [],
+      [
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       5
+      ],
+      []
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       4,
+       4,
+       7,
+       7
+      ],
+      [
+       7
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       -1,
+       -1,
+       0
+      ],
+      [
+       0
+      ]
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "Counting every unseen element counts duplicates repeatedly. Collect the new values into a second set so each is counted once."
+  },
+  {
+   "id": "rs-s08-write",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "set-intersection",
+   "prompt": "Write common_count(a, b) that returns how many DISTINCT values appear in both vectors.",
+   "starter": "fn common_count(a: Vec<i64>, b: Vec<i64>) -> i64 {\n    // distinct values present in both\n    todo!()\n}",
+   "fn": "common_count",
+   "solution": "use std::collections::HashSet;\n\nfn common_count(a: Vec<i64>, b: Vec<i64>) -> i64 {\n    let left: HashSet<i64> = a.into_iter().collect();\n    let right: HashSet<i64> = b.into_iter().collect();\n    left.intersection(&right).count() as i64\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       2,
+       3,
+       4
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [],
+      [
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       1
+      ],
+      [
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       6
+      ],
+      [
+       6,
+       6,
+       5
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       -1,
+       0
+      ],
+      [
+       0,
+       -1
+      ]
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "Turn each side into a set (removing duplicates) and count the elements of the intersection."
+  },
+  {
+   "id": "rs-s09-mcq",
+   "node": "stage-09",
+   "type": "mcq",
+   "concept": "method-receivers",
+   "prompt": "Which method signature allows the body to execute `self.count += 1`?",
+   "choices": [
+    "`fn bump(self)`",
+    "`fn bump(&self)`",
+    "`fn bump(&mut self)`",
+    "`fn bump(self: &Self)`"
+   ],
+   "answer": 2,
+   "explanation": "Changing a field needs a mutable receiver: `&mut self`. `&self` and `self: &Self` are shared references (assignment is error E0594), and a plain `self` without `mut` cannot be assigned through either."
+  },
+  {
+   "id": "rs-s09-code",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "clone-independence",
+   "code": "#[derive(Clone)]\nstruct P {\n    x: i64,\n}\n\nfn main() {\n    let a = P { x: 1 };\n    let mut b = a.clone();\n    b.x = 9;\n    println!(\"{} {}\", a.x, b.x);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "9 9",
+    "1 1",
+    "9 1",
+    "1 9"
+   ],
+   "answer": 3,
+   "explanation": "`clone()` creates a separate value, so changing b leaves a untouched."
+  },
+  {
+   "id": "rs-s09-short",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "copy-structs",
+   "code": "#[derive(Clone, Copy)]\nstruct P {\n    x: i64,\n}\n\nfn main() {\n    let a = P { x: 1 };\n    let mut b = a;\n    b.x = 5;\n    println!(\"{} {}\", a.x, b.x);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "1 5",
+   "explanation": "Because P derives Copy, `let mut b = a;` copies the struct instead of moving it. Both remain usable and independent."
+  },
+  {
+   "id": "rs-s09-explain",
+   "node": "stage-09",
+   "type": "explain",
+   "concept": "struct-move",
+   "prompt": "In your own words: for a struct without `Copy`, why can't you use `account` after `let other = account;`, and what are two ways to keep using both values?",
+   "answer": "Assigning a non-Copy struct moves ownership to `other`; the original binding is no longer valid (error E0382, use of moved value), which guarantees a single owner. To keep both you can `clone()` it for an independent copy, borrow it with `&account` instead of moving, or derive `Copy` for small plain-data types.",
+   "keywords": [
+    [
+     "move",
+     "moved",
+     "ownership",
+     "owner"
+    ],
+    [
+     "clone"
+    ],
+    [
+     "borrow",
+     "reference",
+     "copy"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "mutable-receiver",
+   "prompt": "sum_all(values) should add the values using a small Counter struct. It does not compile. Fix it.",
+   "code": "struct Counter {\n    total: i64,\n}\n\nimpl Counter {\n    fn add(&self, n: i64) {\n        self.total += n;\n    }\n}\n\nfn sum_all(values: Vec<i64>) -> i64 {\n    let c = Counter { total: 0 };\n    for v in values {\n        c.add(v);\n    }\n    c.total\n}",
+   "fn": "sum_all",
+   "solution": "struct Counter {\n    total: i64,\n}\n\nimpl Counter {\n    fn add(&mut self, n: i64) {\n        self.total += n;\n    }\n}\n\nfn sum_all(values: Vec<i64>) -> i64 {\n    let mut c = Counter { total: 0 };\n    for v in values {\n        c.add(v);\n    }\n    c.total\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -5,
+       5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10,
+       10,
+       10
+      ]
+     ],
+     "expected": 30
+    },
+    {
+     "args": [
+      [
+       100
+      ]
+     ],
+     "expected": 100
+    }
+   ],
+   "explanation": "Mutating a field needs `&mut self`, and calling such a method needs the variable declared `let mut`."
+  },
+  {
+   "id": "rs-s09-write",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "struct-state",
+   "prompt": "Write max_balance(initial, changes) that applies the changes in order to an account and returns the highest balance the account ever had, including the initial balance.",
+   "starter": "fn max_balance(initial: i64, changes: Vec<i64>) -> i64 {\n    // track the balance and the highest value reached\n    todo!()\n}",
+   "fn": "max_balance",
+   "solution": "struct Account {\n    balance: i64,\n    highest: i64,\n}\n\nimpl Account {\n    fn new(initial: i64) -> Account {\n        Account { balance: initial, highest: initial }\n    }\n\n    fn apply(&mut self, change: i64) {\n        self.balance += change;\n        if self.balance > self.highest {\n            self.highest = self.balance;\n        }\n    }\n}\n\nfn max_balance(initial: i64, changes: Vec<i64>) -> i64 {\n    let mut account = Account::new(initial);\n    for change in changes {\n        account.apply(change);\n    }\n    account.highest\n}",
+   "tests": [
+    {
+     "args": [
+      0,
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      [
+       5,
+       -3
+      ]
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      0,
+      [
+       -5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      7,
+      [
+       0,
+       0
+      ]
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      -2,
+      [
+       2,
+       5,
+       -10
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      100,
+      [
+       -20,
+       -30,
+       10
+      ]
+     ],
+     "expected": 100
+    }
+   ],
+   "explanation": "Keep the highest value as part of the object's state and update it inside the method that changes the balance."
+  },
+  {
+   "id": "rs-s10-mcq",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "checked-index",
+   "prompt": "Given `let v = vec![1, 2, 3];` and `let i: i64 = -1;`, which expression reads position `i` without ever panicking?",
+   "choices": [
+    "`v.get(i as usize).copied().unwrap()`",
+    "`usize::try_from(i).ok().and_then(|k| v.get(k))`",
+    "`v[i as usize]` once `i < 3` has been checked",
+    "`v.get(usize::try_from(i).expect(\"valid index\"))`"
+   ],
+   "answer": 1,
+   "explanation": "`as usize` wraps -1 to a huge number and indexing then panics; `unwrap()` on the failed conversion panics; `%` yields -1 again. Converting with `try_from(...).ok()` and then using `get` turns every invalid case into None."
+  },
+  {
+   "id": "rs-s10-code",
+   "node": "stage-10",
+   "type": "mcq_code",
+   "concept": "parse-result",
+   "code": "fn main() {\n    let r: Result<i64, _> = \"12a\".parse::<i64>();\n    match r {\n        Ok(n) => println!(\"ok {}\", n),\n        Err(_) => println!(\"bad\"),\n    }\n    let n: i64 = \"007\".parse().unwrap();\n    println!(\"{}\", n);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "bad, then 7",
+    "bad, then a panic",
+    "ok 12, then 7",
+    "bad, then 007"
+   ],
+   "answer": 0,
+   "explanation": "\"12a\" is not a valid integer so the Err arm prints bad. \"007\" parses successfully to the integer 7."
+  },
+  {
+   "id": "rs-s10-short",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "option-fallback",
+   "code": "fn main() {\n    let v: Vec<i64> = vec![4, 8];\n    println!(\"{:?} {:?} {}\", v.get(1), v.get(2), v.get(2).copied().unwrap_or(-1));\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "Some(8) None -1",
+   "explanation": "`get(1)` is Some(8), `get(2)` is None, and `unwrap_or(-1)` turns the None into the fallback -1."
+  },
+  {
+   "id": "rs-s10-explain",
+   "node": "stage-10",
+   "type": "explain",
+   "concept": "failure-contracts",
+   "prompt": "In your own words: when would you choose `Option`, `Result` and `panic!` as the way a Rust function reports a problem?",
+   "answer": "Use `Option` when absence is a normal outcome with nothing more to say (like `get` on a missing index). Use `Result<T, E>` when the caller should learn what went wrong and can handle or propagate the error (like parsing). Use `panic!` for bugs or broken invariants that the program cannot reasonably recover from.",
+   "keywords": [
+    [
+     "absence",
+     "absent",
+     "missing",
+     "none",
+     "no value",
+     "nothing there"
+    ],
+    [
+     "error",
+     "err",
+     "recoverable",
+     "caller",
+     "handle",
+     "what went wrong"
+    ],
+    [
+     "bug",
+     "unrecoverable",
+     "invariant",
+     "cannot recover",
+     "broken"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s10-fix",
+   "node": "stage-10",
+   "type": "fix_bug",
+   "concept": "panic-on-invalid",
+   "prompt": "safe_div(a, b, fallback) should return a / b, or fallback when b is zero. It currently crashes for some inputs. Fix it.",
+   "code": "fn safe_div(a: i64, b: i64, fallback: i64) -> i64 {\n    a / b\n}",
+   "fn": "safe_div",
+   "solution": "fn safe_div(a: i64, b: i64, fallback: i64) -> i64 {\n    if b == 0 {\n        fallback\n    } else {\n        a / b\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      10,
+      2,
+      -1
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      7,
+      0,
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      0,
+      5,
+      9
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -9,
+      3,
+      0
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      5,
+      0,
+      42
+     ],
+     "expected": 42
+    },
+    {
+     "args": [
+      7,
+      2,
+      0
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Integer division by zero panics. Validate the divisor first and return the fallback."
+  },
+  {
+   "id": "rs-s10-write",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "parse-fallback",
+   "prompt": "Write parse_or(text, fallback) that parses text as an i64 and returns it, or returns fallback when text is not a valid integer.",
+   "starter": "fn parse_or(text: String, fallback: i64) -> i64 {\n    // parse, or fall back\n    todo!()\n}",
+   "fn": "parse_or",
+   "solution": "fn parse_or(text: String, fallback: i64) -> i64 {\n    match text.parse::<i64>() {\n        Ok(n) => n,\n        Err(_) => fallback,\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      "42",
+      0
+     ],
+     "expected": 42
+    },
+    {
+     "args": [
+      "x",
+      7
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      "",
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "-5",
+      0
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      "12a",
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      "0",
+      9
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "`parse` returns a Result. Matching on it (or using `unwrap_or`) keeps the failure case explicit instead of panicking."
+  },
+  {
+   "id": "rs-s11-mcq",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "stack-depth",
+   "prompt": "A recursive function is logically correct but crashes when called with a very large input. What is the most likely cause?",
+   "choices": [
+    "Integers overflow automatically once about a thousand calls are active, corrupting results.",
+    "The borrow checker caps the number of nested calls a function may make at compile time.",
+    "Rust enforces a fixed recursion limit of a few hundred calls and aborts beyond it.",
+    "Every call uses stack space and the stack is finite, so deep recursion exhausts it."
+   ],
+   "answer": 3,
+   "explanation": "Each active call occupies stack space and the stack is finite; its size is set outside the language. Very deep problems need an explicit stack or a loop. There is no language-imposed call limit."
+  },
+  {
+   "id": "rs-s11-code",
+   "node": "stage-11",
+   "type": "mcq_code",
+   "concept": "call-tree",
+   "code": "fn calls(n: i64) -> i64 {\n    if n == 0 {\n        1\n    } else {\n        1 + calls(n - 1) + calls(n - 1)\n    }\n}\n\nfn main() {\n    println!(\"{}\", calls(3));\n}",
+   "prompt": "How many calls to `calls` happen when `calls(3)` is evaluated (counting the first call)?",
+   "choices": [
+    "7",
+    "8",
+    "15",
+    "4"
+   ],
+   "answer": 2,
+   "explanation": "The function returns the number of calls in its own tree: calls(0) = 1 and calls(n) = 1 + 2 * calls(n - 1), giving 1, 3, 7, 15."
+  },
+  {
+   "id": "rs-s11-short",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "accumulator-recursion",
+   "code": "fn rev(n: i64, acc: i64) -> i64 {\n    if n == 0 {\n        acc\n    } else {\n        rev(n / 10, acc * 10 + n % 10)\n    }\n}\n\nfn main() {\n    println!(\"{} {}\", rev(1230, 0), rev(5, 0));\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "321 5",
+   "explanation": "rev peels digits from the right of n and appends them to acc: 1230 gives 0, then 3, 32 and finally 321 (the leading zero of the result disappears). rev(5, 0) is 5."
+  },
+  {
+   "id": "rs-s11-explain",
+   "node": "stage-11",
+   "type": "explain",
+   "concept": "base-case",
+   "prompt": "In your own words: what are the two things every correct recursive function needs, and what goes wrong if either is missing?",
+   "answer": "It needs a base case that returns an answer without another recursive call, and each recursive call must move toward that base case (a decreasing measure). Without a base case, or if the input does not get smaller, the calls never stop and the program overflows the stack.",
+   "keywords": [
+    [
+     "base case",
+     "base"
+    ],
+    [
+     "smaller",
+     "decreas",
+     "shrink",
+     "toward",
+     "approach",
+     "progress"
+    ],
+    [
+     "stack overflow",
+     "infinite",
+     "never stop",
+     "never terminate",
+     "terminate",
+     "overflow"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "base-case",
+   "prompt": "count_digits(n) should return how many decimal digits n has (n >= 0; zero has one digit). It is off by one. Fix it.",
+   "code": "fn count_digits(n: i64) -> i64 {\n    if n < 10 {\n        return 0;\n    }\n    1 + count_digits(n / 10)\n}",
+   "fn": "count_digits",
+   "solution": "fn count_digits(n: i64) -> i64 {\n    if n < 10 {\n        return 1;\n    }\n    1 + count_digits(n / 10)\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      99
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      123
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      1000000
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "A single-digit number has one digit, so the base case must return 1, not 0."
+  },
+  {
+   "id": "rs-s11-write",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "recursive-definition",
+   "prompt": "Write fib(n) for n from 0 to 20 using recursion, where fib(0) = 0, fib(1) = 1 and fib(n) = fib(n - 1) + fib(n - 2).",
+   "starter": "fn fib(n: i64) -> i64 {\n    // two base cases, then the recurrence\n    todo!()\n}",
+   "fn": "fib",
+   "solution": "fn fib(n: i64) -> i64 {\n    if n < 2 {\n        n\n    } else {\n        fib(n - 1) + fib(n - 2)\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    },
+    {
+     "args": [
+      15
+     ],
+     "expected": 610
+    },
+    {
+     "args": [
+      20
+     ],
+     "expected": 6765
+    }
+   ],
+   "explanation": "Two base cases (0 and 1) are needed because the recurrence calls n - 1 and n - 2."
+  },
+  {
+   "id": "rs-s12-mcq",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "set-complexity",
+   "prompt": "The one-pass solution to a pair-sum search that keeps a HashSet of seen values has which cost?",
+   "choices": [
+    "O(n log n) time and O(1) extra space after sorting",
+    "O(1) time and O(n) extra space, since a set lookup is constant",
+    "Expected O(n) time and O(n) extra space",
+    "O(n^2) time and O(1) extra space, like the all-pairs scan"
+   ],
+   "answer": 2,
+   "explanation": "One traversal with average constant-time set operations is expected linear time, and the set can hold up to n values. The all-pairs approach is quadratic time with constant extra space."
+  },
+  {
+   "id": "rs-s12-code",
+   "node": "stage-12",
+   "type": "mcq_code",
+   "concept": "nested-loop-count",
+   "code": "fn main() {\n    let n = 6;\n    let mut c = 0;\n    for i in 0..n {\n        for _j in (i + 1)..n {\n            c += 1;\n        }\n    }\n    println!(\"{}\", c);\n}",
+   "prompt": "How many times does the counter increment?",
+   "choices": [
+    "12",
+    "15",
+    "36",
+    "6"
+   ],
+   "answer": 1,
+   "explanation": "The inner loop runs n - 1 - i times: 5 + 4 + 3 + 2 + 1 + 0 = 15, which is n(n - 1)/2 and grows quadratically."
+  },
+  {
+   "id": "rs-s12-short",
+   "node": "stage-12",
+   "type": "short_answer",
+   "concept": "set-insert-bool",
+   "code": "use std::collections::HashSet;\n\nfn main() {\n    let v = [3, 1, 3, 2, 1];\n    let mut seen = HashSet::new();\n    let mut dup = 0;\n    for x in v {\n        if !seen.insert(x) {\n            dup += 1;\n        }\n    }\n    println!(\"{} {}\", dup, seen.len());\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "2 3",
+   "explanation": "The second 3 and the second 1 make `insert` return false, so dup is 2. The set ends with the three distinct values 3, 1 and 2."
+  },
+  {
+   "id": "rs-s12-explain",
+   "node": "stage-12",
+   "type": "explain",
+   "concept": "loop-invariant",
+   "prompt": "In your own words: in the one-pass pair search, why must you look for the current element's partner BEFORE inserting the element into the set? State the invariant.",
+   "answer": "The invariant is that before processing index i, the set holds exactly the values at earlier indices. If the element were inserted first, it could pair with itself (for example a single 1 with target 2), which breaks the requirement of two different indices. Checking first keeps the partner search to earlier elements only.",
+   "keywords": [
+    [
+     "itself",
+     "same element",
+     "own partner",
+     "self"
+    ],
+    [
+     "before",
+     "first",
+     "order",
+     "after"
+    ],
+    [
+     "invariant",
+     "earlier",
+     "previous",
+     "visited",
+     "indices",
+     "already seen"
+    ]
+   ]
+  },
+  {
+   "id": "rs-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "invariant",
+   "prompt": "has_pair_diff(values, diff) should return true when two elements at different indices differ by exactly diff (diff >= 0), in either order. It misses some cases. Fix it.",
+   "code": "use std::collections::HashSet;\n\nfn has_pair_diff(values: Vec<i64>, diff: i64) -> bool {\n    let mut seen: HashSet<i64> = HashSet::new();\n    for v in values {\n        if seen.contains(&(v - diff)) {\n            return true;\n        }\n        seen.insert(v);\n    }\n    false\n}",
+   "fn": "has_pair_diff",
+   "solution": "use std::collections::HashSet;\n\nfn has_pair_diff(values: Vec<i64>, diff: i64) -> bool {\n    let mut seen: HashSet<i64> = HashSet::new();\n    for v in values {\n        if seen.contains(&(v - diff)) || seen.contains(&(v + diff)) {\n            return true;\n        }\n        seen.insert(v);\n    }\n    false\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       5
+      ],
+      4
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       5,
+       1
+      ],
+      4
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      5
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      0
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       3,
+       3
+      ],
+      0
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [],
+      1
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       10,
+       7,
+       1
+      ],
+      3
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "An earlier element can be either diff below or diff above the current one, so both v - diff and v + diff must be looked up."
+  },
+  {
+   "id": "rs-s12-write",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "one-pass-counting",
+   "prompt": "Write count_pairs(values, target) that returns how many pairs of positions i < j satisfy values[i] + values[j] == target. Aim for a single pass with a HashMap of counts.",
+   "starter": "fn count_pairs(values: Vec<i64>, target: i64) -> i64 {\n    // one pass: count earlier partners, then record the current value\n    todo!()\n}",
+   "fn": "count_pairs",
+   "solution": "use std::collections::HashMap;\n\nfn count_pairs(values: Vec<i64>, target: i64) -> i64 {\n    let mut counts: HashMap<i64, i64> = HashMap::new();\n    let mut total = 0;\n    for v in values {\n        total += counts.get(&(target - v)).copied().unwrap_or(0);\n        *counts.entry(v).or_insert(0) += 1;\n    }\n    total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       1,
+       1
+      ],
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       2,
+       7,
+       11
+      ],
+      9
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      9
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       3,
+       3,
+       3,
+       3
+      ],
+      6
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       1,
+       -4
+      ],
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [],
+      2
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "For each element, add the number of earlier elements equal to target minus it, then record the element. Looking before recording preserves i < j."
+  },
+  {
+   "id": "rs-m-ownership-mcq",
+   "node": "module-ownership-borrowing",
+   "type": "mcq",
+   "concept": "borrow-conflict",
+   "prompt": "Why does `let first = &v[0]; v.push(4); println!(\"{}\", first);` fail to compile?",
+   "choices": [
+    "`println!` takes ownership of `first` and then invalidates `v` entirely.",
+    "A Vec cannot be borrowed again once it has been created, even briefly.",
+    "`push` needs `&mut v` while the borrow `first` is still used later.",
+    "`push` moves the element out of the vector, so `first` would be empty."
+   ],
+   "answer": 2,
+   "explanation": "This is E0502: a mutable borrow (from `push`, which may reallocate) overlaps with a shared borrow that is used later. Finish using `first` before pushing, or copy the value out."
+  },
+  {
+   "id": "rs-m-ownership-code",
+   "node": "module-ownership-borrowing",
+   "type": "mcq_code",
+   "concept": "non-lexical-lifetimes",
+   "code": "fn main() {\n    let mut v = vec![1, 2, 3];\n    let first = &v[0];\n    println!(\"{}\", first);\n    v.push(4);\n    println!(\"{}\", v.len());\n}",
+   "prompt": "What happens when this program is compiled and run?",
+   "choices": [
+    "It is rejected: cannot borrow `v` as mutable because it is also borrowed as immutable.",
+    "It compiles and prints 1 then 3.",
+    "It compiles but panics at run time.",
+    "It compiles and prints 1 then 4."
+   ],
+   "answer": 3,
+   "explanation": "Non-lexical lifetimes end a borrow after its last use. `first` is last used by the first println, so the later `push` is allowed."
+  },
+  {
+   "id": "rs-m-ownership-short",
+   "node": "module-ownership-borrowing",
+   "type": "short_answer",
+   "concept": "mutable-borrow-scope",
+   "code": "fn main() {\n    let mut s = String::from(\"ab\");\n    {\n        let r = &mut s;\n        r.push('c');\n    }\n    let t = s.clone();\n    s.push('d');\n    println!(\"{} {}\", s, t);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "abcd abc",
+   "explanation": "The exclusive borrow `r` ends with its block. `t` is an independent clone taken when s was \"abc\", so pushing 'd' afterwards only affects s."
+  },
+  {
+   "id": "rs-m-ownership-explain",
+   "node": "module-ownership-borrowing",
+   "type": "explain",
+   "concept": "disjoint-access",
+   "prompt": "In your own words: Rust rejects two `&mut` references into the same `Vec` at once. Name two ways to work with two of its elements anyway, and why the rule exists.",
+   "answer": "Use indices and swap the elements (`v.swap(i, j)`), or split the slice into disjoint halves with `split_at_mut` (newer versions also offer `get_disjoint_mut`). The rule exists because two live `&mut` references to the same data would alias, so one could invalidate the other; exclusive access is what makes mutation safe.",
+   "keywords": [
+    [
+     "split_at_mut",
+     "split at mut",
+     "swap",
+     "get_disjoint_mut"
+    ],
+    [
+     "index",
+     "indices"
+    ],
+    [
+     "alias",
+     "aliasing",
+     "exclusive",
+     "one mutable",
+     "invalidate"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-ownership-fix",
+   "node": "module-ownership-borrowing",
+   "type": "fix_bug",
+   "concept": "two-mutable-borrows",
+   "prompt": "swap_ends(values) should swap the first and last elements (vectors shorter than two elements are returned unchanged). It does not compile because of two simultaneous mutable borrows. Fix it.",
+   "code": "fn swap_ends(mut values: Vec<i64>) -> Vec<i64> {\n    if values.len() >= 2 {\n        let last = values.len() - 1;\n        let a = &mut values[0];\n        let b = &mut values[last];\n        std::mem::swap(a, b);\n    }\n    values\n}",
+   "fn": "swap_ends",
+   "solution": "fn swap_ends(mut values: Vec<i64>) -> Vec<i64> {\n    if values.len() >= 2 {\n        let last = values.len() - 1;\n        values.swap(0, last);\n    }\n    values\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": [
+      3,
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       6,
+       7,
+       8
+      ]
+     ],
+     "expected": [
+      8,
+      6,
+      7,
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0,
+       9
+      ]
+     ],
+     "expected": [
+      9,
+      0,
+      0
+     ]
+    }
+   ],
+   "explanation": "Two `&mut` borrows of one Vec are rejected (E0499). `Vec::swap(i, j)` takes the indices and does the exchange internally."
+  },
+  {
+   "id": "rs-m-ownership-write",
+   "node": "module-ownership-borrowing",
+   "type": "write_snippet",
+   "concept": "moving-out",
+   "prompt": "Write take_longest(words) that returns the first longest word, moving it out of the vector (no clone needed). An empty vector gives an empty string.",
+   "starter": "fn take_longest(words: Vec<String>) -> String {\n    // return the first word with the greatest length\n    todo!()\n}",
+   "fn": "take_longest",
+   "solution": "fn take_longest(words: Vec<String>) -> String {\n    let mut best = String::new();\n    for w in words {\n        if w.len() > best.len() {\n            best = w;\n        }\n    }\n    best\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": "a"
+    },
+    {
+     "args": [
+      [
+       "ab",
+       "c",
+       "de"
+      ]
+     ],
+     "expected": "ab"
+    },
+    {
+     "args": [
+      [
+       "x",
+       "yy",
+       "zz"
+      ]
+     ],
+     "expected": "yy"
+    },
+    {
+     "args": [
+      [
+       "abc",
+       "abcd",
+       "ab"
+      ]
+     ],
+     "expected": "abcd"
+    },
+    {
+     "args": [
+      [
+       "q",
+       "w"
+      ]
+     ],
+     "expected": "q"
+    }
+   ],
+   "explanation": "Iterating by value moves each String out of the vector, so you can keep the best one without cloning. Using a strict `>` keeps the first of equally long words."
+  },
+  {
+   "id": "rs-m-lifetimes-mcq",
+   "node": "module-lifetimes",
+   "type": "mcq",
+   "concept": "missing-lifetime",
+   "prompt": "`fn longest(a: &str, b: &str) -> &str` is rejected with \"missing lifetime specifier\". Why?",
+   "choices": [
+    "The compiler cannot tell which input the returned reference borrows from.",
+    "A function is never allowed to return a reference to data it was handed.",
+    "`&str` must always be written as `&'static str` when it appears in return position.",
+    "Two reference parameters are not allowed in the same function signature at all."
+   ],
+   "answer": 0,
+   "explanation": "With more than one reference parameter and no `self`, elision cannot pick the input the output is tied to (E0106). Naming a lifetime, as in `fn longest<'a>(a: &'a str, b: &'a str) -> &'a str`, states the relationship."
+  },
+  {
+   "id": "rs-m-lifetimes-code",
+   "node": "module-lifetimes",
+   "type": "mcq_code",
+   "concept": "lifetime-scope",
+   "code": "fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {\n    if a.len() >= b.len() { a } else { b }\n}\n\nfn main() {\n    let x = String::from(\"hello\");\n    let r;\n    {\n        let y = String::from(\"hi\");\n        r = longest(&x, &y).len();\n    }\n    println!(\"{}\", r);\n}",
+   "prompt": "What happens when this program is compiled and run?",
+   "choices": [
+    "It compiles and prints 2.",
+    "It compiles and prints 5.",
+    "It compiles and prints 7.",
+    "It is rejected: `y` does not live long enough."
+   ],
+   "answer": 1,
+   "explanation": "`r` stores a usize (the length), not a reference, so nothing borrowed from `y` outlives the inner block. The borrow of `y` ends after `.len()`."
+  },
+  {
+   "id": "rs-m-lifetimes-short",
+   "node": "module-lifetimes",
+   "type": "short_answer",
+   "concept": "struct-lifetime",
+   "code": "struct Parser<'a> {\n    text: &'a str,\n}\n\nimpl<'a> Parser<'a> {\n    fn first_word(&self) -> &'a str {\n        self.text.split(' ').next().unwrap_or(\"\")\n    }\n}\n\nfn main() {\n    let s = String::from(\"hello world\");\n    let w;\n    {\n        let p = Parser { text: &s };\n        w = p.first_word();\n    }\n    println!(\"{}\", w);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "hello",
+   "explanation": "`first_word` returns `&'a str`, tied to the text the parser borrows, not to the `&self` borrow. The parser `p` can therefore be dropped while `w` (borrowing from `s`) stays valid."
+  },
+  {
+   "id": "rs-m-lifetimes-explain",
+   "node": "module-lifetimes",
+   "type": "explain",
+   "concept": "lifetime-meaning",
+   "prompt": "In your own words: what does a lifetime annotation like `'a` actually do, and what does it NOT do?",
+   "answer": "A lifetime annotation names a relationship between references, telling the compiler how the lifetime of an output reference relates to the inputs so the borrow checker can verify them. It does not extend how long a value lives; the data still lives only as long as its owner, and annotating cannot make a dangling reference valid.",
+   "keywords": [
+    [
+     "relationship",
+     "relate",
+     "relates",
+     "tie",
+     "link",
+     "connect",
+     "describe"
+    ],
+    [
+     "compiler",
+     "borrow checker",
+     "check",
+     "verify"
+    ],
+    [
+     "not extend",
+     "not change",
+     "not keep",
+     "does not make",
+     "doesn't make",
+     "cannot extend",
+     "owner",
+     "only describe"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-lifetimes-fix",
+   "node": "module-lifetimes",
+   "type": "fix_bug",
+   "concept": "does-not-live-long-enough",
+   "prompt": "pick_longer(a, b) should return whichever string is longer (a if they are equal). It does not compile because it keeps a reference to a temporary. Fix it.",
+   "code": "fn pick_longer(a: String, b: String) -> String {\n    let result;\n    {\n        let tmp = b.clone();\n        result = if a.len() >= tmp.len() { &a } else { &tmp };\n    }\n    result.to_string()\n}",
+   "fn": "pick_longer",
+   "solution": "fn pick_longer(a: String, b: String) -> String {\n    if a.len() >= b.len() {\n        a\n    } else {\n        b\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      "a",
+      "b"
+     ],
+     "expected": "a"
+    },
+    {
+     "args": [
+      "ab",
+      "c"
+     ],
+     "expected": "ab"
+    },
+    {
+     "args": [
+      "c",
+      "ab"
+     ],
+     "expected": "ab"
+    },
+    {
+     "args": [
+      "",
+      ""
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "abc",
+      "xyz"
+     ],
+     "expected": "abc"
+    },
+    {
+     "args": [
+      "x",
+      "xyz"
+     ],
+     "expected": "xyz"
+    }
+   ],
+   "explanation": "`tmp` is dropped at the end of the inner block while `result` still refers to it (E0597). Compare the owned inputs directly and return one of them."
+  },
+  {
+   "id": "rs-m-lifetimes-write",
+   "node": "module-lifetimes",
+   "type": "write_snippet",
+   "concept": "borrowed-slices",
+   "prompt": "Write longest_word_len(text) that splits text on single spaces and returns the length of the longest piece (0 for an empty text; the text is ASCII). The pieces are string slices borrowed from `text`.",
+   "starter": "fn longest_word_len(text: String) -> i64 {\n    // split on ' ' and find the longest piece\n    todo!()\n}",
+   "fn": "longest_word_len",
+   "solution": "fn longest_word_len(text: String) -> i64 {\n    text.split(' ').map(|w| w.len()).max().unwrap_or(0) as i64\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "hello world"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "a bb ccc"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "x  yy"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "one two three"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "abc de"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "longer a"
+     ],
+     "expected": 6
+    }
+   ],
+   "explanation": "`split` yields `&str` slices that borrow from `text`; taking only their lengths means nothing borrowed escapes the function."
+  },
+  {
+   "id": "rs-m-traits-mcq",
+   "node": "module-traits-generics",
+   "type": "mcq",
+   "concept": "trait-bounds",
+   "prompt": "A generic `fn largest<T>(items: &[T]) -> T` compares elements with `>` and is rejected by the compiler. What is the right repair?",
+   "choices": [
+    "Add a `'static` lifetime bound to `T`.",
+    "Mark the whole function as `unsafe`.",
+    "Replace `T` with `dyn Any` in the signature.",
+    "Add bounds such as `T: PartialOrd + Copy`."
+   ],
+   "answer": 3,
+   "explanation": "The error (E0369, binary operation `>` cannot be applied to type `T`) says the type lacks a capability the body uses. A trait bound on the generic declares it: `PartialOrd` for `>` and `Copy` to return elements by value."
+  },
+  {
+   "id": "rs-m-traits-code",
+   "node": "module-traits-generics",
+   "type": "mcq_code",
+   "concept": "default-methods",
+   "code": "trait Shape {\n    fn area(&self) -> i64;\n    fn name(&self) -> String {\n        \"shape\".to_string()\n    }\n}\n\nstruct Sq(i64);\nstruct Rect(i64, i64);\n\nimpl Shape for Sq {\n    fn area(&self) -> i64 { self.0 * self.0 }\n    fn name(&self) -> String { \"square\".to_string() }\n}\n\nimpl Shape for Rect {\n    fn area(&self) -> i64 { self.0 * self.1 }\n}\n\nfn main() {\n    let shapes: Vec<Box<dyn Shape>> = vec![Box::new(Sq(3)), Box::new(Rect(2, 5))];\n    for s in &shapes {\n        println!(\"{} {}\", s.name(), s.area());\n    }\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "square 9, then rect 10",
+    "square 9, then square 10",
+    "square 9, then shape 10",
+    "shape 9, then shape 10"
+   ],
+   "answer": 2,
+   "explanation": "Sq overrides `name`; Rect does not, so it uses the trait's default \"shape\". Each call is dispatched to the implementation of the concrete type behind the box."
+  },
+  {
+   "id": "rs-m-traits-short",
+   "node": "module-traits-generics",
+   "type": "short_answer",
+   "concept": "generic-functions",
+   "code": "fn largest<T: PartialOrd + Copy>(items: &[T]) -> T {\n    let mut m = items[0];\n    for &i in items {\n        if i > m {\n            m = i;\n        }\n    }\n    m\n}\n\nfn main() {\n    println!(\"{} {} {}\", largest(&[3, 9, 2]), largest(&[1.5, 0.5]), largest(&['a', 'z', 'm']));\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "9 1.5 z",
+   "explanation": "One generic function works for any type with the required bounds. The compiler generates a specialised copy for i32, f64 and char (monomorphisation)."
+  },
+  {
+   "id": "rs-m-traits-explain",
+   "node": "module-traits-generics",
+   "type": "explain",
+   "concept": "ord-and-floats",
+   "prompt": "In your own words: why must a generic function declare a bound like `T: Ord` before it can compare values, and why is `f64` not `Ord`?",
+   "answer": "Inside a generic function the compiler knows nothing about T, so it only allows operations promised by the bounds; declaring `T: Ord` states that values can be totally ordered. `f64` is intentionally not `Ord` because NaN has no consistent ordering; it is only `PartialOrd`, so floats are sorted with `total_cmp` or a wrapper type.",
+   "keywords": [
+    [
+     "bound",
+     "constraint",
+     "capabilit",
+     "trait",
+     "promise"
+    ],
+    [
+     "nan"
+    ],
+    [
+     "total_cmp",
+     "partialord",
+     "partial",
+     "wrapper"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-traits-fix",
+   "node": "module-traits-generics",
+   "type": "fix_bug",
+   "concept": "missing-bound",
+   "prompt": "largest_or(values, fallback) should return the largest element, or fallback when it is larger (or the vector is empty). It does not compile. Fix the generic helper.",
+   "code": "fn max_or<T>(items: &[T], fallback: T) -> T {\n    let mut best = fallback;\n    for &item in items {\n        if item > best {\n            best = item;\n        }\n    }\n    best\n}\n\nfn largest_or(values: Vec<i64>, fallback: i64) -> i64 {\n    max_or(&values, fallback)\n}",
+   "fn": "largest_or",
+   "solution": "fn max_or<T: PartialOrd + Copy>(items: &[T], fallback: T) -> T {\n    let mut best = fallback;\n    for &item in items {\n        if item > best {\n            best = item;\n        }\n    }\n    best\n}\n\nfn largest_or(values: Vec<i64>, fallback: i64) -> i64 {\n    max_or(&values, fallback)\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       1,
+       9,
+       3
+      ],
+      0
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      [
+       -4,
+       -2
+      ],
+      -9
+     ],
+     "expected": -2
+    },
+    {
+     "args": [
+      [
+       7
+      ],
+      7
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      [
+       3,
+       3
+      ],
+      0
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "`>` needs `PartialOrd`, and copying `item` out of the slice needs `Copy`. Declare both on `T`."
+  },
+  {
+   "id": "rs-m-traits-write",
+   "node": "module-traits-generics",
+   "type": "write_snippet",
+   "concept": "trait-objects",
+   "prompt": "Complete total_score(kind, values): pick the Scorer named by kind (\"double\" or \"square\"; any other name scores 0 for everything) and return the sum of its score for every value.",
+   "starter": "trait Scorer {\n    fn score(&self, x: i64) -> i64;\n}\n\nstruct Double;\nstruct Square;\n\nimpl Scorer for Double {\n    fn score(&self, x: i64) -> i64 { x * 2 }\n}\n\nimpl Scorer for Square {\n    fn score(&self, x: i64) -> i64 { x * x }\n}\n\nfn total_score(kind: String, values: Vec<i64>) -> i64 {\n    // choose a scorer by name and total it over values\n    todo!()\n}",
+   "fn": "total_score",
+   "solution": "trait Scorer {\n    fn score(&self, x: i64) -> i64;\n}\n\nstruct Double;\nstruct Square;\n\nimpl Scorer for Double {\n    fn score(&self, x: i64) -> i64 { x * 2 }\n}\n\nimpl Scorer for Square {\n    fn score(&self, x: i64) -> i64 { x * x }\n}\n\nfn total_score(kind: String, values: Vec<i64>) -> i64 {\n    let scorer: Box<dyn Scorer> = match kind.as_str() {\n        \"double\" => Box::new(Double),\n        \"square\" => Box::new(Square),\n        _ => return 0,\n    };\n    values.iter().map(|&v| scorer.score(v)).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      "double",
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      "square",
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 14
+    },
+    {
+     "args": [
+      "double",
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "other",
+      [
+       5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "square",
+      [
+       -3
+      ]
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      "double",
+      [
+       -4,
+       4
+      ]
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "A `Box<dyn Scorer>` lets one variable hold either implementation chosen at run time. A generic function would need the concrete type known at compile time."
+  },
+  {
+   "id": "rs-m-errors-mcq",
+   "node": "module-error-handling",
+   "type": "mcq",
+   "concept": "question-mark",
+   "prompt": "In `fn f(s: &str) -> Result<i64, std::num::ParseIntError> { let n = s.parse::<i64>()?; Ok(n + 1) }`, what does `?` do when the parse fails?",
+   "choices": [
+    "It ignores the error and leaves `n` uninitialised for later use.",
+    "It returns early from `f` with that error as the `Err` value.",
+    "It panics with the error message, like calling `unwrap` would.",
+    "It replaces the error with 0 and keeps executing the function."
+   ],
+   "answer": 1,
+   "explanation": "`?` unwraps an Ok value and otherwise returns the Err from the enclosing function (converting it with `From` when needed). It never panics and never swallows the error."
+  },
+  {
+   "id": "rs-m-errors-code",
+   "node": "module-error-handling",
+   "type": "mcq_code",
+   "concept": "result-propagation",
+   "code": "use std::num::ParseIntError;\n\nfn add(a: &str, b: &str) -> Result<i64, ParseIntError> {\n    let x: i64 = a.parse()?;\n    let y: i64 = b.parse()?;\n    Ok(x + y)\n}\n\nfn main() {\n    println!(\"{:?}\", add(\"2\", \"3\").ok());\n    println!(\"{}\", add(\"2\", \"x\").is_err());\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "Some(5), then true",
+    "5, then true",
+    "Ok(5), then true",
+    "Some(5), then false"
+   ],
+   "answer": 0,
+   "explanation": "`ok()` converts Result into Option, so success prints Some(5). The second call fails at `y`'s parse and returns the Err early, so `is_err()` is true."
+  },
+  {
+   "id": "rs-m-errors-short",
+   "node": "module-error-handling",
+   "type": "short_answer",
+   "concept": "collect-results",
+   "code": "fn main() {\n    let inputs = [\"10\", \"x\", \"7\", \"-3\"];\n    let total: i64 = inputs.iter().filter_map(|s| s.parse::<i64>().ok()).sum();\n    let all: Result<Vec<i64>, _> = inputs.iter().map(|s| s.parse::<i64>()).collect();\n    println!(\"{} {}\", total, all.is_err());\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "14 true",
+   "explanation": "`filter_map(... .ok())` skips the bad entry, giving 10 + 7 - 3 = 14. Collecting into `Result<Vec<_>, _>` stops at the first error, so the whole collection is an Err."
+  },
+  {
+   "id": "rs-m-errors-explain",
+   "node": "module-error-handling",
+   "type": "explain",
+   "concept": "unwrap-in-libraries",
+   "prompt": "In your own words: why is sprinkling `unwrap()` through reusable code discouraged, and what should the function do instead?",
+   "answer": "`unwrap()` turns every failure into a panic, so the caller cannot recover or add context and one bad input can crash the whole program. Reusable code should return `Result` (or `Option`) and propagate errors to the caller, for example with `?`, reserving panics for bugs and broken invariants.",
+   "keywords": [
+    [
+     "panic",
+     "crash",
+     "abort"
+    ],
+    [
+     "result",
+     "error",
+     "propagat",
+     "caller",
+     "option"
+    ],
+    [
+     "context",
+     "recover",
+     "handle",
+     "invariant",
+     "bug"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-errors-fix",
+   "node": "module-error-handling",
+   "type": "fix_bug",
+   "concept": "question-mark-return-type",
+   "prompt": "sum_numbers(parts) should add up every string that parses as an i64 and skip the ones that do not. It does not compile because of how `?` is used. Fix it.",
+   "code": "fn sum_numbers(parts: Vec<String>) -> i64 {\n    let mut total = 0;\n    for p in parts {\n        let n: i64 = p.parse()?;\n        total += n;\n    }\n    total\n}",
+   "fn": "sum_numbers",
+   "solution": "fn sum_numbers(parts: Vec<String>) -> i64 {\n    let mut total = 0;\n    for p in parts {\n        if let Ok(n) = p.parse::<i64>() {\n            total += n;\n        }\n    }\n    total\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "1",
+       "2"
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "a",
+       "5"
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       "-4",
+       "4"
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "x"
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "10",
+       "y",
+       "20"
+      ]
+     ],
+     "expected": 30
+    }
+   ],
+   "explanation": "`?` only works in a function whose return type can carry the error (Result or Option). This function returns a plain i64, so it must handle each parse result itself."
+  },
+  {
+   "id": "rs-m-errors-write",
+   "node": "module-error-handling",
+   "type": "write_snippet",
+   "concept": "propagating-errors",
+   "prompt": "Write parse_sum_strict(a, b): parse both strings as i64 and return their sum, or -1 if either string is not a valid integer. Use a helper that returns a Result and the `?` operator.",
+   "starter": "fn parse_sum_strict(a: String, b: String) -> i64 {\n    // helper returning Result + `?`, then map the error to -1\n    todo!()\n}",
+   "fn": "parse_sum_strict",
+   "solution": "use std::num::ParseIntError;\n\nfn add_parsed(a: &str, b: &str) -> Result<i64, ParseIntError> {\n    let x: i64 = a.parse()?;\n    let y: i64 = b.parse()?;\n    Ok(x + y)\n}\n\nfn parse_sum_strict(a: String, b: String) -> i64 {\n    match add_parsed(&a, &b) {\n        Ok(sum) => sum,\n        Err(_) => -1,\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      "2",
+      "3"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "2",
+      "x"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "x",
+      "2"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "",
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "-4",
+      "4"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "100",
+      "23"
+     ],
+     "expected": 123
+    }
+   ],
+   "explanation": "The helper uses `?` to return early on a bad parse; the outer function turns the Err into the sentinel -1."
+  },
+  {
+   "id": "rs-m-interior-mcq",
+   "node": "module-interior-mutability",
+   "type": "mcq",
+   "concept": "send-sync",
+   "prompt": "Which of these types can be neither sent to another thread nor shared between threads?",
+   "choices": [
+    "`Rc<i32>`",
+    "`RefCell<i32>`",
+    "`AtomicUsize`",
+    "`Arc<Mutex<i32>>`"
+   ],
+   "answer": 0,
+   "explanation": "`Rc` uses a non-atomic reference count, so it is neither `Send` nor `Sync`. `Arc<Mutex<_>>` and atomics are both; `RefCell<T>` is `Send` (if T is) but not `Sync`."
+  },
+  {
+   "id": "rs-m-interior-code",
+   "node": "module-interior-mutability",
+   "type": "mcq_code",
+   "concept": "refcell-runtime-borrow",
+   "code": "use std::cell::RefCell;\n\nfn main() {\n    let c = RefCell::new(vec![1]);\n    let r = c.borrow();\n    println!(\"{}\", c.try_borrow_mut().is_err());\n    drop(r);\n    println!(\"{}\", c.try_borrow_mut().is_ok());\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "false, then true",
+    "true, then false",
+    "It panics at the first `try_borrow_mut`.",
+    "true, then true"
+   ],
+   "answer": 3,
+   "explanation": "While the shared guard `r` is alive, a mutable borrow fails (try_borrow_mut returns an Err instead of panicking). After dropping the guard it succeeds."
+  },
+  {
+   "id": "rs-m-interior-short",
+   "node": "module-interior-mutability",
+   "type": "short_answer",
+   "concept": "rc-refcell",
+   "code": "use std::cell::RefCell;\nuse std::rc::Rc;\n\nfn main() {\n    let shared = Rc::new(RefCell::new(0));\n    let a = Rc::clone(&shared);\n    let b = Rc::clone(&shared);\n    *a.borrow_mut() += 5;\n    *b.borrow_mut() += 2;\n    println!(\"{} {}\", shared.borrow(), Rc::strong_count(&shared));\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "7 3",
+   "explanation": "All three handles share one RefCell holding 0 + 5 + 2 = 7, and the strong count is 3 (shared, a and b)."
+  },
+  {
+   "id": "rs-m-interior-explain",
+   "node": "module-interior-mutability",
+   "type": "explain",
+   "concept": "arc-refcell-vs-mutex",
+   "prompt": "In your own words: why can an `Arc<Mutex<T>>` be shared between threads but an `Arc<RefCell<T>>` cannot?",
+   "answer": "`Arc<T>` is only `Send` and `Sync` when `T` is `Send + Sync`. `RefCell<T>` is not `Sync`: its borrow flag is not thread-safe, so two threads could break the borrow rules at once. `Mutex<T>` is `Sync` because the lock guards access, so `Arc<Mutex<T>>` can cross threads.",
+   "keywords": [
+    [
+     "sync",
+     "not sync"
+    ],
+    [
+     "refcell",
+     "cell",
+     "borrow flag",
+     "not thread"
+    ],
+    [
+     "mutex",
+     "lock"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-interior-fix",
+   "node": "module-interior-mutability",
+   "type": "fix_bug",
+   "concept": "already-borrowed",
+   "prompt": "tally(values) should add the values into a shared total but never let the total exceed 100. It panics with a BorrowError (\"already mutably borrowed\"). Fix it.",
+   "code": "use std::cell::RefCell;\n\nfn tally(values: Vec<i64>) -> i64 {\n    let total = RefCell::new(0i64);\n    for v in values {\n        let mut guard = total.borrow_mut();\n        *guard += v;\n        if *total.borrow() > 100 {\n            *guard = 100;\n        }\n    }\n    let result = *total.borrow();\n    result\n}",
+   "fn": "tally",
+   "solution": "use std::cell::RefCell;\n\nfn tally(values: Vec<i64>) -> i64 {\n    let total = RefCell::new(0i64);\n    for v in values {\n        let mut guard = total.borrow_mut();\n        *guard += v;\n        if *guard > 100 {\n            *guard = 100;\n        }\n    }\n    let result = *total.borrow();\n    result\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       60,
+       60
+      ]
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      [
+       10,
+       20,
+       30
+      ]
+     ],
+     "expected": 60
+    },
+    {
+     "args": [
+      [
+       200
+      ]
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      [
+       101,
+       -50
+      ]
+     ],
+     "expected": 50
+    }
+   ],
+   "explanation": "`borrow()` while the `borrow_mut()` guard is still alive violates the runtime borrow rules and panics. Read through the existing guard instead."
+  },
+  {
+   "id": "rs-m-interior-write",
+   "node": "module-interior-mutability",
+   "type": "write_snippet",
+   "concept": "shared-mutation",
+   "prompt": "Write log_lengths(words): create a shared `Rc<RefCell<Vec<i64>>>` log, a closure that records a word's length into it through a clone of the Rc, call the closure for each word in order, and return the log's contents.",
+   "starter": "use std::cell::RefCell;\nuse std::rc::Rc;\n\nfn log_lengths(words: Vec<String>) -> Vec<i64> {\n    // record each word's length through a shared Rc<RefCell<Vec<i64>>>\n    todo!()\n}",
+   "fn": "log_lengths",
+   "solution": "use std::cell::RefCell;\nuse std::rc::Rc;\n\nfn log_lengths(words: Vec<String>) -> Vec<i64> {\n    let log: Rc<RefCell<Vec<i64>>> = Rc::new(RefCell::new(Vec::new()));\n    let sink = Rc::clone(&log);\n    let record = move |w: &str| sink.borrow_mut().push(w.len() as i64);\n    for w in &words {\n        record(w);\n    }\n    let out = log.borrow().clone();\n    out\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       "ab",
+       "c"
+      ]
+     ],
+     "expected": [
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       "abc",
+       "",
+       "z"
+      ]
+     ],
+     "expected": [
+      3,
+      0,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       "hello"
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       "x",
+       "yy",
+       "zzz"
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    }
+   ],
+   "explanation": "The closure owns one Rc handle; both handles point at the same RefCell, so pushes made inside the closure are visible through `log`."
+  },
+  {
+   "id": "rs-m-async-mcq",
+   "node": "module-async",
+   "type": "mcq",
+   "concept": "futures-are-lazy",
+   "prompt": "What happens when an `async fn` is called but the result is neither awaited nor polled?",
+   "choices": [
+    "The body runs to completion on a background thread pool.",
+    "The call blocks until the function has finished running.",
+    "Nothing in its body runs; the call only creates a future.",
+    "The body runs up to its first `.await` and then waits there."
+   ],
+   "answer": 2,
+   "explanation": "Futures are lazy state machines: nothing runs until the future is polled, for example by `.await` inside another async context or by an executor. The compiler warns about the unused future."
+  },
+  {
+   "id": "rs-m-async-mcq2",
+   "node": "module-async",
+   "type": "mcq",
+   "concept": "no-executor-in-std",
+   "prompt": "Which statement about the standard library and async code is correct?",
+   "choices": [
+    "`std` provides `std::spawn` for running futures on a thread pool by default.",
+    "`std` defines `Future`, `Poll` and `Waker`, but provides no executor to run them.",
+    "`async fn` cannot be compiled at all unless an external crate is added.",
+    "`std` ships a multi-threaded runtime that is started with `#[async_std::main]`."
+   ],
+   "answer": 1,
+   "explanation": "The traits and types needed to write futures live in std, but running them needs an executor chosen by the program (Tokio, smol, embedded executors, or a hand-written one)."
+  },
+  {
+   "id": "rs-m-async-code",
+   "node": "module-async",
+   "type": "mcq_code",
+   "concept": "poll-order",
+   "code": "use std::future::Future;\nuse std::sync::Arc;\nuse std::task::{Context, Poll, Wake, Waker};\n\nstruct NoopWake;\n\nimpl Wake for NoopWake {\n    fn wake(self: Arc<Self>) {}\n}\n\nfn block_on<F: Future>(fut: F) -> F::Output {\n    let mut fut = Box::pin(fut);\n    let waker = Waker::from(Arc::new(NoopWake));\n    let mut cx = Context::from_waker(&waker);\n    loop {\n        if let Poll::Ready(v) = fut.as_mut().poll(&mut cx) {\n            return v;\n        }\n    }\n}\n\nasync fn add(a: i64, b: i64) -> i64 {\n    println!(\"adding\");\n    a + b\n}\n\nfn main() {\n    let f = add(2, 3);\n    println!(\"created\");\n    println!(\"{}\", block_on(f));\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "adding, created, 5",
+    "created, adding, 5",
+    "adding, 5, created",
+    "created, 5, adding"
+   ],
+   "answer": 1,
+   "explanation": "Creating the future runs nothing. The first poll inside `block_on` executes the body (printing \"adding\"), and then the result 5 is printed."
+  },
+  {
+   "id": "rs-m-async-short",
+   "node": "module-async",
+   "type": "short_answer",
+   "concept": "pending-then-ready",
+   "code": "use std::future::Future;\nuse std::pin::Pin;\nuse std::sync::Arc;\nuse std::task::{Context, Poll, Wake, Waker};\n\nstruct NoopWake;\n\nimpl Wake for NoopWake {\n    fn wake(self: Arc<Self>) {}\n}\n\nstruct YieldOnce(bool);\n\nimpl Future for YieldOnce {\n    type Output = ();\n    fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {\n        if self.0 {\n            Poll::Ready(())\n        } else {\n            self.0 = true;\n            cx.waker().wake_by_ref();\n            Poll::Pending\n        }\n    }\n}\n\nasync fn work() -> i64 {\n    YieldOnce(false).await;\n    7\n}\n\nfn main() {\n    let mut fut = Box::pin(work());\n    let waker = Waker::from(Arc::new(NoopWake));\n    let mut cx = Context::from_waker(&waker);\n    let mut polls = 0;\n    let out = loop {\n        polls += 1;\n        if let Poll::Ready(v) = fut.as_mut().poll(&mut cx) {\n            break v;\n        }\n    };\n    println!(\"{} {}\", out, polls);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "7 2",
+   "explanation": "The first poll reaches `YieldOnce`, which returns Pending (after waking), so the task yields. The second poll finds it Ready and the function returns 7: two polls in total."
+  },
+  {
+   "id": "rs-m-async-explain",
+   "node": "module-async",
+   "type": "explain",
+   "concept": "send-across-await",
+   "prompt": "In your own words: why does holding an `Rc` or a `std::sync::MutexGuard` across an `.await` often stop a future from being spawned on a multi-threaded runtime, and how do you fix it?",
+   "answer": "A future spawned on a multi-threaded runtime must be `Send`, because it can move between worker threads, and the compiler requires every value alive across an `.await` to be `Send` as well. `Rc` and a std `MutexGuard` are not `Send`, so the future is not either. Drop the value before the `.await`, restructure the code, or use a `Send` alternative such as `Arc` or an async mutex.",
+   "keywords": [
+    [
+     "send"
+    ],
+    [
+     "rc",
+     "mutexguard",
+     "guard",
+     "non-send",
+     "not send"
+    ],
+    [
+     "thread",
+     "worker",
+     "move",
+     "moves"
+    ],
+    [
+     "drop",
+     "restructure",
+     "before the await",
+     "arc",
+     "async mutex",
+     "scope"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-async-fix",
+   "node": "module-async",
+   "type": "fix_bug",
+   "concept": "driving-futures",
+   "prompt": "run_total(values) should return the sum of the values by running the async function `total`. It does not compile because it returns the future itself. Fix it.",
+   "code": "use std::future::Future;\nuse std::sync::Arc;\nuse std::task::{Context, Poll, Wake, Waker};\n\nstruct NoopWake;\n\nimpl Wake for NoopWake {\n    fn wake(self: Arc<Self>) {}\n}\n\nfn block_on<F: Future>(fut: F) -> F::Output {\n    let mut fut = Box::pin(fut);\n    let waker = Waker::from(Arc::new(NoopWake));\n    let mut cx = Context::from_waker(&waker);\n    loop {\n        if let Poll::Ready(v) = fut.as_mut().poll(&mut cx) {\n            return v;\n        }\n    }\n}\n\nasync fn total(values: Vec<i64>) -> i64 {\n    values.iter().sum()\n}\n\nfn run_total(values: Vec<i64>) -> i64 {\n    total(values)\n}",
+   "fn": "run_total",
+   "solution": "use std::future::Future;\nuse std::sync::Arc;\nuse std::task::{Context, Poll, Wake, Waker};\n\nstruct NoopWake;\n\nimpl Wake for NoopWake {\n    fn wake(self: Arc<Self>) {}\n}\n\nfn block_on<F: Future>(fut: F) -> F::Output {\n    let mut fut = Box::pin(fut);\n    let waker = Waker::from(Arc::new(NoopWake));\n    let mut cx = Context::from_waker(&waker);\n    loop {\n        if let Poll::Ready(v) = fut.as_mut().poll(&mut cx) {\n            return v;\n        }\n    }\n}\n\nasync fn total(values: Vec<i64>) -> i64 {\n    values.iter().sum()\n}\n\nfn run_total(values: Vec<i64>) -> i64 {\n    block_on(total(values))\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -1,
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10
+      ]
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       5
+      ]
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      [
+       100,
+       -1
+      ]
+     ],
+     "expected": 99
+    }
+   ],
+   "explanation": "Calling an async fn only builds a future whose output type is i64; a synchronous caller has to drive it to completion with an executor such as `block_on`."
+  },
+  {
+   "id": "rs-m-async-write",
+   "node": "module-async",
+   "type": "write_snippet",
+   "concept": "await-chain",
+   "prompt": "Complete run_chain(x): inside an async block, await `double(x)` and then await `double` of that result, and drive the block with `block_on`. Return the final value.",
+   "starter": "use std::future::Future;\nuse std::sync::Arc;\nuse std::task::{Context, Poll, Wake, Waker};\n\nstruct NoopWake;\n\nimpl Wake for NoopWake {\n    fn wake(self: Arc<Self>) {}\n}\n\nfn block_on<F: Future>(fut: F) -> F::Output {\n    let mut fut = Box::pin(fut);\n    let waker = Waker::from(Arc::new(NoopWake));\n    let mut cx = Context::from_waker(&waker);\n    loop {\n        if let Poll::Ready(v) = fut.as_mut().poll(&mut cx) {\n            return v;\n        }\n    }\n}\n\nasync fn double(x: i64) -> i64 {\n    x * 2\n}\n\nfn run_chain(x: i64) -> i64 {\n    // await double twice inside an async block\n    todo!()\n}",
+   "fn": "run_chain",
+   "solution": "use std::future::Future;\nuse std::sync::Arc;\nuse std::task::{Context, Poll, Wake, Waker};\n\nstruct NoopWake;\n\nimpl Wake for NoopWake {\n    fn wake(self: Arc<Self>) {}\n}\n\nfn block_on<F: Future>(fut: F) -> F::Output {\n    let mut fut = Box::pin(fut);\n    let waker = Waker::from(Arc::new(NoopWake));\n    let mut cx = Context::from_waker(&waker);\n    loop {\n        if let Poll::Ready(v) = fut.as_mut().poll(&mut cx) {\n            return v;\n        }\n    }\n}\n\nasync fn double(x: i64) -> i64 {\n    x * 2\n}\n\nfn run_chain(x: i64) -> i64 {\n    block_on(async {\n        let a = double(x).await;\n        double(a).await\n    })\n}",
+   "tests": [
+    {
+     "args": [
+      1
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -3
+     ],
+     "expected": -12
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 20
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 40
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 28
+    }
+   ],
+   "explanation": "`.await` is only allowed inside async code, so wrap the two awaits in an `async` block and pass that block (itself a future) to `block_on`."
+  },
+  {
+   "id": "rs-m-unsafe-mcq",
+   "node": "module-unsafe-ffi",
+   "type": "mcq",
+   "concept": "unsafe-powers",
+   "prompt": "Which of these operations is allowed only inside an `unsafe` block or function?",
+   "choices": [
+    "Calling a function that takes a `&mut` reference.",
+    "Dereferencing a raw pointer.",
+    "Creating a raw pointer from a reference.",
+    "Indexing a `Vec` with a number that may be out of range."
+   ],
+   "answer": 1,
+   "explanation": "`unsafe` unlocks five abilities, including dereferencing raw pointers and calling unsafe functions. Creating a raw pointer is safe; indexing out of range panics rather than needing unsafe; `unsafe` does not turn off the borrow checker for ordinary references."
+  },
+  {
+   "id": "rs-m-unsafe-code",
+   "node": "module-unsafe-ffi",
+   "type": "mcq_code",
+   "concept": "raw-pointer-deref",
+   "code": "fn main() {\n    let mut x = 10;\n    let p = &mut x as *mut i32;\n    unsafe {\n        *p += 5;\n    }\n    println!(\"{}\", x);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "15",
+    "10",
+    "It is rejected: raw pointers cannot be created outside `unsafe`.",
+    "It has undefined behaviour and prints an unpredictable value."
+   ],
+   "answer": 0,
+   "explanation": "Creating the raw pointer is safe; only the dereference is unsafe. The pointer is valid, aligned and not aliased by another live reference, so the write is sound and x becomes 15."
+  },
+  {
+   "id": "rs-m-unsafe-short",
+   "node": "module-unsafe-ffi",
+   "type": "short_answer",
+   "concept": "cstring-terminator",
+   "code": "use std::ffi::CString;\n\nfn main() {\n    let c = CString::new(\"hi\").unwrap();\n    println!(\"{} {}\", c.as_bytes().len(), c.as_bytes_with_nul().len());\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "2 3",
+   "explanation": "`CString` stores the text plus a trailing NUL terminator for C. `as_bytes` excludes the terminator and `as_bytes_with_nul` includes it."
+  },
+  {
+   "id": "rs-m-unsafe-explain",
+   "node": "module-unsafe-ffi",
+   "type": "explain",
+   "concept": "dangling-cstring",
+   "prompt": "In your own words: why is `let p = CString::new(s).unwrap().as_ptr();` followed by a call into C a bug, and how do you fix it?",
+   "answer": "The `CString` is a temporary that is dropped at the end of the statement, so `p` points to freed memory (a dangling pointer) when C uses it, which is undefined behaviour. Bind the `CString` to a variable that stays alive for as long as C uses the pointer, and take `as_ptr()` from that variable.",
+   "keywords": [
+    [
+     "temporary",
+     "dropped",
+     "freed",
+     "end of the statement",
+     "end of statement"
+    ],
+    [
+     "dangling",
+     "use after free",
+     "invalid pointer",
+     "undefined"
+    ],
+    [
+     "keep",
+     "bind",
+     "variable",
+     "alive",
+     "lifetime",
+     "scope"
+    ]
+   ]
+  },
+  {
+   "id": "rs-m-unsafe-fix",
+   "node": "module-unsafe-ffi",
+   "type": "fix_bug",
+   "concept": "unsafe-call-site",
+   "prompt": "sum_raw(values) should add the values by reading them through a raw pointer with the helper `read_at`. It does not compile. Fix it, keeping the unsafe part as small as possible.",
+   "code": "unsafe fn read_at(p: *const i64, i: usize) -> i64 {\n    *p.add(i)\n}\n\nfn sum_raw(values: Vec<i64>) -> i64 {\n    let p = values.as_ptr();\n    let mut total = 0;\n    for i in 0..values.len() {\n        total += read_at(p, i);\n    }\n    total\n}",
+   "fn": "sum_raw",
+   "solution": "unsafe fn read_at(p: *const i64, i: usize) -> i64 {\n    *p.add(i)\n}\n\nfn sum_raw(values: Vec<i64>) -> i64 {\n    let p = values.as_ptr();\n    let mut total = 0;\n    for i in 0..values.len() {\n        // SAFETY: i < values.len(), so p.add(i) points at an initialised element of the vector.\n        total += unsafe { read_at(p, i) };\n    }\n    total\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -5,
+       5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       9
+      ]
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       1,
+       1
+      ]
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       100,
+       200
+      ]
+     ],
+     "expected": 300
+    }
+   ],
+   "explanation": "Calling an `unsafe fn` requires an `unsafe` block at the call site (E0133). Keep the block small and state in a SAFETY comment why the index is in bounds."
+  },
+  {
+   "id": "rs-m-unsafe-write",
+   "node": "module-unsafe-ffi",
+   "type": "write_snippet",
+   "concept": "safe-wrapper",
+   "prompt": "Write swap_via_raw(values, i, j): if i or j is negative or not a valid position, return the vector unchanged; otherwise swap the two elements using raw pointers inside a small unsafe block with a SAFETY comment.",
+   "starter": "fn swap_via_raw(mut values: Vec<i64>, i: i64, j: i64) -> Vec<i64> {\n    // validate first, then swap through raw pointers\n    todo!()\n}",
+   "fn": "swap_via_raw",
+   "solution": "fn swap_via_raw(mut values: Vec<i64>, i: i64, j: i64) -> Vec<i64> {\n    let n = values.len() as i64;\n    if i < 0 || j < 0 || i >= n || j >= n {\n        return values;\n    }\n    let p = values.as_mut_ptr();\n    // SAFETY: i and j are in bounds, so both pointers are valid and aligned; ptr::swap allows them to be equal.\n    unsafe {\n        std::ptr::swap(p.add(i as usize), p.add(j as usize));\n    }\n    values\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      0,
+      2
+     ],
+     "expected": [
+      3,
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      1,
+      1
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      0,
+      5
+     ],
+     "expected": [
+      1,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      -1,
+      0
+     ],
+     "expected": [
+      1,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       6,
+       7,
+       8
+      ],
+      1,
+      3
+     ],
+     "expected": [
+      5,
+      8,
+      7,
+      6
+     ]
+    },
+    {
+     "args": [
+      [],
+      0,
+      0
+     ],
+     "expected": []
+    }
+   ],
+   "explanation": "A safe function wraps the unsafe operation: validating the indices first is what makes the unsafe block sound for every caller."
+  }
+ ]
+}

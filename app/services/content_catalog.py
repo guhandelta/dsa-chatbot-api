@@ -345,7 +345,7 @@ def load_test_cases(content_id: str, *, text: str | None = None) -> tuple[list, 
     fns = {}
     if front.get("fn_python"):
         fns["python"] = front["fn_python"]
-    for lang in ("javascript", "java", "cpp", "c", "rust"):
+    for lang in ("javascript", "java", "cpp", "c", "rust", "typescript", "ruby", "go", "csharp"):
         if front.get(f"fn_{lang}"):
             fns[lang] = front[f"fn_{lang}"]
     # Legacy DSA documents encode the Java method in the reference snippet.

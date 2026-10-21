@@ -1,0 +1,2476 @@
+{
+ "language": "cpp",
+ "version": 1,
+ "note": "Authored Study Room quiz items. Code items (short_answer, fix_bug, write_snippet) are validated by execution with g++/clang++ (-std=c++17 and -std=c++20, UBSan); mcq_code outputs are checked the same way. Claims that need no execution are backed by the knowledge-base reference rows.",
+ "items": [
+  {
+   "id": "cpp-s01-mcq",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "widening-before-arithmetic",
+   "prompt": "With `int a = 3000000, b = 3000000;`, which line reliably stores the true product in a `long long`?",
+   "choices": [
+    "long long product = a * b;",
+    "long long product = (long long)(a * b);",
+    "long long product = static_cast<long long>(a) * b;",
+    "long long product = a * b * 1LL;"
+   ],
+   "answer": 2,
+   "explanation": "Only the third line converts an operand before the multiplication, so the product is computed in 64 bits. In the other three the expression a * b is evaluated as int first (signed overflow, undefined behaviour), and the conversion or the extra `* 1LL` happens too late."
+  },
+  {
+   "id": "cpp-s01-code",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "integer-division-modulo",
+   "code": "#include <iostream>\nint main() {\n    std::cout << -7 / 2 << \" \" << -7 % 2 << \" \" << 7 % -2;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "-4 1 -1",
+    "-3 1 -1",
+    "-4 -1 1",
+    "-3 -1 1"
+   ],
+   "answer": 3,
+   "explanation": "Integer division truncates toward zero, so -7 / 2 is -3. The remainder takes the sign of the dividend, so -7 % 2 is -1 and 7 % -2 is 1; together they satisfy (a / b) * b + a % b == a."
+  },
+  {
+   "id": "cpp-s01-short",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "integer-vs-floating-division",
+   "code": "#include <iostream>\nint main() {\n    std::cout << 7 / 2 * 2.0 << \" \" << 7 / 2.0 * 2;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "6 7",
+   "explanation": "7 / 2 is integer division (3), then 3 * 2.0 is 6. In 7 / 2.0 the divisor is a double, so the result is 3.5 and 3.5 * 2 is 7. Whole-valued doubles print without a decimal point by default."
+  },
+  {
+   "id": "cpp-s01-explain",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "overflow-before-assignment",
+   "prompt": "In your own words: why can `long long total = a * b;` still be wrong when `a` and `b` are `int`, even though `total` is 64 bits wide?",
+   "answer": "The multiplication is carried out in the type of its operands, so int * int is computed as int first and only the finished result is converted to long long. If the product does not fit in int, signed overflow has already happened and is undefined behaviour. Convert one operand to long long before multiplying.",
+   "keywords": [
+    [
+     "int * int",
+     "type of the operands",
+     "operands",
+     "computed as int",
+     "int first",
+     "int arithmetic",
+     "int math",
+     "as ints",
+     "int multiplication"
+    ],
+    [
+     "overflow",
+     "does not fit",
+     "too large",
+     "wrap around",
+     "wraps"
+    ],
+    [
+     "undefined",
+     " ub",
+     "(ub"
+    ],
+    [
+     "cast",
+     "convert",
+     "static_cast",
+     "widen",
+     "long long literal",
+     "1ll"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "narrowing-to-int",
+   "prompt": "seconds_in(days) must return the number of seconds in that many days as a long long. It is right for small inputs but wrong for large day counts. Fix it.",
+   "code": "long long seconds_in(long long days) {\n    int per_day = 24 * 60 * 60;\n    int total = days * per_day;\n    return total;\n}",
+   "fn": "seconds_in",
+   "solution": "long long seconds_in(long long days) {\n    long long per_day = 24 * 60 * 60;\n    long long total = days * per_day;\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 86400
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 604800
+    },
+    {
+     "args": [
+      30
+     ],
+     "expected": 2592000
+    },
+    {
+     "args": [
+      25000
+     ],
+     "expected": 2160000000
+    },
+    {
+     "args": [
+      100000
+     ],
+     "expected": 8640000000
+    },
+    {
+     "args": [
+      99999
+     ],
+     "expected": 8639913600
+    }
+   ],
+   "explanation": "Storing the 64-bit product in an int discards the high bits once it exceeds the int range. Keep the intermediate values in long long."
+  },
+  {
+   "id": "cpp-s02-mcq",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "range-check",
+   "prompt": "Which condition is true exactly when `x` is between 1 and 5, inclusive?",
+   "choices": [
+    "1 <= x <= 5",
+    "x >= 1 || x <= 5",
+    "x > 1 && x < 5",
+    "x >= 1 && x <= 5"
+   ],
+   "answer": 3,
+   "explanation": "Both comparisons must hold, so join them with && and keep the inclusive operators. `1 <= x <= 5` parses as `(1 <= x) <= 5`, || is true for every x, and the strict comparisons exclude 1 and 5."
+  },
+  {
+   "id": "cpp-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "chained-comparison",
+   "code": "#include <iostream>\nint main() {\n    int x = 9;\n    std::cout << (1 <= x <= 5);\n}",
+   "prompt": "This program compiles (with a warning). What does it print?",
+   "choices": [
+    "1",
+    "0",
+    "9",
+    "5"
+   ],
+   "answer": 0,
+   "explanation": "`1 <= x <= 5` is `(1 <= x) <= 5`. The first comparison is true, which is the number 1, and 1 <= 5 is true, so the output is 1 even though 9 is outside the range."
+  },
+  {
+   "id": "cpp-s02-short",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "short-circuit",
+   "code": "#include <iostream>\nint calls = 0;\nbool check(bool v) {\n    ++calls;\n    return v;\n}\n\nint main() {\n    bool r = check(false) && check(true);\n    std::cout << r << \" \" << calls;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "0 1",
+   "explanation": "&& stops as soon as the left operand is false, so check(true) is never called: r is 0 and calls is 1."
+  },
+  {
+   "id": "cpp-s02-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "assignment-vs-comparison",
+   "prompt": "Explain what `if (x = 0)` does in C++ and how it differs from `if (x == 0)`.",
+   "answer": "`x = 0` is an assignment expression: it stores 0 in x and its value is the assigned value, 0, so the condition is always false and x has been overwritten. `x == 0` compares and leaves x unchanged. Compilers can warn about an assignment used as a condition.",
+   "keywords": [
+    [
+     "assign",
+     "stores",
+     "overwrite",
+     "sets x",
+     "clobber"
+    ],
+    [
+     "false",
+     "evaluates to 0",
+     "value 0",
+     "result is 0",
+     "is 0",
+     "zero",
+     "never true",
+     "never taken"
+    ],
+    [
+     "compare",
+     "==",
+     "equality",
+     "unchanged"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s02-write",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "compound-condition",
+   "prompt": "Write is_leap_year(year) for a positive year: a year is a leap year when it is divisible by 4, except years divisible by 100 are not, unless they are also divisible by 400. Return a bool.",
+   "starter": "bool is_leap_year(long long year) {\n    // return true for leap years\n    return false;\n}",
+   "fn": "is_leap_year",
+   "solution": "bool is_leap_year(long long year) {\n    return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;\n}",
+   "tests": [
+    {
+     "args": [
+      2000
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      1900
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      2024
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      2023
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      2100
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      1600
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "Combine the three divisibility rules with && and ||: divisible by 4 and not by 100, or divisible by 400."
+  },
+  {
+   "id": "cpp-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "unsigned-loop-counter",
+   "prompt": "What is wrong with `for (std::size_t i = n; i >= 0; --i)`?",
+   "choices": [
+    "It runs n + 1 times, from n down to 0, and then stops correctly.",
+    "It stops as soon as i becomes -1, because the condition is then false.",
+    "It does not compile, because an unsigned variable cannot be decremented.",
+    "i >= 0 is always true for an unsigned type, so the loop never ends by its own condition."
+   ],
+   "answer": 3,
+   "explanation": "An unsigned integer is never negative: after 0, --i wraps to the largest std::size_t, which still satisfies i >= 0. Count down with a signed variable, or restructure the loop (for example `for (i = n; i-- > 0;)`)."
+  },
+  {
+   "id": "cpp-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "loop-trace",
+   "code": "#include <iostream>\nint main() {\n    for (int i = 10; i > 0; i -= 3) {\n        std::cout << i << ' ';\n    }\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "10 7 4 1",
+    "10 7 4",
+    "7 4 1",
+    "10 7 4 1 -2"
+   ],
+   "answer": 0,
+   "explanation": "i takes 10, 7, 4 and 1; after i -= 3 it is -2 and the condition i > 0 fails before the body can print it."
+  },
+  {
+   "id": "cpp-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "unsigned-wraparound",
+   "code": "#include <iostream>\nint main() {\n    unsigned char i = 3;\n    int visits = 0;\n    while (i < 200) {\n        ++visits;\n        --i;\n        if (visits > 10) break;\n    }\n    std::cout << visits;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "4",
+   "explanation": "i goes 3, 2, 1, 0 (four visits). Decrementing 0 wraps the unsigned char to 255, which fails i < 200, so the loop ends after four visits."
+  },
+  {
+   "id": "cpp-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "accumulator-invariant",
+   "prompt": "For a loop that computes the sum of 1..n into `total`, state what `total` means before each iteration, and explain why n = 0 needs no special case.",
+   "answer": "Before the iteration for i, total holds the sum of the integers 1 through i-1 (the values already visited), so it starts at 0 for the empty sum. When n is 0 the loop condition is false on the first check, the body never runs, and the initial 0 is returned, which is the correct answer.",
+   "keywords": [
+    [
+     "sum of",
+     "already visited",
+     "previous",
+     "so far",
+     "i-1",
+     "before i",
+     "running sum",
+     "already added"
+    ],
+    [
+     "start",
+     "initial",
+     "starts at 0",
+     "zero",
+     "empty",
+     "at first"
+    ],
+    [
+     "never runs",
+     "body does not run",
+     "condition is false",
+     "no iteration",
+     "skipped",
+     "does not execute",
+     "never executes",
+     "test fails"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "off-by-one",
+   "prompt": "sum_odd(n) must return the sum of the odd integers from 1 through n (inclusive). It is wrong when n is odd. Fix it.",
+   "code": "long long sum_odd(long long n) {\n    long long total = 0;\n    for (long long i = 1; i < n; i += 2) {\n        total += i;\n    }\n    return total;\n}",
+   "fn": "sum_odd",
+   "solution": "long long sum_odd(long long n) {\n    long long total = 0;\n    for (long long i = 1; i <= n; i += 2) {\n        total += i;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      6
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      9
+     ],
+     "expected": 25
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 2500
+    }
+   ],
+   "explanation": "The bound is inclusive, so the condition must be i <= n; with i < n the last odd value is skipped whenever n is odd."
+  },
+  {
+   "id": "cpp-s04-mcq",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "pass-by-value",
+   "prompt": "A function is declared `void append_zero(std::vector<int> v)` and its body calls `v.push_back(0)`. What does the caller's vector look like afterwards?",
+   "choices": [
+    "It has one extra element, a 0, at the end.",
+    "It does not compile: vectors are not copyable.",
+    "It is empty, because the vector was moved.",
+    "It is unchanged; the parameter is a copy."
+   ],
+   "answer": 3,
+   "explanation": "A by-value parameter is initialized as a copy of the argument, so the push_back changes the copy only. Take `std::vector<int>&` to modify the caller's vector, or `const std::vector<int>&` to read it without copying."
+  },
+  {
+   "id": "cpp-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "reference-parameter",
+   "code": "#include <iostream>\nvoid add_one(int& x) { x += 1; }\nvoid add_two(int x) { x += 2; }\n\nint main() {\n    int n = 1;\n    add_one(n);\n    add_two(n);\n    std::cout << n;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "1",
+    "3",
+    "2",
+    "4"
+   ],
+   "answer": 2,
+   "explanation": "add_one takes a reference, so it changes n from 1 to 2. add_two changes only its own copy, so n stays 2."
+  },
+  {
+   "id": "cpp-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "copy-on-call",
+   "code": "#include <iostream>\nstruct Tracker {\n    static int copies;\n    Tracker() = default;\n    Tracker(const Tracker&) { ++copies; }\n};\nint Tracker::copies = 0;\n\nvoid by_value(Tracker t) { (void)t; }\nvoid by_ref(const Tracker& t) { (void)t; }\n\nint main() {\n    Tracker t;\n    by_value(t);\n    by_ref(t);\n    by_value(t);\n    std::cout << Tracker::copies;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "2",
+   "explanation": "Each by_value call copy-constructs its parameter from the lvalue t; by_ref binds a reference and copies nothing, so the copy constructor runs twice."
+  },
+  {
+   "id": "cpp-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "return-vs-print",
+   "prompt": "A teammate's function prints its result with std::cout instead of returning it. Explain why that does not satisfy a return-value contract.",
+   "answer": "The caller (here the test runner or other code) receives only the returned value; text written to standard output is a side effect it cannot use as the function's result. A function that prints returns nothing (or the wrong thing), so callers cannot compose it with other code or check its result.",
+   "keywords": [
+    [
+     "caller",
+     "runner",
+     "test",
+     "calling code",
+     "other code"
+    ],
+    [
+     "returned value",
+     "return value",
+     "value is returned",
+     "returns a value",
+     "gives back",
+     "hands back"
+    ],
+    [
+     "side effect",
+     "cannot use",
+     "can't use",
+     "cannot read",
+     "cannot capture",
+     "not captured",
+     "just text",
+     "for a human",
+     "no value",
+     "nothing to use"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "function-contract",
+   "prompt": "Write clamp_to(value, low, high) that returns value limited to the range [low, high]: low if value is below it, high if value is above it, otherwise value. Assume low <= high.",
+   "starter": "long long clamp_to(long long value, long long low, long long high) {\n    // your code here\n    return 0;\n}",
+   "fn": "clamp_to",
+   "solution": "long long clamp_to(long long value, long long low, long long high) {\n    if (value < low) return low;\n    if (value > high) return high;\n    return value;\n}",
+   "tests": [
+    {
+     "args": [
+      5,
+      1,
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -3,
+      0,
+      4
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      12,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      0,
+      0,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      -7,
+      -7,
+      3
+     ],
+     "expected": -7
+    },
+    {
+     "args": [
+      -9,
+      -20,
+      -10
+     ],
+     "expected": -10
+    }
+   ],
+   "explanation": "Check each side of the range in turn and return the boundary or the value itself; return ends the call."
+  },
+  {
+   "id": "cpp-s05-mcq",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "size-unsigned",
+   "prompt": "For an empty `std::string s`, what is the value of `s.size() - 1`?",
+   "choices": [
+    "-1, because the result is signed",
+    "The largest value of std::size_t",
+    "0, because it saturates at zero",
+    "It throws std::out_of_range"
+   ],
+   "answer": 1,
+   "explanation": "size() returns an unsigned type, and 0 - 1 wraps around in unsigned arithmetic. Conditions such as `i <= s.size() - 1` therefore misbehave on empty strings; compare with `i < s.size()` instead."
+  },
+  {
+   "id": "cpp-s05-code",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "string-value-semantics",
+   "code": "#include <iostream>\n#include <string>\nint main() {\n    std::string a = \"ab\";\n    std::string b = a;\n    b += \"c\";\n    b[0] = 'z';\n    std::cout << a << \" \" << b;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "zb zbc",
+    "ab zb",
+    "ab abc",
+    "ab zbc"
+   ],
+   "answer": 3,
+   "explanation": "std::string has value semantics: b is an independent copy, so changing b does not affect a."
+  },
+  {
+   "id": "cpp-s05-short",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "substr-clamping",
+   "code": "#include <iostream>\n#include <string>\nint main() {\n    std::string s = \"abcdef\";\n    std::cout << s.substr(2, 3) << s.substr(4, 100).size();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "cde2",
+   "explanation": "substr(2, 3) is the three characters starting at index 2: \"cde\". For substr(4, 100) the length is clamped to the remaining characters \"ef\", whose size is 2."
+  },
+  {
+   "id": "cpp-s05-explain",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "valid-indices",
+   "prompt": "What are the valid indices of a `std::string s`, and why is the loop condition `i <= s.size() - 1` dangerous?",
+   "answer": "Valid indices run from 0 to size() - 1. operator[] does not check bounds, so going past the end is a bug. Because size() is unsigned, s.size() - 1 on an empty string wraps to a huge number, so the condition i <= s.size() - 1 is always true and the loop runs far past the end. Use i < s.size().",
+   "keywords": [
+    [
+     "0",
+     "size() - 1",
+     "size()-1",
+     "last index"
+    ],
+    [
+     "unchecked",
+     "no check",
+     "does not check",
+     "bounds",
+     "undefined"
+    ],
+    [
+     "unsigned",
+     "wrap",
+     "underflow",
+     "huge",
+     "largest"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "character-ranges",
+   "prompt": "count_digits(text) must count the characters '0' through '9' in text. It misses some. Fix it.",
+   "code": "long long count_digits(const std::string& text) {\n    long long count = 0;\n    for (char ch : text) {\n        if (ch > '0' && ch <= '9') {\n            ++count;\n        }\n    }\n    return count;\n}",
+   "fn": "count_digits",
+   "solution": "long long count_digits(const std::string& text) {\n    long long count = 0;\n    for (char ch : text) {\n        if (ch >= '0' && ch <= '9') {\n            ++count;\n        }\n    }\n    return count;\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "a1b2"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "007"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "0"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      "9876543210"
+     ],
+     "expected": 10
+    }
+   ],
+   "explanation": "'0' itself is a digit, so the lower bound must be inclusive."
+  },
+  {
+   "id": "cpp-s06-mcq",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "vector-copy",
+   "prompt": "After `std::vector<int> a{1, 2}; std::vector<int> b = a; b[0] = 9;`, what is `a[0]`?",
+   "choices": [
+    "1, because b is an independent copy",
+    "9, because a and b share the same elements",
+    "It is undefined, because a was copied from",
+    "It is a compile error to modify a copy"
+   ],
+   "answer": 0,
+   "explanation": "Initializing b from a copies every element. Unlike arrays in Java or JavaScript, assigning vectors does not alias them; use a reference (`auto& b = a;`) when you want an alias."
+  },
+  {
+   "id": "cpp-s06-code",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "copy-vs-reference",
+   "code": "#include <iostream>\n#include <vector>\nint main() {\n    std::vector<int> a{1, 2, 3};\n    std::vector<int> b = a;\n    auto& c = a;\n    b.push_back(4);\n    b.push_back(6);\n    c.push_back(5);\n    std::cout << a.size() << b.size() << c.size();\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "555",
+    "445",
+    "454",
+    "344"
+   ],
+   "answer": 2,
+   "explanation": "a and c are the same vector (c is a reference) and it received one push_back: size 4. b is a separate copy that received two: size 5."
+  },
+  {
+   "id": "cpp-s06-short",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "braced-initialization",
+   "code": "#include <iostream>\n#include <vector>\nint main() {\n    std::vector<int> a(3, 7);\n    std::vector<int> b{3, 7};\n    std::cout << a.size() << \" \" << b.size();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "3 2",
+   "explanation": "Parentheses call the (count, value) constructor: three sevens. Braces prefer the initializer_list constructor: the two elements 3 and 7."
+  },
+  {
+   "id": "cpp-s06-explain",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "const-reference-parameter",
+   "prompt": "Why is `const std::vector<long long>&` the usual parameter type for a function that only reads a vector?",
+   "answer": "Passing by value would copy every element on each call, which is O(n) work and memory. A reference avoids the copy, and const prevents the function from modifying the caller's vector, so the contract that the input is not changed is enforced by the compiler.",
+   "keywords": [
+    [
+     "copy",
+     "copies",
+     "copying"
+    ],
+    [
+     "avoid",
+     "no copy",
+     "without copying",
+     "alias",
+     "refers to",
+     "not copied",
+     "instead of copying"
+    ],
+    [
+     "modif",
+     "read-only",
+     "readonly",
+     "cannot change",
+     "unchanged",
+     "not change"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "negative-remainder",
+   "prompt": "count_odd(values) must count the odd numbers in values, including negative ones. It misses the negative odd numbers. Fix it.",
+   "code": "long long count_odd(const std::vector<long long>& values) {\n    long long count = 0;\n    for (long long v : values) {\n        if (v % 2 == 1) {\n            ++count;\n        }\n    }\n    return count;\n}",
+   "fn": "count_odd",
+   "solution": "long long count_odd(const std::vector<long long>& values) {\n    long long count = 0;\n    for (long long v : values) {\n        if (v % 2 != 0) {\n            ++count;\n        }\n    }\n    return count;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       3
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       -3
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       -2,
+       -4
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       2,
+       -1,
+       5,
+       -7
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       0
+      ]
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "In C++ the remainder takes the sign of the dividend, so -3 % 2 is -1, not 1. Test for != 0."
+  },
+  {
+   "id": "cpp-s07-mcq",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "operator-bracket-inserts",
+   "prompt": "`std::unordered_map<std::string, int> m;` is empty. After `int n = m[\"x\"];`, what is true?",
+   "choices": [
+    "m is still empty and n is undefined",
+    "m is still empty and n is 0",
+    "m has one entry, \"x\" mapped to 0",
+    "An std::out_of_range exception is thrown"
+   ],
+   "answer": 2,
+   "explanation": "operator[] inserts a value-initialized element when the key is missing. Use find or count to look up without inserting; at() throws std::out_of_range instead."
+  },
+  {
+   "id": "cpp-s07-code",
+   "node": "stage-07",
+   "type": "mcq_code",
+   "concept": "frequency-counting",
+   "code": "#include <iostream>\n#include <string>\n#include <unordered_map>\nint main() {\n    std::unordered_map<std::string, int> m;\n    m[\"a\"]++;\n    m[\"b\"];\n    m[\"a\"] += 2;\n    std::cout << m.size() << m[\"a\"];\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "23",
+    "13",
+    "22",
+    "33"
+   ],
+   "answer": 0,
+   "explanation": "m[\"a\"]++ creates a with 1 and m[\"b\"] creates b with 0, so size() is 2; then a becomes 3. The << operands are evaluated left to right."
+  },
+  {
+   "id": "cpp-s07-short",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "lookup-inserts",
+   "code": "#include <iostream>\n#include <string>\n#include <unordered_map>\nint main() {\n    std::unordered_map<char, int> m;\n    for (char c : std::string(\"banana\")) ++m[c];\n    std::cout << m.size() << m['a'];\n    std::cout << m['z'];\n    std::cout << m.size();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "3304",
+   "explanation": "banana has three distinct letters, so size() is 3; m['a'] is 3; m['z'] is a missing key that operator[] inserts with 0; the final size() is therefore 4."
+  },
+  {
+   "id": "cpp-s07-explain",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "find-vs-subscript-vs-at",
+   "prompt": "Compare m[key], m.find(key) and m.at(key) for an std::unordered_map when the key may be missing.",
+   "answer": "m[key] inserts a default-valued entry when the key is missing (and cannot be used on a const map). m.find(key) returns an iterator and compares with end() when the key is missing, without changing the map. m.at(key) does not insert but throws std::out_of_range for a missing key.",
+   "keywords": [
+    [
+     "insert",
+     "adds",
+     "creates"
+    ],
+    [
+     "find",
+     "end()",
+     "iterator"
+    ],
+    [
+     "at(",
+     ".at",
+     "out_of_range",
+     "throws",
+     "exception"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "insert-does-not-overwrite",
+   "prompt": "max_frequency(words) must return how many times the most common word occurs (0 for no words). It returns 0 for every input. Fix it.",
+   "code": "#include <string>\n#include <unordered_map>\n#include <vector>\n\nlong long max_frequency(const std::vector<std::string>& words) {\n    std::unordered_map<std::string, long long> counts;\n    for (const std::string& w : words) {\n        counts.insert({w, counts[w] + 1});\n    }\n    long long best = 0;\n    for (const auto& entry : counts) {\n        if (entry.second > best) best = entry.second;\n    }\n    return best;\n}",
+   "fn": "max_frequency",
+   "solution": "#include <string>\n#include <unordered_map>\n#include <vector>\n\nlong long max_frequency(const std::vector<std::string>& words) {\n    std::unordered_map<std::string, long long> counts;\n    for (const std::string& w : words) {\n        ++counts[w];\n    }\n    long long best = 0;\n    for (const auto& entry : counts) {\n        if (entry.second > best) best = entry.second;\n    }\n    return best;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x",
+       "x"
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "aa",
+       "a",
+       "aa",
+       "a",
+       "aa"
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "b"
+      ]
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "insert never overwrites an existing key. The expression counts[w] already created w with value 0, so the insert was a no-op and every count stayed 0. Use ++counts[w]."
+  },
+  {
+   "id": "cpp-s08-mcq",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "insert-result",
+   "prompt": "What does the `.second` member of the pair returned by `std::unordered_set::insert` tell you?",
+   "choices": [
+    "The number of elements now in the set",
+    "Whether the set had to rehash",
+    "The hash value of the key",
+    "Whether the key was newly inserted"
+   ],
+   "answer": 3,
+   "explanation": "insert returns pair<iterator, bool>: the bool is true when the key was added and false when an equivalent key was already present."
+  },
+  {
+   "id": "cpp-s08-code",
+   "node": "stage-08",
+   "type": "mcq_code",
+   "concept": "ordered-set-comparator",
+   "code": "#include <iostream>\n#include <functional>\n#include <set>\nint main() {\n    std::set<int, std::greater<int>> s{3, 1, 2, 3};\n    for (int x : s) std::cout << x;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "123",
+    "321",
+    "3123",
+    "312"
+   ],
+   "answer": 1,
+   "explanation": "The duplicate 3 is ignored, and std::greater makes the set iterate from the largest key to the smallest."
+  },
+  {
+   "id": "cpp-s08-short",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "comparator-equivalence",
+   "code": "#include <iostream>\n#include <set>\n#include <string>\nstruct P {\n    std::string name;\n    int age;\n};\nstruct ByAge {\n    bool operator()(const P& a, const P& b) const { return a.age < b.age; }\n};\n\nint main() {\n    std::set<P, ByAge> s;\n    s.insert({\"a\", 30});\n    s.insert({\"b\", 30});\n    s.insert({\"c\", 31});\n    std::cout << s.size();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "2",
+   "explanation": "std::set considers two keys the same when neither compares less than the other. a and b tie on age, so the second insert is rejected; the set holds {a, c}."
+  },
+  {
+   "id": "cpp-s08-explain",
+   "node": "stage-08",
+   "type": "explain",
+   "concept": "set-choice",
+   "prompt": "When would you choose std::unordered_set over std::set, and what do you give up?",
+   "answer": "Choose unordered_set when you only need fast average-time membership and uniqueness; hashing gives average O(1) insert and lookup. You give up sorted iteration order (the order is unspecified) and ordered queries such as lower_bound; std::set costs O(log n) per operation but keeps keys ordered.",
+   "keywords": [
+    [
+     "average",
+     "o(1)",
+     "constant",
+     "hash"
+    ],
+    [
+     "ordering",
+     "iteration order",
+     "unspecified",
+     "lower_bound",
+     "unsorted",
+     "no order",
+     "not sorted",
+     "order is not",
+     "not ordered",
+     "sorted order",
+     "lose the order",
+     "lose order",
+     "sorted iteration"
+    ],
+    [
+     "o(log n)",
+     "log n",
+     "tree",
+     "std::set"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s08-write",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "duplicate-detection",
+   "prompt": "Write has_duplicate(values) that returns true when some value occurs more than once.",
+   "starter": "bool has_duplicate(const std::vector<long long>& values) {\n    // your code here\n    return false;\n}",
+   "fn": "has_duplicate",
+   "solution": "#include <unordered_set>\n#include <vector>\n\nbool has_duplicate(const std::vector<long long>& values) {\n    std::unordered_set<long long> seen;\n    for (long long v : values) {\n        if (!seen.insert(v).second) return true;\n    }\n    return false;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       5,
+       5
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       -1,
+       0,
+       -1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       2,
+       1,
+       4
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       -2,
+       2
+      ]
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "insert(...).second is false exactly when the value was already present, so one pass with a hash set is enough."
+  },
+  {
+   "id": "cpp-s09-mcq",
+   "node": "stage-09",
+   "type": "mcq",
+   "concept": "struct-copy-vs-reference",
+   "prompt": "Given `struct Box { int n; };`, `Box a{1}; Box b = a; b.n = 5;` what is `a.n`?",
+   "choices": [
+    "1, because b is an independent copy",
+    "5, because b and a are the same object",
+    "It is indeterminate after the copy",
+    "It does not compile, because Box has no copy constructor"
+   ],
+   "answer": 0,
+   "explanation": "A struct is copied member by member (the compiler generates a copy constructor), and the copy is independent. Only a reference (`Box& b = a;`) names the same object."
+  },
+  {
+   "id": "cpp-s09-code",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "alias-and-copy",
+   "code": "#include <iostream>\nstruct Box {\n    int n;\n};\n\nint main() {\n    Box a{1};\n    Box b = a;\n    Box& c = a;\n    b.n = 10;\n    c.n = 20;\n    std::cout << a.n << \" \" << b.n;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "10 10",
+    "20 20",
+    "1 10",
+    "20 10"
+   ],
+   "answer": 3,
+   "explanation": "c is a reference to a, so c.n = 20 changes a. b is a separate copy made when a.n was 1; it then became 10."
+  },
+  {
+   "id": "cpp-s09-short",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "value-initialization",
+   "code": "#include <iostream>\nstruct P {\n    int x = 5;\n    int y;\n};\n\nint main() {\n    P p{};\n    std::cout << p.x << p.y;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "50",
+   "explanation": "The default member initializer sets x to 5. With `P p{}` the other member y is value-initialized, which zero-initializes it, so the output is 5 followed by 0."
+  },
+  {
+   "id": "cpp-s09-explain",
+   "node": "stage-09",
+   "type": "explain",
+   "concept": "per-call-state",
+   "prompt": "Why should final_balance create its account object inside the function instead of using one shared global account?",
+   "answer": "Each call must start from its own initial balance. A global account keeps state between calls, so one call's changes would leak into the next one and results would depend on call order. A local object is created fresh on every call and destroyed at its end.",
+   "keywords": [
+    [
+     "each call",
+     "every call",
+     "fresh",
+     "its own",
+     "own initial",
+     "separate"
+    ],
+    [
+     "persist",
+     "leak",
+     "previous call",
+     "earlier call",
+     "state between",
+     "carry",
+     "remember",
+     "keeps its value",
+     "call order",
+     "order of calls",
+     "leftover",
+     "stale"
+    ],
+    [
+     "local object",
+     "local variable",
+     "local account",
+     "destroyed",
+     "scope",
+     "automatic",
+     "created inside",
+     "new object"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "initial-extreme",
+   "prompt": "peak_balance(initial, changes) must return the highest balance reached, counting the starting balance. It is wrong when every balance is negative. Fix it.",
+   "code": "struct Account {\n    long long balance;\n};\n\nlong long peak_balance(long long initial, const std::vector<long long>& changes) {\n    Account account{initial};\n    long long best = 0;\n    for (long long change : changes) {\n        account.balance += change;\n        if (account.balance > best) best = account.balance;\n    }\n    return best;\n}",
+   "fn": "peak_balance",
+   "solution": "struct Account {\n    long long balance;\n};\n\nlong long peak_balance(long long initial, const std::vector<long long>& changes) {\n    Account account{initial};\n    long long best = account.balance;\n    for (long long change : changes) {\n        account.balance += change;\n        if (account.balance > best) best = account.balance;\n    }\n    return best;\n}",
+   "tests": [
+    {
+     "args": [
+      -5,
+      []
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      0,
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      [
+       5,
+       -20,
+       3
+      ]
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      -10,
+      [
+       -1,
+       -2
+      ]
+     ],
+     "expected": -10
+    },
+    {
+     "args": [
+      3,
+      [
+       -1,
+       4
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      -2,
+      [
+       5,
+       -3
+      ]
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Starting the maximum at 0 invents a balance that never occurred. Start from the first real value, the initial balance."
+  },
+  {
+   "id": "cpp-s10-mcq",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "unchecked-subscript",
+   "prompt": "For `std::vector<int> v{1, 2, 3};`, what does `v[10]` do?",
+   "choices": [
+    "Throws std::out_of_range, as v.at(10) would",
+    "Has undefined behaviour; it is not checked",
+    "Returns 0, a value-initialised element",
+    "Returns the last element, clamping the index"
+   ],
+   "answer": 1,
+   "explanation": "operator[] performs no bounds check, so an out-of-range index is undefined behaviour and not an exception. v.at(10) is the checked access that throws std::out_of_range."
+  },
+  {
+   "id": "cpp-s10-code",
+   "node": "stage-10",
+   "type": "mcq_code",
+   "concept": "at-throws",
+   "code": "#include <iostream>\n#include <stdexcept>\n#include <vector>\nint main() {\n    std::vector<int> v{1, 2, 3};\n    try {\n        std::cout << v.at(5);\n    } catch (const std::out_of_range&) {\n        std::cout << \"oops\";\n    }\n    std::cout << v.size();\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "oops",
+    "5oops3",
+    "oops3",
+    "3"
+   ],
+   "answer": 2,
+   "explanation": "at(5) throws std::out_of_range before anything is printed; the handler prints oops, and execution continues with the size 3."
+  },
+  {
+   "id": "cpp-s10-short",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "stoi-contract",
+   "code": "#include <iostream>\n#include <stdexcept>\n#include <string>\nint main() {\n    int v = std::stoi(\"12x\");\n    std::cout << v;\n    try {\n        std::stoi(\"x12\");\n    } catch (const std::invalid_argument&) {\n        std::cout << '!';\n    }\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "12!",
+   "explanation": "std::stoi parses the longest numeric prefix, so \"12x\" gives 12 without an error. \"x12\" has no numeric prefix, so it throws std::invalid_argument and the handler prints !."
+  },
+  {
+   "id": "cpp-s10-explain",
+   "node": "stage-10",
+   "type": "explain",
+   "concept": "failure-contract",
+   "prompt": "safe_at returns a fallback for a bad index. What other failure contracts could a C++ function choose, and why must the choice be stated?",
+   "answer": "It could throw an exception (such as std::out_of_range from at()), return std::optional (or std::expected in C++23) to signal absence, or return an error code. The caller needs to know which one it gets, because it decides whether the caller must catch, test the result, or can assume success.",
+   "keywords": [
+    [
+     "exception",
+     "throw",
+     "out_of_range"
+    ],
+    [
+     "optional",
+     "expected",
+     "error code",
+     "return code"
+    ],
+    [
+     "caller",
+     "contract",
+     "document",
+     "know"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s10-write",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "validated-division",
+   "prompt": "Write safe_divide(a, b, fallback) that returns a / b (integer division) or fallback when b is 0. Never throw.",
+   "starter": "long long safe_divide(long long a, long long b, long long fallback) {\n    // your code here\n    return 0;\n}",
+   "fn": "safe_divide",
+   "solution": "long long safe_divide(long long a, long long b, long long fallback) {\n    if (b == 0) return fallback;\n    return a / b;\n}",
+   "tests": [
+    {
+     "args": [
+      7,
+      2,
+      -1
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      7,
+      0,
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      0,
+      5,
+      9
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -7,
+      2,
+      0
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      9,
+      -3,
+      0
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      0,
+      0,
+      4
+     ],
+     "expected": 4
+    }
+   ],
+   "explanation": "Divide by zero is undefined behaviour for integers, so test the divisor first; integer division truncates toward zero."
+  },
+  {
+   "id": "cpp-s11-mcq",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "stack-overflow",
+   "prompt": "A recursive function has no reachable base case and recurses until the stack is exhausted. What happens in C++?",
+   "choices": [
+    "A std::bad_alloc exception is thrown, and a catch block can handle it.",
+    "Undefined behaviour; it usually crashes and cannot be portably caught.",
+    "The compiler limits recursion to a fixed depth and then stops the calls.",
+    "The recursion quietly returns 0 for the remaining calls once memory runs out."
+   ],
+   "answer": 1,
+   "explanation": "Stack exhaustion is undefined behaviour and usually crashes the process; it is not an exception. Prove that every call moves toward a base case."
+  },
+  {
+   "id": "cpp-s11-code",
+   "node": "stage-11",
+   "type": "mcq_code",
+   "concept": "truncating-division-recursion",
+   "code": "#include <iostream>\nlong long f(long long n) {\n    if (n == 0) return 0;\n    return n % 10 + f(n / 10);\n}\n\nint main() {\n    std::cout << f(-12);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "-3",
+    "3",
+    "0",
+    "-12"
+   ],
+   "answer": 0,
+   "explanation": "n / 10 truncates toward zero: -12 -> -1 -> 0. n % 10 takes the sign of the dividend: -2, then -1. The sum is -3."
+  },
+  {
+   "id": "cpp-s11-short",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "call-count",
+   "code": "#include <iostream>\nint calls = 0;\n\nint h(int n) {\n    ++calls;\n    if (n == 0) return 0;\n    return h(n - 1);\n}\n\nint main() {\n    h(5);\n    std::cout << calls;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "6",
+   "explanation": "The calls are h(5), h(4), h(3), h(2), h(1) and h(0): six, including the base case."
+  },
+  {
+   "id": "cpp-s11-explain",
+   "node": "stage-11",
+   "type": "explain",
+   "concept": "base-case-and-measure",
+   "prompt": "For digit_sum(n), name the base case and the quantity that decreases, and explain why the function terminates.",
+   "answer": "The base case is a single-digit number (n < 10), which is its own digit sum. Each recursive call is on n / 10, which has one fewer digit and is strictly smaller, so the argument must reach the base case after a finite number of calls.",
+   "keywords": [
+    [
+     "n < 10",
+     "n<10",
+     "single digit",
+     "one digit",
+     "n == 0",
+     "n is 0",
+     "n is zero",
+     "n=0"
+    ],
+    [
+     "n / 10",
+     "n/10",
+     "fewer digit",
+     "smaller",
+     "shrink",
+     "one less digit",
+     "drops a digit",
+     "divided by 10"
+    ],
+    [
+     "finite",
+     "eventually",
+     "reaches the base",
+     "reach the base",
+     "gets to the base",
+     "hits the base",
+     "reaches it",
+     "reach it"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "base-case-zero",
+   "prompt": "count_digits(n) must return how many decimal digits n has (n >= 0), where 0 has one digit. It returns 0 for 0. Fix it.",
+   "code": "long long count_digits(long long n) {\n    if (n == 0) return 0;\n    return 1 + count_digits(n / 10);\n}",
+   "fn": "count_digits",
+   "solution": "long long count_digits(long long n) {\n    if (n < 10) return 1;\n    return 1 + count_digits(n / 10);\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      99
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      1000000
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "The base case must answer correctly for the smallest valid input: a single digit, including 0, has one digit."
+  },
+  {
+   "id": "cpp-s12-mcq",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "hash-complexity",
+   "prompt": "Which statement about the one-pass has_pair using std::unordered_set is accurate?",
+   "choices": [
+    "It is O(n) in the worst case too, whatever the hash function does.",
+    "It is O(n log n) because the set keeps its keys sorted at every insert.",
+    "Expected O(n) time and O(n) extra space; hash operations are average O(1).",
+    "It is O(1) extra space because only one element is remembered at a time."
+   ],
+   "answer": 2,
+   "explanation": "Each of the n elements causes one lookup and one insert, O(1) on average with a good hash, giving expected O(n) time; the set may hold all n values. unordered_set operations can degrade to O(n) each in the worst case, and std::set (not unordered_set) would be the sorted, O(log n) container."
+  },
+  {
+   "id": "cpp-s12-code",
+   "node": "stage-12",
+   "type": "mcq_code",
+   "concept": "pair-count",
+   "code": "#include <iostream>\nint main() {\n    int c = 0;\n    for (int i = 0; i < 5; ++i) {\n        for (int j = i + 1; j < 5; ++j) {\n            ++c;\n        }\n    }\n    std::cout << c;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "5",
+    "25",
+    "15",
+    "10"
+   ],
+   "answer": 3,
+   "explanation": "The inner loop runs 4, 3, 2, 1 and 0 times: 10 = 5 * 4 / 2 pair visits, which grows as n squared."
+  },
+  {
+   "id": "cpp-s12-short",
+   "node": "stage-12",
+   "type": "short_answer",
+   "concept": "set-insert-bool",
+   "code": "#include <iostream>\n#include <unordered_set>\nint main() {\n    std::unordered_set<int> s;\n    int dup = 0;\n    for (int x : {3, 1, 3, 2, 1, 3}) {\n        if (!s.insert(x).second) ++dup;\n    }\n    std::cout << dup << \" \" << s.size();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "3 3",
+   "explanation": "3, 1 and 2 are new; the later 3, 1 and 3 are duplicates: dup is 3 and the set holds 3 distinct values."
+  },
+  {
+   "id": "cpp-s12-explain",
+   "node": "stage-12",
+   "type": "explain",
+   "concept": "complement-before-insert",
+   "prompt": "In the one-pass has_pair, why must the complement be looked up before the current value is inserted?",
+   "answer": "The two elements must be at different indices. If the current value were inserted first, the lookup could find that same element and pair it with itself, for example [1] with target 2 would wrongly return true. Checking first means the set contains only earlier indices.",
+   "keywords": [
+    [
+     "different index",
+     "different indices",
+     "itself",
+     "same element",
+     "own partner"
+    ],
+    [
+     "earlier",
+     "before",
+     "previous",
+     "already seen"
+    ],
+    [
+     "wrong",
+     "false positive",
+     "incorrect",
+     "[1]"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "self-pairing",
+   "prompt": "has_pair_sum(values, target) must return whether two elements at different indices sum to target. It returns true for [1] with target 2. Fix it.",
+   "code": "#include <unordered_set>\n#include <vector>\n\nbool has_pair_sum(const std::vector<long long>& values, long long target) {\n    std::unordered_set<long long> seen;\n    for (long long v : values) {\n        seen.insert(v);\n        if (seen.count(target - v) == 1) return true;\n    }\n    return false;\n}",
+   "fn": "has_pair_sum",
+   "solution": "#include <unordered_set>\n#include <vector>\n\nbool has_pair_sum(const std::vector<long long>& values, long long target) {\n    std::unordered_set<long long> seen;\n    for (long long v : values) {\n        if (seen.count(target - v) == 1) return true;\n        seen.insert(v);\n    }\n    return false;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      2
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      2
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       1
+      ],
+      2
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       2,
+       7,
+       11
+      ],
+      9
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      9
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       -3,
+       4
+      ],
+      1
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       5,
+       1,
+       3
+      ],
+      8
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "Inserting first lets an element be its own partner. Look up the complement, then insert."
+  },
+  {
+   "id": "cpp-m-raii-mcq",
+   "node": "module-raii-smart-pointers",
+   "type": "mcq",
+   "concept": "unique-ptr-ownership",
+   "prompt": "Which statement about `std::unique_ptr<T>` is correct?",
+   "choices": [
+    "It can be copied; the copies share one reference count.",
+    "It can only be used for arrays.",
+    "It deletes its object only when delete is called on it explicitly.",
+    "It cannot be copied, but it can be moved to transfer ownership."
+   ],
+   "answer": 3,
+   "explanation": "unique_ptr models sole ownership: the copy constructor is deleted, the move constructor transfers ownership, and the destructor deletes the object."
+  },
+  {
+   "id": "cpp-m-raii-code",
+   "node": "module-raii-smart-pointers",
+   "type": "mcq_code",
+   "concept": "destruction-order",
+   "code": "#include <iostream>\nstruct N {\n    const char* name;\n    ~N() { std::cout << name; }\n};\n\nint main() {\n    N a{\"a\"};\n    N b{\"b\"};\n    {\n        N c{\"c\"};\n    }\n    std::cout << \"|\";\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "abc|",
+    "c|ba",
+    "c|ab",
+    "|cba"
+   ],
+   "answer": 1,
+   "explanation": "c is destroyed at the end of its inner block, before '|' is printed. a and b, which live until the end of main, are destroyed in reverse order of construction: b, then a."
+  },
+  {
+   "id": "cpp-m-raii-short",
+   "node": "module-raii-smart-pointers",
+   "type": "short_answer",
+   "concept": "shared-ptr-count",
+   "code": "#include <iostream>\n#include <memory>\nint main() {\n    auto p = std::make_shared<int>(5);\n    auto q = p;\n    {\n        auto r = p;\n        std::cout << p.use_count();\n    }\n    std::cout << p.use_count();\n    q.reset();\n    std::cout << p.use_count();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "321",
+   "explanation": "Three owners (p, q, r) at first; r is destroyed at the end of its block leaving two; q.reset() leaves one."
+  },
+  {
+   "id": "cpp-m-raii-weak-code",
+   "node": "module-raii-smart-pointers",
+   "type": "mcq_code",
+   "concept": "weak-ptr-expiry",
+   "code": "#include <iostream>\n#include <memory>\nint main() {\n    std::weak_ptr<int> w;\n    {\n        auto p = std::make_shared<int>(3);\n        w = p;\n        std::cout << (w.lock() != nullptr);\n    }\n    std::cout << (w.lock() != nullptr);\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "11",
+    "01",
+    "10",
+    "00"
+   ],
+   "answer": 2,
+   "explanation": "While p is alive, lock() returns a non-null shared_ptr. After the block p was the last owner, the int is destroyed, and lock() returns an empty shared_ptr."
+  },
+  {
+   "id": "cpp-m-raii-explain",
+   "node": "module-raii-smart-pointers",
+   "type": "explain",
+   "concept": "shared-ptr-cycles",
+   "prompt": "Two nodes hold std::shared_ptr to each other. Explain why they are never freed and how std::weak_ptr fixes it.",
+   "answer": "Each node keeps the other's reference count above zero, so when outside owners let go the counts never reach zero and the destructors never run: a leak. Making one direction (for example the back pointer to the parent) a weak_ptr does not add to the strong count, so the object is destroyed once the real owners are gone.",
+   "keywords": [
+    [
+     "cycle",
+     "each other",
+     "mutual",
+     "circular",
+     "the other",
+     "one another",
+     "keeps the other"
+    ],
+    [
+     "count",
+     "reference count",
+     "never reach zero",
+     "never zero",
+     "never freed",
+     "leak"
+    ],
+    [
+     "does not own",
+     "non-owning",
+     "doesn't own",
+     "not own",
+     "does not increase",
+     "doesn't increase",
+     "increment",
+     "no ownership",
+     "not count",
+     "strong count",
+     "break the cycle",
+     "breaks the cycle",
+     "observer"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-m-copymove-mcq",
+   "node": "module-copy-move",
+   "type": "mcq",
+   "concept": "std-move",
+   "prompt": "What does `std::move(x)` do by itself?",
+   "choices": [
+    "It casts x to an rvalue so a move overload can be chosen.",
+    "It moves x's contents into a new object immediately.",
+    "It deletes x and frees the memory it owned.",
+    "It makes x const so it cannot be modified further."
+   ],
+   "answer": 0,
+   "explanation": "std::move is only a cast; the move constructor or move assignment that it enables is what transfers resources."
+  },
+  {
+   "id": "cpp-m-copymove-code",
+   "node": "module-copy-move",
+   "type": "mcq_code",
+   "concept": "copy-vs-move-constructors",
+   "code": "#include <iostream>\nstruct T {\n    T() = default;\n    T(const T&) { std::cout << 'C'; }\n    T(T&&) noexcept { std::cout << 'M'; }\n};\n\nT make() { return T(); }\n\nint main() {\n    T a;\n    T b = a;\n    T c = std::move(a);\n    T d = make();\n    (void)b; (void)c; (void)d;\n}",
+   "prompt": "This program is compiled as C++17 or later. What does it print?",
+   "choices": [
+    "CMM",
+    "CM",
+    "CCM",
+    "M"
+   ],
+   "answer": 1,
+   "explanation": "b is copy-constructed from the lvalue a (C); c is move-constructed from std::move(a) (M); in `T d = make()` the prvalue returned by make initializes d directly, so since C++17 no copy or move happens at all."
+  },
+  {
+   "id": "cpp-m-copymove-short",
+   "node": "module-copy-move",
+   "type": "short_answer",
+   "concept": "vector-relocation",
+   "code": "#include <iostream>\n#include <vector>\nstruct A {\n    A() = default;\n    A(const A&) { std::cout << 'c'; }\n    A(A&&) noexcept { std::cout << 'm'; }\n};\nstruct B {\n    B() = default;\n    B(const B&) { std::cout << 'c'; }\n    B(B&&) { std::cout << 'm'; }\n};\n\nint main() {\n    std::vector<A> va;\n    va.reserve(1);\n    va.emplace_back();\n    va.emplace_back();\n    std::cout << '|';\n    std::vector<B> vb;\n    vb.reserve(1);\n    vb.emplace_back();\n    vb.emplace_back();\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "m|c",
+   "explanation": "The second emplace_back exceeds the capacity of 1, so the vector relocates the first element. It moves only when the move constructor is noexcept (A: m); B's move constructor can throw and B is copyable, so the vector copies to keep its strong guarantee (B: c)."
+  },
+  {
+   "id": "cpp-m-copymove-explain",
+   "node": "module-copy-move",
+   "type": "explain",
+   "concept": "moved-from-state",
+   "prompt": "What can you assume about a standard-library object after it has been moved from, and what is the safe thing to do with it?",
+   "answer": "It is in a valid but unspecified state: it can be destroyed or assigned a new value, but you should not rely on its contents (a moved-from vector is often empty, but that is not guaranteed). Do not read its value; reassign it first.",
+   "keywords": [
+    [
+     "valid",
+     "unspecified",
+     "unspecified state"
+    ],
+    [
+     "safely destroy",
+     "can be destroyed",
+     "can be assigned",
+     "assign a new",
+     "reassign",
+     "assigned a new",
+     "new value",
+     "reuse",
+     "only destruction",
+     "only destroy",
+     "destruction and assignment",
+     "destroyed or assigned",
+     "destroy it"
+    ],
+    [
+     "not rely",
+     "do not rely",
+     "should not",
+     "don't rely",
+     "not read",
+     "not guaranteed",
+     "not empty",
+     "not assume",
+     "don't read",
+     "do not read",
+     "not count on",
+     "don't count on",
+     "must not count"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-m-copymove-rules-mcq",
+   "node": "module-copy-move",
+   "type": "mcq",
+   "concept": "special-member-functions",
+   "prompt": "A class declares a destructor but no copy or move operations. What happens to its implicit move operations?",
+   "choices": [
+    "They are generated as usual, memberwise.",
+    "They are generated but defined as deleted.",
+    "They are not declared, so copies are used instead.",
+    "The program is ill-formed without explicit moves."
+   ],
+   "answer": 2,
+   "explanation": "Declaring a destructor (or a copy operation) suppresses the implicit move operations; moves from rvalues then fall back to the copy operations. Following the rule of zero avoids this trap."
+  },
+  {
+   "id": "cpp-m-iter-mcq",
+   "node": "module-iterator-invalidation",
+   "type": "mcq",
+   "concept": "erase-in-loop",
+   "prompt": "Which loop body removes elements from a vector correctly while iterating with an iterator `it`?",
+   "choices": [
+    "v.erase(it); ++it;  // move on to the next element",
+    "v.erase(it++);  // advance first, then erase",
+    "it = v.erase(it);  // advance only when nothing was erased",
+    "v.erase(it); continue;  // it still names the next element"
+   ],
+   "answer": 2,
+   "explanation": "erase invalidates the erased iterator and everything after it, and returns an iterator to the element that follows. Assign that result to it and advance only when you did not erase; calling ++it on an invalidated iterator is undefined behaviour."
+  },
+  {
+   "id": "cpp-m-iter-code",
+   "node": "module-iterator-invalidation",
+   "type": "mcq_code",
+   "concept": "erase-return-iterator",
+   "code": "#include <iostream>\n#include <vector>\nint main() {\n    std::vector<int> v{1, 2, 3, 4, 5, 6};\n    for (auto it = v.begin(); it != v.end();) {\n        if (*it % 2 == 0) it = v.erase(it);\n        else ++it;\n    }\n    for (int x : v) std::cout << x;\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "135",
+    "246",
+    "13 5",
+    "1356"
+   ],
+   "answer": 0,
+   "explanation": "Each erase returns the iterator to the next element, which is then examined without being skipped, so all even numbers are removed."
+  },
+  {
+   "id": "cpp-m-iter-short",
+   "node": "module-iterator-invalidation",
+   "type": "short_answer",
+   "concept": "reallocation",
+   "code": "#include <iostream>\n#include <cstdint>\n#include <vector>\nint main() {\n    std::vector<int> v;\n    v.reserve(4);\n    auto before = reinterpret_cast<std::uintptr_t>(v.data());\n    for (int i = 0; i < 4; ++i) v.push_back(i);\n    std::cout << (before == reinterpret_cast<std::uintptr_t>(v.data()));\n    v.push_back(9);\n    std::cout << (before == reinterpret_cast<std::uintptr_t>(v.data()));\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "10",
+   "explanation": "With capacity reserved for 4 elements, the first four push_backs do not reallocate, so the data address is unchanged (1). The fifth exceeds the capacity: the vector allocates new storage while the old block still exists, so the address differs (0), and all pointers, references and iterators into the old storage are invalidated."
+  },
+  {
+   "id": "cpp-m-iter-explain",
+   "node": "module-iterator-invalidation",
+   "type": "explain",
+   "concept": "stable-references",
+   "prompt": "A graph stores raw pointers to nodes held in a std::vector<Node>, and later more nodes are added. What can go wrong, and what are two ways to avoid it?",
+   "answer": "push_back can reallocate the vector, which moves the elements to new storage and invalidates every pointer, reference and iterator into the old storage, so the stored pointers dangle. Store indices instead of pointers, reserve the final size up front and never exceed it, or use a container with stable addresses such as std::list, std::deque (for push at the ends) or a vector of unique_ptr.",
+   "keywords": [
+    [
+     "reallocat",
+     "grows",
+     "capacity",
+     "moves the elements"
+    ],
+    [
+     "dangl",
+     "invalid",
+     "undefined"
+    ],
+    [
+     "index",
+     "indices",
+     "reserve",
+     "unique_ptr",
+     "list",
+     "deque",
+     "stable"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-m-iter-fix",
+   "node": "module-iterator-invalidation",
+   "type": "fix_bug",
+   "concept": "skip-after-erase",
+   "prompt": "drop_negatives(values) must return the vector without its negative elements, in order. It leaves some negatives behind when two of them are adjacent. Fix it.",
+   "code": "#include <vector>\n\nstd::vector<long long> drop_negatives(std::vector<long long> values) {\n    for (std::size_t i = 0; i < values.size(); ++i) {\n        if (values[i] < 0) {\n            values.erase(values.begin() + i);\n        }\n    }\n    return values;\n}",
+   "fn": "drop_negatives",
+   "solution": "#include <vector>\n\nstd::vector<long long> drop_negatives(std::vector<long long> values) {\n    std::size_t i = 0;\n    while (i < values.size()) {\n        if (values[i] < 0) {\n            values.erase(values.begin() + i);\n        } else {\n            ++i;\n        }\n    }\n    return values;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      1,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       2
+      ]
+     ],
+     "expected": [
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       -2,
+       3
+      ]
+     ],
+     "expected": [
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       -1,
+       -1,
+       -1,
+       7
+      ]
+     ],
+     "expected": [
+      5,
+      7
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       -1
+      ]
+     ],
+     "expected": []
+    }
+   ],
+   "explanation": "After erasing at i, the next element has moved into position i; incrementing i skips it. Advance only when nothing was erased."
+  },
+  {
+   "id": "cpp-m-cmp-mcq",
+   "node": "module-comparators",
+   "type": "mcq",
+   "concept": "strict-weak-ordering",
+   "prompt": "Why is `[](int a, int b) { return a <= b; }` an invalid comparator for std::sort?",
+   "choices": [
+    "It is slower than `<` because it needs two comparisons.",
+    "It sorts in descending order instead of ascending.",
+    "It cannot be used with int, only with user types.",
+    "comp(a, a) returns true, which violates strict weak ordering."
+   ],
+   "answer": 3,
+   "explanation": "A comparator must be a strict weak ordering, so comp(a, a) must be false. With <= it is true for equal elements, which is undefined behaviour and can make std::sort read outside the range."
+  },
+  {
+   "id": "cpp-m-cmp-code",
+   "node": "module-comparators",
+   "type": "mcq_code",
+   "concept": "priority-queue-heap",
+   "code": "#include <iostream>\n#include <functional>\n#include <queue>\n#include <vector>\nint main() {\n    std::priority_queue<int, std::vector<int>, std::greater<int>> q;\n    q.push(5);\n    q.push(1);\n    q.push(3);\n    std::cout << q.top();\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "1",
+    "3",
+    "5",
+    "It does not compile"
+   ],
+   "answer": 0,
+   "explanation": "With std::greater as the comparator the heap is a min-heap, so top() is the smallest element. The default std::less would give a max-heap with top() 5."
+  },
+  {
+   "id": "cpp-m-cmp-short",
+   "node": "module-comparators",
+   "type": "short_answer",
+   "concept": "tie-break-sort",
+   "code": "#include <iostream>\n#include <algorithm>\n#include <tuple>\n#include <vector>\nstruct E {\n    int cost;\n    int id;\n};\n\nint main() {\n    std::vector<E> v{{3, 2}, {1, 9}, {3, 1}, {2, 5}};\n    std::sort(v.begin(), v.end(), [](const E& a, const E& b) {\n        return std::tie(a.cost, a.id) < std::tie(b.cost, b.id);\n    });\n    for (const E& e : v) std::cout << e.id;\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "9512",
+   "explanation": "std::tie compares lexicographically: by cost, then by id. The order is (1,9), (2,5), (3,1), (3,2), so the ids are 9, 5, 1, 2."
+  },
+  {
+   "id": "cpp-m-cmp-explain",
+   "node": "module-comparators",
+   "type": "explain",
+   "concept": "subtraction-comparator",
+   "prompt": "Why should you not write a comparator as `return a - b < 0;` for integer keys?",
+   "answer": "The subtraction can overflow for large or opposite-sign values, and signed overflow is undefined behaviour; it can also produce a wrong sign, which violates the strict weak ordering contract. Compare directly with `return a < b;`.",
+   "keywords": [
+    [
+     "overflow",
+     "overflows",
+     "wrap"
+    ],
+    [
+     "undefined",
+     " ub",
+     "(ub",
+     "wrong sign",
+     "violat",
+     "contract",
+     "strict weak"
+    ],
+    [
+     "compare directly",
+     "direct comparison",
+     "compare them directly",
+     "less-than",
+     "less than",
+     "just compare",
+     "use <",
+     "write a < b",
+     "use a < b",
+     "return a < b"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-m-cmp-write",
+   "node": "module-comparators",
+   "type": "write_snippet",
+   "concept": "multi-key-sort",
+   "prompt": "Write sort_words(words) that returns the words sorted by length (shortest first), with words of equal length in alphabetical (lexicographic) order.",
+   "starter": "std::vector<std::string> sort_words(std::vector<std::string> words) {\n    // your code here\n    return words;\n}",
+   "fn": "sort_words",
+   "solution": "#include <algorithm>\n#include <string>\n#include <vector>\n\nstd::vector<std::string> sort_words(std::vector<std::string> words) {\n    std::sort(words.begin(), words.end(),\n              [](const std::string& a, const std::string& b) {\n                  if (a.size() != b.size()) return a.size() < b.size();\n                  return a < b;\n              });\n    return words;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       "b",
+       "a"
+      ]
+     ],
+     "expected": [
+      "a",
+      "b"
+     ]
+    },
+    {
+     "args": [
+      [
+       "ccc",
+       "a",
+       "bb"
+      ]
+     ],
+     "expected": [
+      "a",
+      "bb",
+      "ccc"
+     ]
+    },
+    {
+     "args": [
+      [
+       "pear",
+       "fig",
+       "apple",
+       "kiwi",
+       "date"
+      ]
+     ],
+     "expected": [
+      "fig",
+      "date",
+      "kiwi",
+      "pear",
+      "apple"
+     ]
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x"
+      ]
+     ],
+     "expected": [
+      "x",
+      "x"
+     ]
+    },
+    {
+     "args": [
+      [
+       "ab",
+       "b",
+       "aa",
+       "a"
+      ]
+     ],
+     "expected": [
+      "a",
+      "b",
+      "aa",
+      "ab"
+     ]
+    }
+   ],
+   "explanation": "Compare the lengths first and fall back to the strings when the lengths tie; both comparisons are strict, so the result is a valid strict weak ordering."
+  },
+  {
+   "id": "cpp-m-tmpl-mcq",
+   "node": "module-templates-concepts",
+   "type": "mcq",
+   "concept": "concepts-syntax-only",
+   "prompt": "What does a C++20 concept such as `std::totally_ordered` guarantee about a type T?",
+   "choices": [
+    "Only that the required expressions are valid for T, not their semantics.",
+    "That < on T is a correct strict ordering for every value of T.",
+    "That T is one of the built-in arithmetic types, such as int.",
+    "That T is trivially copyable, so it can be copied with memcpy."
+   ],
+   "answer": 0,
+   "explanation": "Concepts check that expressions compile (syntax); they cannot prove that an operator behaves like a real ordering. Document the semantic requirements separately."
+  },
+  {
+   "id": "cpp-m-tmpl-code",
+   "node": "module-templates-concepts",
+   "type": "mcq_code",
+   "concept": "deduction-conflict",
+   "code": "template <class T>\nT biggest(T a, T b) {\n    return a > b ? a : b;\n}\n\nint main() {\n    return biggest(1, 2.5) > 0 ? 0 : 1;\n}",
+   "prompt": "What happens when this program is compiled?",
+   "choices": [
+    "It compiles and biggest returns the double 2.5.",
+    "It compiles and biggest returns 2, converted to int.",
+    "It fails to compile: T is deduced as both int and double.",
+    "It compiles, but the linker cannot find biggest."
+   ],
+   "answer": 2,
+   "explanation": "Template argument deduction examines each argument: the first deduces T as int, the second as double. The deductions conflict and there is no conversion to reconcile them, so the call is ill-formed. Write biggest<double>(1, 2.5) or use two template parameters."
+  },
+  {
+   "id": "cpp-m-tmpl-short",
+   "node": "module-templates-concepts",
+   "type": "short_answer",
+   "concept": "if-constexpr",
+   "code": "#include <iostream>\n#include <type_traits>\ntemplate <class T>\nconst char* kind(T) {\n    if constexpr (std::is_integral_v<T>) return \"int\";\n    else return \"other\";\n}\n\nint main() {\n    std::cout << kind(3) << ' ' << kind(2.5) << ' ' << kind('x') << ' ' << kind(true);\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "int other int int",
+   "explanation": "int, char and bool are integral types; double is not. `if constexpr` selects the branch at compile time for each instantiation."
+  },
+  {
+   "id": "cpp-m-tmpl-explain",
+   "node": "module-templates-concepts",
+   "type": "explain",
+   "concept": "template-definition-visibility",
+   "prompt": "You define a function template in a .cpp file and call it from another .cpp file, and the linker reports an undefined reference. Why, and what are the fixes?",
+   "answer": "A template is only a pattern; the compiler instantiates it where it is used, and that needs the definition to be visible. If it is defined in a different translation unit, no instantiation is generated for the type that is used, so the symbol is missing at link time. Put the definition in the header, or explicitly instantiate the needed types in the .cpp file.",
+   "keywords": [
+    [
+     "instantiat",
+     "pattern",
+     "per type",
+     "for each type"
+    ],
+    [
+     "visible",
+     "header",
+     "definition",
+     "translation unit"
+    ],
+    [
+     "explicit instantiation",
+     "explicitly instantiate",
+     "put it in the header",
+     "move the definition"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-m-tmpl-fix",
+   "node": "module-templates-concepts",
+   "type": "fix_bug",
+   "concept": "generic-initial-value",
+   "prompt": "max_value(values) must return the largest element of a non-empty vector. It is wrong when every element is negative. Fix the template helper.",
+   "code": "template <class T>\nT max_of(const std::vector<T>& v) {\n    T best{};\n    for (const T& x : v) {\n        if (x > best) best = x;\n    }\n    return best;\n}\n\nlong long max_value(const std::vector<long long>& values) {\n    return max_of(values);\n}",
+   "fn": "max_value",
+   "solution": "template <class T>\nT max_of(const std::vector<T>& v) {\n    T best = v.front();\n    for (const T& x : v) {\n        if (x > best) best = x;\n    }\n    return best;\n}\n\nlong long max_value(const std::vector<long long>& values) {\n    return max_of(values);\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       3,
+       1,
+       2
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       -3,
+       -1,
+       -2
+      ]
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       -7
+      ]
+     ],
+     "expected": -7
+    },
+    {
+     "args": [
+      [
+       0,
+       -1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       4,
+       9,
+       9,
+       2
+      ]
+     ],
+     "expected": 9
+    }
+   ],
+   "explanation": "T{} is zero, which is not necessarily an element of the vector. Seed the running maximum with the first element."
+  },
+  {
+   "id": "cpp-m-exc-mcq",
+   "node": "module-exception-safety",
+   "type": "mcq",
+   "concept": "noexcept-terminate",
+   "prompt": "A function declared `noexcept` lets an exception escape. What happens?",
+   "choices": [
+    "The exception propagates normally to the caller.",
+    "The compiler inserts a catch-all handler that returns 0.",
+    "The exception is silently swallowed.",
+    "std::terminate is called."
+   ],
+   "answer": 3,
+   "explanation": "An exception escaping a noexcept function calls std::terminate. Mark only operations that really cannot throw (moves, swap, destructors) as noexcept."
+  },
+  {
+   "id": "cpp-m-exc-code",
+   "node": "module-exception-safety",
+   "type": "mcq_code",
+   "concept": "rethrow",
+   "code": "#include <iostream>\n#include <stdexcept>\nint main() {\n    try {\n        try {\n            throw std::out_of_range(\"x\");\n        } catch (const std::exception&) {\n            std::cout << \"inner \";\n            throw;\n        }\n    } catch (const std::out_of_range&) {\n        std::cout << \"outer\";\n    }\n}",
+   "prompt": "What does this program print?",
+   "choices": [
+    "inner",
+    "outer",
+    "inner outer",
+    "inner inner outer"
+   ],
+   "answer": 2,
+   "explanation": "The inner handler catches by reference to the base class, prints, and `throw;` rethrows the original std::out_of_range unchanged, which the outer handler then catches."
+  },
+  {
+   "id": "cpp-m-exc-short",
+   "node": "module-exception-safety",
+   "type": "short_answer",
+   "concept": "stack-unwinding",
+   "code": "#include <iostream>\nstruct G {\n    const char* name;\n    ~G() { std::cout << name; }\n};\n\nvoid f() {\n    G a{\"a\"};\n    G b{\"b\"};\n    throw 1;\n}\n\nint main() {\n    try {\n        f();\n    } catch (int) {\n        std::cout << \"c\";\n    }\n}",
+   "prompt": "Type exactly what this program prints.",
+   "answer": "bac",
+   "explanation": "While the exception propagates out of f, the locals are destroyed in reverse order (b, then a) before the handler in main runs and prints c. That is why RAII releases resources on every path."
+  },
+  {
+   "id": "cpp-m-exc-explain",
+   "node": "module-exception-safety",
+   "type": "explain",
+   "concept": "strong-guarantee",
+   "prompt": "Describe the strong exception guarantee and how copy-and-swap achieves it.",
+   "answer": "The strong guarantee means that if an operation throws, the program state is as if the call never happened. Copy-and-swap does all the work that can fail on a separate copy first, and commits at the end by swapping it in with a non-throwing swap, so a failure leaves the original untouched.",
+   "keywords": [
+    [
+     "as if",
+     "never happened",
+     "no effect",
+     "rolled back",
+     "unchanged",
+     "roll back",
+     "intact",
+     "never attempted"
+    ],
+    [
+     "temporary",
+     "separate copy",
+     "working copy",
+     "a copy",
+     "copy first",
+     "scratch",
+     "new object",
+     "duplicate",
+     "separate object",
+     "side"
+    ],
+    [
+     "non-throwing",
+     "nothrow",
+     "noexcept",
+     "commit",
+     "cannot throw",
+     "swap in",
+     "swap it",
+     "swaps it",
+     "swap the",
+     "swap at",
+     "swap last",
+     "finally swap",
+     "then swap"
+    ]
+   ]
+  },
+  {
+   "id": "cpp-m-exc-fix",
+   "node": "module-exception-safety",
+   "type": "fix_bug",
+   "concept": "uncaught-parse-failure",
+   "prompt": "parse_or(text, fallback) must return the integer parsed from text, or fallback when text cannot be parsed or does not fit in a long long. Text that starts with a number, such as \"7x\", counts as parsed (std::stoll stops at the first character that cannot belong to the number). It crashes on bad input. Fix it.",
+   "code": "#include <stdexcept>\n#include <string>\n\nlong long parse_or(const std::string& text, long long fallback) {\n    (void)fallback;\n    return std::stoll(text);\n}",
+   "fn": "parse_or",
+   "solution": "#include <stdexcept>\n#include <string>\n\nlong long parse_or(const std::string& text, long long fallback) {\n    try {\n        return std::stoll(text);\n    } catch (const std::invalid_argument&) {\n        return fallback;\n    } catch (const std::out_of_range&) {\n        return fallback;\n    }\n}",
+   "tests": [
+    {
+     "args": [
+      "12",
+      -1
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      "abc",
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "",
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "99999999999999999999",
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "-5",
+      9
+     ],
+     "expected": -5
+    },
+    {
+     "args": [
+      "7x",
+      0
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "std::stoll throws std::invalid_argument for non-numeric text and std::out_of_range for values that do not fit; an uncaught exception terminates the program. Catch both by const reference. Note that \"7x\" parses its numeric prefix."
+  }
+ ]
+}

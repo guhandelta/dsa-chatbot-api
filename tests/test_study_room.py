@@ -252,7 +252,7 @@ def test_compare_context_matches_the_same_concept_family():
 # ---------------------------------------------------------------- what next
 
 async def test_what_next_follows_progress_and_weak_spots(client, db):
-    headers, uid = await register(client, db, 'next@example.com', ('python', 'rust'))
+    headers, uid = await register(client, db, 'next@example.com', ('python', 'go'))
     get = lambda lang='python': client.get('/study/next', headers=headers, params={'language': lang})
     first = (await get()).json()
     assert first['kind'] == 'quiz' and first['node_id'] == 'python:stage-01'
@@ -271,8 +271,8 @@ async def test_what_next_follows_progress_and_weak_spots(client, db):
     await db.commit()
     checks = (await get()).json()
     assert checks['kind'] == 'quiz' and checks['node_id'] == 'python:stage-02' and '2 of 3' in checks['reason']
-    rust = (await get('rust')).json()
-    assert rust['kind'] == 'content-gap' and rust['status'] == 'blocked' and rust['node_id'] == 'rust:stage-01'
+    go = (await get('go')).json()
+    assert go['kind'] == 'content-gap' and go['status'] == 'blocked' and go['node_id'] == 'go:stage-01'
 
 
 async def test_what_next_reviews_a_weak_concept_first(client, db, monkeypatch):
@@ -329,10 +329,10 @@ async def test_a_node_without_graded_work_reports_a_content_blocker(db, monkeypa
 
 
 async def test_focus_keeps_unavailable_curriculum_visible(db):
-    focus = await study_room.resolve_focus(db, 'nobody', 'rust', None)
-    assert focus['kind'] == 'node' and focus['id'] == 'rust:stage-01'
+    focus = await study_room.resolve_focus(db, 'nobody', 'go', None)
+    assert focus['kind'] == 'node' and focus['id'] == 'go:stage-01'
     assert not focus['node']['coverage_ready']
-    assert study_room.focus_context('rust', focus, 'ownership borrow')
+    assert study_room.focus_context('go', focus, 'slice map')
 
 
 def test_module_lesson_skips_rows_that_are_no_longer_eligible(monkeypatch):
