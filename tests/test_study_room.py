@@ -15,6 +15,17 @@ TAKEAWAY = ("A dict maps keys to values.\n\nTAKEAWAY\nConcept: Use get for a def
             "Example: counts.get(w, 0)\nPitfall: counts[w] += 1 raises KeyError.")
 
 
+@pytest.fixture
+def unauthored_go(monkeypatch):
+    """Go as it was before any stage files or quiz bank were authored."""
+    from app.services import content_catalog, quiz as quiz_module
+    find_path, bank_version = content_catalog.find_path, quiz_module._bank_version
+    monkeypatch.setattr(content_catalog, 'find_path',
+                        lambda cid: None if cid.startswith('go-path-') else find_path(cid))
+    monkeypatch.setattr(quiz_module, '_bank_version', lambda language: (
+        (str(quiz_module.BANK_DIR / 'go.json'), 0) if language == 'go' else bank_version(language)))
+
+
 class FakeModel:
     def __init__(self, replies):
         self.replies = list(replies)
@@ -251,7 +262,7 @@ def test_compare_context_matches_the_same_concept_family():
 
 # ---------------------------------------------------------------- what next
 
-async def test_what_next_follows_progress_and_weak_spots(client, db):
+async def test_what_next_follows_progress_and_weak_spots(client, db, unauthored_go):
     headers, uid = await register(client, db, 'next@example.com', ('python', 'go'))
     get = lambda lang='python': client.get('/study/next', headers=headers, params={'language': lang})
     first = (await get()).json()
@@ -328,7 +339,7 @@ async def test_a_node_without_graded_work_reports_a_content_blocker(db, monkeypa
     assert step['missing_content'] == ['exercise', 'checks'] and step['link'] is None
 
 
-async def test_focus_keeps_unavailable_curriculum_visible(db):
+async def test_focus_keeps_unavailable_curriculum_visible(db, unauthored_go):
     focus = await study_room.resolve_focus(db, 'nobody', 'go', None)
     assert focus['kind'] == 'node' and focus['id'] == 'go:stage-01'
     assert not focus['node']['coverage_ready']

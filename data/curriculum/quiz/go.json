@@ -1,0 +1,1673 @@
+{
+ "language": "go",
+ "version": 1,
+ "note": "Authored Study Room quiz items. Code items (mcq_code, short_answer) were validated by compiling and running them in the golang:1.23-bookworm image (go vet and go run, module go 1.23). No fix_bug/write_snippet items: the app has no runner for Go. Claims are grounded in the Go knowledge-base rows or verified by execution.",
+ "items": [
+  {
+   "id": "go-s01-mcq",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "integer-overflow",
+   "prompt": "A program increments a variable of type int8 that currently holds 127. Which statement about Go is accurate?",
+   "choices": [
+    "The program panics at run time",
+    "The value wraps silently; this is defined behaviour",
+    "The behaviour is undefined, as in C",
+    "The variable is promoted to a wider type automatically"
+   ],
+   "answer": 1,
+   "explanation": "Go integer overflow wraps silently and is defined behaviour, not undefined behaviour. There is no run-time panic and no automatic promotion."
+  },
+  {
+   "id": "go-s01-code",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "no-implicit-conversion",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar a int = 3\n\tvar b int64 = 4\n\tfmt.Println(a * b)\n}\n",
+   "prompt": "What happens when this program is compiled?",
+   "choices": [
+    "It fails to compile because int and int64 are different types",
+    "It prints 12 after widening a to int64 implicitly",
+    "It prints 12",
+    "It compiles but panics at run time"
+   ],
+   "answer": 0,
+   "explanation": "Go has no implicit numeric conversions. int and int64 are distinct types, so a * b is a compile-time type mismatch; convert one operand explicitly."
+  },
+  {
+   "id": "go-s01-short",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "integer-overflow",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar x int8 = 127\n\tx++\n\tfmt.Println(x)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "-128",
+   "explanation": "int8 holds -128 to 127. Incrementing 127 wraps around silently to -128."
+  },
+  {
+   "id": "go-s01-div",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "division-modulo",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ta, b := -7, 2\n\tfmt.Println(a/b, a%b)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "-3 -1",
+   "explanation": "Integer / truncates toward zero, so -7/2 is -3. % takes the sign of the dividend, so -7%2 is -1; together (-3*2)+(-1) == -7."
+  },
+  {
+   "id": "go-s01-zero",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "zero-values",
+   "prompt": "In a function body you write `var n int` and use n without assigning it. What does n hold?",
+   "choices": [
+    "nil",
+    "Whatever happened to be in memory",
+    "Nothing: the code does not compile until n is assigned",
+    "0, because every variable starts at its type's zero value"
+   ],
+   "answer": 3,
+   "explanation": "Go has no uninitialized variables: var n int starts at 0 (\"\" for strings, false for bool, nil for pointers). Unused local variables are errors, but unassigned ones are not."
+  },
+  {
+   "id": "go-s01-explain",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "int-width",
+   "prompt": "In your own words: why must you convert explicitly between int and int64 in Go, and what can you rely on about the width of plain int?",
+   "answer": "Go has no implicit numeric conversions, so int and int64 are different types and mixing them in an expression is a compile error; you convert deliberately with int64(x) or int(y). The width of int is implementation-specific (32 or 64 bits), so use an explicitly sized type such as int64 when a fixed width matters.",
+   "keywords": [
+    [
+     "implicit",
+     "no automatic",
+     "different type",
+     "distinct type",
+     "mismatch",
+     "separate type",
+     "two types",
+     "different int",
+     "not the same type"
+    ],
+    [
+     "convert",
+     "conversion",
+     "cast"
+    ],
+    [
+     "32",
+     "64",
+     "implementation",
+     "platform",
+     "architecture"
+    ]
+   ]
+  },
+  {
+   "id": "go-s02-mcq",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "bool-condition",
+   "prompt": "n is an int variable. What happens with `if n { ... }`?",
+   "choices": [
+    "It runs the block when n is non-zero",
+    "It runs the block only when n equals 1",
+    "It does not compile: a condition must be a bool",
+    "It runs the block when n is not nil"
+   ],
+   "answer": 2,
+   "explanation": "Go has no truthiness. An if condition must be of type bool, so use an explicit comparison such as n != 0."
+  },
+  {
+   "id": "go-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "short-circuit",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc check(name string, v bool) bool {\n\tfmt.Print(name, \" \")\n\treturn v\n}\n\nfunc main() {\n\tfmt.Println(check(\"A\", false) && check(\"B\", true))\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "A B false",
+    "A false",
+    "B A false",
+    "false"
+   ],
+   "answer": 1,
+   "explanation": "&& evaluates the right operand only when the left one is true. check(\"B\", true) is never called, so only A is printed before the result false."
+  },
+  {
+   "id": "go-s02-break",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "break-in-switch",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfor i := 0; i < 3; i++ {\n\t\tswitch i {\n\t\tcase 1:\n\t\t\tbreak\n\t\t}\n\t\tfmt.Print(i)\n\t}\n\tfmt.Println()\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "012",
+   "explanation": "break inside a switch leaves only the switch, not the enclosing for loop, so every iteration continues to the Print. To leave the loop you need a label."
+  },
+  {
+   "id": "go-s02-switch",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "switch-no-fallthrough",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tx := 2\n\tswitch x {\n\tcase 1:\n\t\tfmt.Print(\"one \")\n\tcase 2:\n\t\tfmt.Print(\"two \")\n\tcase 3:\n\t\tfmt.Print(\"three \")\n\t}\n\tfmt.Println()\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "two",
+   "explanation": "A Go switch runs only the matching case; it does not fall through to later cases unless you write fallthrough."
+  },
+  {
+   "id": "go-s02-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "inclusive-boundaries",
+   "prompt": "In your own words: how do you write 'value is between low and high, inclusive' in Go, and why should you test the boundary values separately?",
+   "answer": "Write two explicit comparisons joined with &&: value >= low && value <= high. A chained comparison like low <= value <= high does not compile in Go. Inclusive means the endpoints count, so using < instead of <= silently excludes value == low or value == high; only a test at each boundary exposes that off-by-one.",
+   "keywords": [
+    [
+     "&&",
+     "logical and",
+     "both conditions",
+     "both comparisons"
+    ],
+    [
+     ">=",
+     "<=",
+     "inclusive",
+     "endpoint",
+     "boundary"
+    ],
+    [
+     "chain",
+     "explicit",
+     "two comparison",
+     "separate"
+    ]
+   ]
+  },
+  {
+   "id": "go-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "for-only-loop",
+   "prompt": "Which statement about loops in Go is correct?",
+   "choices": [
+    "Go has a single loop keyword, for, which also covers the condition-only form",
+    "Go has for and while, and a do-while form that is only available inside functions",
+    "while exists as a keyword, but only for loops that do not declare an index variable",
+    "A for loop must declare an index variable, and range is the only way to avoid one"
+   ],
+   "answer": 0,
+   "explanation": "Go has one loop keyword. `for cond { }` is the while-style form, `for { }` is infinite, and `for ... range` iterates collections."
+  },
+  {
+   "id": "go-s03-range-int",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "range-over-int",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tsum := 0\n\tfor i := range 4 {\n\t\tsum += i\n\t}\n\tfmt.Println(sum)\n}\n",
+   "prompt": "Type exactly what this prints (assume the module declares go 1.22 or later).",
+   "answer": "6",
+   "explanation": "Since Go 1.22, range over an integer n yields 0 through n-1. 0+1+2+3 is 6."
+  },
+  {
+   "id": "go-s03-range-once",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "range-evaluated-once",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ts := []int{1, 2, 3}\n\tcount := 0\n\tfor range s {\n\t\ts = append(s, 0)\n\t\tcount++\n\t}\n\tfmt.Println(count, len(s))\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "It never terminates",
+    "3 3",
+    "6 6",
+    "3 6"
+   ],
+   "answer": 3,
+   "explanation": "The range expression is evaluated once before the loop, so the iteration count is fixed at 3 even though the loop body appends three elements."
+  },
+  {
+   "id": "go-s03-copy",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "range-copy",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ts := []int{1, 2, 3}\n\tfor _, v := range s {\n\t\tv *= 2\n\t}\n\tfmt.Println(s)\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "[2 4 6]",
+    "[1 2 3 1 2 3]",
+    "[1 2 3]",
+    "It does not compile because v is unused"
+   ],
+   "answer": 2,
+   "explanation": "range yields a copy of each element. Multiplying the copy v does not change the slice; assign through s[i] to modify it."
+  },
+  {
+   "id": "go-s03-shadow",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "shadowing",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ttotal := 0\n\tfor i := 1; i <= 3; i++ {\n\t\ttotal := total + i\n\t\t_ = total\n\t}\n\tfmt.Println(total)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "0",
+   "explanation": "Inside the loop, := declares a new variable named total that hides the outer one. The outer total is never updated, so it is still 0. Use = to update the outer variable."
+  },
+  {
+   "id": "go-s03-closure",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "per-iteration-variable",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar fs []func() int\n\tfor i := 0; i < 3; i++ {\n\t\tfs = append(fs, func() int { return i })\n\t}\n\tfor _, f := range fs {\n\t\tfmt.Print(f())\n\t}\n\tfmt.Println()\n}\n",
+   "prompt": "The module's go.mod declares go 1.22 or later. What does this program print?",
+   "choices": [
+    "333",
+    "012",
+    "210",
+    "000"
+   ],
+   "answer": 1,
+   "explanation": "Starting with Go 1.22 each iteration has its own copy of the loop variable (for modules declaring go 1.22 or later), so the closures capture 0, 1 and 2. Older modules keep the shared-variable behaviour and would print 333."
+  },
+  {
+   "id": "go-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "accumulator",
+   "prompt": "In your own words: why must the accumulator for a running total be declared before the loop, and which two inputs would you trace to catch an off-by-one error?",
+   "answer": "The accumulator must live outside the loop so its value survives from one iteration to the next; declaring it inside creates a fresh variable each time (and := in an inner block would even shadow an outer one). To catch off-by-one errors trace the boundary inputs: zero (the loop body should not run and the initial value is returned) and one (exactly one iteration).",
+   "keywords": [
+    [
+     "outside",
+     "before the loop",
+     "survive",
+     "persist",
+     "scope",
+     "shadow"
+    ],
+    [
+     "zero",
+     "0",
+     "empty",
+     "boundary"
+    ],
+    [
+     "one",
+     "1",
+     "off-by-one",
+     "condition",
+     "<="
+    ]
+   ]
+  },
+  {
+   "id": "go-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "pass-by-value",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc set(s []int) { s[0] = 0 }\n\nfunc grow(s []int) { s = append(s, 9) }\n\nfunc main() {\n\ta := []int{1, 2}\n\tset(a)\n\tgrow(a)\n\tfmt.Println(a, len(a))\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "[0 2] 2",
+    "[1 2] 2",
+    "[0 2 9] 3",
+    "[1 2 9] 3"
+   ],
+   "answer": 0,
+   "explanation": "Every argument is passed by value, but a slice value is a small header sharing its elements: set writes through to the caller's data. grow only changes its own copy of the header, so the caller still has length 2."
+  },
+  {
+   "id": "go-s04-defer-order",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "defer-order",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfor i := 0; i < 3; i++ {\n\t\tdefer fmt.Print(i, \" \")\n\t}\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2 1 0",
+   "explanation": "Deferred calls run last-in, first-out when main returns. The argument i is evaluated when each defer statement executes, so the calls print 2, 1, 0."
+  },
+  {
+   "id": "go-s04-named",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "named-results",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc f() (r int) {\n\tdefer func() { r *= 2 }()\n\treturn 21\n}\n\nfunc main() {\n\tfmt.Println(f())\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "42",
+   "explanation": "return 21 assigns 21 to the named result r, then the deferred closure runs and doubles it before the function actually returns 42."
+  },
+  {
+   "id": "go-s04-recover",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "recover",
+   "prompt": "Where does recover() actually stop a panic?",
+   "choices": [
+    "Anywhere in the panicking goroutine, including in the function that panicked",
+    "Only inside main, because it is the outermost frame of the program",
+    "In any other goroutine that calls it, since it can take over the panic",
+    "Only when called directly by a deferred function while panicking"
+   ],
+   "answer": 3,
+   "explanation": "recover returns the panic value only when called directly by a deferred function during panicking; elsewhere it returns nil. A panic in one goroutine cannot be recovered by another."
+  },
+  {
+   "id": "go-s04-errors",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "error-values",
+   "prompt": "A function may be given a missing file name by a user. How does idiomatic Go report this ordinary failure?",
+   "choices": [
+    "Panic and let the caller recover",
+    "Return -1 and set a global flag",
+    "Return an error as the last result",
+    "Throw an exception with throw"
+   ],
+   "answer": 2,
+   "explanation": "Ordinary failures are returned as error values (v, err := f()). panic is reserved for programming errors and truly unrecoverable states."
+  },
+  {
+   "id": "go-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "return-contract",
+   "prompt": "In your own words: a function prints its answer instead of returning it. Why does it fail a return-value contract, and why does reassigning a parameter inside a function not change the caller's variable?",
+   "answer": "Callers use a function's returned value; printing sends text to standard output but gives the caller nothing to use, so the contract (the return value) is not met. Go passes every argument by value, so the parameter is a separate copy of the caller's value; assigning to it changes only the copy.",
+   "keywords": [
+    [
+     "return",
+     "returned value",
+     "caller"
+    ],
+    [
+     "by value",
+     "copy",
+     "copied",
+     "own variable",
+     "separate"
+    ]
+   ]
+  },
+  {
+   "id": "go-s05-len",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "bytes-vs-runes",
+   "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"unicode/utf8\"\n)\n\nfunc main() {\n\ts := \"héllo\"\n\tfmt.Println(len(s), utf8.RuneCountInString(s))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6 5",
+   "explanation": "len counts bytes, and é takes two bytes in UTF-8, so len is 6. utf8.RuneCountInString counts code points, giving 5."
+  },
+  {
+   "id": "go-s05-mcq",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "string-index-type",
+   "prompt": "For `s := \"cat\"`, what is the type of the expression s[0]?",
+   "choices": [
+    "rune",
+    "byte",
+    "string",
+    "char"
+   ],
+   "answer": 1,
+   "explanation": "Indexing a string yields a byte (alias of uint8). A rune comes from ranging over the string; Go has no char type."
+  },
+  {
+   "id": "go-s05-range",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "range-offsets",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfor i := range \"aé!\" {\n\t\tfmt.Print(i, \",\")\n\t}\n\tfmt.Println()\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "0,1,3,",
+    "0,1,2,",
+    "0,2,3,",
+    "0,1,4,"
+   ],
+   "answer": 0,
+   "explanation": "Ranging over a string yields the byte offset where each rune starts. a is one byte (offset 0), é is two bytes (offset 1), so ! starts at offset 3."
+  },
+  {
+   "id": "go-s05-counts",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "letter-frequency",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tw := \"banana\"\n\tvar counts [26]int\n\tfor i := 0; i < len(w); i++ {\n\t\tcounts[w[i]-'a']++\n\t}\n\tfmt.Println(counts[0], counts[1])\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 1",
+   "explanation": "w[i]-'a' maps a to index 0 and b to index 1 for lowercase ASCII text. banana has three a and one b."
+  },
+  {
+   "id": "go-s05-convert",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "int-to-string",
+   "code": "package main\n\nimport (\n\t\"fmt\"\n\t\"strconv\"\n)\n\nfunc main() {\n\tfmt.Println(string(rune(65)) + strconv.Itoa(65))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "A65",
+   "explanation": "string(rune(65)) is the character with code point 65, which is A. strconv.Itoa(65) gives the decimal digits 65. Converting an int directly with string(i) is the character, not the digits, and go vet warns about it."
+  },
+  {
+   "id": "go-s05-explain",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "string-building",
+   "prompt": "In your own words: why is building a long string with s += piece in a loop a problem in Go, and what do you use instead?",
+   "answer": "Strings are immutable, so each += creates a brand-new string and copies the old contents; over a long loop the total copying becomes quadratic. Use strings.Builder (or bytes.Buffer), append pieces to it, and call String() once at the end.",
+   "keywords": [
+    [
+     "immutable",
+     "new string",
+     "copy",
+     "copies",
+     "allocate"
+    ],
+    [
+     "quadratic",
+     "n squared",
+     "n^2",
+     "slow"
+    ],
+    [
+     "strings.builder",
+     "builder",
+     "bytes.buffer"
+    ]
+   ]
+  },
+  {
+   "id": "go-s06-array",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "array-value",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tx := [3]int{1, 2, 3}\n\ty := x\n\ty[0] = 9\n\tfmt.Println(x[0], y[0])\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1 9",
+   "explanation": "An array is a value: assigning it copies all the elements, so changing y does not affect x. A slice would share its elements instead."
+  },
+  {
+   "id": "go-s06-alias",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "slice-alias",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ta := []int{1, 2, 3}\n\tb := a\n\tb[0] = 9\n\tfmt.Println(a[0])\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "1",
+    "It does not compile",
+    "0",
+    "9"
+   ],
+   "answer": 3,
+   "explanation": "Assigning a slice copies only its header; a and b refer to the same underlying array, so the write through b is visible through a."
+  },
+  {
+   "id": "go-s06-append",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "append-shared-array",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tbase := make([]int, 3, 10)\n\ta := append(base, 1)\n\tb := append(base, 2)\n\tfmt.Println(a[3], b[3])\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2 2",
+   "explanation": "base has spare capacity, so both appends write into the same backing array at index 3. The second write overwrites the first, and a and b both show 2. Never rely on whether append reuses storage."
+  },
+  {
+   "id": "go-s06-copy",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "independent-copy",
+   "prompt": "You want a slice with its own elements, independent of the original. Which is a correct way?",
+   "choices": [
+    "b := a, which gives b its own header and therefore its own elements",
+    "b := a[:], which copies every element into a fresh array",
+    "b := make([]int, len(a)); copy(b, a)",
+    "b := a[:len(a):len(a)], which caps the capacity so nothing is shared"
+   ],
+   "answer": 2,
+   "explanation": "make plus copy (or slices.Clone) allocates new storage. b := a and b := a[:] share the array, and a full slice expression only limits capacity: the result still shares the same elements."
+  },
+  {
+   "id": "go-s06-nil",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "nil-slice",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar s []int\n\tfmt.Println(len(s), s == nil)\n\tfor range s {\n\t\tfmt.Println(\"never\")\n\t}\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "0 false",
+    "0 true",
+    "It panics: nil slice",
+    "It does not compile: s is uninitialised"
+   ],
+   "answer": 1,
+   "explanation": "A nil slice has length 0, compares equal to nil, and ranges over zero elements without panicking."
+  },
+  {
+   "id": "go-s06-explain",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "range-copy",
+   "prompt": "In your own words: when you write `for _, v := range values`, what is v, and how do you change an element in place?",
+   "answer": "v is a copy of the element, so assigning to v does not change the slice. To modify an element in place, use the index: for i := range values { values[i] = ... } or assign through values[i].",
+   "keywords": [
+    [
+     "copy",
+     "copied"
+    ],
+    [
+     "index",
+     "values[i]",
+     "s[i]"
+    ]
+   ]
+  },
+  {
+   "id": "go-s07-commaok",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "comma-ok",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tm := map[string]int{\"a\": 0}\n\t_, okA := m[\"a\"]\n\t_, okB := m[\"b\"]\n\tfmt.Println(m[\"a\"] == m[\"b\"], okA, okB)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "true true false",
+   "explanation": "A missing key reads as the value type's zero value, so m[\"a\"] and m[\"b\"] are both 0. Only the two-value form tells a stored zero (ok true) from an absent key (ok false)."
+  },
+  {
+   "id": "go-s07-nil",
+   "node": "stage-07",
+   "type": "mcq_code",
+   "concept": "nil-map-write",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar m map[string]int\n\tfmt.Println(len(m), m[\"a\"])\n\tm[\"a\"] = 1\n\tfmt.Println(\"done\")\n}\n",
+   "prompt": "What happens when this program runs?",
+   "choices": [
+    "It prints 0 0 and then panics on the assignment",
+    "It prints 0 0 and then done, because assignment creates the map on demand",
+    "It panics on the first Println, because a nil map cannot be read",
+    "It does not compile, because m is never initialised"
+   ],
+   "answer": 0,
+   "explanation": "Reading, len and range work on a nil map, but assigning to a nil map panics. Create the map with make or a literal first."
+  },
+  {
+   "id": "go-s07-order",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "iteration-order",
+   "prompt": "A test compares the output of a loop `for k, v := range m` against a fixed expected string and fails on some runs. What is the right fix?",
+   "choices": [
+    "Iterate twice, because the second pass settles into a stable order",
+    "Switch the key type to int, because integer keys are visited in ascending order",
+    "Insert the keys in sorted order before iterating, so the map remembers that order",
+    "Collect the keys into a slice, sort it, and iterate over the sorted keys"
+   ],
+   "answer": 3,
+   "explanation": "Map iteration order is unspecified and deliberately varies between iterations. Sort the keys when order matters."
+  },
+  {
+   "id": "go-s07-keys",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "map-key-types",
+   "prompt": "Which type can NOT be used as a map key?",
+   "choices": [
+    "string",
+    "[2]int",
+    "[]int",
+    "a struct whose fields are all ints"
+   ],
+   "answer": 2,
+   "explanation": "Keys must be comparable with ==. Slices, maps and functions are not; strings, arrays of comparable elements and structs of comparable fields are."
+  },
+  {
+   "id": "go-s07-count",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "frequency-map",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tcounts := map[string]int{}\n\tfor _, w := range []string{\"a\", \"b\", \"a\"} {\n\t\tcounts[w]++\n\t}\n\tfmt.Println(len(counts), counts[\"a\"])\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2 2",
+   "explanation": "counts[w]++ reads the zero value for an absent key, adds one, and stores it. There are two distinct keys, and a occurs twice."
+  },
+  {
+   "id": "go-s07-explain",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "map-concurrency",
+   "prompt": "In your own words: two goroutines update the same map and a WaitGroup waits for both. Is that safe, and what do you do about it?",
+   "answer": "No. A WaitGroup only waits for completion; it does not synchronize the writes. Concurrent writes to an ordinary map are a data race and can crash the program. Guard the map with a sync.Mutex (or RWMutex), confine it to one goroutine, or use sync.Map for its documented access patterns, and run the tests with -race.",
+   "keywords": [
+    [
+     "not safe",
+     "unsafe",
+     "race",
+     "not thread",
+     "isn't safe",
+     "is not safe",
+     "no.",
+     "no,"
+    ],
+    [
+     "mutex",
+     "lock",
+     "sync.map",
+     "one goroutine",
+     "confine"
+    ],
+    [
+     "waitgroup",
+     "wait"
+    ]
+   ]
+  },
+  {
+   "id": "go-s08-dup",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "set-distinct",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tset := map[string]struct{}{}\n\tfor _, w := range []string{\"a\", \"b\", \"a\"} {\n\t\tset[w] = struct{}{}\n\t}\n\tfmt.Println(len(set))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "Assigning an existing key again does not add an entry, so the map holds one entry per distinct key."
+  },
+  {
+   "id": "go-s08-member",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "set-membership",
+   "prompt": "With `seen := map[int]struct{}{}`, which expression tests whether 5 is in the set?",
+   "choices": [
+    "if seen[5] { ... }",
+    "_, ok := seen[5]",
+    "seen.has(5)",
+    "5 in seen"
+   ],
+   "answer": 1,
+   "explanation": "The two-value lookup reports presence. `if seen[5]` does not compile because struct{} is not a bool; Go maps have no has method and no in operator."
+  },
+  {
+   "id": "go-s08-boolmap",
+   "node": "stage-08",
+   "type": "mcq_code",
+   "concept": "bool-map-pitfall",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ts := map[int]bool{}\n\ts[1] = true\n\ts[2] = false\n\tfmt.Println(len(s), s[2])\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "2 false",
+    "1 false",
+    "2 true",
+    "1 true"
+   ],
+   "answer": 0,
+   "explanation": "len counts keys, including keys whose bool value is false, so the 'set' has two members even though s[2] reads false. With map[T]bool, store only true, or use struct{} values and test presence with the comma-ok form."
+  },
+  {
+   "id": "go-s08-why",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "struct-empty",
+   "prompt": "Why do many Go programs use map[T]struct{} for a set rather than map[T]bool?",
+   "choices": [
+    "Lookups in a map[T]bool take O(log n) while struct{} lookups take O(1)",
+    "The compiler rejects map[T]bool",
+    "struct{} makes the map iterate in sorted order",
+    "struct{} values are zero-byte, and presence is the only information stored"
+   ],
+   "answer": 3,
+   "explanation": "struct{} occupies no space and cannot hold a misleading false: membership means the key is present."
+  },
+  {
+   "id": "go-s08-key",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "struct-key",
+   "code": "package main\n\nimport \"fmt\"\n\ntype pt struct{ r, c int }\n\nfunc main() {\n\tseen := map[pt]struct{}{}\n\tseen[pt{1, 2}] = struct{}{}\n\t_, ok := seen[pt{1, 2}]\n\tfmt.Println(ok, len(seen))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "true 1",
+   "explanation": "A struct whose fields are all comparable is a valid key, and two pt values with the same fields are the same key, so the lookup succeeds and there is one entry."
+  },
+  {
+   "id": "go-s08-explain",
+   "node": "stage-08",
+   "type": "explain",
+   "concept": "set-vs-map",
+   "prompt": "In your own words: when would you choose a set rather than a map, and what must you not assume about iterating over it?",
+   "answer": "Choose a set when you only need to know whether a key is present or want each distinct key once; choose a map when each key also carries a value. Never assume a particular iteration order: Go map iteration order is unspecified and varies, so sort the keys if order matters.",
+   "keywords": [
+    [
+     "membership",
+     "present",
+     "distinct",
+     "unique",
+     "duplicate"
+    ],
+    [
+     "value",
+     "associated"
+    ],
+    [
+     "order",
+     "unspecified",
+     "random",
+     "sort"
+    ]
+   ]
+  },
+  {
+   "id": "go-s09-recv",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "pointer-receiver",
+   "code": "package main\n\nimport \"fmt\"\n\ntype counter struct{ n int }\n\nfunc (c counter) incV()  { c.n++ }\nfunc (c *counter) incP() { c.n++ }\n\nfunc main() {\n\tc := counter{}\n\tc.incV()\n\tc.incP()\n\tc.incP()\n\tfmt.Println(c.n)\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "0",
+    "1",
+    "2",
+    "3"
+   ],
+   "answer": 2,
+   "explanation": "incV has a value receiver, so it increments a copy. incP has a pointer receiver and changes c itself; c.incP() is shorthand for (&c).incP() because c is addressable. Two pointer calls give 2."
+  },
+  {
+   "id": "go-s09-copy",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "struct-copy",
+   "code": "package main\n\nimport \"fmt\"\n\ntype point struct{ x, y int }\n\nfunc main() {\n\ta := point{1, 2}\n\tb := a\n\tb.x = 9\n\tfmt.Println(a.x, b.x)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1 9",
+   "explanation": "Assigning a struct copies all of its fields, so b is independent of a (unlike two references to one JavaScript object)."
+  },
+  {
+   "id": "go-s09-when",
+   "node": "stage-09",
+   "type": "mcq",
+   "concept": "receiver-choice",
+   "prompt": "Which situation calls for a pointer receiver?",
+   "choices": [
+    "The method only reads a small struct and never needs to change any field",
+    "The method must modify the receiver, or the type contains a sync.Mutex",
+    "The method returns an int, so the receiver must be addressable",
+    "The struct has exactly one field, so a copy would be wasteful"
+   ],
+   "answer": 1,
+   "explanation": "Use a pointer receiver when the method must change the receiver, when the struct is large, or when it must not be copied (such as a type containing a Mutex)."
+  },
+  {
+   "id": "go-s09-method-set",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "method-sets",
+   "code": "package main\n\nimport \"fmt\"\n\ntype pusher interface{ push(int) }\n\ntype stack struct{ items []int }\n\nfunc (s *stack) push(v int) { s.items = append(s.items, v) }\n\nfunc main() {\n\tvar p pusher = stack{}\n\tfmt.Println(p)\n}\n",
+   "prompt": "What happens when this program is compiled?",
+   "choices": [
+    "It fails: stack does not implement pusher because push has a pointer receiver",
+    "It compiles, because a stack value can have its address taken automatically",
+    "It compiles but panics at run time when push is first called",
+    "It fails because stack does not define a String method for fmt"
+   ],
+   "answer": 0,
+   "explanation": "The method set of stack (the value type) contains only value-receiver methods. push has a pointer receiver, so only *stack satisfies pusher; var p pusher = &stack{} compiles."
+  },
+  {
+   "id": "go-s09-typed-nil",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "typed-nil-error",
+   "code": "package main\n\nimport \"fmt\"\n\ntype myErr struct{}\n\nfunc (*myErr) Error() string { return \"x\" }\n\nfunc get() error {\n\tvar e *myErr\n\treturn e\n}\n\nfunc main() {\n\tfmt.Println(get() == nil)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "false",
+   "explanation": "The returned error interface holds a dynamic type (*myErr) with a nil pointer value, so the interface itself is not nil. Return a literal nil for success."
+  },
+  {
+   "id": "go-s09-explain",
+   "node": "stage-09",
+   "type": "explain",
+   "concept": "embedding",
+   "prompt": "In your own words: what does embedding a struct in another struct give you in Go, and how does it differ from inheritance?",
+   "answer": "Embedding promotes the embedded type's fields and methods to the outer type, which is composition. The outer type does not become a subtype of the embedded type, and a promoted method still has the embedded value as its receiver.",
+   "keywords": [
+    [
+     "promote",
+     "promoted",
+     "forward",
+     "composition",
+     "compose"
+    ],
+    [
+     "not inherit",
+     "not a subtype",
+     "no inheritance",
+     "not subtype",
+     "receiver"
+    ]
+   ]
+  },
+  {
+   "id": "go-s10-mcq",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "index-panic",
+   "prompt": "In Go, what happens when code evaluates values[i] with i outside the slice's bounds?",
+   "choices": [
+    "It returns the element type's zero value",
+    "It returns nil",
+    "It silently wraps around to a valid index",
+    "A run-time panic"
+   ],
+   "answer": 3,
+   "explanation": "Index out of range is a run-time panic in Go, unlike JavaScript's undefined. Validate the index before using it."
+  },
+  {
+   "id": "go-s10-recover",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "recover-boundary",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc safe(v []int, i int) (res int) {\n\tdefer func() {\n\t\tif r := recover(); r != nil {\n\t\t\tres = -1\n\t\t}\n\t}()\n\treturn v[i]\n}\n\nfunc main() {\n\tfmt.Println(safe([]int{1}, 3), safe([]int{1}, 0))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "-1 1",
+   "explanation": "The deferred closure recovers the index-out-of-range panic and sets the named result. It works, but it hides unrelated bugs; checking 0 <= i && i < len(v) up front is the clearer validation."
+  },
+  {
+   "id": "go-s10-guard",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "complete-bounds-check",
+   "prompt": "Which condition fully guards values[i] against a panic?",
+   "choices": [
+    "i < len(values), which rules out an index past the end",
+    "i >= 0, which rules out a negative index",
+    "i >= 0 && i < len(values)",
+    "len(values) > 0, which rules out an empty slice"
+   ],
+   "answer": 2,
+   "explanation": "Both ends are needed: a negative index panics even when i < len(values), and an index at or beyond len panics even when i >= 0."
+  },
+  {
+   "id": "go-s10-commaok",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "absent-vs-zero",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tm := map[string]int{\"a\": 1}\n\tv, ok := m[\"z\"]\n\tfmt.Println(v, ok)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "0 false",
+   "explanation": "For an absent key the lookup yields the zero value and ok false. Use ok, not the value, to detect absence."
+  },
+  {
+   "id": "go-s10-errors",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "error-vs-panic",
+   "prompt": "A function parses user input that may be malformed. What is the idiomatic way to report bad input?",
+   "choices": [
+    "panic with a message",
+    "Return an error value for the caller to check",
+    "Call os.Exit(1) inside the function",
+    "Recover inside the same function and ignore it"
+   ],
+   "answer": 1,
+   "explanation": "Invalid input is an expected failure: return an error. panic is for programming errors and unrecoverable states, and recover is typically placed at a boundary such as one request."
+  },
+  {
+   "id": "go-s10-explain",
+   "node": "stage-10",
+   "type": "explain",
+   "concept": "validate-first",
+   "prompt": "In your own words: why is checking the index before access better than wrapping values[i] in a function that recovers from the panic?",
+   "answer": "A bounds check states the contract explicitly and handles exactly the invalid case. A broad recover catches every panic in the function, so it can hide unrelated bugs (nil dereferences, other index errors) and makes the control flow harder to follow. Ordinary failures should be handled with checks or returned errors; recover belongs at a boundary.",
+   "keywords": [
+    [
+     "explicit",
+     "check",
+     "validate",
+     "contract"
+    ],
+    [
+     "hide",
+     "conceal",
+     "unrelated",
+     "every panic",
+     "any panic",
+     "bug"
+    ],
+    [
+     "boundary",
+     "error",
+     "returned"
+    ]
+   ]
+  },
+  {
+   "id": "go-s11-depth",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "recursion-limits",
+   "prompt": "Which statement about recursion depth in Go is accurate?",
+   "choices": [
+    "Goroutine stacks grow, but there is a maximum size and no fixed safe depth is guaranteed",
+    "Recursion fails at a fixed depth of 10,000 frames, set by the language specification",
+    "Go guarantees tail-call elimination, so tail-recursive functions never grow the stack",
+    "Recursion is not allowed inside closures, only in named top-level functions"
+   ],
+   "answer": 0,
+   "explanation": "Goroutine stacks grow dynamically but have a runtime-controlled limit; deep recursion can still fail. Do not depend on a fixed depth or on tail-call elimination; use an explicit stack for very deep searches."
+  },
+  {
+   "id": "go-s11-count",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "base-case",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc width(n int) int {\n\tif n < 10 {\n\t\treturn 1\n\t}\n\treturn 1 + width(n/10)\n}\n\nfunc main() {\n\tfmt.Println(width(9054))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "4",
+   "explanation": "n/10 is integer division, so 9054 -> 905 -> 90 -> 9. The base case n < 10 returns 1 at 9, and each caller adds 1, giving 4."
+  },
+  {
+   "id": "go-s11-closure",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "recursive-closure",
+   "prompt": "Which declaration of a recursive local function compiles?",
+   "choices": [
+    "fib := func(n int) int { if n < 2 { return n }; return fib(n-1) + fib(n-2) }",
+    "var fib func(int) int\nfib = func(n int) int { if n < 2 { return n }; return fib(n-1) + fib(n-2) }",
+    "var fib func(int) int = func(n int) int { if n < 2 { return n }; return fib(n-1) + fib(n-2) }"
+   ],
+   "answer": 1,
+   "explanation": "A variable's scope starts after its declaration, so neither := nor a one-line var declaration lets the function literal refer to its own name. Declare the variable first with var, then assign the function literal in a separate statement."
+  },
+  {
+   "id": "go-s11-trunc",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "integer-division",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(-25/10, -25%10)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "-2 -5",
+   "explanation": "Integer division truncates toward zero and % takes the sign of the dividend, so -25/10 is -2 and -25%10 is -5."
+  },
+  {
+   "id": "go-s11-trace",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "call-order",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc walk(n int) {\n\tif n == 0 {\n\t\treturn\n\t}\n\tfmt.Print(n)\n\twalk(n - 1)\n\tfmt.Print(n)\n}\n\nfunc main() {\n\twalk(3)\n\tfmt.Println()\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "321123",
+   "explanation": "Each call prints n, descends, then prints n again after the deeper call returns, so the descent prints 3 2 1 and the unwinding prints 1 2 3."
+  },
+  {
+   "id": "go-s11-explain",
+   "node": "stage-11",
+   "type": "explain",
+   "concept": "termination",
+   "prompt": "In your own words: what two things make a recursive function terminate correctly?",
+   "answer": "A base case that returns an answer without another recursive call, and a measure that strictly moves toward the base case on every call (for example n shrinking by integer division), so every call chain reaches the base case.",
+   "keywords": [
+    [
+     "base case",
+     "stop",
+     "terminat"
+    ],
+    [
+     "smaller",
+     "shrink",
+     "decreas",
+     "approach",
+     "toward",
+     "progress"
+    ]
+   ]
+  },
+  {
+   "id": "go-s12-map",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "map-cost",
+   "prompt": "Which description of Go map operation cost is the most accurate?",
+   "choices": [
+    "Lookup is guaranteed O(1) in the worst case, because the specification fixes the hash table design",
+    "Lookup is O(log n) because maps are implemented as balanced search trees",
+    "Insertion, lookup and deletion are expected constant time on average, which is a property of hashing and not a worst-case guarantee",
+    "Lookup is O(n) because keys are compared one after another in insertion order"
+   ],
+   "answer": 2,
+   "explanation": "Average-case operations are expected constant time; the specification promises no particular implementation or worst case, and hashing a key costs time proportional to its size."
+  },
+  {
+   "id": "go-s12-ops",
+   "node": "stage-12",
+   "type": "short_answer",
+   "concept": "nested-loop-count",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tn := 5\n\tsingle, pairs := 0, 0\n\tfor i := 0; i < n; i++ {\n\t\tsingle++\n\t\tfor j := i + 1; j < n; j++ {\n\t\t\tpairs++\n\t\t}\n\t}\n\tfmt.Println(single, pairs)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "5 10",
+   "explanation": "One traversal visits n elements; examining every pair of distinct indices takes n(n-1)/2 = 10 steps for n = 5, which grows quadratically."
+  },
+  {
+   "id": "go-s12-bug",
+   "node": "stage-12",
+   "type": "mcq_code",
+   "concept": "invariant-order",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc hasPair(values []int, target int) bool {\n\tseen := map[int]struct{}{}\n\tfor _, v := range values {\n\t\tseen[v] = struct{}{}\n\t\tif _, ok := seen[target-v]; ok {\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}\n\nfunc main() {\n\tfmt.Println(hasPair([]int{1}, 2))\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "false",
+    "true",
+    "It panics",
+    "It does not compile"
+   ],
+   "answer": 1,
+   "explanation": "The element is inserted before the complement is checked, so 1 finds itself as its own partner. The invariant 'seen holds earlier indices only' requires checking first and inserting afterwards."
+  },
+  {
+   "id": "go-s12-append",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "amortized",
+   "prompt": "What is the cost of append for a slice, per the standard description?",
+   "choices": [
+    "O(1) amortised",
+    "Always O(n) because of copying",
+    "O(log n) always",
+    "O(1) in the worst case for every call"
+   ],
+   "answer": 0,
+   "explanation": "append is O(1) amortised: capacity grows geometrically, so occasional reallocation copies are spread across many appends."
+  },
+  {
+   "id": "go-s12-sort",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "sort-stability",
+   "prompt": "You sort records by score and records with equal scores must keep their original relative order. Which is the correct choice?",
+   "choices": [
+    "slices.Sort",
+    "sort.Slice",
+    "Any of them; Go sorts are stable",
+    "slices.SortStableFunc"
+   ],
+   "answer": 3,
+   "explanation": "slices.SortFunc and sort.Slice are not stable. Use slices.SortStableFunc or sort.SliceStable when equal elements must stay in order."
+  },
+  {
+   "id": "go-s12-explain",
+   "node": "stage-12",
+   "type": "explain",
+   "concept": "loop-invariant",
+   "prompt": "In your own words: state the loop invariant for a one-pass pair search with a set and explain why it makes the algorithm correct.",
+   "answer": "Before each iteration the set holds exactly the values at earlier indices. Checking whether target minus the current value is in the set therefore finds a partner at a different, earlier index; inserting the current value only afterwards keeps it from pairing with itself. Every pair is examined when its later element is visited, so one pass suffices, giving expected linear time.",
+   "keywords": [
+    [
+     "earlier",
+     "previous",
+     "seen",
+     "before each iteration",
+     "before the current"
+    ],
+    [
+     "different index",
+     "distinct",
+     "itself",
+     "own partner",
+     "afterwards",
+     "after checking"
+    ],
+    [
+     "linear",
+     "one pass",
+     "o(n)",
+     "single pass"
+    ]
+   ]
+  },
+  {
+   "id": "go-m-slices-full",
+   "node": "module-slices-maps",
+   "type": "short_answer",
+   "concept": "full-slice-expression",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ta := []int{1, 2, 3, 4}\n\tb := a[:2:2]\n\tb = append(b, 99)\n\tfmt.Println(a[2], len(b))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "3 3",
+   "explanation": "The full slice expression a[:2:2] caps b's capacity at 2, so append must allocate a new array and a[2] is unchanged. Without the third index it would overwrite a[2]."
+  },
+  {
+   "id": "go-m-slices-share",
+   "node": "module-slices-maps",
+   "type": "mcq_code",
+   "concept": "append-overwrite",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ta := []int{1, 2, 3, 4}\n\tb := a[:2]\n\tb = append(b, 99)\n\tfmt.Println(a)\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "[1 2 3 4]",
+    "[1 2 99]",
+    "[1 2 99 4]",
+    "[1 2 3 4 99]"
+   ],
+   "answer": 2,
+   "explanation": "b has length 2 and capacity 4, so append writes into the shared backing array at index 2, overwriting a[2]. Use a[:2:2] or copy when independence is needed."
+  },
+  {
+   "id": "go-m-slices-clone",
+   "node": "module-slices-maps",
+   "type": "mcq",
+   "concept": "independent-copy",
+   "prompt": "Which gives you a slice that does not share storage with a?",
+   "choices": [
+    "b := a[:len(a)]",
+    "b := slices.Clone(a)",
+    "b := a",
+    "b := append(a[:0], a...)"
+   ],
+   "answer": 1,
+   "explanation": "slices.Clone (or make plus copy) allocates new storage. The other forms either share the array outright, or, for append(a[:0], a...), write back into a's own array."
+  },
+  {
+   "id": "go-m-slices-cap",
+   "node": "module-slices-maps",
+   "type": "short_answer",
+   "concept": "len-cap",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\ts := make([]int, 2, 5)\n\tt := s[1:3]\n\tfmt.Println(len(t), cap(t))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2 4",
+   "explanation": "t starts at index 1 of s's array, so its capacity is 5-1 = 4 and its length is 3-1 = 2. Capacity measures how far a slice can extend within the array."
+  },
+  {
+   "id": "go-m-maps-keys",
+   "node": "module-slices-maps",
+   "type": "mcq",
+   "concept": "maps-keys-iterator",
+   "prompt": "In Go 1.23 and later, what does maps.Keys(m) return?",
+   "choices": [
+    "An iterator, not a slice",
+    "A []K sorted ascending",
+    "A set of keys as map[K]struct{}",
+    "A channel of keys"
+   ],
+   "answer": 0,
+   "explanation": "maps.Keys and maps.Values arrived in the standard library in Go 1.23 and return iterators; the older golang.org/x/exp/maps versions returned slices. Check the module's go line."
+  },
+  {
+   "id": "go-m-slices-explain",
+   "node": "module-slices-maps",
+   "type": "explain",
+   "concept": "subslice-retention",
+   "prompt": "In your own words: why can taking a short subslice of a huge slice be a memory problem, and what do you do about it?",
+   "answer": "A subslice shares the original's underlying array, so keeping even a small subslice keeps the whole large array reachable and uncollected. Copy the elements you need into a new slice (copy or slices.Clone) when you want independent ownership.",
+   "keywords": [
+    [
+     "underlying",
+     "backing",
+     "share",
+     "same array"
+    ],
+    [
+     "reachable",
+     "memory",
+     "retain",
+     "keep",
+     "garbage"
+    ],
+    [
+     "copy",
+     "clone"
+    ]
+   ]
+  },
+  {
+   "id": "go-m-iface-ptr",
+   "node": "module-interfaces-method-sets",
+   "type": "mcq_code",
+   "concept": "method-set-compile",
+   "code": "package main\n\nimport \"fmt\"\n\ntype shape interface{ area() int }\n\ntype sq struct{ side int }\n\nfunc (q *sq) area() int { return q.side * q.side }\n\nfunc main() {\n\tvar s shape = sq{2}\n\tfmt.Println(s.area())\n}\n",
+   "prompt": "What happens when this program is compiled?",
+   "choices": [
+    "It prints 4, because sq{2} is converted to &sq{2} automatically",
+    "It panics with a nil pointer dereference when area is called",
+    "It prints 0, because the zero value of the side field is used",
+    "It fails: sq does not implement shape (area has a pointer receiver)"
+   ],
+   "answer": 3,
+   "explanation": "The method set of sq excludes pointer-receiver methods, so the value sq{2} does not satisfy shape. &sq{2} would."
+  },
+  {
+   "id": "go-m-iface-nil",
+   "node": "module-interfaces-method-sets",
+   "type": "short_answer",
+   "concept": "typed-nil",
+   "code": "package main\n\nimport \"fmt\"\n\ntype myErr struct{}\n\nfunc (*myErr) Error() string { return \"x\" }\n\nfunc main() {\n\tvar e *myErr\n\tvar err error = e\n\tfmt.Println(e == nil, err == nil)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "true false",
+   "explanation": "e is a nil pointer, so e == nil is true. Assigned to the error interface, it becomes a value with dynamic type *myErr, so the interface is not nil."
+  },
+  {
+   "id": "go-m-iface-implicit",
+   "node": "module-interfaces-method-sets",
+   "type": "mcq",
+   "concept": "implicit-satisfaction",
+   "prompt": "How does a Go type declare that it implements an interface?",
+   "choices": [
+    "With an implements clause naming the interface in the type declaration",
+    "By embedding the interface type in the struct that provides the methods",
+    "It does not declare it: having all the interface's methods in its method set is enough",
+    "By registering the type with the runtime, for example in an init function"
+   ],
+   "answer": 2,
+   "explanation": "Satisfaction is implicit: a type implements an interface when its method set contains the interface's methods. This supports small interfaces defined where behaviour is consumed."
+  },
+  {
+   "id": "go-m-iface-assert",
+   "node": "module-interfaces-method-sets",
+   "type": "short_answer",
+   "concept": "type-assertion",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar v any = \"hi\"\n\tn, ok := v.(int)\n\tfmt.Println(n, ok)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "0 false",
+   "explanation": "With the comma-ok form a failed type assertion yields the zero value and false. Without ok, a failed assertion panics."
+  },
+  {
+   "id": "go-m-iface-embed",
+   "node": "module-interfaces-method-sets",
+   "type": "mcq",
+   "concept": "embedding",
+   "prompt": "A struct Outer embeds Inner. Which statement is correct?",
+   "choices": [
+    "Outer becomes a subtype of Inner and can be assigned to variables of type Inner",
+    "Inner's fields and methods are promoted to Outer, but Outer is not a subtype of Inner",
+    "Embedding copies Inner's methods only when they are exported",
+    "Embedding is only allowed for interface types"
+   ],
+   "answer": 1,
+   "explanation": "Embedding is composition: fields and methods are promoted, and a promoted method's receiver is still the embedded value. It does not create a subtype relationship."
+  },
+  {
+   "id": "go-m-iface-explain",
+   "node": "module-interfaces-method-sets",
+   "type": "explain",
+   "concept": "method-set-T-vs-ptr",
+   "prompt": "In your own words: a type has a method with a pointer receiver. Which of T and *T satisfy an interface requiring it, and why does container/heap take a pointer?",
+   "answer": "Only *T has that method in its method set; the method set of T contains just the value-receiver methods. So a *T satisfies the interface but a plain T value does not. container/heap implementations have Push and Pop with pointer receivers (they change the slice's length), so the heap is passed as a pointer.",
+   "keywords": [
+    [
+     "*t",
+     "pointer"
+    ],
+    [
+     "method set"
+    ],
+    [
+     "push",
+     "pop",
+     "length",
+     "modif",
+     "container/heap",
+     "heap"
+    ]
+   ]
+  },
+  {
+   "id": "go-m-err-is",
+   "node": "module-errors",
+   "type": "short_answer",
+   "concept": "errors-is-wrap",
+   "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrEmpty = errors.New(\"empty\")\n\nfunc main() {\n\te := fmt.Errorf(\"load: %w\", ErrEmpty)\n\tfmt.Println(e == ErrEmpty, errors.Is(e, ErrEmpty))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "false true",
+   "explanation": "== compares only the outermost error, which is now the wrapper. errors.Is walks the chain of %w-wrapped errors and finds the sentinel."
+  },
+  {
+   "id": "go-m-err-v",
+   "node": "module-errors",
+   "type": "short_answer",
+   "concept": "percent-v-vs-w",
+   "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nvar ErrEmpty = errors.New(\"empty\")\n\nfunc main() {\n\te := fmt.Errorf(\"load: %v\", ErrEmpty)\n\tfmt.Println(errors.Is(e, ErrEmpty))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "false",
+   "explanation": "%v keeps the message text but does not wrap, so the link to ErrEmpty is lost. Use %w when the caller should be able to inspect the underlying error."
+  },
+  {
+   "id": "go-m-err-as",
+   "node": "module-errors",
+   "type": "mcq",
+   "concept": "errors-as-target",
+   "prompt": "What must the second argument to errors.As be?",
+   "choices": [
+    "A non-nil pointer to an interface type or to a type implementing error",
+    "The sentinel error value to compare against, exactly as with errors.Is",
+    "A string naming the error type to look for in the chain",
+    "A predicate function that returns true for the error to extract"
+   ],
+   "answer": 0,
+   "explanation": "errors.As finds the first error in the chain assignable to the target's type and stores it, so the target must be a non-nil pointer; anything else panics."
+  },
+  {
+   "id": "go-m-err-type",
+   "node": "module-errors",
+   "type": "mcq_code",
+   "concept": "error-type-extraction",
+   "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\ntype parseErr struct{ line int }\n\nfunc (p *parseErr) Error() string { return \"parse error\" }\n\nfunc main() {\n\terr := fmt.Errorf(\"ctx: %w\", &parseErr{line: 12})\n\tvar pe *parseErr\n\tif errors.As(err, &pe) {\n\t\tfmt.Println(pe.line)\n\t} else {\n\t\tfmt.Println(\"none\")\n\t}\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "none",
+    "It panics",
+    "0",
+    "12"
+   ],
+   "answer": 3,
+   "explanation": "errors.As walks the %w chain, finds the *parseErr and stores it in pe, so pe.line is 12."
+  },
+  {
+   "id": "go-m-err-join",
+   "node": "module-errors",
+   "type": "short_answer",
+   "concept": "errors-join",
+   "code": "package main\n\nimport (\n\t\"errors\"\n\t\"fmt\"\n)\n\nfunc main() {\n\tfmt.Println(errors.Join(nil, nil) == nil)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "true",
+   "explanation": "errors.Join returns nil when every argument is nil, so the comparison is true. When errors are present, Is and As search all of them."
+  },
+  {
+   "id": "go-m-err-explain",
+   "node": "module-errors",
+   "type": "explain",
+   "concept": "wrap-or-not",
+   "prompt": "In your own words: when should you wrap an error with %w, and when should you deliberately not?",
+   "answer": "Wrap when the caller may need to react to the underlying error, because %w lets errors.Is and errors.As inspect the chain. Do not wrap when the underlying error is an implementation detail you do not want to become part of your API; use %v there.",
+   "keywords": [
+    [
+     "%w",
+     "wrap"
+    ],
+    [
+     "caller",
+     "inspect",
+     "errors.is",
+     "errors.as",
+     "react"
+    ],
+    [
+     "implementation detail",
+     "api",
+     "%v",
+     "not expose",
+     "hide"
+    ]
+   ]
+  },
+  {
+   "id": "go-m-chan-closed",
+   "node": "module-goroutines-channels",
+   "type": "short_answer",
+   "concept": "closed-channel-receive",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tch := make(chan int, 1)\n\tch <- 5\n\tclose(ch)\n\ta, ok := <-ch\n\tb, ok2 := <-ch\n\tfmt.Println(a, ok, b, ok2)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "5 true 0 false",
+   "explanation": "A closed channel still delivers buffered values. Once drained, a receive returns the element's zero value and false for the second result."
+  },
+  {
+   "id": "go-m-chan-owner",
+   "node": "module-goroutines-channels",
+   "type": "mcq",
+   "concept": "channel-closing",
+   "prompt": "Who should close a channel?",
+   "choices": [
+    "Any receiver, as soon as it has enough values",
+    "Every goroutine, to be safe",
+    "The producer or owner that knows no more sends will occur",
+    "Nobody: the runtime closes it"
+   ],
+   "answer": 2,
+   "explanation": "The sender/owner decides when sending is finished. Sending on a closed channel panics and closing twice is unsafe, so receivers must not close it."
+  },
+  {
+   "id": "go-m-chan-sum",
+   "node": "module-goroutines-channels",
+   "type": "short_answer",
+   "concept": "unbuffered-channel",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tch := make(chan int)\n\tgo func() {\n\t\tfor i := 1; i <= 3; i++ {\n\t\t\tch <- i\n\t\t}\n\t\tclose(ch)\n\t}()\n\tsum := 0\n\tfor v := range ch {\n\t\tsum += v\n\t}\n\tfmt.Println(sum)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6",
+   "explanation": "The producer sends 1, 2, 3 and closes the channel, which ends the range loop in main. The channel operations synchronize the goroutines, so the result is deterministic."
+  },
+  {
+   "id": "go-m-chan-race",
+   "node": "module-goroutines-channels",
+   "type": "mcq",
+   "concept": "data-race",
+   "prompt": "Ten goroutines each do counter++ on a shared int; a WaitGroup makes main wait for them. What is the correct description?",
+   "choices": [
+    "It is safe: WaitGroup serialises the increments so they cannot overlap",
+    "It is a data race: guard the counter with a mutex or atomic; WaitGroup only waits for completion",
+    "It is safe on 64-bit machines, because an aligned int increment is a single instruction",
+    "It is safe if each goroutine sleeps briefly before incrementing"
+   ],
+   "answer": 1,
+   "explanation": "WaitGroup coordinates completion, not mutual exclusion. Unsynchronised concurrent writes are a data race, and sleeping is not a synchronisation strategy. Use sync.Mutex or sync/atomic and run tests with -race."
+  },
+  {
+   "id": "go-m-chan-wg",
+   "node": "module-goroutines-channels",
+   "type": "mcq",
+   "concept": "waitgroup-add",
+   "prompt": "Where should wg.Add(1) be called relative to the go statement?",
+   "choices": [
+    "Before the go statement, in the launching goroutine",
+    "Inside the new goroutine, as its first statement",
+    "After wg.Wait()",
+    "It does not matter"
+   ],
+   "answer": 0,
+   "explanation": "If Add runs inside the goroutine, Wait may run first and return before the goroutine is counted. Call Add before starting it."
+  },
+  {
+   "id": "go-m-chan-explain",
+   "node": "module-goroutines-channels",
+   "type": "explain",
+   "concept": "goroutine-leak",
+   "prompt": "In your own words: what is a goroutine leak and how do you prevent one when a goroutine blocks on a channel send?",
+   "answer": "A goroutine leak is a goroutine that never exits, for example because it is blocked forever on a send or receive that nobody will complete; it keeps everything it references reachable. Give every goroutine a path to completion or cancellation, such as selecting on ctx.Done() alongside the channel operation, and have the owner close channels so receivers can finish.",
+   "keywords": [
+    [
+     "never exit",
+     "blocked forever",
+     "stuck",
+     "forever",
+     "block"
+    ],
+    [
+     "cancel",
+     "ctx.done",
+     "context",
+     "done channel",
+     "select"
+    ],
+    [
+     "close",
+     "owner",
+     "complete"
+    ]
+   ]
+  },
+  {
+   "id": "go-m-ctx-err",
+   "node": "module-context",
+   "type": "short_answer",
+   "concept": "ctx-err",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tbefore := ctx.Err() == nil\n\tcancel()\n\tfmt.Println(before, ctx.Err() == context.Canceled)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "true true",
+   "explanation": "Err returns nil until the context is cancelled, and context.Canceled afterwards."
+  },
+  {
+   "id": "go-m-ctx-up",
+   "node": "module-context",
+   "type": "mcq",
+   "concept": "cancellation-direction",
+   "prompt": "Child ctx is derived from parent with WithCancel. You call the child's cancel function. What happens to parent?",
+   "choices": [
+    "Parent is cancelled too, because child and parent share one done channel",
+    "It panics, because a child may not be cancelled before its parent",
+    "Parent's deadline is shortened to the moment the child was cancelled",
+    "Parent is unaffected; cancellation flows down only"
+   ],
+   "answer": 3,
+   "explanation": "Cancelling a child never cancels its parent; cancelling the parent cancels all its children."
+  },
+  {
+   "id": "go-m-ctx-done",
+   "node": "module-context",
+   "type": "short_answer",
+   "concept": "ctx-done",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithCancel(context.Background())\n\tdone := make(chan string)\n\tgo func() {\n\t\t<-ctx.Done()\n\t\tdone <- ctx.Err().Error()\n\t}()\n\tcancel()\n\tfmt.Println(<-done)\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "context canceled",
+   "explanation": "Done returns a channel that is closed on cancellation, so the goroutine unblocks and reports ctx.Err(), whose text is context canceled."
+  },
+  {
+   "id": "go-m-ctx-cancel",
+   "node": "module-context",
+   "type": "mcq",
+   "concept": "defer-cancel",
+   "prompt": "Why call cancel (usually with defer cancel()) even for WithTimeout, when the timer will fire anyway?",
+   "choices": [
+    "The timer never fires unless cancel is called first, so the timeout would not apply",
+    "cancel is needed before ctx.Err() can be read, otherwise Err always returns nil",
+    "Not calling it keeps the child's resources around until the parent ends, and go vet reports some missed calls",
+    "Go requires cancel for every context, including context.Background(), or the program will not compile"
+   ],
+   "answer": 2,
+   "explanation": "Always calling cancel releases the child's resources promptly. Skipping it keeps them until the parent ends; go vet's lostcancel check reports some such cases."
+  },
+  {
+   "id": "go-m-ctx-timeout",
+   "node": "module-context",
+   "type": "mcq_code",
+   "concept": "deadline-exceeded",
+   "code": "package main\n\nimport (\n\t\"context\"\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc main() {\n\tctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)\n\tdefer cancel()\n\t<-ctx.Done()\n\tfmt.Println(ctx.Err())\n}\n",
+   "prompt": "What does this program print?",
+   "choices": [
+    "context canceled",
+    "context deadline exceeded",
+    "<nil>",
+    "It blocks forever"
+   ],
+   "answer": 1,
+   "explanation": "When a timeout expires the context's Err is context.DeadlineExceeded; context.Canceled is for explicit cancellation."
+  },
+  {
+   "id": "go-m-ctx-explain",
+   "node": "module-context",
+   "type": "explain",
+   "concept": "cooperative-cancellation",
+   "prompt": "In your own words: a request times out but its worker goroutine keeps running. Why, and what must the worker do?",
+   "answer": "Cancellation is only a signal; context does not stop goroutines by force. The worker must cooperate by observing the context, for example selecting on ctx.Done() together with the channel operation it waits on, or calling APIs that take the context, and then return. Otherwise it may block forever or keep working.",
+   "keywords": [
+    [
+     "signal",
+     "not force",
+     "does not stop",
+     "cooperat",
+     "observe",
+     "check"
+    ],
+    [
+     "ctx.done",
+     "done",
+     "select"
+    ],
+    [
+     "return",
+     "exit",
+     "stop"
+    ]
+   ]
+  },
+  {
+   "id": "go-m-gen-any",
+   "node": "module-generics",
+   "type": "mcq",
+   "concept": "any-constraint",
+   "prompt": "Inside `func Same[T any](a, b T) bool`, what can you do with a and b?",
+   "choices": [
+    "Only operations valid for every type, such as assigning, passing and returning them",
+    "Compare them with <, because every type is ordered in some way",
+    "Compare them with ==, because every type supports equality",
+    "Call any method they happen to have, since the method is looked up at run time"
+   ],
+   "answer": 0,
+   "explanation": "any permits every type, so only operations valid for all of them are allowed. == needs comparable and < needs cmp.Ordered."
+  },
+  {
+   "id": "go-m-gen-compile",
+   "node": "module-generics",
+   "type": "mcq_code",
+   "concept": "constraint-operators",
+   "code": "package main\n\nimport \"fmt\"\n\nfunc maxOf[T any](a, b T) T {\n\tif a > b {\n\t\treturn a\n\t}\n\treturn b\n}\n\nfunc main() {\n\tfmt.Println(maxOf(3, 5))\n}\n",
+   "prompt": "What happens when this program is compiled?",
+   "choices": [
+    "It prints 5",
+    "It compiles and panics for non-numeric T",
+    "It prints 3",
+    "It fails: operator > is not defined for T any"
+   ],
+   "answer": 3,
+   "explanation": "An operator is allowed only if every type in the constraint supports it. Use cmp.Ordered for <, <=, > and >=."
+  },
+  {
+   "id": "go-m-gen-tilde",
+   "node": "module-generics",
+   "type": "short_answer",
+   "concept": "type-set",
+   "code": "package main\n\nimport \"fmt\"\n\ntype Score int\n\nfunc sum[T ~int | ~int64](xs []T) T {\n\tvar t T\n\tfor _, x := range xs {\n\t\tt += x\n\t}\n\treturn t\n}\n\nfunc main() {\n\tfmt.Println(sum([]Score{1, 2, 3}))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6",
+   "explanation": "~int includes every type whose underlying type is int, so Score satisfies the constraint and the sum is 6."
+  },
+  {
+   "id": "go-m-gen-method",
+   "node": "module-generics",
+   "type": "mcq",
+   "concept": "method-type-params",
+   "prompt": "Which is true of generic methods in Go?",
+   "choices": [
+    "A method may declare its own type parameters",
+    "A method can use only the type parameters of its receiver type",
+    "Methods cannot be defined on generic types"
+   ],
+   "answer": 1,
+   "explanation": "Methods cannot declare their own type parameters; only the receiver's type parameters are available."
+  },
+  {
+   "id": "go-m-gen-stack",
+   "node": "module-generics",
+   "type": "short_answer",
+   "concept": "explicit-instantiation",
+   "code": "package main\n\nimport \"fmt\"\n\ntype Stack[T any] struct{ items []T }\n\nfunc NewStack[T any]() *Stack[T] { return &Stack[T]{} }\n\nfunc (s *Stack[T]) Push(v T) { s.items = append(s.items, v) }\n\nfunc main() {\n\ts := NewStack[int]()\n\ts.Push(1)\n\ts.Push(2)\n\tfmt.Println(len(s.items))\n}\n",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "T appears only in the result of NewStack, so inference has no argument to work from and the type argument is written explicitly: NewStack[int]()."
+  },
+  {
+   "id": "go-m-gen-explain",
+   "node": "module-generics",
+   "type": "explain",
+   "concept": "comparable-vs-ordered",
+   "prompt": "In your own words: which constraint do you need for a generic set's element type and which for a generic max function, and why?",
+   "answer": "A set backed by a map needs comparable, which permits == and != and makes the type usable as a map key. A max function needs cmp.Ordered, which permits <, <=, > and >= for integers, floats and strings. any permits neither.",
+   "keywords": [
+    [
+     "comparable",
+     "=="
+    ],
+    [
+     "cmp.ordered",
+     "ordered",
+     "<",
+     ">"
+    ],
+    [
+     "map key",
+     "as a key",
+     "operator"
+    ]
+   ]
+  }
+ ]
+}

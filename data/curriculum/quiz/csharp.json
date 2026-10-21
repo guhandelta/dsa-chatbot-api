@@ -1,0 +1,1562 @@
+{
+ "language": "csharp",
+ "version": 1,
+ "note": "Authored Study Room quiz items for nodes that had no checks. short_answer snippets are top-level-statement Program.cs bodies that are compiled and run (dotnet 8, C# 12) by the verifier and compared exactly; mcq and mcq_code claims were checked by running the snippets with the .NET 8 SDK or are stated in the knowledge base. C# has no runner in the app, so there are no fix_bug or write_snippet items.",
+ "items": [
+  {
+   "id": "cs-s01-mcq",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "overflow-context",
+   "prompt": "In a default project (no <CheckForOverflowUnderflow> setting), which statement about integer overflow is correct?",
+   "choices": [
+    "Any int expression that exceeds int.MaxValue throws OverflowException, constant or not.",
+    "A non-constant int expression wraps silently, but a constant such as int.MaxValue + 1 is a compile-time error.",
+    "A non-constant expression and a constant expression both wrap silently with no diagnostics.",
+    "A non-constant expression and a constant expression are both compile-time errors."
+   ],
+   "answer": 1,
+   "explanation": "Non-constant integer arithmetic is unchecked by default, so it wraps; a checked context or the project setting makes it throw. Constant expressions that overflow are rejected by the compiler (CS0220) unless wrapped in unchecked."
+  },
+  {
+   "id": "cs-s01-code",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "widening-after-multiply",
+   "code": "int a = 100000, b = 100000;\nlong area = a * b;\nConsole.WriteLine(area);",
+   "prompt": "What does this print?",
+   "choices": [
+    "10000000000",
+    "OverflowException is thrown",
+    "The program does not compile",
+    "1410065408"
+   ],
+   "answer": 3,
+   "explanation": "a * b is evaluated as int * int and wraps in the unchecked context before the result is widened to long. Casting an operand, as in (long)a * b, would give 10000000000."
+  },
+  {
+   "id": "cs-s01-short",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "narrowing-cast",
+   "code": "long big = 4294967297L;\nConsole.WriteLine((int)big);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1",
+   "explanation": "4294967297 is 2^32 + 1. An explicit cast to int truncates in an unchecked context, keeping the low 32 bits, which is 1. In a checked context the cast would throw instead."
+  },
+  {
+   "id": "cs-s01-explain",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "widening-after-multiply",
+   "prompt": "In your own words: given int a and int b, why can `long total = a * b;` still give a wrong answer, and how do you fix it?",
+   "answer": "The multiplication a * b is performed in int arithmetic first, and the overflow wraps silently in an unchecked context before the wrapped value is widened to long. Widening the destination does not widen the arithmetic. Cast one operand to long before multiplying, for example (long)a * b, or declare the operands as long.",
+   "keywords": [
+    [
+     "int",
+     "32-bit",
+     "32 bit"
+    ],
+    [
+     "before",
+     "first",
+     "intermediate",
+     "operand",
+     "widen"
+    ],
+    [
+     "cast",
+     "(long)",
+     "L suffix",
+     "long operand",
+     "declare"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s01-mcq2",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "remainder-sign",
+   "prompt": "What does -7 % 3 evaluate to in C#?",
+   "choices": [
+    "-1",
+    "2",
+    "1",
+    "-2"
+   ],
+   "answer": 0,
+   "explanation": "The remainder takes the sign of the dividend, so -7 % 3 is -1 (and -7 / 3 truncates toward zero to -2, since -2 * 3 + -1 == -7)."
+  },
+  {
+   "id": "cs-s02-mcq",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "chained-comparison",
+   "prompt": "A rule says x must be between 1 and 5, inclusive. Which condition expresses it in C#?",
+   "choices": [
+    "1 <= x <= 5",
+    "x >= 1 & <= 5",
+    "x >= 1 && x <= 5",
+    "x in [1, 5]"
+   ],
+   "answer": 2,
+   "explanation": "Each comparison produces a bool, so both must be written out and combined with &&. 1 <= x <= 5 does not compile because <= cannot compare a bool with an int."
+  },
+  {
+   "id": "cs-s02-code",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "short-circuit",
+   "code": "bool F() { Console.Write(\"F \"); return false; }\nbool T() { Console.Write(\"T \"); return true; }\nbool r = F() && T();\nConsole.WriteLine(r);",
+   "prompt": "What does this print?",
+   "choices": [
+    "False",
+    "F T False",
+    "F False",
+    "T F False"
+   ],
+   "answer": 2,
+   "explanation": "&& short-circuits: F() returns false, so the right operand T() is never evaluated and only F is printed before the result."
+  },
+  {
+   "id": "cs-s02-short",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "relational-patterns",
+   "code": "int x = 25;\nConsole.WriteLine((x is > 0 and < 25) + \" \" + (x is >= 25 or < 0));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "False True",
+   "explanation": "x is > 0 and < 25 fails because 25 is not less than 25; x is >= 25 or < 0 succeeds through the first alternative. Both patterns use constant bounds."
+  },
+  {
+   "id": "cs-s02-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "chained-comparison",
+   "prompt": "Explain why `1 <= x <= 5` does not compile in C# and what you write instead.",
+   "answer": "1 <= x evaluates to a bool, and the second <= would then have to compare that bool with the int 5, which is a compile error. Write the two comparisons explicitly and combine them with &&: x >= 1 && x <= 5.",
+   "keywords": [
+    [
+     "bool",
+     "boolean",
+     "true or false"
+    ],
+    [
+     "cannot",
+     "compile",
+     "error",
+     "not allowed",
+     "does not work",
+     "doesn't work"
+    ],
+    [
+     "&&",
+     "logical and",
+     "two comparisons",
+     "two separate",
+     "separately",
+     "combine"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s02-code2",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "relational-patterns",
+   "code": "bool a = x is >= 1 and < 10;\nbool b = x >= low && x < high;\nbool c = x is >= low and < high;\nbool d = x is not (< 0 or > 9);",
+   "prompt": "Which statement does NOT compile? Assume `int x`, `int low` and `int high` are local variables.",
+   "choices": [
+    "bool c = x is >= low and < high;",
+    "bool a = x is >= 1 and < 10;",
+    "bool b = x >= low && x < high;",
+    "bool d = x is not (< 0 or > 9);"
+   ],
+   "answer": 0,
+   "explanation": "Relational patterns need constant right-hand sides, so comparing against the variables low and high is error CS9135. The other three lines use constants or ordinary comparison operators."
+  },
+  {
+   "id": "cs-s03-mcq",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "off-by-one",
+   "prompt": "Which loop header visits exactly the integers 1 through n?",
+   "choices": [
+    "for (int i = 1; i < n; i++)",
+    "for (int i = 0; i < n; i++)",
+    "for (int i = 1; i <= n; i += 2)",
+    "for (int i = 1; i <= n; i++)"
+   ],
+   "answer": 3,
+   "explanation": "i starts at 1 and the condition i <= n keeps n itself. i < n stops at n - 1, starting at 0 visits 0 through n - 1, and i += 2 skips every other value."
+  },
+  {
+   "id": "cs-s03-code",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "accumulator-type",
+   "code": "int small = 0;\nlong wide = 0;\nfor (int i = 1; i <= 100000; i++)\n{\n    small += i;\n    wide += i;\n}\nConsole.WriteLine(small + \" \" + wide);",
+   "prompt": "What does this print?",
+   "choices": [
+    "5000050000 5000050000",
+    "705082704 5000050000",
+    "OverflowException",
+    "-2147483648 5000050000"
+   ],
+   "answer": 1,
+   "explanation": "The true sum is 5000050000, which exceeds int.MaxValue. The int accumulator wraps silently in the default unchecked context and ends at 705082704; the long accumulator is exact."
+  },
+  {
+   "id": "cs-s03-short",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "loop-trace",
+   "code": "int total = 0;\nfor (int i = 0; i < 4; i++)\n{\n    total += i;\n}\nConsole.WriteLine(total);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6",
+   "explanation": "The loop visits i = 0, 1, 2, 3 because the condition is i < 4, so total is 0 + 1 + 2 + 3 = 6."
+  },
+  {
+   "id": "cs-s03-explain",
+   "node": "stage-03",
+   "type": "explain",
+   "concept": "accumulator",
+   "prompt": "Explain why a running-sum accumulator starts at 0, why you might declare it as long, and what the loop does when n is 0.",
+   "answer": "The accumulator holds the sum of everything visited so far, and zero is the sum of nothing, so it must start at 0 before the loop. A long avoids silent wrap-around once the total exceeds int range. When n is 0 the condition is false on the first check, the body never runs, and the method returns the initial 0.",
+   "keywords": [
+    [
+     "at 0",
+     "at zero",
+     "zero",
+     "initial value",
+     "nothing yet",
+     "sum of nothing",
+     "empty sum",
+     "identity"
+    ],
+    [
+     "long",
+     "64-bit",
+     "64 bit",
+     "wrap",
+     "overflow"
+    ],
+    [
+     "never runs",
+     "skipped",
+     "does not run",
+     "doesn't run",
+     "not executed",
+     "no iteration",
+     "returns 0",
+     "empty"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s03-mcq2",
+   "node": "stage-03",
+   "type": "mcq",
+   "concept": "checked-arithmetic",
+   "prompt": "An int accumulator should throw instead of silently wrapping when the sum is too large. Which statement does that?",
+   "choices": [
+    "sum = unchecked(sum + i);",
+    "sum = checked(sum + i);",
+    "sum = (long)sum + i;",
+    "sum += i; // with using System.Numerics;"
+   ],
+   "answer": 1,
+   "explanation": "checked(expr) forces overflow checking and throws OverflowException. unchecked forces wrapping, assigning a long to an int variable is a compile error, and a using directive changes nothing about overflow."
+  },
+  {
+   "id": "cs-s04-mcq",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "parameter-modifiers",
+   "prompt": "Which parameter modifier passes a read-only reference, mainly to avoid copying a large struct?",
+   "choices": [
+    "ref",
+    "out",
+    "params",
+    "in"
+   ],
+   "answer": 3,
+   "explanation": "`in` (C# 7.2) passes a read-only reference. `ref` passes the variable itself so the method can reassign it, `out` requires the method to assign it before returning, and `params` collects extra arguments into an array."
+  },
+  {
+   "id": "cs-s04-code",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "pass-by-value",
+   "code": "static void Bump(int x) { x = x + 1; }\nstatic void BumpRef(ref int x) { x = x + 1; }\nint n = 5;\nBump(n);\nConsole.Write(n + \" \");\nBumpRef(ref n);\nConsole.WriteLine(n);",
+   "prompt": "What does this print?",
+   "choices": [
+    "5 6",
+    "6 6",
+    "5 5",
+    "6 7"
+   ],
+   "answer": 0,
+   "explanation": "Parameters are passed by value, so Bump increments its own copy and n stays 5. BumpRef receives the variable itself, so n becomes 6."
+  },
+  {
+   "id": "cs-s04-short",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "expression-bodied-method",
+   "code": "static long Twice(long v) => v * 2;\nConsole.WriteLine(Twice(Twice(3)));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "12",
+   "explanation": "Twice(3) returns 6 and Twice(6) returns 12. The expression-bodied member is shorthand for a method whose body returns v * 2."
+  },
+  {
+   "id": "cs-s04-explain",
+   "node": "stage-04",
+   "type": "explain",
+   "concept": "return-vs-print",
+   "prompt": "Explain the difference between a method that returns a value and one that prints it, and why a return-value contract needs the former.",
+   "answer": "A return hands the value back to the caller, which can store it, compare it or pass it on, and it ends the call. Printing only writes text to the console and gives the caller nothing to use, so a method whose contract promises a result must return it.",
+   "keywords": [
+    [
+     "return",
+     "returns",
+     "hands back"
+    ],
+    [
+     "caller",
+     "call site",
+     "receives",
+     "calling code"
+    ],
+    [
+     "print",
+     "console",
+     "output",
+     "writes"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s04-mcq2",
+   "node": "stage-04",
+   "type": "mcq",
+   "concept": "math-abs-edge",
+   "prompt": "What happens when you evaluate Math.Abs(int.MinValue) in C#?",
+   "choices": [
+    "It returns int.MinValue unchanged.",
+    "It returns 2147483648.",
+    "It throws OverflowException.",
+    "It returns 0."
+   ],
+   "answer": 2,
+   "explanation": "The positive value 2147483648 is not representable as an int, and in .NET Math.Abs(int.MinValue) throws OverflowException rather than wrapping."
+  },
+  {
+   "id": "cs-s05-mcq",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "string-building",
+   "prompt": "A loop appends a small piece to a string with `result += piece` one hundred thousand times. What is the recommended fix?",
+   "choices": [
+    "Declare result as char[] and assign result += piece.",
+    "Mark result as volatile so each concatenation is in place.",
+    "Build the text with a StringBuilder and convert it once at the end.",
+    "Switch to string.Intern for every piece."
+   ],
+   "answer": 2,
+   "explanation": "Strings are immutable, so every += creates a new string. A StringBuilder appends into one growing buffer, and ToString() is called once at the end."
+  },
+  {
+   "id": "cs-s05-code",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "string-immutability",
+   "code": "string s = \"a\";\nstring t = s;\ns += \"b\";\nConsole.WriteLine(s + \" \" + t);",
+   "prompt": "What does this print?",
+   "choices": [
+    "ab a",
+    "ab ab",
+    "a a",
+    "a ab"
+   ],
+   "answer": 0,
+   "explanation": "s += \"b\" creates a new string and points s at it. t still refers to the original, unchanged \"a\"."
+  },
+  {
+   "id": "cs-s05-short",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "utf16-length",
+   "code": "string e = \"\\U0001F600\";\nConsole.WriteLine(e.Length);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "string.Length counts UTF-16 code units, and this emoji is outside the Basic Multilingual Plane, so it takes two code units (a surrogate pair) even though it is one visible character."
+  },
+  {
+   "id": "cs-s05-explain",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "string-indexing",
+   "prompt": "Explain why `text[text.Length]` throws, what the last valid index is, and what string.Length actually counts.",
+   "answer": "Indices are zero-based, so the valid range is 0 to Length - 1, and index Length is one past the end, which throws IndexOutOfRangeException. Length counts UTF-16 code units, not visible characters or Unicode code points.",
+   "keywords": [
+    [
+     "length - 1",
+     "length-1",
+     "one less",
+     "minus one",
+     "last index",
+     "0 to"
+    ],
+    [
+     "IndexOutOfRange",
+     "past the end",
+     "beyond the end",
+     "one past",
+     "out of range",
+     "out of bounds",
+     "after the last"
+    ],
+    [
+     "utf-16",
+     "utf16",
+     "code unit"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s05-mcq3",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "culture-sensitive-comparison",
+   "prompt": "Which of these comparisons is culture-sensitive by default, so its result can differ between machines?",
+   "choices": [
+    "a == b",
+    "string.Equals(a, b)",
+    "a lookup in a Dictionary<string, int>",
+    "string.Compare(a, b) without options"
+   ],
+   "answer": 3,
+   "explanation": "==, string.Equals(a, b) and Dictionary<string, T> default to ordinal comparison. string.CompareTo, string.Compare without options and the default sort comparer are culture-sensitive; pass StringComparison.Ordinal for code-unit order."
+  },
+  {
+   "id": "cs-s06-mcq",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "array-copy",
+   "prompt": "Which statement creates an independent (shallow) copy of an int[] named a?",
+   "choices": [
+    "int[] b = a; // plain assignment",
+    "int[] b = (int[])a.Clone();",
+    "var b = a.Length; // the size of a",
+    "ref int[] b = ref a; // a ref alias"
+   ],
+   "answer": 1,
+   "explanation": "Assigning an array variable copies only the reference. Clone (cast back to int[]), ToArray or Array.Copy produce a separate array whose elements are copied."
+  },
+  {
+   "id": "cs-s06-code",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "array-aliasing",
+   "code": "int[] a = { 1, 2, 3 };\nint[] b = a;\nb[0] = 9;\nint[] c = (int[])a.Clone();\nc[0] = 5;\nConsole.WriteLine(a[0] + \" \" + c[0]);",
+   "prompt": "What does this print?",
+   "choices": [
+    "1 5",
+    "9 5",
+    "9 9",
+    "1 1"
+   ],
+   "answer": 1,
+   "explanation": "b is the same array as a, so b[0] = 9 changes a[0]. c is a separate copy, so c[0] = 5 does not affect a."
+  },
+  {
+   "id": "cs-s06-short",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "array-equality",
+   "code": "using System.Linq;\nint[] a = { 1, 2, 3 };\nint[] b = { 1, 2, 3 };\nConsole.WriteLine((a == b) + \" \" + a.SequenceEqual(b));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "False True",
+   "explanation": "== on two arrays compares references, and these are two different array objects. SequenceEqual compares the elements in order, which are equal."
+  },
+  {
+   "id": "cs-s06-explain",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "array-aliasing",
+   "prompt": "Explain why `b[0] = 9` also changes a[0] after `int[] b = a;`, and how you get an independent copy.",
+   "answer": "Arrays are reference types: the assignment copies the reference, so a and b name the same array object. To get an independent array, use Clone, ToArray or Array.Copy; these copies are shallow, so elements that are objects are still shared.",
+   "keywords": [
+    [
+     "reference",
+     "same array",
+     "same object",
+     "alias",
+     "point"
+    ],
+    [
+     "clone",
+     "copy",
+     "toarray",
+     "array.copy"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s06-mcq2",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "shallow-copy",
+   "prompt": "A List<int>[] array is cloned with Clone(), and then clone[0].Add(2) is executed. What does the ORIGINAL array's first list hold?",
+   "choices": [
+    "It is unchanged, because Clone deep-copies every list held in the array.",
+    "It throws InvalidOperationException because the list is now shared by two arrays.",
+    "It is unchanged, because List<int> is a value type and is copied.",
+    "It also holds the added element: Clone is shallow, so both arrays share the list."
+   ],
+   "answer": 3,
+   "explanation": "Clone copies the references stored in the array, not the objects they point to, so both arrays refer to the same List<int>."
+  },
+  {
+   "id": "cs-s07-mcq",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "trygetvalue",
+   "prompt": "Which call looks up a value and reports a missing key by returning false, with a default value in its out parameter, instead of throwing?",
+   "choices": [
+    "d.TryGetValue(key, out var value)",
+    "d[key], reading the value through the indexer",
+    "d.Add(key, 0), inserting a placeholder entry",
+    "d.Remove(key), deleting the entry and its value"
+   ],
+   "answer": 0,
+   "explanation": "The indexer throws KeyNotFoundException for a missing key. TryGetValue returns false and leaves the out value at its default. Add throws if the key already exists, and Remove returns a bool about removal, not lookup."
+  },
+  {
+   "id": "cs-s07-code",
+   "node": "stage-07",
+   "type": "mcq_code",
+   "concept": "frequency-map",
+   "code": "var d = new Dictionary<string, int>();\ntry\n{\n    d[\"a\"]++;\n    Console.WriteLine(\"ok\");\n}\ncatch (KeyNotFoundException)\n{\n    Console.WriteLine(\"missing\");\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "ok",
+    "1",
+    "missing",
+    "The program does not compile"
+   ],
+   "answer": 2,
+   "explanation": "d[\"a\"]++ first reads d[\"a\"], and reading a key that is not in the dictionary throws KeyNotFoundException. A frequency map must handle the first occurrence explicitly."
+  },
+  {
+   "id": "cs-s07-short",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "dictionary-add-vs-indexer",
+   "code": "var d = new Dictionary<string, int>();\nd[\"a\"] = 1;\nd[\"a\"] = 2;\nConsole.WriteLine(d.TryAdd(\"a\", 3) + \" \" + d[\"a\"]);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "False 2",
+   "explanation": "The indexer assignment adds or overwrites, leaving 2. TryAdd returns false instead of throwing when the key exists and does not change the stored value."
+  },
+  {
+   "id": "cs-s07-explain",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "frequency-map",
+   "prompt": "Explain how to build a word-frequency map in C# so that the first occurrence of a word does not throw.",
+   "answer": "Reading d[word] for a word that has not been added throws KeyNotFoundException, so look the word up safely first. Use TryGetValue (or GetValueOrDefault, or ContainsKey) to get the current count, defaulting to zero when absent, then store count + 1 with the indexer assignment, which adds or overwrites.",
+   "keywords": [
+    [
+     "TryGetValue",
+     "GetValueOrDefault",
+     "ContainsKey",
+     "TryAdd"
+    ],
+    [
+     "missing",
+     "absent",
+     "not present",
+     "not yet",
+     "first occurrence",
+     "not exist",
+     "not there",
+     "not found",
+     "isn't there",
+     "not in the dictionary",
+     "unseen"
+    ],
+    [
+     "KeyNotFound",
+     "throw",
+     "exception"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s07-mcq2",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "enumeration-order",
+   "prompt": "What may your code assume about the enumeration order of a Dictionary<TKey, TValue>?",
+   "choices": [
+    "It is always the order in which keys were first added.",
+    "It is always sorted by key using the key comparer.",
+    "Nothing: the order is not guaranteed, though it often looks like insertion order.",
+    "It is always the reverse of the order in which keys were added."
+   ],
+   "answer": 2,
+   "explanation": "Enumeration order of a Dictionary is unspecified. It frequently looks like insertion order, but code must not depend on that; use SortedDictionary or sort explicitly when order matters."
+  },
+  {
+   "id": "cs-s08-mcq",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "hashset-add",
+   "prompt": "What does HashSet<int>.Add(7) return when 7 is already in the set?",
+   "choices": [
+    "false",
+    "true",
+    "It throws ArgumentException, like Dictionary.Add.",
+    "It returns the existing element, 7."
+   ],
+   "answer": 0,
+   "explanation": "HashSet<T>.Add returns a bool: true if the element was added and false if it was already present. Unlike Dictionary.Add, a duplicate does not throw."
+  },
+  {
+   "id": "cs-s08-code",
+   "node": "stage-08",
+   "type": "mcq_code",
+   "concept": "reference-equality-elements",
+   "code": "var set = new HashSet<int[]>();\nset.Add(new[] { 1 });\nConsole.WriteLine(set.Add(new[] { 1 }));",
+   "prompt": "What does this print?",
+   "choices": [
+    "False",
+    "An exception is thrown",
+    "The program does not compile",
+    "True"
+   ],
+   "answer": 3,
+   "explanation": "Arrays use reference equality by default, so two separate int[] objects with the same contents are two distinct elements and Add returns true."
+  },
+  {
+   "id": "cs-s08-short",
+   "node": "stage-08",
+   "type": "short_answer",
+   "concept": "tuple-equality",
+   "code": "var s = new HashSet<(int, int)>();\ns.Add((1, 2));\ns.Add((1, 2));\ns.Add((2, 1));\nConsole.WriteLine(s.Count);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "Value tuples have structural equality, so the second (1, 2) is a duplicate; (2, 1) has different components and is a separate element."
+  },
+  {
+   "id": "cs-s08-explain",
+   "node": "stage-08",
+   "type": "explain",
+   "concept": "set-vs-list",
+   "prompt": "When would you choose a HashSet<T> over a List<T> to track what you have seen, and what does the set rely on to decide that two elements are the same?",
+   "answer": "A HashSet gives expected O(1) add and contains and keeps each element once, while List.Contains is O(n) and allows duplicates. The set decides equality with Equals and GetHashCode (or a supplied comparer), so those must be consistent for the element type.",
+   "keywords": [
+    [
+     "O(1)",
+     "constant",
+     "hash",
+     "fast"
+    ],
+    [
+     "Equals",
+     "GetHashCode",
+     "equality",
+     "comparer"
+    ],
+    [
+     "duplicate",
+     "unique",
+     "distinct",
+     "once",
+     "repeat"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s08-mcq2",
+   "node": "stage-08",
+   "type": "mcq",
+   "concept": "mutable-keys",
+   "prompt": "A mutable object that is part of Equals/GetHashCode is changed after it was added to a HashSet. What is the likely consequence?",
+   "choices": [
+    "The set detects the change and automatically rehashes the element.",
+    "The entry may become unfindable, since it sits in the bucket of its old hash code.",
+    "The next lookup of that element throws InvalidOperationException.",
+    "Nothing: the set stores a snapshot copy of the element."
+   ],
+   "answer": 1,
+   "explanation": "A key's hash must not change while it is stored. After the mutation a lookup computes the new hash and looks in a different bucket, so Contains can return false for an element that is physically in the set."
+  },
+  {
+   "id": "cs-s09-mcq",
+   "node": "stage-09",
+   "type": "mcq",
+   "concept": "class-vs-struct",
+   "prompt": "`Counter` is a class with a public int field Value. After `Counter c2 = c1; c2.Value += 1;`, which statement is true?",
+   "choices": [
+    "c1.Value is unchanged, because c2 is an independent copy.",
+    "c1.Value has also changed, because c1 and c2 refer to the same object.",
+    "The code does not compile until Counter is a struct.",
+    "c1 becomes null once c2 is modified."
+   ],
+   "answer": 1,
+   "explanation": "Assigning a class instance copies the reference, not the object. Both variables see the mutation. For a struct the assignment would copy the value instead."
+  },
+  {
+   "id": "cs-s09-code",
+   "node": "stage-09",
+   "type": "mcq_code",
+   "concept": "struct-copy",
+   "code": "PCounter p1 = new PCounter();\nPCounter p2 = p1;\np2.Value += 1;\nConsole.WriteLine(p1.Value + \" \" + p2.Value);\n\nstruct PCounter\n{\n    public int Value;\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "1 1",
+    "0 0",
+    "1 0",
+    "0 1"
+   ],
+   "answer": 3,
+   "explanation": "PCounter is a struct, so `PCounter p2 = p1;` copies the whole value. Changing p2 does not affect p1."
+  },
+  {
+   "id": "cs-s09-short",
+   "node": "stage-09",
+   "type": "short_answer",
+   "concept": "struct-in-array",
+   "code": "var items = new[] { new PCounter() };\nitems[0].Value = 5;\nConsole.WriteLine(items[0].Value);\n\nstruct PCounter\n{\n    public int Value;\n}",
+   "prompt": "Type exactly what this prints.",
+   "answer": "5",
+   "explanation": "An array element is a variable, so items[0].Value = 5 modifies the struct in place. The same assignment on a List<PCounter> element does not compile (CS1612) because the indexer returns a copy."
+  },
+  {
+   "id": "cs-s09-explain",
+   "node": "stage-09",
+   "type": "explain",
+   "concept": "mutable-struct-list",
+   "prompt": "Why does `list[i].Value = 5` fail to compile for a List of a mutable struct, while the same assignment on an array element works? How do you update such an element?",
+   "answer": "The List indexer returns a copy of the struct, so assigning to a field of that temporary copy would be lost; the compiler rejects it as error CS1612. An array element is itself a variable, so it is modified in place. For a list, copy the element out, change it and assign the whole struct back, or make the struct immutable and replace the element.",
+   "keywords": [
+    [
+     "copy",
+     "returns a copy",
+     "not a variable",
+     "temporary"
+    ],
+    [
+     "CS1612",
+     "compile",
+     "error",
+     "rejects"
+    ],
+    [
+     "assign",
+     "replace",
+     "write back",
+     "whole",
+     "immutable"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s09-mcq2",
+   "node": "stage-09",
+   "type": "mcq",
+   "concept": "immutable-struct-keys",
+   "prompt": "Which design is recommended for a small struct that will be used as a Dictionary key?",
+   "choices": [
+    "Make it immutable, such as a readonly struct or a record struct that is never changed once used as a key.",
+    "Give it public settable fields so callers can adjust the key after insertion.",
+    "Make it a class with a mutable hash code so the key can be updated in place.",
+    "Avoid overriding Equals and GetHashCode so the default behaviour is always used."
+   ],
+   "answer": 0,
+   "explanation": "A key's hash must not change while it is in a collection, so immutable structs are preferred for keys and small values. Default struct equality can also be slow, so use a record struct or override Equals and GetHashCode."
+  },
+  {
+   "id": "cs-s10-mcq",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "index-exceptions",
+   "prompt": "A method reads `values[5]` on an int[] of length 2. Which exception is thrown?",
+   "choices": [
+    "ArgumentOutOfRangeException",
+    "KeyNotFoundException",
+    "IndexOutOfRangeException",
+    "NullReferenceException"
+   ],
+   "answer": 2,
+   "explanation": "Out-of-range array access throws IndexOutOfRangeException. A List<T> indexer throws ArgumentOutOfRangeException instead, and KeyNotFoundException belongs to dictionaries."
+  },
+  {
+   "id": "cs-s10-code",
+   "node": "stage-10",
+   "type": "mcq_code",
+   "concept": "bounds-check",
+   "code": "int[] a = { 2, 4 };\nint index = -1;\ntry\n{\n    Console.WriteLine(index >= a.Length ? \"fallback\" : a[index].ToString());\n}\ncatch (IndexOutOfRangeException)\n{\n    Console.WriteLine(\"threw\");\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "fallback",
+    "2",
+    "threw",
+    "-1"
+   ],
+   "answer": 2,
+   "explanation": "The guard only checks the upper bound. -1 is not >= 2, so the else branch reads a[-1], which throws IndexOutOfRangeException. A complete check also tests index < 0."
+  },
+  {
+   "id": "cs-s10-short",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "try-pattern",
+   "code": "Console.WriteLine(int.TryParse(\"12x\", out int n) + \" \" + n);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "False 0",
+   "explanation": "TryParse returns false for text that is not a valid integer and sets the out value to 0, instead of throwing."
+  },
+  {
+   "id": "cs-s10-explain",
+   "node": "stage-10",
+   "type": "explain",
+   "concept": "failure-contracts",
+   "prompt": "Name three ways a method can report invalid input in C# and say when you would pick each.",
+   "answer": "A fallback value suits cases where a sensible default exists and the caller should not fail. A Try method returning bool with an out value (like int.TryParse) suits failures that are expected and common. Throwing a specific exception (ArgumentOutOfRangeException, ArgumentNullException, InvalidOperationException) suits contract violations the caller cannot reasonably continue from.",
+   "keywords": [
+    [
+     "fallback",
+     "default value",
+     "default"
+    ],
+    [
+     "Try",
+     "bool",
+     "TryParse",
+     "out"
+    ],
+    [
+     "throw",
+     "exception"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s10-mcq2",
+   "node": "stage-10",
+   "type": "mcq",
+   "concept": "rethrow",
+   "prompt": "Inside a catch block you want to rethrow the current exception and keep its original stack trace. Which statement do you use?",
+   "choices": [
+    "throw;",
+    "throw ex;",
+    "throw new Exception(ex.Message);",
+    "return;"
+   ],
+   "answer": 0,
+   "explanation": "A bare `throw;` rethrows the exception being handled and preserves the original stack trace. `throw ex;` resets it."
+  },
+  {
+   "id": "cs-s11-mcq",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "stack-overflow",
+   "prompt": "What happens when recursion is so deep that the thread's stack is exhausted in .NET?",
+   "choices": [
+    "A StackOverflowException is thrown that you can handle with try/catch.",
+    "The runtime converts the call to a loop automatically.",
+    "The method returns default(T) to its caller.",
+    "A StackOverflowException is raised that cannot be caught and terminates the process."
+   ],
+   "answer": 3,
+   "explanation": "The available depth depends on thread stack size, platform and frame size, and is not a fixed number. Because StackOverflowException cannot be caught, very deep recursion should be converted to an explicit stack."
+  },
+  {
+   "id": "cs-s11-code",
+   "node": "stage-11",
+   "type": "mcq_code",
+   "concept": "overflow-in-recursion",
+   "code": "static long Fact(long n) => n <= 1 ? 1 : n * Fact(n - 1);\nConsole.WriteLine(Fact(21));",
+   "prompt": "What does this print?",
+   "choices": [
+    "51090942171709440000",
+    "-4249290049419214848",
+    "OverflowException",
+    "9223372036854775807"
+   ],
+   "answer": 1,
+   "explanation": "21! is about 5.1e19, which exceeds long.MaxValue (about 9.2e18). In the default unchecked context the multiplication wraps, giving a negative number."
+  },
+  {
+   "id": "cs-s11-short",
+   "node": "stage-11",
+   "type": "short_answer",
+   "concept": "recursion-trace",
+   "code": "static int Sum(int n)\n{\n    if (n == 0) return 0;\n    return n + Sum(n - 1);\n}\nConsole.WriteLine(Sum(4));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "10",
+   "explanation": "Sum(4) = 4 + Sum(3) = 4 + 3 + Sum(2) = ... = 4 + 3 + 2 + 1 + Sum(0), and Sum(0) is the base case 0, so the result is 10."
+  },
+  {
+   "id": "cs-s11-explain",
+   "node": "stage-11",
+   "type": "explain",
+   "concept": "base-case",
+   "prompt": "For a recursive digit sum that uses n / 10 and n % 10, explain what the base case is for and why the recursion terminates.",
+   "answer": "The base case returns an answer without another call, so the recursion has a place to stop. Each recursive call passes n / 10, which drops the last digit with integer division and is strictly smaller, so the input keeps shrinking until it reaches the base case (a single digit or zero).",
+   "keywords": [
+    [
+     "stops",
+     "calls stop",
+     "stop the recurs",
+     "stop recurs",
+     "stop calling",
+     "terminat",
+     "no further call",
+     "without another call",
+     "without recurs",
+     "no more call",
+     "ends the recursion",
+     "end the recursion"
+    ],
+    [
+     "smaller",
+     "decreas",
+     "closer",
+     "shrink",
+     "drops"
+    ],
+    [
+     "/ 10",
+     "divide",
+     "integer division",
+     "truncat",
+     "last digit"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s11-mcq2",
+   "node": "stage-11",
+   "type": "mcq",
+   "concept": "integer-division",
+   "prompt": "What do 123 / 10 and 123 % 10 evaluate to when both operands are int?",
+   "choices": [
+    "12.3 and 3",
+    "12 and 3",
+    "13 and 3",
+    "12 and 0.3"
+   ],
+   "answer": 1,
+   "explanation": "Integer division truncates toward zero, so 123 / 10 is 12, and % gives the remainder 3. No Math.Floor is needed for nonnegative operands."
+  },
+  {
+   "id": "cs-s12-mcq",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "contains-cost",
+   "prompt": "A query keeps elements of list A with `A.Where(x => B.Contains(x))`, where A has n items and B is a List<int> with m items. What is the cost of the filter?",
+   "choices": [
+    "O(n + m), because each list is traversed once",
+    "O(n log m), because the lookup into B is a binary search",
+    "O(n), because LINQ optimizes the lookup into B automatically",
+    "O(n * m), because List<T>.Contains scans B once for every element of A."
+   ],
+   "answer": 3,
+   "explanation": "List<T>.Contains is O(m) per call and runs once per element of A. Building a HashSet<T> from B first gives expected O(1) membership tests."
+  },
+  {
+   "id": "cs-s12-code",
+   "node": "stage-12",
+   "type": "mcq_code",
+   "concept": "nested-traversal",
+   "code": "int[] values = { 4, 7, 9 };\nint visits = 0;\nforeach (int a in values)\n{\n    foreach (int b in values)\n    {\n        visits++;\n    }\n}\nConsole.WriteLine(visits);",
+   "prompt": "What does this print?",
+   "choices": [
+    "9",
+    "3",
+    "6",
+    "81"
+   ],
+   "answer": 0,
+   "explanation": "A full inner traversal runs for each of the 3 outer elements, so the body runs 3 * 3 = 9 times. Counting how often the operation runs shows the n * n growth."
+  },
+  {
+   "id": "cs-s12-short",
+   "node": "stage-12",
+   "type": "short_answer",
+   "concept": "distinct-indices",
+   "code": "long[] values = { 1 };\nvar seen = new HashSet<long>();\nbool found = false;\nforeach (long v in values)\n{\n    seen.Add(v);\n    if (seen.Contains(2 - v)) found = true;\n}\nConsole.WriteLine(found);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "True",
+   "explanation": "Adding the element before checking for its complement lets 1 pair with itself, so [1] with target 2 wrongly reports a pair. The check must run before the current element is added."
+  },
+  {
+   "id": "cs-s12-explain",
+   "node": "stage-12",
+   "type": "explain",
+   "concept": "loop-invariant",
+   "prompt": "State the invariant of a one-pass 'is there a pair summing to target' algorithm that uses a HashSet, and its time and space cost.",
+   "answer": "Before processing each element, the set holds exactly the elements at earlier indices. For the current element we check whether target minus the element is already in the set, which guarantees the partner has a different index, and only then add the element. One pass with expected O(1) set operations is expected O(n) time and O(n) extra space.",
+   "keywords": [
+    [
+     "earlier",
+     "before",
+     "already seen",
+     "previous",
+     "seen so far"
+    ],
+    [
+     "O(n)",
+     "linear"
+    ],
+    [
+     "O(1)",
+     "hash",
+     "constant",
+     "set"
+    ]
+   ]
+  },
+  {
+   "id": "cs-s12-mcq2",
+   "node": "stage-12",
+   "type": "mcq",
+   "concept": "hash-complexity",
+   "prompt": "Which statement about HashSet<T> operation cost is accurate?",
+   "choices": [
+    "Add is guaranteed O(1) in the worst case, whatever the hash codes.",
+    "Contains is O(log n) because the elements are kept in sorted order.",
+    "Add and Contains are expected O(1), given a well-behaved hash code.",
+    "Add is always O(n) because it copies the whole set."
+   ],
+   "answer": 2,
+   "explanation": "Hash tables give expected constant-time lookup, insert and remove. Poor hash codes or expensive comparers raise the real cost, and enumeration order is not sorted."
+  },
+  {
+   "id": "cs-m-valueref-mcq",
+   "node": "module-value-reference",
+   "type": "mcq",
+   "concept": "value-types",
+   "prompt": "Which of these is a value type?",
+   "choices": [
+    "string",
+    "int[]",
+    "A value tuple such as (int, int)",
+    "A positional record (record class)"
+   ],
+   "answer": 2,
+   "explanation": "Tuples, structs, enums and primitives are value types. string, arrays and records (record class) are reference types; string is a reference type with value-like equality and immutability."
+  },
+  {
+   "id": "cs-m-valueref-code",
+   "node": "module-value-reference",
+   "type": "mcq_code",
+   "concept": "parameter-passing",
+   "code": "static void Replace(int[] arr) { arr = new[] { 99 }; }\nstatic void Mutate(int[] arr) { arr[0] = 99; }\nint[] a = { 1 };\nReplace(a);\nConsole.Write(a[0] + \" \");\nMutate(a);\nConsole.WriteLine(a[0]);",
+   "prompt": "What does this print?",
+   "choices": [
+    "1 99",
+    "99 99",
+    "1 1",
+    "99 1"
+   ],
+   "answer": 0,
+   "explanation": "The reference is passed by value. Assigning a new array to the parameter does not affect the caller's variable, but writing through the reference changes the shared array."
+  },
+  {
+   "id": "cs-m-valueref-short",
+   "node": "module-value-reference",
+   "type": "short_answer",
+   "concept": "boxing",
+   "code": "int i = 1;\nobject o = i;\ni = 2;\nConsole.WriteLine(o);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "1",
+   "explanation": "Converting a value type to object allocates a box holding a copy. Changing i afterwards does not change the boxed copy."
+  },
+  {
+   "id": "cs-m-valueref-explain",
+   "node": "module-value-reference",
+   "type": "explain",
+   "concept": "copy-vs-share",
+   "prompt": "Explain how assigning a struct differs from assigning a class instance, and why 'the struct lives on the stack' is a poor way to explain it.",
+   "answer": "Assigning or passing a struct copies the whole value, so the two variables are independent. Assigning or passing a class instance copies the reference, so both variables see the same object. Where a value is stored (stack, heap, inside another object) is a runtime detail; the observable behaviour is described by copy versus share semantics.",
+   "keywords": [
+    [
+     "copy",
+     "copies",
+     "duplicat"
+    ],
+    [
+     "reference",
+     "same object",
+     "share"
+    ],
+    [
+     "detail",
+     "semantic",
+     "behaviour",
+     "behavior",
+     "runtime"
+    ]
+   ]
+  },
+  {
+   "id": "cs-m-valueref-mcq2",
+   "node": "module-value-reference",
+   "type": "mcq",
+   "concept": "string-equality",
+   "prompt": "What does `==` compare for two string variables?",
+   "choices": [
+    "Only whether they are the same object",
+    "Only their lengths, as the cheapest possible test",
+    "Their hash codes, treating equal hashes as equal strings",
+    "Their contents, because string overloads =="
+   ],
+   "answer": 3,
+   "explanation": "== on ordinary classes compares references unless overloaded; string (and records) overload it to compare contents ordinally."
+  },
+  {
+   "id": "cs-m-valueref-mcq3",
+   "node": "module-value-reference",
+   "type": "mcq",
+   "concept": "out-parameters",
+   "prompt": "Which parameter modifier requires the called method to assign the parameter before it returns?",
+   "choices": [
+    "ref",
+    "out",
+    "in",
+    "params"
+   ],
+   "answer": 1,
+   "explanation": "`out` parameters must be assigned before the method returns, as in dictionary.TryGetValue(key, out var value). `ref` may be read and reassigned, `in` is read-only, and `params` collects arguments."
+  },
+  {
+   "id": "cs-m-generics-mcq",
+   "node": "module-generics",
+   "type": "mcq",
+   "concept": "unconstrained-equality",
+   "prompt": "A generic method `static bool Same<T>(T a, T b) => a == b;` has no constraints. What happens?",
+   "choices": [
+    "It compiles and always compares references.",
+    "It does not compile: == is not available on an unconstrained T.",
+    "It compiles and calls Equals on the arguments.",
+    "It compiles, but throws at run time for value types."
+   ],
+   "answer": 1,
+   "explanation": "Without a constraint, T supports only what object supports. Use EqualityComparer<T>.Default.Equals(a, b), or add a constraint that provides the operation."
+  },
+  {
+   "id": "cs-m-generics-code",
+   "node": "module-generics",
+   "type": "mcq_code",
+   "concept": "static-per-instantiation",
+   "code": "Cache<int>.Count = 5;\nCache<string>.Count += 1;\nConsole.WriteLine(Cache<int>.Count + \" \" + Cache<string>.Count);\n\nclass Cache<T>\n{\n    public static int Count;\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "6 6",
+    "5 5",
+    "0 1",
+    "5 1"
+   ],
+   "answer": 3,
+   "explanation": "Each closed generic type has its own static fields, so Cache<int>.Count and Cache<string>.Count are different variables."
+  },
+  {
+   "id": "cs-m-generics-short",
+   "node": "module-generics",
+   "type": "short_answer",
+   "concept": "covariance",
+   "code": "using System.Linq;\nIEnumerable<string> names = new List<string> { \"a\", \"b\" };\nIEnumerable<object> objs = names;\nConsole.WriteLine(objs.Count());",
+   "prompt": "Type exactly what this prints.",
+   "answer": "2",
+   "explanation": "IEnumerable<out T> is covariant, so an IEnumerable<string> can be used where an IEnumerable<object> is expected. A List<string> could not be assigned to a List<object>, because classes are invariant."
+  },
+  {
+   "id": "cs-m-generics-explain",
+   "node": "module-generics",
+   "type": "explain",
+   "concept": "default-not-found",
+   "prompt": "Why is returning default(T) to mean 'not found' ambiguous, and what is a better contract?",
+   "answer": "default(T) is null for reference types and zero for value types, and those can also be real elements, so the caller cannot tell 'absent' from 'present with that value'. Prefer a TryX(..., out T value) method returning bool, or a nullable result, so absence is reported separately from the value.",
+   "keywords": [
+    [
+     "null",
+     "zero"
+    ],
+    [
+     "ambiguous",
+     "cannot tell",
+     "can't tell",
+     "distinguish",
+     "tell apart",
+     "tell the difference",
+     "indistinguishable",
+     "real element",
+     "valid value",
+     "legitimate",
+     "same as",
+     "also be"
+    ],
+    [
+     "Try",
+     "out",
+     "bool",
+     "nullable"
+    ]
+   ]
+  },
+  {
+   "id": "cs-m-generics-mcq2",
+   "node": "module-generics",
+   "type": "mcq",
+   "concept": "array-covariance",
+   "prompt": "What happens at run time when `object[] arr = new string[1]; arr[0] = 42;` executes?",
+   "choices": [
+    "ArrayTypeMismatchException is thrown.",
+    "The int is boxed and stored in the string[].",
+    "The code does not compile.",
+    "arr[0] stays null and no error occurs."
+   ],
+   "answer": 0,
+   "explanation": "Arrays of reference types are covariant, so the assignment to object[] compiles, but the runtime checks the stored type and throws ArrayTypeMismatchException."
+  },
+  {
+   "id": "cs-m-generics-mcq3",
+   "node": "module-generics",
+   "type": "mcq",
+   "concept": "constraints",
+   "prompt": "Which constraint lets generic code call x.CompareTo(y) on values of type T?",
+   "choices": [
+    "where T : class",
+    "where T : new()",
+    "where T : IComparable<T>",
+    "where T : notnull"
+   ],
+   "answer": 2,
+   "explanation": "IComparable<T> declares CompareTo. class, new() and notnull restrict the kind of type argument or allow construction but add no comparison operation."
+  },
+  {
+   "id": "cs-m-linq-code",
+   "node": "module-linq",
+   "type": "mcq_code",
+   "concept": "deferred-execution",
+   "code": "var list = new List<int> { 1, 2, 3 };\nvar query = list.Where(x => x > 1);\nlist.Add(4);\nConsole.WriteLine(query.Count());",
+   "prompt": "What does this print?",
+   "choices": [
+    "2",
+    "4",
+    "3",
+    "InvalidOperationException"
+   ],
+   "answer": 2,
+   "explanation": "Where is deferred: the query runs when it is enumerated and sees the list as it is then. The list holds 2, 3 and 4 above the threshold when Count() enumerates it."
+  },
+  {
+   "id": "cs-m-linq-short",
+   "node": "module-linq",
+   "type": "short_answer",
+   "concept": "repeated-enumeration",
+   "code": "int calls = 0;\nvar q = new[] { 1, 2, 3 }.Select(x => { calls++; return x * 2; });\nvar first = q.ToList();\nvar second = q.ToList();\nConsole.WriteLine(calls);",
+   "prompt": "Type exactly what this prints.",
+   "answer": "6",
+   "explanation": "Select is deferred and each ToList() enumerates the query again, running the lambda for all 3 elements each time: 3 + 3 = 6 calls."
+  },
+  {
+   "id": "cs-m-linq-mcq",
+   "node": "module-linq",
+   "type": "mcq",
+   "concept": "streaming-vs-buffering",
+   "prompt": "Which operator streams one element at a time instead of buffering its input before producing results?",
+   "choices": [
+    "Where",
+    "OrderBy",
+    "GroupBy",
+    "Reverse"
+   ],
+   "answer": 0,
+   "explanation": "Where and Select yield elements as they are pulled. OrderBy, GroupBy and Reverse must buffer some or all of the input first."
+  },
+  {
+   "id": "cs-m-linq-explain",
+   "node": "module-linq",
+   "type": "explain",
+   "concept": "double-enumeration",
+   "prompt": "A deferred query is used with `query.Count()` followed by `foreach (var x in query)`. Explain the cost and how to avoid it.",
+   "answer": "A deferred query does its work every time it is enumerated, so Count() and then the foreach enumerate it twice, repeating the pipeline and any side effects in its lambdas, and it may see changed source data. Materialize once with ToList() or ToArray() and reuse that snapshot.",
+   "keywords": [
+    [
+     "twice",
+     "two",
+     "each time",
+     "repeat",
+     "again",
+     "every time"
+    ],
+    [
+     "ToList",
+     "materializ",
+     "ToArray",
+     "snapshot",
+     "once"
+    ]
+   ]
+  },
+  {
+   "id": "cs-m-linq-mcq2",
+   "node": "module-linq",
+   "type": "mcq",
+   "concept": "tolist-snapshot",
+   "prompt": "`var snap = people.ToList();` is executed, where `people` holds Person class instances. Afterwards `people[0].Name = \"Zed\";` runs. What does snap[0].Name show?",
+   "choices": [
+    "The old name, because ToList clones each Person object it copies.",
+    "An exception, because snap is a read-only view of the source.",
+    "null, because the snapshot is detached from the source objects.",
+    "\"Zed\", because the list copy holds references to the same Person objects."
+   ],
+   "answer": 3,
+   "explanation": "ToList materializes a snapshot of the sequence's elements, but it does not recursively clone them. Both lists contain references to the same Person objects."
+  },
+  {
+   "id": "cs-m-linq-mcq3",
+   "node": "module-linq",
+   "type": "mcq",
+   "concept": "empty-sequences",
+   "prompt": "What does `Enumerable.Empty<int>().Max()` do?",
+   "choices": [
+    "It returns 0, the default value of int.",
+    "It throws InvalidOperationException.",
+    "It returns int.MinValue as the identity for max.",
+    "It returns null because there is no maximum."
+   ],
+   "answer": 1,
+   "explanation": "Max on an empty sequence of non-nullable values throws InvalidOperationException. FirstOrDefault returns default instead, which is ambiguous when 0 is a valid element."
+  },
+  {
+   "id": "cs-m-records-code",
+   "node": "module-records-patterns",
+   "type": "mcq_code",
+   "concept": "with-expression-shallow",
+   "code": "var a = new Box(1, new List<int> { 1 });\nvar b = a with { Id = 2 };\nb.Items.Add(9);\nConsole.WriteLine(a.Id + \" \" + a.Items.Count);\n\nrecord Box(int Id, List<int> Items);",
+   "prompt": "What does this print?",
+   "choices": [
+    "2 2",
+    "1 2",
+    "1 1",
+    "2 1"
+   ],
+   "answer": 1,
+   "explanation": "`with` creates a shallow copy: b gets Id = 2 while a keeps Id = 1, but both records share the same List<int>, so adding through b is visible through a."
+  },
+  {
+   "id": "cs-m-records-short",
+   "node": "module-records-patterns",
+   "type": "short_answer",
+   "concept": "switch-expression",
+   "code": "static string Kind(int x) => x switch { < 0 => \"neg\", 0 => \"zero\", _ => \"pos\" };\nConsole.WriteLine(Kind(0) + Kind(-5) + Kind(7));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "zeronegpos",
+   "explanation": "The arms are tested top to bottom and the first match wins: 0 gives zero, -5 gives neg, and 7 falls to the discard arm and gives pos."
+  },
+  {
+   "id": "cs-m-records-mcq",
+   "node": "module-records-patterns",
+   "type": "mcq",
+   "concept": "record-equality-arrays",
+   "prompt": "A positional record has an int[] member. Two instances are created with separate arrays holding equal contents. What does `a == b` give?",
+   "choices": [
+    "true, because records compare the contents of every member, even arrays.",
+    "true, because the two arrays have the same length and type.",
+    "It throws InvalidOperationException.",
+    "false, because the array member is compared by reference."
+   ],
+   "answer": 3,
+   "explanation": "Record equality is value-based over its components, but an array component is compared with the array's own equality, which is reference equality."
+  },
+  {
+   "id": "cs-m-records-explain",
+   "node": "module-records-patterns",
+   "type": "explain",
+   "concept": "switch-exhaustiveness",
+   "prompt": "What happens at run time when no arm of a switch expression matches, and how do you prevent it?",
+   "answer": "The switch expression throws a SwitchExpressionException. The compiler warns when it can see that cases are missing. Add a discard arm (_) as the last arm to make the match exhaustive; remember that arms are tested in order and the first match wins.",
+   "keywords": [
+    [
+     "SwitchExpressionException",
+     "exception",
+     "throws"
+    ],
+    [
+     "discard",
+     "_",
+     "default arm",
+     "exhaustive",
+     "catch-all"
+    ]
+   ]
+  },
+  {
+   "id": "cs-m-records-code2",
+   "node": "module-records-patterns",
+   "type": "mcq_code",
+   "concept": "list-patterns",
+   "code": "int[] arr = { 1, 2, 3, 4 };\nif (arr is [var first, .., var last])\n{\n    Console.WriteLine(first + \"-\" + last);\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "1-4",
+    "1-2",
+    "1-3",
+    "The code does not compile"
+   ],
+   "answer": 0,
+   "explanation": "The list pattern (C# 11) [var first, .., var last] binds the first and last elements and the slice pattern .. matches everything in between."
+  },
+  {
+   "id": "cs-m-records-mcq2",
+   "node": "module-records-patterns",
+   "type": "mcq",
+   "concept": "unreachable-arm",
+   "prompt": "In a switch expression over an `object o`, the arm `object => 1,` is written before the arm `string => 2,`. What does the compiler do?",
+   "choices": [
+    "It compiles, and strings still choose the more specific second arm.",
+    "It compiles, and strings always take the first arm at run time.",
+    "It reports an error: the second arm can never be reached.",
+    "It compiles and throws SwitchExpressionException for strings."
+   ],
+   "answer": 2,
+   "explanation": "Arms are tested in order, so a broad type pattern before a more specific one makes the specific arm unreachable, which the compiler reports as an error."
+  },
+  {
+   "id": "cs-m-records-mcq3",
+   "node": "module-records-patterns",
+   "type": "mcq",
+   "concept": "record-struct-mutability",
+   "prompt": "Which statement about `record struct Cell(int Row, int Col)` is correct?",
+   "choices": [
+    "Its positional properties are init-only, exactly like those of a positional record class.",
+    "It is a reference type with reference equality.",
+    "Its positional properties are settable; a readonly record struct prevents that.",
+    "It cannot be used as a dictionary key."
+   ],
+   "answer": 2,
+   "explanation": "Positional record class properties are init-only by default; a record struct is mutable unless declared readonly. Record structs have value-based equality, which makes them convenient composite keys."
+  },
+  {
+   "id": "cs-m-async-mcq",
+   "node": "module-async-cancellation",
+   "type": "mcq",
+   "concept": "cooperative-cancellation",
+   "prompt": "A long-running loop never looks at its CancellationToken. What does calling cts.Cancel() do to it?",
+   "choices": [
+    "Nothing by itself: cancellation is a cooperative request that the loop must observe.",
+    "It aborts the thread running the loop at its next statement.",
+    "It throws OperationCanceledException inside the loop immediately.",
+    "It rolls back the work the loop already did, restoring the earlier state."
+   ],
+   "answer": 0,
+   "explanation": "Cancel requests cancellation; it does not forcibly terminate arbitrary code or undo committed work. Code must check token.ThrowIfCancellationRequested() or pass the token to APIs that honour it."
+  },
+  {
+   "id": "cs-m-async-code",
+   "node": "module-async-cancellation",
+   "type": "mcq_code",
+   "concept": "throw-if-cancelled",
+   "code": "using var cts = new CancellationTokenSource();\ncts.Cancel();\ntry\n{\n    cts.Token.ThrowIfCancellationRequested();\n    Console.WriteLine(\"ran\");\n}\ncatch (OperationCanceledException)\n{\n    Console.WriteLine(\"canceled\");\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "ran",
+    "ran canceled",
+    "The program does not compile",
+    "canceled"
+   ],
+   "answer": 3,
+   "explanation": "The token was cancelled before the check, so ThrowIfCancellationRequested throws OperationCanceledException and \"ran\" is never printed."
+  },
+  {
+   "id": "cs-m-async-short",
+   "node": "module-async-cancellation",
+   "type": "short_answer",
+   "concept": "canceled-task-exception",
+   "code": "using var cts = new CancellationTokenSource();\ncts.Cancel();\ntry\n{\n    await Task.Delay(1000, cts.Token);\n}\ncatch (OperationCanceledException e)\n{\n    Console.WriteLine(e.GetType().Name);\n}",
+   "prompt": "Type exactly what this prints.",
+   "answer": "TaskCanceledException",
+   "explanation": "Task.Delay observes the already-cancelled token and its task ends cancelled; awaiting it throws TaskCanceledException, which derives from OperationCanceledException and so matches the catch."
+  },
+  {
+   "id": "cs-m-async-explain",
+   "node": "module-async-cancellation",
+   "type": "explain",
+   "concept": "await-in-lock",
+   "prompt": "Why can't you await inside a lock block, and what do you use for async mutual exclusion?",
+   "answer": "The compiler rejects await inside a lock body (error CS1996) because the continuation after the await may run on a different thread, and a lock must be released by the thread that took it. Use SemaphoreSlim(1, 1) with await sem.WaitAsync() and release it in a finally block; SemaphoreSlim is not reentrant.",
+   "keywords": [
+    [
+     "CS1996",
+     "compile",
+     "not allowed",
+     "cannot await",
+     "can't await",
+     "error"
+    ],
+    [
+     "SemaphoreSlim",
+     "semaphore"
+    ],
+    [
+     "finally",
+     "release"
+    ]
+   ]
+  },
+  {
+   "id": "cs-m-async-code2",
+   "node": "module-async-cancellation",
+   "type": "mcq_code",
+   "concept": "waitasync-does-not-cancel",
+   "code": "var tcs = new TaskCompletionSource();\nusing var cts = new CancellationTokenSource();\ncts.Cancel();\ntry\n{\n    await tcs.Task.WaitAsync(cts.Token);\n}\ncatch (OperationCanceledException)\n{\n    Console.WriteLine(tcs.Task.IsCompleted);\n}",
+   "prompt": "What does this print?",
+   "choices": [
+    "True",
+    "False",
+    "InvalidOperationException",
+    "Nothing: the catch block is never entered"
+   ],
+   "answer": 1,
+   "explanation": "WaitAsync with a token stops waiting for the task but does not stop the underlying work. The wrapped task is still not completed, so IsCompleted is False."
+  },
+  {
+   "id": "cs-m-async-mcq2",
+   "node": "module-async-cancellation",
+   "type": "mcq",
+   "concept": "await-threads",
+   "prompt": "What does `await` do when the awaited operation has not finished?",
+   "choices": [
+    "It always runs the awaited work on a new thread-pool thread.",
+    "It waits asynchronously and resumes the method later, without necessarily using a new thread.",
+    "It blocks the calling thread until the operation completes.",
+    "It cancels the operation if it takes too long."
+   ],
+   "answer": 1,
+   "explanation": "await does not mean that the awaited work runs on a new thread. I/O may complete without occupying a thread for the whole wait, and CPU-bound work needs an explicit scheduling decision."
+  },
+  {
+   "id": "cs-m-async-mcq3",
+   "node": "module-async-cancellation",
+   "type": "mcq",
+   "concept": "cts-disposal",
+   "prompt": "Which statement matches guidance about CancellationTokenSource?",
+   "choices": [
+    "It never needs disposal because the garbage collector releases it deterministically.",
+    "Disposing it cancels every operation that uses its token.",
+    "Only the token (not the source) can be disposed.",
+    "It is IDisposable; dispose it when you are done, especially if it uses a timer or is linked."
+   ],
+   "answer": 3,
+   "explanation": "A CancellationTokenSource owns resources such as timers and registrations, so dispose it (for example with `using var`) when finished. Garbage collection does not give a deterministic release time."
+  }
+ ]
+}

@@ -13,6 +13,17 @@ from app.services import learning_path as lp
 from app.services import quiz
 
 
+@pytest.fixture
+def unauthored_go(monkeypatch):
+    """Go as it was before any stage files or quiz bank were authored."""
+    from app.services import content_catalog, quiz as quiz_module
+    find_path, bank_version = content_catalog.find_path, quiz_module._bank_version
+    monkeypatch.setattr(content_catalog, 'find_path',
+                        lambda cid: None if cid.startswith('go-path-') else find_path(cid))
+    monkeypatch.setattr(quiz_module, '_bank_version', lambda language: (
+        (str(quiz_module.BANK_DIR / 'go.json'), 0) if language == 'go' else bank_version(language)))
+
+
 async def make_user(db, email='path@example.com'):
     user = User(email=email, hashed_password='x', peppercorns=50)
     db.add(user)
@@ -45,7 +56,7 @@ def test_python_path_reuses_stage_files_and_branches_into_depth_modules():
     assert lp.find_node('python', 'python:stage-99') is None
 
 
-def test_languages_without_stage_files_still_get_a_path():
+def test_languages_without_stage_files_still_get_a_path(unauthored_go):
     stages = [n for n in lp.nodes('go') if n['kind'] == 'stage']
     assert len(stages) == 12 and not any(n['exercise_id'] for n in stages)
     assert stages[0]['lesson_ids'] == ['go-fundamentals']
@@ -77,7 +88,9 @@ def test_node_for_exercise_maps_a_stage_file_back_to_its_language():
     ('python', True, 'next-wave'), ('typescript', False, 'quiz-led'),
     ('c', True, 'launch-ready'), ('go', False, 'needs-authoring'),
 ])
-def test_readiness_reflects_existing_content(monkeypatch, language, runner, verdict):
+def test_readiness_reflects_existing_content(monkeypatch, request, language, runner, verdict):
+    if language == 'go':
+        request.getfixturevalue('unauthored_go')
     monkeypatch.setattr('app.services.code_runner.available_languages',
                         lambda: {language: runner})
     report = lp.readiness(language)
@@ -115,7 +128,7 @@ async def test_a_low_quiz_score_does_not_master_the_node(db):
     assert node['check_score'] == pytest.approx(1 / 3) and not node['complete']
 
 
-async def test_a_language_without_assessments_keeps_unavailable_nodes_visible(db, monkeypatch):
+async def test_a_language_without_assessments_keeps_unavailable_nodes_visible(db, monkeypatch, unauthored_go):
     user = await make_user(db, 'none@example.com')
     monkeypatch.setattr(lp, 'DEPTH_MODULES', {})
     state = await lp.progress(db, user.id, 'go')
@@ -129,8 +142,7 @@ def test_authored_and_knowledge_base_items_are_both_used():
     python = quiz.items('python')
     assert {i['source'] for i in python.values()} == {'authored', 'knowledge-base'}
     assert {i['type'] for i in python.values()} == set(quiz.TYPES)
-    assert quiz.items('csharp') == {}  # no authored bank and no answer-keyed rows to grade against
-    assert quiz._authored('go', quiz._bank_version('go')) == ()
+    assert {i['source'] for i in quiz.items('rust').values()} == {'authored'}
 
 
 def test_public_view_never_contains_answer_keys_or_tests():
@@ -319,7 +331,7 @@ async def test_wrong_and_typed_answers_reveal_weak_spots(db):
     assert (await quiz.weak_concepts(db, user.id, 'python'))[0]['misses'] == 2
 
 
-async def test_start_rejects_unknown_nodes_and_empty_pools(db):
+async def test_start_rejects_unknown_nodes_and_empty_pools(db, unauthored_go):
     user = await make_user(db, 'start@example.com')
     for node_id, status in (('python:stage-99', 404), ('python:module-typing', 409)):
         with pytest.raises(HTTPException) as err:
