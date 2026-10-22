@@ -85,7 +85,7 @@ def test_node_for_exercise_maps_a_stage_file_back_to_its_language():
 
 
 @pytest.mark.parametrize('language,runner,verdict', [
-    ('python', True, 'next-wave'), ('typescript', False, 'quiz-led'),
+    ('python', True, 'launch-ready'), ('typescript', False, 'quiz-led'),
     ('c', True, 'launch-ready'), ('go', False, 'needs-authoring'),
 ])
 def test_readiness_reflects_existing_content(monkeypatch, request, language, runner, verdict):
@@ -102,7 +102,7 @@ async def test_progress_moves_the_learner_through_mastery(db):
     user = await make_user(db)
     fresh = await lp.progress(db, user.id, 'python')
     assert fresh['current_id'] == 'python:stage-01' and fresh['completed'] == 0
-    assert next(n for n in fresh['nodes'] if n['id'] == 'python:module-typing')['status'] == 'unavailable'
+    assert next(n for n in fresh['nodes'] if n['id'] == 'python:module-typing')['status'] == 'not-started'
     db.add(LearningEvent(user_id=user.id, problem_id='python-path-01-values', kind='solved', language='python'))
     await db.flush()
     halfway = await lp.progress(db, user.id, 'python')
@@ -331,8 +331,10 @@ async def test_wrong_and_typed_answers_reveal_weak_spots(db):
     assert (await quiz.weak_concepts(db, user.id, 'python'))[0]['misses'] == 2
 
 
-async def test_start_rejects_unknown_nodes_and_empty_pools(db, unauthored_go):
+async def test_start_rejects_unknown_nodes_and_empty_pools(db, unauthored_go, monkeypatch):
     user = await make_user(db, 'start@example.com')
+    original_pool = quiz.pool
+    monkeypatch.setattr(quiz, 'pool', lambda language, node: [] if node == 'python:module-typing' else original_pool(language, node))
     for node_id, status in (('python:stage-99', 404), ('python:module-typing', 409)):
         with pytest.raises(HTTPException) as err:
             await quiz.start(db, user, 'python', node_id, 3)
