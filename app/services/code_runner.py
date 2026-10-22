@@ -38,6 +38,10 @@ TIER1 = ("python", "javascript")
 # falls back to the compile-only check below — never to a silent pass.
 COMPILED = ("c", "cpp", "java", "rust")
 
+# Scripted languages that execute through app.services.script_runners: Ruby and
+# TypeScript take the cases as data, Go and C# are compiled with typed literals.
+SCRIPTED = ("ruby", "typescript", "go", "csharp")
+
 # The compile-only fallback, used when execution was refused.
 TIER2 = COMPILED
 
@@ -49,6 +53,10 @@ _TOOLCHAIN = {
     "cpp": "g++",
     "java": "javac",
     "rust": "rustc",
+    "ruby": "ruby",
+    "typescript": "tsc",
+    "go": "go",
+    "csharp": "dotnet",
 }
 
 
@@ -67,7 +75,9 @@ def _container_languages(image: str) -> dict[str, bool]:
     with tempfile.TemporaryDirectory(prefix="dsa-probe-") as scratch:
         for language, executable in _TOOLCHAIN.items():
             try:
-                tools[language] = _run([executable, "--version"], Path(scratch))[0] == 0
+                from app.services.script_runners import PROBE_ARGS
+                args = PROBE_ARGS.get(language, ["--version"])
+                tools[language] = _run([executable, *args], Path(scratch))[0] == 0
             except RuntimeError:
                 tools[language] = False
     return tools
@@ -456,6 +466,21 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
         else:
             results.append(_run_compiled(
                 lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
+
+    for lang in SCRIPTED:
+        if lang not in solutions:
+            continue
+        if not available_languages().get(lang):
+            results.append(LangResult(
+                language=lang, tier=2, status="unverified",
+                detail=f"{_TOOLCHAIN[lang]} not installed — cannot verify this language",
+            ))
+        elif io_mode == "stdio":
+            results.append(LangResult(language=lang, tier=2, status="unverified",
+                                      detail="stdin/stdout problems are not supported for this language"))
+        else:
+            from app.services import script_runners
+            results.append(script_runners.run(lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
 
     # Cross-language agreement across Tier-1 languages that actually ran
     ran = [r for r in results if r.tier == 1 and r.status in ("passed", "failed") and r.outputs]

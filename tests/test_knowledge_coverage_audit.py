@@ -33,8 +33,8 @@ def test_entire_packaged_inventory_includes_all_framework_subjects_and_scoped_re
             'python-django','python-fastapi','python-flask','embedded-c','embedded-python'} <= subjects.keys()
     assert all(s['quality_status']=='not_certified' for s in subjects.values())
     assert all(p['scope_ok'] for s in subjects.values() for p in s['retrieval_probes'])
-    assert subjects['typescript']['execution_adapter_available_in_code'] is False
-    assert subjects['ruby']['execution_adapter_available_in_code'] is False
+    assert subjects['typescript']['execution_adapter_available_in_code'] is True
+    assert subjects['ruby']['execution_adapter_available_in_code'] is True
     assert subjects['rust']['application_reference_extractor_supported'] is False
     assert subjects['python']['learner_reference_admission_gate_enabled'] is False
     assert sum(s['records'] for s in subjects.values())==result['records']

@@ -36,7 +36,7 @@ LEVEL_LABELS = {
     "L0": "Syntax and first programs", "L1": "Core constructs", "L2": "Data modelling",
     "L3": "Recursion, complexity and depth", "L4": "Language mastery",
 }
-RUNNABLE = ("python", "javascript", "java", "c", "cpp", "rust")
+RUNNABLE = ("python", "javascript", "java", "c", "cpp", "rust", "ruby", "typescript", "go", "csharp")
 LANGUAGE_LABELS = {
     "python": "Python", "javascript": "JavaScript", "java": "Java", "typescript": "TypeScript",
     "c": "C", "cpp": "C++", "rust": "Rust", "go": "Go", "csharp": "C#", "ruby": "Ruby",

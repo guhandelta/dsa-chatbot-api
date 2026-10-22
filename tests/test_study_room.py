@@ -61,11 +61,14 @@ def ask(**overrides):
 
 # ---------------------------------------------------------------- path
 
-async def test_readiness_lists_every_language(client, db):
+async def test_readiness_lists_every_language(client, db, monkeypatch):
+    # Python and Java have a runner here; TypeScript and Ruby do not, whatever the host has installed.
+    monkeypatch.setattr('app.services.code_runner.available_languages',
+                        lambda: {'python': True, 'java': True, 'javascript': True, 'typescript': False, 'ruby': False})
     headers, _ = await register(client, db)
     body = (await client.get('/study/readiness', headers=headers)).json()
     verdicts = {r['language']: r['verdict'] for r in body['languages']}
-    assert verdicts['python'] == verdicts['java'] == verdicts['javascript'] == 'next-wave'
+    assert verdicts['python'] == verdicts['java'] == verdicts['javascript'] == 'launch-ready'
     assert verdicts['typescript'] == verdicts['ruby'] == 'quiz-led'
     assert body['levels']['L4'] == 'Language mastery'
 
@@ -74,7 +77,7 @@ async def test_path_lesson_and_access(client, db):
     headers, _ = await register(client, db)
     path = (await client.get('/study/path', headers=headers, params={'language': 'python'})).json()
     assert path['current_id'] == 'python:stage-01' and path['label'] == 'Python'
-    assert path['readiness']['verdict'] == 'next-wave' and len(path['nodes']) == 20
+    assert path['readiness']['verdict'] == 'launch-ready' and len(path['nodes']) == 20
     assert (await client.get('/study/path', headers=headers, params={'language': 'rust'})).status_code == 403
     stage = (await client.get('/study/nodes/python:stage-07/lesson', headers=headers,
                               params={'language': 'python'})).json()

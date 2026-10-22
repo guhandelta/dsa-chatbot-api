@@ -255,7 +255,7 @@ def known_patterns() -> list[str]:
 
 
 def known_languages() -> list[str]:
-    return ["python", "javascript", "java", "cpp", "c", "rust"]
+    return ["python", "javascript", "java", "cpp", "c", "rust", "typescript", "ruby", "go", "csharp"]
 
 
 def level_summary(language: str | None = None) -> list[dict]:
