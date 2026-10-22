@@ -51,6 +51,142 @@ def subarrays(values):
     return [values[i:j] for i in range(len(values)) for j in range(i+1,len(values)+1)]
 
 
+def avl_height(values):
+    """Second, recursive AVL written separately from the published references."""
+    class N:
+        def __init__(self, key): self.key, self.left, self.right, self.h = key, None, None, 1
+    def h(n): return n.h if n else 0
+    def fix(n): n.h = 1 + max(h(n.left), h(n.right))
+    def rot_right(y):
+        x = y.left; y.left = x.right; x.right = y; fix(y); fix(x); return x
+    def rot_left(x):
+        y = x.right; x.right = y.left; y.left = x; fix(x); fix(y); return y
+    def insert(n, key):
+        if n is None: return N(key)
+        if key < n.key: n.left = insert(n.left, key)
+        elif key > n.key: n.right = insert(n.right, key)
+        else: return n
+        fix(n)
+        bal = h(n.left) - h(n.right)
+        if bal > 1 and key < n.left.key: return rot_right(n)
+        if bal < -1 and key > n.right.key: return rot_left(n)
+        if bal > 1: n.left = rot_left(n.left); return rot_right(n)
+        if bal < -1: n.right = rot_right(n.right); return rot_left(n)
+        return n
+    root = None
+    for v in values: root = insert(root, v)
+    return h(root)
+
+
+def rb_black_height(values):
+    """Second CLRS red-black insertion, written separately from the published reference.
+    Black height: black nodes on the leftmost root-to-NIL path, root counted, NIL not counted."""
+    class N:
+        def __init__(self, k):
+            self.k, self.red, self.l, self.r, self.p = k, True, None, None, None
+    class T:
+        root = None
+    t = T()
+    def rot_left(x):
+        y = x.r; x.r = y.l
+        if y.l: y.l.p = x
+        y.p = x.p
+        if x.p is None: t.root = y
+        elif x is x.p.l: x.p.l = y
+        else: x.p.r = y
+        y.l = x; x.p = y
+    def rot_right(x):
+        y = x.l; x.l = y.r
+        if y.r: y.r.p = x
+        y.p = x.p
+        if x.p is None: t.root = y
+        elif x is x.p.r: x.p.r = y
+        else: x.p.l = y
+        y.r = x; x.p = y
+    for k in values:
+        z, parent, cur = N(k), None, t.root
+        while cur is not None:
+            parent, cur = cur, (cur.l if k < cur.k else cur.r)
+        z.p = parent
+        if parent is None: t.root = z
+        elif k < parent.k: parent.l = z
+        else: parent.r = z
+        x = z
+        while x.p is not None and x.p.red:
+            g = x.p.p
+            if x.p is g.l:
+                u = g.r
+                if u is not None and u.red:
+                    x.p.red = False; u.red = False; g.red = True; x = g
+                else:
+                    if x is x.p.r:
+                        x = x.p; rot_left(x)
+                    x.p.red = False; g.red = True; rot_right(g)
+            else:
+                u = g.l
+                if u is not None and u.red:
+                    x.p.red = False; u.red = False; g.red = True; x = g
+                else:
+                    if x is x.p.l:
+                        x = x.p; rot_right(x)
+                    x.p.red = False; g.red = True; rot_left(g)
+        t.root.red = False
+    count, n = 0, t.root
+    while n is not None:
+        if not n.red: count += 1
+        n = n.l
+    return count
+
+
+def btree_height(values, order):
+    """Second B-tree insertion (reactive split at `order` keys), written separately."""
+    if not values: return 0
+    class Node:
+        def __init__(self, leaf): self.keys, self.kids, self.leaf = [], [], leaf
+    root = Node(True)
+    def insert_into(node, key):
+        if node.leaf:
+            node.keys.append(key); node.keys.sort()
+        else:
+            i = sum(1 for k in node.keys if key > k)
+            split = insert_into(node.kids[i], key)
+            if split is not None:
+                mid_key, right = split
+                node.keys.insert(i, mid_key); node.kids.insert(i + 1, right)
+        return split_node(node) if len(node.keys) >= order else None
+    def split_node(node):
+        mid = len(node.keys) // 2
+        mid_key = node.keys[mid]
+        right = Node(node.leaf)
+        right.keys = node.keys[mid + 1:]
+        if not node.leaf:
+            right.kids = node.kids[mid + 1:]
+            node.kids = node.kids[:mid + 1]
+        node.keys = node.keys[:mid]
+        return mid_key, right
+    for key in values:
+        split = insert_into(root, key)
+        if split is not None:
+            new_root = Node(False)
+            new_root.keys = [split[0]]; new_root.kids = [root, split[1]]
+            root = new_root
+    levels, node = 1, root
+    while not node.leaf:
+        node = node.kids[0]; levels += 1
+    return levels
+
+
+def rotate_grid(values, cols):
+    if not values: return []
+    rows = len(values) // cols
+    grid = [values[r * cols:(r + 1) * cols] for r in range(rows)]
+    return [x for row in zip(*grid[::-1]) for x in row]
+
+
+def dll_remove_all(values, target):
+    return [v for v in values if v != target]
+
+
 ORACLES = {
     'best-time-to-buy-and-sell-stock': lambda a:max([0]+[a[j]-a[i] for i in range(len(a)) for j in range(i+1,len(a))]),
     'binary-search': lambda a,t:a.index(t) if t in a else -1,
@@ -74,6 +210,11 @@ ORACLES = {
     'search-in-rotated-sorted-array':lambda a,t:a.index(t) if t in a else -1,
     'sum-of-two-integers':lambda a,b:((a+b+2**31)%2**32)-2**31,
     'word-break':word_break,
+    'avl-tree': avl_height,
+    'red-black-tree': rb_black_height,
+    'b-tree': btree_height,
+    'matrix-and-grid': rotate_grid,
+    'doubly-linked-list': dll_remove_all,
 }
 
 
