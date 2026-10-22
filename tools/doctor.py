@@ -70,6 +70,20 @@ def check_dependencies() -> None:
 
 # --------------------------------------------------------------- configuration
 
+def check_production_readiness() -> None:
+    """What would stop the API starting with APP_ENV=production."""
+    sys.path.insert(0, str(ROOT))
+    from app.core.config import settings
+    problems = settings.production_problems()
+    status = FAIL if settings.app_env == "production" else WARN
+    for problem in problems:
+        check("production", status, problem)
+    if not problems:
+        check("production", PASS, "settings are safe for APP_ENV=production")
+    elif status == WARN:
+        check("production", WARN, "APP_ENV is not production, so these are not enforced yet")
+
+
 def check_config() -> None:
     env_file = ROOT / ".env"
     if not env_file.is_file():
@@ -354,6 +368,7 @@ def main() -> int:
 
     check_dependencies()
     check_config()
+    check_production_readiness()
     check_database()
     check_toolchains()
     check_content()

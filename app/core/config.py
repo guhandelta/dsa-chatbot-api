@@ -122,6 +122,40 @@ class Settings(BaseSettings):
         if self.app_env == "production" and self.exec_backend != "docker":
             raise RuntimeError("Production requires EXEC_BACKEND=docker")
 
+    def production_problems(self) -> list[str]:
+        """Settings that are unsafe in production, whatever APP_ENV currently says.
+
+        Startup refuses to run when APP_ENV=production and this is non-empty;
+        tools/doctor.py reports the same list as warnings before then.
+        """
+        problems = []
+        if self.exec_backend != "docker":
+            problems.append("EXEC_BACKEND must be docker")
+        if self.jwt_secret in ("", "dev-secret-change-me") or "change-me" in self.jwt_secret or len(self.jwt_secret) < 32:
+            problems.append("JWT_SECRET is missing, a placeholder, or shorter than 32 characters")
+        origins = self.cors_origin_list
+        local = ("localhost", "127.0.0.1", "[::1]", "0.0.0.0")
+        if not origins or all(o.split("://", 1)[-1].split(":")[0].split("/")[0] in local for o in origins):
+            problems.append("CORS_ORIGINS lists only local origins; set the deployed UI origin")
+        if "*" in origins:
+            problems.append("CORS_ORIGINS must not contain *")
+        if self.auto_create_tables:
+            problems.append("AUTO_CREATE_TABLES must be false; run alembic upgrade head")
+        placeholders = [e for e in self.admin_email_list
+                        if e.endswith(("@example.com", "@example.org", "@example.net")) or e in ("admin", "you")]
+        if placeholders:
+            problems.append("ADMIN_EMAILS contains placeholder address(es): " + ", ".join(placeholders)
+                            + " (anyone who registers one becomes admin)")
+        if self.database_url.startswith("sqlite"):
+            problems.append("DATABASE_URL is SQLite; use Postgres for multi-worker production")
+        return problems
+
+    def validate_production_policy(self) -> None:
+        if self.app_env == "production":
+            problems = self.production_problems()
+            if problems:
+                raise RuntimeError("Unsafe production configuration:\n  - " + "\n  - ".join(problems))
+
     @property
     def resolved_database_url(self) -> str:
         if self.database_url.startswith("sqlite+aiosqlite:///./"):

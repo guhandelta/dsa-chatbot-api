@@ -39,6 +39,7 @@ async def lifespan(app: FastAPI):
         # Validate image pinning and CLI availability before accepting requests.
         from app.services.container_executor import command
         command(["true"], _root, "dsa-startup-validation")
+    settings.validate_production_policy()
     # Create tables on startup (use Alembic migrations once you deploy)
     await init_db()
     from app.services.maintenance import worker
