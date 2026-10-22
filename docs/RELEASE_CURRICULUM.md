@@ -96,8 +96,27 @@ npm run build
   tests use stubs; no paid LLM/embedding calls were made for this change.
 - Replace the existing subprocess executor with a real sandbox before running
   untrusted code in a public deployment. Static screening is not isolation.
-- TypeScript, embedded systems, frameworks, and design patterns are deferred.
+- Embedded systems, frameworks, and design patterns are deferred. TypeScript, Ruby,
+  Go and C# have the same 12-stage path and now execute in the sandbox (below).
 
 Evaluation access uses the existing learning-event table. Subsequent request and
 practice integrity fixes require migration 0005; see the confirmed-fixes guide.
 Local JDK configuration is machine-specific.
+
+## Execution sandbox image
+
+`EXEC_BACKEND=docker` runs submissions in the image pinned by
+`EXEC_CONTAINER_IMAGE`. `sandbox/Dockerfile` builds it with Python, Node, Java,
+C, C++, Rust, Ruby, TypeScript (tsc), Go and the .NET SDK:
+
+```sh
+docker build -t dsa-verification:<date> sandbox/
+docker images --no-trunc dsa-verification:<date>   # copy the sha256:<id> into EXEC_CONTAINER_IMAGE
+```
+
+Ruby, TypeScript, Go and C# run through `app/services/script_runners.py`. Results
+are written to a per-run token-named file rather than stdout. Go's standard
+library is pre-compiled into a read-only cache baked into the image (add imports
+to the warm list in the Dockerfile if a package fails to build), and C# is
+compiled with Roslyn directly. With an older image these four languages report
+"unverified" instead of grading.

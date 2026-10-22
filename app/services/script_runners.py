@@ -1,11 +1,11 @@
 """Execution of Ruby, TypeScript, Go and C# solutions against test cases.
 
-Ruby and TypeScript are handed the cases as data (Ruby reads JSON from stdin,
+Ruby and TypeScript are handed the cases as data (Ruby reads cases.json,
 TypeScript has them embedded as a literal because the sandbox image carries no
 Node type declarations). Go and C# are statically typed, so, like the other
 compiled languages, the cases are emitted as native literals from the types
 inferred from the test data (`exec_harness.infer_types`) and only the answers
-are printed. Anything the type inference cannot express is reported as
+are recorded. Anything the type inference cannot express is reported as
 "unverified", never as a pass.
 
 Results never travel on stdout, where a solution could print a forged line or
@@ -60,19 +60,19 @@ import (
 \t"strings"
 )
 
-var results []string
+var _dsaResults []string
 
-func emit(v any) {{
+func _dsaEmit(v any) {{
 \tout, _ := json.Marshal(v)
 \tif string(out) == "null" {{
 \t\tout = []byte("[]")
 \t}}
-\tresults = append(results, string(out))
+\t_dsaResults = append(_dsaResults, string(out))
 }}
 
 func main() {{
 {body}
-\tos.WriteFile("{result}", []byte("["+strings.Join(results, ",")+"]"), 0o644)
+\tos.WriteFile("{result}", []byte("["+strings.Join(_dsaResults, ",")+"]"), 0o644)
 }}
 '''
 
@@ -134,7 +134,7 @@ def render_go(solution: str, fn: str, cases: list, sig: TypeSig, width: str, res
     body = []
     for case in cases:
         args = ", ".join(_go_literal(v, t, width) for v, t in zip(case, sig.args))
-        body.append(f"\temit({fn}({args}))")
+        body.append(f"\t_dsaEmit({fn}({args}))")
     return {
         "go.mod": "module m\n\ngo 1.21\n",
         "solution.go": "package main\n\n" + solution + "\n",

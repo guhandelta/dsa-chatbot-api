@@ -40,7 +40,7 @@ def test_go_harness_embeds_typed_literals_and_names_the_function():
     sig = exec_harness.infer_types(cases, [1, 0])
     files = script_runners.render_go('func f(v []int, s string) int { return len(v) }', 'f', cases, sig, 'int', 'r.json')
     assert files['solution.go'].startswith('package main')
-    assert 'emit(f([]int{1, 2}, "a"))' in files['main.go'] and 'emit(f([]int{}, "b"))' in files['main.go']
+    assert '_dsaEmit(f([]int{1, 2}, "a"))' in files['main.go'] and '_dsaEmit(f([]int{}, "b"))' in files['main.go']
     assert '[]int64{' in script_runners.render_go('', 'f', cases, sig, 'int64', 'r.json')['main.go']
 
 
