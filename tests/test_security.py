@@ -195,3 +195,24 @@ def test_javascript_runtime_access_blocked(code):
 ])
 def test_javascript_dsa_allowed(code):
     assert screen(code, 'javascript').allowed
+
+
+@pytest.mark.parametrize('code', [
+    "const fs = require('fs')",
+    "import('node:fs')",
+    "process.env.SECRET",
+    "this.constructor.constructor('return process')()",
+    r"const load = require; load('fs')",
+    "console.log(`${process.env.X}`)",
+])
+def test_typescript_runtime_access_blocked(code):
+    assert screen(code, 'typescript').verdict == 'block'
+
+
+@pytest.mark.parametrize('code', [
+    'class Stack { constructor() { this.items = []; } }',
+    'function process(tasks: number[]): number { return tasks.length; }',
+    "// @ts-ignore require('fs') in a comment\nconst msg = 'process.env';",
+])
+def test_typescript_dsa_allowed(code):
+    assert screen(code, 'typescript').allowed
