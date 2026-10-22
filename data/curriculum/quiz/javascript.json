@@ -1,7 +1,7 @@
 {
  "language": "javascript",
  "version": 1,
- "note": "Authored Study Room quiz items. Code items are validated by execution.",
+ "note": "Authored Study Room quiz items. Code items are validated by execution. Module assessments (js-m-*) are validated by execution: snippets were run under local Node and Node 18 (Docker); import()-from-data:-URL snippets keep ES-module behaviour runnable without .mjs files. Claims about NaN/-0/sort, ?? vs ||, microtask order, async/promise flow, AbortController/AbortSignal.any/throwIfAborted and live bindings were executed; fetch-404 (ok false, no rejection), .mjs/.cjs/package.json type rules, extensionless relative specifiers and __dirname in ESM were also executed with real files under Node 22 and Node 18.",
  "items": [
   {
    "id": "js-s01-code",
@@ -1056,6 +1056,921 @@
     }
    ],
    "explanation": "Check before adding so the set only contains earlier elements."
+  },
+  {
+   "id": "js-m-closures-this-prototypes-mcq",
+   "node": "module-closures-this-prototypes",
+   "type": "mcq",
+   "concept": "closure-binding",
+   "prompt": "makeCounter() declares a local variable and returns an inner function that reads and updates it. After makeCounter has returned, the inner function is called. What is true of that variable?",
+   "choices": [
+    "The inner function received a frozen copy of its value when it was created",
+    "The variable is destroyed on return, so the call throws a ReferenceError",
+    "The inner function still reads and updates the same variable",
+    "The variable is moved onto the global object"
+   ],
+   "answer": 2,
+   "explanation": "A closure captures the binding, not a snapshot of its value, and keeps it reachable after the outer function returns."
+  },
+  {
+   "id": "js-m-closures-this-prototypes-mcq-code-loop",
+   "node": "module-closures-this-prototypes",
+   "type": "mcq_code",
+   "concept": "let-per-iteration",
+   "prompt": "What does this print?",
+   "code": "const fns = [];\nfor (let i = 0; i < 3; i++) {\n  fns.push(() => i);\n}\nlet x = 10;\nconst show = () => x;\nx = 20;\nconsole.log(fns.map(f => f()).join(','), show());",
+   "choices": [
+    "3,3,3 20",
+    "0,1,2 20",
+    "0,1,2 10",
+    "3,3,3 10"
+   ],
+   "answer": 1,
+   "explanation": "`let` in a for loop creates a fresh binding per iteration, so the callbacks see 0, 1, 2. `show` captured the binding x, not the value 10, so it sees the later assignment."
+  },
+  {
+   "id": "js-m-closures-this-prototypes-short-counter",
+   "node": "module-closures-this-prototypes",
+   "type": "short_answer",
+   "concept": "closure-state",
+   "prompt": "Type exactly what this prints.",
+   "code": "function makeCounter() {\n  let n = 0;\n  return () => ++n;\n}\nconst a = makeCounter();\nconst b = makeCounter();\na(); a();\nconsole.log(a(), b());",
+   "answer": "3 1",
+   "explanation": "Each makeCounter() call creates its own n; a() runs three times (3) and b() once (1)."
+  },
+  {
+   "id": "js-m-closures-this-prototypes-short-this",
+   "node": "module-closures-this-prototypes",
+   "type": "short_answer",
+   "concept": "this-binding",
+   "prompt": "Type exactly what this prints (the four values, separated by single spaces).",
+   "code": "const o = { n: 'obj', get() { return this?.n ?? 'lost'; } };\nconst g = o.get;\nconst h = o.get.bind({ n: 'bound' });\nconsole.log(o.get(), g(), h(), [1].map(o.get)[0]);",
+   "answer": "obj lost bound lost",
+   "explanation": "o.get() is a method call (this is o). g() and the map callback call the function plainly, so this is not o. bind fixes this to the given object."
+  },
+  {
+   "id": "js-m-closures-this-prototypes-mcq-code-proto",
+   "node": "module-closures-this-prototypes",
+   "type": "mcq_code",
+   "concept": "prototype-lookup",
+   "prompt": "What does this print?",
+   "code": "class Dog {\n  bark() { return 'woof'; }\n}\nconst d1 = new Dog();\nconst d2 = new Dog();\nconsole.log(d1.bark === d2.bark, Object.hasOwn(d1, 'bark'), 'bark' in d1);",
+   "choices": [
+    "false false true",
+    "true false true",
+    "true true true",
+    "false true false"
+   ],
+   "answer": 1,
+   "explanation": "Class methods live once on Dog.prototype and are shared (same function). They are not own properties of the instances, but `in` follows the prototype chain."
+  },
+  {
+   "id": "js-m-closures-this-prototypes-explain",
+   "node": "module-closures-this-prototypes",
+   "type": "explain",
+   "concept": "this-lost-callback",
+   "prompt": "A class method uses this.name. After the code passes it as a callback, `button.onClick(user.greet)`, the method fails because it no longer sees the user. In your own words, why does that happen, and name one way to fix it.",
+   "answer": "The value of this depends on how a function is called, not where it was defined. Passing user.greet hands over the bare function, which is later called plainly rather than as user.greet(), so this is undefined (strict mode) or the global object instead of user. Fix it by binding the method (user.greet.bind(user)) or wrapping it in an arrow function that calls user.greet().",
+   "keywords": [
+    [
+     "how it is called",
+     "how the function is called",
+     "called plainly",
+     "plain call",
+     "plain function",
+     "not called on",
+     "not as a method",
+     "without the object",
+     "detached",
+     "receiver",
+     "call site",
+     "call-site",
+     "invoked",
+     "called as a",
+     "regular function",
+     "normal function",
+     "called on",
+     "call was made",
+     "way it is called",
+     "way it's called",
+     "how it's called",
+     "how you call",
+     "the caller"
+    ],
+    [
+     "bind",
+     "arrow",
+     "wrapper",
+     "wrap",
+     "=>"
+    ],
+    [
+     "undefined",
+     "global object",
+     "globalthis",
+     "window",
+     "strict mode",
+     "loses",
+     "lost",
+     "no longer",
+     "anymore"
+    ]
+   ]
+  },
+  {
+   "id": "js-m-closures-this-prototypes-fix-bug",
+   "node": "module-closures-this-prototypes",
+   "type": "fix_bug",
+   "concept": "var-loop-closure",
+   "prompt": "squares(n) should return [0, 1, 4, ...] (the squares of 0..n-1) by calling closures created in a loop, but every closure sees the same variable. Fix it.",
+   "code": "function squares(n) {\n  var fns = [];\n  for (var i = 0; i < n; i++) {\n    fns.push(() => i * i);\n  }\n  return fns.map(f => f());\n}",
+   "fn": "squares",
+   "solution": "function squares(n) {\n  var fns = [];\n  for (let i = 0; i < n; i++) {\n    fns.push(() => i * i);\n  }\n  return fns.map(f => f());\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": [
+      0
+     ]
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": [
+      0,
+      1
+     ]
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": [
+      0,
+      1,
+      4
+     ]
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": [
+      0,
+      1,
+      4,
+      9
+     ]
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": [
+      0,
+      1,
+      4,
+      9,
+      16
+     ]
+    }
+   ],
+   "explanation": "`var i` is one shared variable, so each closure sees its final value. `let` gives each iteration its own binding."
+  },
+  {
+   "id": "js-m-coercion-mcq",
+   "node": "module-coercion",
+   "type": "mcq",
+   "concept": "nullish-vs-or",
+   "prompt": "x holds the number 0. Which pair of results is right for `x ?? 1` and `x || 1`?",
+   "choices": [
+    "1 and 0",
+    "1 and 1",
+    "0 and 1",
+    "0 and 0"
+   ],
+   "answer": 2,
+   "explanation": "`??` replaces only null and undefined, so 0 stays 0. `||` replaces any falsy value, and 0 is falsy, so it gives 1."
+  },
+  {
+   "id": "js-m-coercion-mcq-code-sort",
+   "node": "module-coercion",
+   "type": "mcq_code",
+   "concept": "default-sort",
+   "prompt": "What does this print?",
+   "code": "console.log([10, 9, 1].sort().join(','), '10' < '9', '10' < 9);",
+   "choices": [
+    "1,9,10 false true",
+    "9,10,1 true false",
+    "1,10,9 true false",
+    "1,9,10 true false"
+   ],
+   "answer": 2,
+   "explanation": "sort() without a comparator compares elements as strings, so '10' sorts before '9'. Two strings compare by code unit ('10' < '9'), but a string against a number is converted numerically, so '10' < 9 is false."
+  },
+  {
+   "id": "js-m-coercion-short-conv",
+   "node": "module-coercion",
+   "type": "short_answer",
+   "concept": "conversion",
+   "prompt": "Type exactly what this prints (seven values separated by single spaces).",
+   "code": "console.log(1 + '2', '3' - 1, Number('12px'), parseInt('12px', 10), Number(''), null == 0, null == undefined);",
+   "answer": "12 2 NaN 12 0 false true",
+   "explanation": "+ with a string concatenates, - converts to numbers; Number is strict (NaN for '12px', 0 for ''), parseInt reads a prefix; null == 0 is false but null == undefined is true."
+  },
+  {
+   "id": "js-m-coercion-short-equality",
+   "node": "module-coercion",
+   "type": "short_answer",
+   "concept": "sameness",
+   "prompt": "Type exactly what this prints (four values separated by single spaces).",
+   "code": "console.log([NaN].includes(NaN), [NaN].indexOf(NaN), Object.is(0, -0), 0 === -0);",
+   "answer": "true -1 false true",
+   "explanation": "includes uses SameValueZero (finds NaN); indexOf uses === (does not). Object.is tells 0 and -0 apart; === does not."
+  },
+  {
+   "id": "js-m-coercion-explain",
+   "node": "module-coercion",
+   "type": "explain",
+   "concept": "default-sort",
+   "prompt": "`[10, 9, 1].sort()` returns `[1, 10, 9]`. Explain why, and what you change to get numeric ascending order.",
+   "answer": "Without a comparator, sort converts every element to a string and compares them as text, character by character (UTF-16 code units), so '10' comes before '9' because '1' is less than '9'. Pass a comparator such as (a, b) => a - b to compare them as numbers.",
+   "keywords": [
+    [
+     "string",
+     "text"
+    ],
+    [
+     "comparator",
+     "compare function",
+     "(a, b)",
+     "(a,b)",
+     "a - b",
+     "a-b",
+     "callback",
+     "subtract",
+     "compare fn",
+     "comparefn",
+     "pass a function",
+     "custom function"
+    ],
+    [
+     "first character",
+     "character by character",
+     "code unit",
+     "utf-16",
+     "lexicographic",
+     "dictionary",
+     "alphabetic",
+     "first digit",
+     "digit",
+     "character",
+     "unicode",
+     "code point",
+     "letter"
+    ]
+   ]
+  },
+  {
+   "id": "js-m-coercion-fix-bug",
+   "node": "module-coercion",
+   "type": "fix_bug",
+   "concept": "default-sort",
+   "prompt": "sortNumbers(a) should return the numbers in ascending numeric order, but the result is wrong for some inputs. Fix it.",
+   "code": "function sortNumbers(a) {\n  return [...a].sort();\n}",
+   "fn": "sortNumbers",
+   "solution": "function sortNumbers(a) {\n  return [...a].sort((x, y) => x - y);\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       10,
+       9,
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      9,
+      10
+     ]
+    },
+    {
+     "args": [
+      [
+       100,
+       25,
+       3
+      ]
+     ],
+     "expected": [
+      3,
+      25,
+      100
+     ]
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       3,
+       2,
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       -10,
+       2
+      ]
+     ],
+     "expected": [
+      -10,
+      -1,
+      2
+     ]
+    },
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    }
+   ],
+   "explanation": "The default sort compares as strings; a numeric comparator fixes the order."
+  },
+  {
+   "id": "js-m-coercion-write",
+   "node": "module-coercion",
+   "type": "write_snippet",
+   "concept": "falsy-zero",
+   "prompt": "counts is an array of numbers (0 is a valid stored count). Write countOrDefault(counts, i, d) that returns counts[i], or d when there is no entry at index i. A stored 0 must be returned as 0.",
+   "starter": "function countOrDefault(counts, i, d) {\n  \n}",
+   "fn": "countOrDefault",
+   "solution": "function countOrDefault(counts, i, d) {\n  return counts[i] ?? d;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       0,
+       4
+      ],
+      0,
+      9
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       4
+      ],
+      1,
+      9
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       0,
+       4
+      ],
+      2,
+      9
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [],
+      0,
+      -1
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       7
+      ],
+      5,
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       0
+      ],
+      0,
+      5
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "`||` would replace a stored 0; `??` only replaces undefined/null."
+  },
+  {
+   "id": "js-m-event-loop-mcq-sync",
+   "node": "module-event-loop",
+   "type": "mcq",
+   "concept": "run-to-completion",
+   "prompt": "A click handler runs a synchronous loop that takes three seconds. The user clicks another button during those three seconds. What happens?",
+   "choices": [
+    "The second click runs immediately, between iterations of the loop",
+    "The second click's handler runs on a second JavaScript thread",
+    "The second click's handler waits until the loop has finished",
+    "The second click is discarded and never delivered"
+   ],
+   "answer": 2,
+   "explanation": "JavaScript jobs run to completion on one thread. The event waits in the task queue until the running code returns."
+  },
+  {
+   "id": "js-m-event-loop-mcq-starve",
+   "node": "module-event-loop",
+   "type": "mcq",
+   "concept": "microtask-starvation",
+   "prompt": "A microtask keeps scheduling another microtask, forever. What happens to a pending setTimeout(fn, 0) callback?",
+   "choices": [
+    "It runs between microtasks, because timers have higher priority",
+    "It runs after a short delay, once the browser clamps the microtasks",
+    "It runs as soon as the queue holds more than ten microtasks",
+    "It never runs, because microtasks are drained first"
+   ],
+   "answer": 3,
+   "explanation": "After each task the host drains the microtask queue, including microtasks added while draining, so the timer task starves."
+  },
+  {
+   "id": "js-m-event-loop-mcq-code",
+   "node": "module-event-loop",
+   "type": "mcq_code",
+   "concept": "tasks-vs-microtasks",
+   "prompt": "In what order are the letters printed?",
+   "code": "console.log('A');\nsetTimeout(() => console.log('B'), 0);\nPromise.resolve().then(() => console.log('C'));\nconsole.log('D');",
+   "choices": [
+    "A D B C",
+    "A B C D",
+    "A D C B",
+    "A C D B"
+   ],
+   "answer": 2,
+   "explanation": "A and D are synchronous. The promise reaction is a microtask (C), which runs before the timer task (B)."
+  },
+  {
+   "id": "js-m-event-loop-short-order",
+   "node": "module-event-loop",
+   "type": "short_answer",
+   "concept": "queue-order",
+   "prompt": "Type exactly what this prints (seven tokens separated by single spaces).",
+   "code": "setTimeout(() => console.log('T1'), 0);\nPromise.resolve().then(() => {\n  console.log('M1');\n  queueMicrotask(() => console.log('M3'));\n}).then(() => console.log('M2'));\nqueueMicrotask(() => console.log('Q'));\nsetTimeout(() => console.log('T2'), 0);\nconsole.log('S');",
+   "answer": "S M1 Q M3 M2 T1 T2",
+   "explanation": "Synchronous code first, then all microtasks in FIFO order (a microtask added while draining still runs before any timer; M2 is queued only after M1 finishes, behind M3), then the timers in order."
+  },
+  {
+   "id": "js-m-event-loop-short-await",
+   "node": "module-event-loop",
+   "type": "short_answer",
+   "concept": "await-ordering",
+   "prompt": "Type exactly what this prints (three digits separated by single spaces).",
+   "code": "async function f() {\n  console.log('1');\n  await null;\n  console.log('3');\n}\nf();\nconsole.log('2');",
+   "answer": "1 2 3",
+   "explanation": "An async function runs synchronously until its first await; the rest resumes later as a microtask, after the caller's own code."
+  },
+  {
+   "id": "js-m-event-loop-explain",
+   "node": "module-event-loop",
+   "type": "explain",
+   "concept": "async-not-parallel",
+   "prompt": "A search function is declared `async` and contains a long CPU-heavy loop. While it runs, the page becomes unresponsive. A teammate says 'it's async, so it can't hold anything up'. Explain why that is wrong and how you could fix it.",
+   "answer": "Async functions still run on the single JavaScript thread and run to completion until they hit an await on something pending. A long synchronous loop keeps the thread busy, so no other task, timer, input event or rendering can run until it returns. Fix it by splitting the work into chunks and yielding between them (for example with a timer), or by moving it into a worker.",
+   "keywords": [
+    [
+     "single thread",
+     "one thread",
+     "same thread",
+     "run to completion",
+     "runs to completion",
+     "one at a time",
+     "one thing at a time",
+     "main thread"
+    ],
+    [
+     "until it finishes",
+     "until it returns",
+     "other tasks",
+     "timers",
+     "input",
+     "rendering",
+     "repaint",
+     "nothing else",
+     "until the loop",
+     "block",
+     "busy",
+     "clicks"
+    ],
+    [
+     "worker",
+     "chunk",
+     "yield",
+     "split",
+     "break up",
+     "smaller pieces"
+    ]
+   ]
+  },
+  {
+   "id": "js-m-promises-async-mcq-throw",
+   "node": "module-promises-async",
+   "type": "mcq",
+   "concept": "async-return",
+   "prompt": "An async function's body throws an Error before its first await. What does calling the function return?",
+   "choices": [
+    "A promise that is rejected with that error",
+    "Nothing: the error is thrown synchronously at the call",
+    "undefined, and the error is silently dropped",
+    "A fulfilled promise whose value is the Error object"
+   ],
+   "answer": 0,
+   "explanation": "An async function always returns a promise; a thrown error rejects it instead of propagating synchronously."
+  },
+  {
+   "id": "js-m-promises-async-mcq-code-chain",
+   "node": "module-promises-async",
+   "type": "mcq_code",
+   "concept": "promise-chain",
+   "prompt": "Which lines are printed, in order?",
+   "code": "Promise.resolve(1)\n  .then(v => { throw new Error('bad' + v); })\n  .then(() => console.log('skipped'))\n  .catch(e => { console.log(e.message); return 'recovered'; })\n  .then(v => console.log(v))\n  .finally(() => console.log('done'));",
+   "choices": [
+    "bad1 / skipped / recovered / done",
+    "bad1 / recovered",
+    "recovered / done",
+    "bad1 / recovered / done"
+   ],
+   "answer": 3,
+   "explanation": "The throw skips the next then, catch handles it and returns a value, the next then prints the recovered value, and finally runs last."
+  },
+  {
+   "id": "js-m-promises-async-short",
+   "node": "module-promises-async",
+   "type": "short_answer",
+   "concept": "async-ordering",
+   "prompt": "Type exactly what this prints (separated by single spaces).",
+   "code": "async function f() { return 1; }\nasync function g() { throw new Error('x'); }\nconst p = f();\nconsole.log(p instanceof Promise, typeof p.then);\ng().catch(e => console.log('caught', e.message));\n(async () => {\n  try { await g(); } catch (e) { console.log('try', e.message); }\n  console.log('after');\n})();\nconsole.log('sync');",
+   "answer": "true function sync caught x try x after",
+   "explanation": "The async function returns a promise immediately; 'sync' prints before any reaction. The rejection handlers then run as microtasks in the order they were registered; await throws at the await so try/catch handles it."
+  },
+  {
+   "id": "js-m-promises-async-mcq-fetch",
+   "node": "module-promises-async",
+   "type": "mcq",
+   "concept": "fetch-http-error",
+   "prompt": "fetch('/missing') reaches the server, which answers with HTTP 404. What does the returned promise do?",
+   "choices": [
+    "It rejects with an HTTPError object that carries status 404",
+    "It rejects with a TypeError describing the failed request",
+    "It throws synchronously at the call, before any promise exists",
+    "It fulfills with a Response whose ok is false"
+   ],
+   "answer": 3,
+   "explanation": "fetch rejects for network and abort failures; an HTTP error status still resolves to a Response, so check response.ok before parsing."
+  },
+  {
+   "id": "js-m-promises-async-mcq-await",
+   "node": "module-promises-async",
+   "type": "mcq",
+   "concept": "await-nonblocking",
+   "prompt": "An async function is paused at an await on a promise that is still pending. What happens to the rest of the program?",
+   "choices": [
+    "Every other piece of code waits until that promise settles",
+    "Other code keeps running; the function resumes once it settles",
+    "The function is cancelled if the promise takes longer than the current task",
+    "The JavaScript engine starts a second thread to run the rest of the program"
+   ],
+   "answer": 1,
+   "explanation": "await suspends only that async function's continuation; the thread is free to run other work."
+  },
+  {
+   "id": "js-m-promises-async-explain",
+   "node": "module-promises-async",
+   "type": "explain",
+   "concept": "promise-all-cancel",
+   "prompt": "Three requests are started and combined with Promise.all. One of them fails straight away. Does the code stop the other two? Explain, and say what real cancellation would need.",
+   "answer": "No. Promise.all just settles early with the first failure; it does not cancel the other operations, which keep running and whose results are ignored. Real cancellation has to be supported by the underlying API, typically by passing an AbortSignal from an AbortController to each request.",
+   "keywords": [
+    [
+     "not cancel",
+     "doesn't cancel",
+     "does not cancel",
+     "keep running",
+     "keeps running",
+     "still run",
+     "still running",
+     "continue",
+     "no cancel",
+     "not stop",
+     "doesn't stop",
+     "does not stop",
+     "isn't cancelled",
+     "not cancelled",
+     "keep going",
+     "keeps going",
+     "carry on",
+     "carries on",
+     "still go",
+     "not canceled",
+     "isn't canceled",
+     "aren't cancelled",
+     "aren't canceled",
+     "doesn't abort",
+     "does not abort"
+    ],
+    [
+     "abortsignal",
+     "abortcontroller",
+     "signal",
+     "abort"
+    ],
+    [
+     "underlying",
+     "each request",
+     "each operation",
+     "supported by",
+     "cooperat",
+     "api itself",
+     "ignored",
+     "thrown away",
+     "discard",
+     "each fetch",
+     "each call",
+     "each of them",
+     "every request",
+     "each one"
+    ]
+   ]
+  },
+  {
+   "id": "js-m-abort-controller-mcq-reason",
+   "node": "module-abort-controller",
+   "type": "mcq",
+   "concept": "abort-reason",
+   "prompt": "controller.abort() is called with no argument. What is controller.signal.reason afterwards?",
+   "choices": [
+    "undefined",
+    "A DOMException named AbortError",
+    "A DOMException named TimeoutError",
+    "The string \"aborted\""
+   ],
+   "answer": 1,
+   "explanation": "Without an argument the reason is a DOMException named AbortError (TimeoutError is for AbortSignal.timeout)."
+  },
+  {
+   "id": "js-m-abort-controller-short-basic",
+   "node": "module-abort-controller",
+   "type": "short_answer",
+   "concept": "abort-idempotent",
+   "prompt": "Type exactly what this prints (two output lines, written on one line separated by a single space).",
+   "code": "const c = new AbortController();\nlet fired = 0;\nc.signal.addEventListener('abort', () => fired++);\nconsole.log(c.signal.aborted);\nc.abort();\nc.abort();\nconsole.log(c.signal.aborted, fired, c.signal.reason.name);",
+   "answer": "false true 1 AbortError",
+   "explanation": "abort() is idempotent: the abort event fires once and the reason is the default AbortError."
+  },
+  {
+   "id": "js-m-abort-controller-short-reason",
+   "node": "module-abort-controller",
+   "type": "short_answer",
+   "concept": "abort-custom-reason",
+   "prompt": "Type exactly what this prints (separated by single spaces).",
+   "code": "const c = new AbortController();\nc.abort(new Error('user left'));\nconsole.log(c.signal.reason.message, c.signal.reason instanceof Error);\ntry { c.signal.throwIfAborted(); } catch (e) { console.log('threw', e.message); }\nconst c2 = new AbortController();\nc2.signal.throwIfAborted();\nconsole.log('ok');",
+   "answer": "user left true threw user left ok",
+   "explanation": "A custom reason is stored as given; throwIfAborted throws that reason on an aborted signal and does nothing otherwise."
+  },
+  {
+   "id": "js-m-abort-controller-short-any",
+   "node": "module-abort-controller",
+   "type": "short_answer",
+   "concept": "abort-combined",
+   "prompt": "Type exactly what this prints (three values separated by single spaces).",
+   "code": "const t = AbortSignal.timeout(10);\nconst c = new AbortController();\nconst any = AbortSignal.any([t, c.signal]);\nc.abort();\nconsole.log(any.aborted, any.reason.name, t.aborted);",
+   "answer": "true AbortError false",
+   "explanation": "AbortSignal.any aborts as soon as any input aborts, with that input's reason; the 10 ms timeout signal has not fired yet."
+  },
+  {
+   "id": "js-m-abort-controller-mcq-code-coop",
+   "node": "module-abort-controller",
+   "type": "mcq_code",
+   "concept": "cooperative-cancel",
+   "prompt": "What does this print?",
+   "code": "let sum = 0;\nconst c = new AbortController();\nc.signal.addEventListener('abort', () => console.log('abort event'));\nfor (let i = 1; i <= 3; i++) {\n  sum += i;\n  if (i === 1) c.abort();\n}\nconsole.log(sum, c.signal.aborted);",
+   "choices": [
+    "abort event / 1 true",
+    "6 true",
+    "abort event / 6 true",
+    "abort event / 6 false"
+   ],
+   "answer": 2,
+   "explanation": "Aborting fires the event but does not interrupt the loop: nothing in it checks the signal, so all three iterations run."
+  },
+  {
+   "id": "js-m-abort-controller-mcq-reuse",
+   "node": "module-abort-controller",
+   "type": "mcq",
+   "concept": "abort-one-way",
+   "prompt": "A request was cancelled with controller.abort(). The user retries. What is the correct way to get a fresh cancellable request?",
+   "choices": [
+    "Call controller.reset() and reuse the same controller",
+    "Create a new AbortController for the new request",
+    "Set controller.signal.aborted = false",
+    "Call controller.abort() once more to toggle it back"
+   ],
+   "answer": 1,
+   "explanation": "Aborting is one-way and a controller cannot be reset; create a new controller (and signal) per operation."
+  },
+  {
+   "id": "js-m-abort-controller-explain",
+   "node": "module-abort-controller",
+   "type": "explain",
+   "concept": "cooperative-cancel",
+   "prompt": "A teammate calls controller.abort() to stop a function that runs a long synchronous loop and never looks at the controller. They expect the loop to stop. Does it, and what must the function do for cancellation to work? Does aborting also undo work that has already been done?",
+   "answer": "No. Cancellation is cooperative: the loop only stops if it checks the signal (signal.aborted or throwIfAborted) between chunks or listens for the abort event and then rejects or throws. Aborting does not undo side effects already performed, such as a request the server already processed.",
+   "keywords": [
+    [
+     "cooperat",
+     "unless it checks",
+     "must check",
+     "has to check",
+     "never checks",
+     "not check",
+     "only works if",
+     "only stops if",
+     "opt in",
+     "opt-in"
+    ],
+    [
+     "throwifaborted",
+     ".aborted",
+     "abort event",
+     "listen",
+     "addeventlistener"
+    ],
+    [
+     "undo",
+     "side effect",
+     "already done",
+     "already processed",
+     "roll back",
+     "rollback"
+    ]
+   ]
+  },
+  {
+   "id": "js-m-modules-mcq-ext",
+   "node": "module-modules",
+   "type": "mcq",
+   "concept": "esm-detection",
+   "prompt": "In Node.js, which file name is treated as an ES module regardless of what package.json says?",
+   "choices": [
+    "app.js",
+    "app.cjs",
+    "app.mjs",
+    "app.node"
+   ],
+   "answer": 2,
+   "explanation": ".mjs is always ESM and .cjs always CommonJS; .js depends on the package's \"type\" field."
+  },
+  {
+   "id": "js-m-modules-mcq-code-live",
+   "node": "module-modules",
+   "type": "mcq_code",
+   "concept": "live-bindings",
+   "prompt": "counter.js and main.js are both ES modules. What does main.js print?",
+   "code": "// counter.js\nexport let n = 0;\nexport function inc() { n++; }\n\n// main.js\nimport { n, inc } from './counter.js';\ninc();\ninc();\nconsole.log(n);",
+   "choices": [
+    "0",
+    "1",
+    "ReferenceError",
+    "2"
+   ],
+   "answer": 3,
+   "explanation": "An imported binding is a live read-only view of the exported variable, not a copy, so it reflects the increments."
+  },
+  {
+   "id": "js-m-modules-short-live",
+   "node": "module-modules",
+   "type": "short_answer",
+   "concept": "live-bindings",
+   "prompt": "This runs a tiny ES module from a data: URL. Type exactly what it prints (two numbers separated by a space).",
+   "code": "(async () => {\n  const url = 'data:text/javascript,export let n = 0; export function inc() { n++; }';\n  const m = await import(url);\n  const copy = m.n;\n  m.inc();\n  m.inc();\n  console.log(copy, m.n);\n})();",
+   "answer": "0 2",
+   "explanation": "`copy` is an ordinary copy made at that moment (0); m.n is the live exported binding (2 after two inc() calls)."
+  },
+  {
+   "id": "js-m-modules-short-dyn",
+   "node": "module-modules",
+   "type": "short_answer",
+   "concept": "dynamic-import",
+   "prompt": "This also imports a module from a data: URL. Type exactly what it prints (two output lines, written on one line separated by a single space).",
+   "code": "// A one-line module made from a data: URL, so the whole snippet fits in one file.\nconst p = import('data:text/javascript,export default 7; export const a = 1;');\nconsole.log(p instanceof Promise);\np.then(m => console.log(Object.keys(m).sort().join(','), m.default));",
+   "answer": "true a,default 7",
+   "explanation": "import() returns a promise immediately; the module namespace arrives later with the named and default exports."
+  },
+  {
+   "id": "js-m-modules-mcq-resolve",
+   "node": "module-modules",
+   "type": "mcq",
+   "concept": "module-resolution",
+   "prompt": "`import { walk } from './graph'` works in your Vite dev server but fails under plain Node.js ESM with a module-not-found error. What is the most likely cause?",
+   "choices": [
+    "Static import syntax is only allowed in browsers and bundlers, not in Node.js at all",
+    "The bundler rewrote the import into a dynamic import() call that Node.js rejects",
+    "Node ESM needs a file extension on relative paths, which the bundler let you omit",
+    "walk has to be exported as a default export before Node.js can find it"
+   ],
+   "answer": 2,
+   "explanation": "Bundlers accept extensionless specifiers and aliases that Node's ESM resolver does not; write './graph.js'."
+  },
+  {
+   "id": "js-m-modules-mcq-cjs",
+   "node": "module-modules",
+   "type": "mcq",
+   "concept": "esm-globals",
+   "prompt": "Which of these is NOT available inside an ES module in Node.js?",
+   "choices": [
+    "import.meta.url",
+    "__dirname",
+    "globalThis",
+    "process"
+   ],
+   "answer": 1,
+   "explanation": "In ESM, __dirname, __filename and require are not defined; use import.meta.url (or import.meta.dirname in recent Node.js)."
+  },
+  {
+   "id": "js-m-modules-explain",
+   "node": "module-modules",
+   "type": "explain",
+   "concept": "static-vs-dynamic-import",
+   "prompt": "How does a dynamic import() differ from a top-level `import ... from` declaration, and when would you choose it?",
+   "answer": "A top-level import is resolved and linked before the importing module's body runs, so everything it names is ready up front. import() returns a promise for the module namespace, loading on demand at run time, so you use it to load code conditionally or lazily, and you must handle a rejected promise.",
+   "keywords": [
+    [
+     "promise",
+     "async",
+     "asynchronous",
+     "await",
+     "then("
+    ],
+    [
+     "on demand",
+     "lazy",
+     "lazily",
+     "conditional",
+     "at run time",
+     "at runtime",
+     "when needed",
+     "only if",
+     "load later",
+     "loaded later"
+    ],
+    [
+     "before the",
+     "up front",
+     "upfront",
+     "ahead of time",
+     "hoist",
+     "linked",
+     "at the top",
+     "before any",
+     "top level",
+     "top-level"
+    ]
+   ]
   }
  ]
 }

@@ -2638,6 +2638,1061 @@
    ],
    "answer": 1,
    "explanation": "finally runs before the function actually returns, so 'cleanup ' is printed first, then the returned 'try'."
+  },
+  {
+   "id": "py-m-typing-mcq-unenforced",
+   "node": "module-typing",
+   "type": "mcq",
+   "concept": "hints-not-enforced",
+   "prompt": "A function is declared `def area(w: float, h: float) -> float`. Another part of the program calls `area('3', 'x')`. What does CPython do with the annotations when making that call?",
+   "choices": [
+    "It raises TypeError before the body runs, because the arguments do not match the hints",
+    "It converts both arguments to float, then runs the body",
+    "It does not check them; the body runs with the strings exactly as given",
+    "It prints a warning and then runs the body"
+   ],
+   "answer": 2,
+   "explanation": "CPython stores annotations but does not check them. Any failure here would come from the operations inside the body, not from the hints. Type checkers such as mypy and Pyright report the mismatch before running."
+  },
+  {
+   "id": "py-m-typing-mcq-optional",
+   "node": "module-typing",
+   "type": "mcq",
+   "concept": "optional",
+   "prompt": "What does the annotation `Optional[int]` (equivalently `int | None`) on a parameter tell a type checker?",
+   "choices": [
+    "The parameter has a default, so callers may leave the argument out",
+    "Checking of this parameter is skipped",
+    "Python raises TypeError at call time for any value that is neither int nor None",
+    "The value may be an int or None"
+   ],
+   "answer": 3,
+   "explanation": "Optional means the value may be None, not that the argument may be omitted. It is a hint for static tools; nothing is enforced at run time."
+  },
+  {
+   "id": "py-m-typing-mcq-protocol",
+   "node": "module-typing",
+   "type": "mcq",
+   "concept": "protocol",
+   "prompt": "A class defines a `neighbors(self, node)` method but does not inherit from a `Protocol` class that requires exactly that method. Where a variable is annotated with that Protocol, what does a type checker say about passing an instance of the class?",
+   "choices": [
+    "It accepts it: having the required methods is enough",
+    "It rejects it: the class must list the Protocol as a base class",
+    "It rejects it unless the Protocol is decorated with @runtime_checkable",
+    "It accepts it only if a TypeVar links the two types"
+   ],
+   "answer": 0,
+   "explanation": "Protocol is structural typing: a class matches if it has the required methods, mirroring duck typing. @runtime_checkable only affects isinstance checks at run time, and only checks that methods exist."
+  },
+  {
+   "id": "py-m-typing-mcq-code",
+   "node": "module-typing",
+   "type": "mcq_code",
+   "concept": "annotations-vs-runtime",
+   "prompt": "What does this print?",
+   "code": "def double(n: int) -> int:\n    return n * 2\n\nprint(double('ab'))",
+   "choices": [
+    "TypeError raised at the call",
+    "abab",
+    "ab",
+    "Nothing: the call is skipped"
+   ],
+   "answer": 1,
+   "explanation": "The `int` annotation is not enforced, so the call runs. 'ab' * 2 repeats the string, giving 'abab'. A type checker would flag the call, but running the program does not."
+  },
+  {
+   "id": "py-m-typing-short-cast",
+   "node": "module-typing",
+   "type": "short_answer",
+   "concept": "cast",
+   "code": "from typing import cast\n\nx = cast(int, '7')\nprint(type(x).__name__, x)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "str 7",
+   "explanation": "cast only tells the type checker to assume a type. At run time it returns the value unchanged, so x is still the string '7'."
+  },
+  {
+   "id": "py-m-typing-short-annotations",
+   "node": "module-typing",
+   "type": "short_answer",
+   "concept": "annotations-stored",
+   "code": "def f(a: int, b: str = 'x') -> bool:\n    return True\n\nprint(list(f.__annotations__))",
+   "prompt": "Type exactly what this prints.",
+   "answer": "['a', 'b', 'return']",
+   "explanation": "CPython stores annotations in the function's __annotations__ dict (parameters, then 'return') but never checks them."
+  },
+  {
+   "id": "py-m-typing-explain-boundary",
+   "node": "module-typing",
+   "type": "explain",
+   "concept": "validation-boundary",
+   "prompt": "A web handler is written as `def handle(user: dict[str, int])` and receives parsed JSON from clients. One client sends {'age': 'old'}. Explain why the annotation does not protect the handler and what the code should do.",
+   "answer": "Type hints are only read by static tools like mypy or Pyright; CPython does not check them when the function runs, so the bad value gets in anyway. Data arriving from outside the program (JSON, a database, a network) must be validated explicitly at run time, with checks or a validation library, before it is trusted.",
+   "keywords": [
+    [
+     "not enforced",
+     "does not check",
+     "doesn't check",
+     "no check",
+     "not checked",
+     "never checked",
+     "isn't enforced",
+     "not verified",
+     "aren't enforced",
+     "never looks",
+     "doesn't look",
+     "does not look",
+     "don't check",
+     "do not check",
+     "doesn't enforce",
+     "does not enforce",
+     "ignored by",
+     "no effect at run"
+    ],
+    [
+     "validat",
+     "verify",
+     "explicit check",
+     "check the data",
+     "check the fields",
+     "check the input",
+     "check the values",
+     "check yourself",
+     "sanitiz"
+    ],
+    [
+     "runtime",
+     "run time",
+     "at run",
+     "static",
+     "mypy",
+     "pyright",
+     "type checker"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-typing-fix-to-ints",
+   "node": "module-typing",
+   "type": "fix_bug",
+   "concept": "annotations-do-not-convert",
+   "prompt": "to_ints(values) is annotated to take a list[str] and return a list[int], but it returns the strings unchanged. Fix it so it returns the list of ints.",
+   "code": "def to_ints(values: list[str]) -> list[int]:\n    return values",
+   "fn": "to_ints",
+   "solution": "def to_ints(values: list[str]) -> list[int]:\n    return [int(v) for v in values]",
+   "tests": [
+    {
+     "args": [
+      [
+       "1",
+       "2",
+       "3"
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       "10",
+       "-4"
+      ]
+     ],
+     "expected": [
+      10,
+      -4
+     ]
+    },
+    {
+     "args": [
+      [
+       "007"
+      ]
+     ],
+     "expected": [
+      7
+     ]
+    },
+    {
+     "args": [
+      [
+       "5",
+       "5"
+      ]
+     ],
+     "expected": [
+      5,
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       "100",
+       "0",
+       "42"
+      ]
+     ],
+     "expected": [
+      100,
+      0,
+      42
+     ]
+    },
+    {
+     "args": [
+      [
+       "9007199254740993"
+      ]
+     ],
+     "expected": [
+      9007199254740993
+     ]
+    },
+    {
+     "args": [
+      [
+       " 12 ",
+       "-0"
+      ]
+     ],
+     "expected": [
+      12,
+      0
+     ]
+    }
+   ],
+   "explanation": "The -> list[int] annotation converts nothing. The function has to call int() on each element itself."
+  },
+  {
+   "id": "py-m-typing-write-first-or-default",
+   "node": "module-typing",
+   "type": "write_snippet",
+   "concept": "optional-handling",
+   "prompt": "Write first_or_default(xs, default) matching the hints: it returns the first element of a non-empty list, otherwise default.",
+   "starter": "def first_or_default(xs: list[int], default: int) -> int:\n    # return xs[0] when xs is non-empty, otherwise default\n    pass",
+   "fn": "first_or_default",
+   "solution": "def first_or_default(xs: list[int], default: int) -> int:\n    return xs[0] if xs else default",
+   "tests": [
+    {
+     "args": [
+      [
+       5,
+       6
+      ],
+      0
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [],
+      7
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      [
+       0
+      ],
+      9
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -1,
+       -2,
+       -3
+      ],
+      4
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      3
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "The empty list is falsy, so `xs[0] if xs else default` covers both cases. Note that a first element of 0 is still returned, because the test is on the list, not the element."
+  },
+  {
+   "id": "py-m-asyncio-mcq-coroutine",
+   "node": "module-asyncio",
+   "type": "mcq",
+   "concept": "coroutine-object",
+   "prompt": "Given `async def fetch(): ...` and the statement `x = fetch()` in ordinary code, what is x right after the statement?",
+   "choices": [
+    "The value that fetch returns, because the body runs immediately",
+    "A Task that is already scheduled on the event loop",
+    "None, until the event loop starts it",
+    "A coroutine object; the body has not started"
+   ],
+   "answer": 3,
+   "explanation": "Calling an async def function only creates a coroutine object. Its body runs once it is awaited or wrapped in a task. Forgetting await gives a 'never awaited' RuntimeWarning."
+  },
+  {
+   "id": "py-m-asyncio-mcq-cancel",
+   "node": "module-asyncio",
+   "type": "mcq",
+   "concept": "cancellederror",
+   "prompt": "A task is cancelled while it is suspended at an await that sits inside `try: ... except Exception: pass`. What happens to the cancellation?",
+   "choices": [
+    "The handler swallows it and the task keeps running",
+    "The handler turns it into a TimeoutError",
+    "It passes through; it is not an Exception subclass",
+    "The handler runs, but the task is cancelled afterwards anyway"
+   ],
+   "answer": 2,
+   "explanation": "CancelledError derives from BaseException (since 3.8), so `except Exception` does not catch it. Code that deliberately catches it for cleanup should re-raise it."
+  },
+  {
+   "id": "py-m-asyncio-mcq-blocking",
+   "node": "module-asyncio",
+   "type": "mcq",
+   "concept": "blocking-call",
+   "prompt": "Inside an `async def`, which call stops every other task on the event loop until it returns?",
+   "choices": [
+    "await asyncio.sleep(1)",
+    "time.sleep(1)",
+    "await asyncio.to_thread(time.sleep, 1)",
+    "await queue.get() on an empty asyncio.Queue"
+   ],
+   "answer": 1,
+   "explanation": "time.sleep is a synchronous call, so the single event-loop thread sits in it. The other three suspend only the current task or move the blocking work off the loop thread."
+  },
+  {
+   "id": "py-m-asyncio-mcq-gather",
+   "node": "module-asyncio",
+   "type": "mcq_code",
+   "concept": "gather-order",
+   "prompt": "What does this print?",
+   "code": "import asyncio\n\nasync def sq(n):\n    return n * n\n\nasync def main():\n    print(await asyncio.gather(sq(3), sq(1), sq(2)))\n\nasyncio.run(main())",
+   "choices": [
+    "[1, 4, 9]",
+    "[3, 1, 2]",
+    "[9, 1, 4]",
+    "[9, 4, 1]"
+   ],
+   "answer": 2,
+   "explanation": "asyncio.gather returns results in the order its arguments were given, not in completion order: 3*3, 1*1, 2*2."
+  },
+  {
+   "id": "py-m-asyncio-short-coroutine",
+   "node": "module-asyncio",
+   "type": "short_answer",
+   "concept": "coroutine-object",
+   "code": "import asyncio\n\nasync def hello():\n    print('body ran')\n    return 1\n\nc = hello()\nprint(type(c).__name__)\nc.close()",
+   "prompt": "Type exactly what this prints.",
+   "answer": "coroutine",
+   "explanation": "Calling hello() builds a coroutine object without running its body, so 'body ran' is never printed. close() discards it without a warning."
+  },
+  {
+   "id": "py-m-asyncio-short-cancel",
+   "node": "module-asyncio",
+   "type": "short_answer",
+   "concept": "cancel-cleanup",
+   "code": "import asyncio\n\nasync def job():\n    try:\n        await asyncio.sleep(10)\n    except Exception:\n        print('caught')\n    finally:\n        print('cleanup')\n\nasync def main():\n    t = asyncio.create_task(job())\n    await asyncio.sleep(0)\n    t.cancel()\n    try:\n        await t\n    except asyncio.CancelledError:\n        print('cancelled')\n\nasyncio.run(main())",
+   "prompt": "Type exactly what this prints.",
+   "answer": "cleanup\ncancelled",
+   "explanation": "sleep(0) lets job start and reach its await. cancel() delivers CancelledError there; it is not an Exception so 'caught' is skipped, finally prints 'cleanup', and the awaiting caller sees CancelledError."
+  },
+  {
+   "id": "py-m-asyncio-explain-blocking",
+   "node": "module-asyncio",
+   "type": "explain",
+   "concept": "blocking-the-loop",
+   "prompt": "A coroutine in an asyncio program calls `time.sleep(2)` to pause. Explain why this delays every other task in the program, and what the coroutine should use instead.",
+   "answer": "asyncio runs all tasks cooperatively on a single event-loop thread and switches between them only at await points. time.sleep is a synchronous call that blocks that thread, so no other task can run for two seconds. Use await asyncio.sleep, which suspends only this task, or run genuinely blocking work with asyncio.to_thread.",
+   "keywords": [
+    [
+     "one thread",
+     "single thread",
+     "same thread",
+     "event loop",
+     "cooperative",
+     "only switches",
+     "switch at"
+    ],
+    [
+     "blocks the",
+     "blocks that",
+     "blocks all",
+     "blocks every",
+     "blocking",
+     "blocked",
+     "block the",
+     "stall",
+     "freeze",
+     "halt",
+     "hold up",
+     "cannot run",
+     "can't run",
+     "nothing else"
+    ],
+    [
+     "await asyncio.sleep",
+     "asyncio.sleep",
+     "to_thread",
+     "executor",
+     "async version",
+     "async equivalent"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-asyncio-fix-missing-await",
+   "node": "module-asyncio",
+   "type": "fix_bug",
+   "concept": "await-and-gather",
+   "prompt": "double_all(nums) should return a list with every number doubled, computed through the double coroutine. It returns coroutine objects instead of numbers. Fix _all.",
+   "code": "import asyncio\n\nasync def double(n):\n    return n * 2\n\nasync def _all(nums):\n    return [double(n) for n in nums]\n\ndef double_all(nums):\n    return asyncio.run(_all(nums))",
+   "fn": "double_all",
+   "solution": "import asyncio\n\nasync def double(n):\n    return n * 2\n\nasync def _all(nums):\n    return list(await asyncio.gather(*(double(n) for n in nums)))\n\ndef double_all(nums):\n    return asyncio.run(_all(nums))",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": [
+      2,
+      4,
+      6
+     ]
+    },
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       0
+      ]
+     ],
+     "expected": [
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       -5,
+       5
+      ]
+     ],
+     "expected": [
+      -10,
+      10
+     ]
+    },
+    {
+     "args": [
+      [
+       10,
+       20,
+       30,
+       40
+      ]
+     ],
+     "expected": [
+      20,
+      40,
+      60,
+      80
+     ]
+    },
+    {
+     "args": [
+      [
+       7
+      ]
+     ],
+     "expected": [
+      14
+     ]
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      6,
+      2,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       -20,
+       3,
+       -1
+      ]
+     ],
+     "expected": [
+      -40,
+      6,
+      -2
+     ]
+    },
+    {
+     "args": [
+      [
+       9007199254740993
+      ]
+     ],
+     "expected": [
+      18014398509481986
+     ]
+    }
+   ],
+   "explanation": "Calling double(n) only creates coroutine objects. asyncio.gather awaits them all and returns results in argument order; a sequence of plain `await double(n)` calls would also work."
+  },
+  {
+   "id": "py-m-asyncio-write-gather",
+   "node": "module-asyncio",
+   "type": "write_snippet",
+   "concept": "gather-results",
+   "prompt": "Write add_ten_all(nums) so it uses the add_ten coroutine for every number and returns the results as a list, in the same order as nums. Use asyncio.gather inside a coroutine and asyncio.run to start it.",
+   "starter": "import asyncio\n\nasync def add_ten(n):\n    return n + 10\n\ndef add_ten_all(nums):\n    # build a coroutine that gathers add_ten(n) for each n, then run it\n    pass",
+   "fn": "add_ten_all",
+   "solution": "import asyncio\n\nasync def add_ten(n):\n    return n + 10\n\nasync def _run(nums):\n    return list(await asyncio.gather(*(add_ten(n) for n in nums)))\n\ndef add_ten_all(nums):\n    return asyncio.run(_run(nums))",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": [
+      11,
+      12,
+      13
+     ]
+    },
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       0
+      ]
+     ],
+     "expected": [
+      10
+     ]
+    },
+    {
+     "args": [
+      [
+       -10,
+       -20
+      ]
+     ],
+     "expected": [
+      0,
+      -10
+     ]
+    },
+    {
+     "args": [
+      [
+       100,
+       5,
+       50
+      ]
+     ],
+     "expected": [
+      110,
+      15,
+      60
+     ]
+    },
+    {
+     "args": [
+      [
+       9
+      ]
+     ],
+     "expected": [
+      19
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       3,
+       9,
+       1
+      ]
+     ],
+     "expected": [
+      15,
+      13,
+      19,
+      11
+     ]
+    },
+    {
+     "args": [
+      [
+       9007199254740993
+      ]
+     ],
+     "expected": [
+      9007199254741003
+     ]
+    }
+   ],
+   "explanation": "gather(*coros) runs the coroutines concurrently and returns their results in argument order. asyncio.run(main()) is the single entry point from ordinary code."
+  },
+  {
+   "id": "py-m-packaging-mcq-venv",
+   "node": "module-packaging",
+   "type": "mcq",
+   "concept": "virtual-environment",
+   "prompt": "What does creating a virtual environment give a project?",
+   "choices": [
+    "A packaged, distributable build of the application",
+    "Its own interpreter environment with separately installed packages",
+    "A sandbox that stops untrusted code from touching the rest of the system",
+    "A lock file pinning every dependency to an exact version"
+   ],
+   "answer": 1,
+   "explanation": "A virtual environment selects an interpreter environment with its own installed packages. It does not package an application, sandbox code, or lock versions; locking is a separate tool or workflow."
+  },
+  {
+   "id": "py-m-packaging-mcq-pip",
+   "node": "module-packaging",
+   "type": "mcq",
+   "concept": "python-m-pip",
+   "prompt": "Why do the docs recommend `python -m pip install ...` over a bare `pip install ...`?",
+   "choices": [
+    "It fetches packages from a faster package index",
+    "It creates a new virtual environment first, then installs",
+    "It installs for the same interpreter that runs the code",
+    "It skips dependency resolution to avoid conflicts"
+   ],
+   "answer": 2,
+   "explanation": "Running pip through the intended interpreter makes the installer and the runtime agree about which environment receives the package. A bare pip on PATH may belong to a different interpreter."
+  },
+  {
+   "id": "py-m-packaging-mcq-pyproject",
+   "node": "module-packaging",
+   "type": "mcq",
+   "concept": "pyproject-toml",
+   "prompt": "Which statement about a pyproject.toml file is accurate?",
+   "choices": [
+    "It declares build needs and metadata; locking is separate",
+    "It pins every transitive dependency to an exact version automatically",
+    "It is required for any import to resolve",
+    "It activates the project's virtual environment when you enter the directory"
+   ],
+   "answer": 0,
+   "explanation": "pyproject.toml can declare build-system requirements and project metadata, but it does not lock dependencies by itself, is not needed for imports to resolve, and does not activate environments."
+  },
+  {
+   "id": "py-m-packaging-mcq-shadow",
+   "node": "module-packaging",
+   "type": "mcq_code",
+   "concept": "shadowing",
+   "prompt": "A project folder contains json.py (its whole content is `print('mine')`) and main.py (shown below). The program is started with `python main.py` from that folder. What happens?",
+   "code": "# main.py\nimport json\nprint(json.dumps({}))",
+   "choices": [
+    "It prints {}, because the standard library is always preferred",
+    "It prints mine, then fails with an AttributeError",
+    "It fails with ImportError because json is a reserved name",
+    "It prints mine, then prints {}"
+   ],
+   "answer": 1,
+   "explanation": "The script's directory is first on sys.path, so `import json` finds the local file, which runs and prints 'mine'. That module has no dumps, so the attribute lookup fails. A local file named like a standard module shadows it."
+  },
+  {
+   "id": "py-m-packaging-mcq-relative",
+   "node": "module-packaging",
+   "type": "mcq",
+   "concept": "relative-import",
+   "prompt": "graph_tools/run.py is a file inside the package graph_tools, and it contains the line `from .search import bfs`. A developer runs it with `python graph_tools/run.py`. What happens?",
+   "choices": [
+    "The import works, since search.py sits in the same directory",
+    "ModuleNotFoundError: No module named 'graph_tools.search'",
+    "SyntaxError, because a leading dot is not valid in a script",
+    "ImportError about a relative import with no parent package"
+   ],
+   "answer": 3,
+   "explanation": "Run directly as a script, the file has no package context, so a relative import fails. Running `python -m graph_tools.run` from the project root sets the package context."
+  },
+  {
+   "id": "py-m-packaging-short-import-once",
+   "node": "module-packaging",
+   "type": "short_answer",
+   "concept": "module-cache",
+   "code": "import sys\nimport math\nimport math as m2\n\nprint(m2 is math, __name__)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "True __main__",
+   "explanation": "A module is executed once and cached in sys.modules, so every import of it returns the same object. A file that is run directly has __name__ equal to '__main__'."
+  },
+  {
+   "id": "py-m-packaging-explain-path",
+   "node": "module-packaging",
+   "type": "explain",
+   "concept": "sys-path",
+   "prompt": "In a project root there is a package app/ and a folder tools/ with check.py, which does `import app`. Running `python tools/check.py` from the root fails with ModuleNotFoundError, but `python -m tools.check` from the same place works. Explain why.",
+   "answer": "Python builds sys.path to search for imports. When a file is run as a script, the first entry is that script's own directory (tools), not the project root, so the app package cannot be found. With python -m, the current directory is put first, so the project root is searched and the import succeeds.",
+   "keywords": [
+    [
+     "sys.path",
+     "search path",
+     "module path",
+     "import path",
+     "looks in"
+    ],
+    [
+     "script's directory",
+     "script directory",
+     "directory of the script",
+     "folder of the script",
+     "script's folder",
+     "script's own",
+     "directory of the file",
+     "where the script is",
+     "the script location"
+    ],
+    [
+     "current directory",
+     "working directory",
+     "cwd",
+     "project root",
+     "from the root",
+     "root folder",
+     "root directory"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-packaging-write-dotted",
+   "node": "module-packaging",
+   "type": "write_snippet",
+   "concept": "python-m-module-name",
+   "prompt": "Write dotted_name(path) that turns a relative file path of a module inside a package into the dotted name used with `python -m`. For example 'tools/check.py' -> 'tools.check' and 'a/b/c.py' -> 'a.b.c'. A path with no folder, such as 'main.py', gives 'main'.",
+   "starter": "def dotted_name(path):\n    # 'tools/check.py' -> 'tools.check'\n    pass",
+   "fn": "dotted_name",
+   "solution": "def dotted_name(path):\n    return path[:-3].replace('/', '.')",
+   "tests": [
+    {
+     "args": [
+      "tools/check.py"
+     ],
+     "expected": "tools.check"
+    },
+    {
+     "args": [
+      "a/b/c.py"
+     ],
+     "expected": "a.b.c"
+    },
+    {
+     "args": [
+      "main.py"
+     ],
+     "expected": "main"
+    },
+    {
+     "args": [
+      "graph_tools/search.py"
+     ],
+     "expected": "graph_tools.search"
+    },
+    {
+     "args": [
+      "pkg/sub/mod.py"
+     ],
+     "expected": "pkg.sub.mod"
+    },
+    {
+     "args": [
+      "x.py"
+     ],
+     "expected": "x"
+    },
+    {
+     "args": [
+      "pkg/copy.py"
+     ],
+     "expected": "pkg.copy"
+    },
+    {
+     "args": [
+      "pytools/happy.py"
+     ],
+     "expected": "pytools.happy"
+    },
+    {
+     "args": [
+      "Pkg/Mod_x.py"
+     ],
+     "expected": "Pkg.Mod_x"
+    }
+   ],
+   "explanation": "`python -m package.module` takes dots where the path has slashes and no .py suffix. Strip the last three characters, then replace '/' with '.'."
+  },
+  {
+   "id": "py-m-pytest-mcq-teardown",
+   "node": "module-pytest",
+   "type": "mcq",
+   "concept": "yield-fixture",
+   "prompt": "A pytest fixture does its setup, then `yield value`, then runs cleanup code. The test that uses it fails. What happens to the cleanup code?",
+   "choices": [
+    "It is skipped, so cleanup must be written inside the test",
+    "It runs only when the test passes",
+    "It runs before the test, as part of setup",
+    "It still runs as teardown"
+   ],
+   "answer": 3,
+   "explanation": "Code after the yield is teardown, and pytest runs it even when the test fails. That is what makes yield fixtures a safe place to release owned resources."
+  },
+  {
+   "id": "py-m-pytest-mcq-raises",
+   "node": "module-pytest",
+   "type": "mcq",
+   "concept": "pytest-raises",
+   "prompt": "In `with pytest.raises(ValueError, match='negative weight'):`, what does the match argument do?",
+   "choices": [
+    "It searches the message with a regular expression",
+    "It requires the message to equal the string exactly",
+    "It compares the exception's class name to the string",
+    "It filters which tests the block applies to"
+   ],
+   "answer": 0,
+   "explanation": "match is a regular expression searched in the message. The test fails if no exception, or a different exception type, is raised."
+  },
+  {
+   "id": "py-m-pytest-mcq-passing",
+   "node": "module-pytest",
+   "type": "mcq",
+   "concept": "what-passing-proves",
+   "prompt": "All the tests for a function pass. What may you conclude?",
+   "choices": [
+    "The function is correct for every possible input",
+    "The function has no bugs left in any code path",
+    "It works as asserted for the cases that ran",
+    "The tests cover every edge case automatically"
+   ],
+   "answer": 2,
+   "explanation": "Passing tests establish behavior for the executed cases and environment, not universal correctness. Edge cases such as empty input, duplicates or the largest size have to be chosen deliberately."
+  },
+  {
+   "id": "py-m-pytest-mcq-collect",
+   "node": "module-pytest",
+   "type": "mcq_code",
+   "concept": "test-discovery",
+   "prompt": "By default, how many tests does pytest collect from test_sample.py?",
+   "code": "def test_one(): pass\n\ndef check_two(): pass\n\nclass TestGroup:\n    def test_three(self): pass\n    def helper(self): pass\n\nclass Helper:\n    def test_four(self): pass\n\nclass TestWithInit:\n    def __init__(self): pass\n    def test_five(self): pass",
+   "choices": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "answer": 1,
+   "explanation": "Collected: test_one and TestGroup.test_three. check_two does not start with test_, helper is not a test_ method, Helper does not start with Test, and TestWithInit is skipped because it defines __init__ (pytest warns about it)."
+  },
+  {
+   "id": "py-m-pytest-mcq-scope",
+   "node": "module-pytest",
+   "type": "mcq_code",
+   "concept": "fixture-scope",
+   "prompt": "pytest runs the tests of this file from top to bottom. What is the outcome?",
+   "code": "import pytest\n\n@pytest.fixture(scope='module')\ndef items():\n    return []\n\ndef test_a(items):\n    items.append(1)\n    assert len(items) == 1\n\ndef test_b(items):\n    items.append(2)\n    assert len(items) == 1",
+   "choices": [
+    "Both tests pass",
+    "test_a passes and test_b fails",
+    "test_a fails and test_b passes",
+    "Both tests fail"
+   ],
+   "answer": 1,
+   "explanation": "A module-scoped fixture is created once, so both tests receive the same list. After test_a appends 1, test_b appends 2 and sees a length of 2, so its assertion fails. With the default function scope each test would get a fresh list."
+  },
+  {
+   "id": "py-m-pytest-short-discovery",
+   "node": "module-pytest",
+   "type": "short_answer",
+   "concept": "file-discovery",
+   "code": "from fnmatch import fnmatch\n\nnames = ['test_cart.py', 'cart_test.py', 'cart_tests.py', 'tests.py', 'Test_cart.py']\nfound = [n for n in names if fnmatch(n, 'test_*.py') or fnmatch(n, '*_test.py')]\nprint(found)",
+   "prompt": "Type exactly what this prints.",
+   "answer": "['test_cart.py', 'cart_test.py']",
+   "explanation": "pytest's default file patterns are test_*.py and *_test.py. This snippet applies the same two patterns with fnmatch: cart_tests.py, tests.py and Test_cart.py match neither."
+  },
+  {
+   "id": "py-m-pytest-explain-shared-state",
+   "node": "module-pytest",
+   "type": "explain",
+   "concept": "fixture-shared-state",
+   "prompt": "A test passes when it is run alone but fails when the whole suite runs. It receives a dict from a fixture declared with a module or session scope. Explain a likely cause and how to fix it.",
+   "answer": "A fixture with a wider scope is created once and the same object is handed to many tests. An earlier test mutates the dict, and that change leaks into later tests, so results depend on what ran before. Use the default function scope so each test gets a fresh dict, or give each test its own copy.",
+   "keywords": [
+    [
+     "same object",
+     "same dict",
+     "shared",
+     "share",
+     "one instance",
+     "reused",
+     "created once",
+     "single instance"
+    ],
+    [
+     "mutat",
+     "modif",
+     "been changed",
+     "is changed",
+     "gets changed",
+     "leak",
+     "carries over",
+     "carry over",
+     "left behind",
+     "state from"
+    ],
+    [
+     "function scope",
+     "default scope",
+     "fresh dict",
+     "fresh value",
+     "fresh copy",
+     "fresh object",
+     "fresh one",
+     "fresh state",
+     "per test",
+     "per-test",
+     "each test its own",
+     "new copy",
+     "own copy",
+     "copy of the dict",
+     "copy the dict",
+     "deepcopy",
+     "copy.copy"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-pytest-fix-is-test-file",
+   "node": "module-pytest",
+   "type": "fix_bug",
+   "concept": "file-discovery",
+   "prompt": "is_test_file(name) should report whether pytest's default rules would collect a file with that name: it matches test_*.py or *_test.py. It currently misses one of the two patterns. Fix it.",
+   "code": "def is_test_file(name):\n    return name.startswith('test_') and name.endswith('.py')",
+   "fn": "is_test_file",
+   "solution": "def is_test_file(name):\n    return (name.startswith('test_') and name.endswith('.py')) or name.endswith('_test.py')",
+   "tests": [
+    {
+     "args": [
+      "test_cart.py"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "cart_test.py"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "tests.py"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "cart_tests.py"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "conftest.py"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "test_cart.txt"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "mytest.py"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "test_.py"
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      "cart_test.py.bak"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "test_cart.pyc"
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      "cart_test.pyc"
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "pytest's default file patterns are test_*.py and *_test.py. The buggy version only checked the prefix form, so cart_test.py was missed."
   }
  ]
 }

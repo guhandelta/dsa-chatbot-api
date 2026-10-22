@@ -126,7 +126,8 @@ DEPTH_MODULES: dict[str, tuple[Module, ...]] = {
     ),
     "java": (
         _m("generics", "Generics and variance", "L3", "generic", "wildcard", "variance"),
-        _m("collections-contracts", "Collections contracts", "L3", "equals", "hashcode", "compareto"),
+        _m("collections-contracts", "Collections contracts", "L3", "equals", "hashcode", "compareto",
+           "collections: contracts", "equality ordering hashing"),
         _m("streams", "Streams", "L3", "stream"),
         _m("concurrency", "Concurrency and CompletableFuture", "L4", "thread", "completablefuture", "interrupt"),
         _m("junit", "JUnit", "L4", "junit"),

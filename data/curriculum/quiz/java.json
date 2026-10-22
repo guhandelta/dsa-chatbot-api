@@ -1,1064 +1,2032 @@
 {
- "language": "java",
- "version": 1,
- "note": "Authored Study Room quiz items. Code items are validated by execution.",
- "items": [
-  {
-   "id": "java-s01-code",
-   "node": "stage-01",
-   "type": "mcq_code",
-   "concept": "integer-division",
-   "code": "int a = 7, b = 2;\nSystem.out.println(a / b + \" \" + (double) a / b);",
-   "prompt": "What does this print?",
-   "choices": [
-    "3.5 3.5",
-    "3 3.5",
-    "3 3.0",
-    "4 3.5"
-   ],
-   "answer": 1,
-   "explanation": "int / int truncates to 3. Casting a to double first makes the division floating point, 3.5."
-  },
-  {
-   "id": "java-s01-short",
-   "node": "stage-01",
-   "type": "short_answer",
-   "concept": "overflow",
-   "code": "int big = Integer.MAX_VALUE;\nSystem.out.println(big + 1 == Integer.MIN_VALUE);",
-   "prompt": "Type exactly what this prints.",
-   "answer": "true",
-   "explanation": "Java int arithmetic wraps on overflow, so MAX_VALUE + 1 is MIN_VALUE."
-  },
-  {
-   "id": "java-s01-fix",
-   "node": "stage-01",
-   "type": "fix_bug",
-   "concept": "integer-division",
-   "prompt": "average(int total, int count) must return the exact average as a double. 7 and 2 should give 3.5. Fix it.",
-   "code": "public double average(int total, int count) {\n    return total / count;\n}",
-   "fn": "average",
-   "solution": "public double average(int total, int count) {\n    return (double) total / count;\n}",
-   "tests": [
+  "language": "java",
+  "version": 1,
+  "note": "Authored Study Room quiz items. Code items are validated by execution. Module items (generics, collections-contracts, streams, concurrency): snippets, compile-error claims and outputs executed on the JDK; wildcard/PECS signatures compile-checked. JUnit items are not executed (JUnit is not installed) and are grounded in the knowledge base only.",
+  "items": [
     {
-     "args": [
-      7,
-      2
-     ],
-     "expected": 3.5
+      "id": "java-s01-code",
+      "node": "stage-01",
+      "type": "mcq_code",
+      "concept": "integer-division",
+      "code": "int a = 7, b = 2;\nSystem.out.println(a / b + \" \" + (double) a / b);",
+      "prompt": "What does this print?",
+      "choices": [
+        "3.5 3.5",
+        "3 3.5",
+        "3 3.0",
+        "4 3.5"
+      ],
+      "answer": 1,
+      "explanation": "int / int truncates to 3. Casting a to double first makes the division floating point, 3.5."
     },
     {
-     "args": [
-      10,
-      4
-     ],
-     "expected": 2.5
+      "id": "java-s01-short",
+      "node": "stage-01",
+      "type": "short_answer",
+      "concept": "overflow",
+      "code": "int big = Integer.MAX_VALUE;\nSystem.out.println(big + 1 == Integer.MIN_VALUE);",
+      "prompt": "Type exactly what this prints.",
+      "answer": "true",
+      "explanation": "Java int arithmetic wraps on overflow, so MAX_VALUE + 1 is MIN_VALUE."
     },
     {
-     "args": [
-      9,
-      3
-     ],
-     "expected": 3.0
+      "id": "java-s01-fix",
+      "node": "stage-01",
+      "type": "fix_bug",
+      "concept": "integer-division",
+      "prompt": "average(int total, int count) must return the exact average as a double. 7 and 2 should give 3.5. Fix it.",
+      "code": "public double average(int total, int count) {\n    return total / count;\n}",
+      "fn": "average",
+      "solution": "public double average(int total, int count) {\n    return (double) total / count;\n}",
+      "tests": [
+        {
+          "args": [
+            7,
+            2
+          ],
+          "expected": 3.5
+        },
+        {
+          "args": [
+            10,
+            4
+          ],
+          "expected": 2.5
+        },
+        {
+          "args": [
+            9,
+            3
+          ],
+          "expected": 3.0
+        },
+        {
+          "args": [
+            0,
+            5
+          ],
+          "expected": 0.0
+        },
+        {
+          "args": [
+            1,
+            4
+          ],
+          "expected": 0.25
+        },
+        {
+          "args": [
+            5,
+            2
+          ],
+          "expected": 2.5
+        }
+      ],
+      "explanation": "Integer division happens before the result is widened; cast an operand to double first."
     },
     {
-     "args": [
-      0,
-      5
-     ],
-     "expected": 0.0
+      "id": "java-s02-code",
+      "node": "stage-02",
+      "type": "mcq_code",
+      "concept": "string-equality",
+      "code": "String a = new String(\"hi\");\nString b = \"hi\";\nSystem.out.println((a == b) + \" \" + a.equals(b));",
+      "prompt": "What does this print?",
+      "choices": [
+        "true true",
+        "false true",
+        "false false",
+        "true false"
+      ],
+      "answer": 1,
+      "explanation": "== compares references; new String creates a separate object. equals compares contents."
     },
     {
-     "args": [
-      1,
-      4
-     ],
-     "expected": 0.25
+      "id": "java-s02-short",
+      "node": "stage-02",
+      "type": "short_answer",
+      "concept": "short-circuit",
+      "code": "int[] xs = {};\nboolean ok = xs.length > 0 && xs[0] > 0;\nSystem.out.println(ok);",
+      "prompt": "Type exactly what this prints.",
+      "answer": "false",
+      "explanation": "&& short-circuits: the length check is false, so xs[0] is never read."
     },
     {
-     "args": [
-      5,
-      2
-     ],
-     "expected": 2.5
+      "id": "java-s02-fix",
+      "node": "stage-02",
+      "type": "fix_bug",
+      "concept": "boundaries",
+      "prompt": "isTeen(int age) must return true for 13 through 19 inclusive. Fix the boundaries.",
+      "code": "public boolean isTeen(int age) {\n    return age > 13 && age < 19;\n}",
+      "fn": "isTeen",
+      "solution": "public boolean isTeen(int age) {\n    return age >= 13 && age <= 19;\n}",
+      "tests": [
+        {
+          "args": [
+            13
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            19
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            16
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            12
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            20
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            0
+          ],
+          "expected": false
+        }
+      ],
+      "explanation": "Inclusive boundaries need >= and <=."
+    },
+    {
+      "id": "java-s03-code",
+      "node": "stage-03",
+      "type": "mcq_code",
+      "concept": "loop-bounds",
+      "code": "int count = 0;\nfor (int i = 0; i <= 5; i += 2) count++;\nSystem.out.println(count);",
+      "prompt": "What does this print?",
+      "choices": [
+        "2",
+        "3",
+        "4",
+        "6"
+      ],
+      "answer": 1,
+      "explanation": "i takes 0, 2 and 4, so the body runs three times."
+    },
+    {
+      "id": "java-s03-short",
+      "node": "stage-03",
+      "type": "short_answer",
+      "concept": "accumulator",
+      "code": "int total = 0;\nfor (int i = 1; i <= 4; i++) total += i * i;\nSystem.out.println(total);",
+      "prompt": "Type exactly what this prints.",
+      "answer": "30",
+      "explanation": "1 + 4 + 9 + 16 = 30."
+    },
+    {
+      "id": "java-s03-fix",
+      "node": "stage-03",
+      "type": "fix_bug",
+      "concept": "off-by-one",
+      "prompt": "sumTo(int n) should return 1 + 2 + ... + n. It misses n. Fix it.",
+      "code": "public int sumTo(int n) {\n    int total = 0;\n    for (int i = 1; i < n; i++) total += i;\n    return total;\n}",
+      "fn": "sumTo",
+      "solution": "public int sumTo(int n) {\n    int total = 0;\n    for (int i = 1; i <= n; i++) total += i;\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            1
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            2
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            5
+          ],
+          "expected": 15
+        },
+        {
+          "args": [
+            10
+          ],
+          "expected": 55
+        },
+        {
+          "args": [
+            100
+          ],
+          "expected": 5050
+        }
+      ],
+      "explanation": "Use <= so the loop includes n."
+    },
+    {
+      "id": "java-s04-code",
+      "node": "stage-04",
+      "type": "mcq_code",
+      "concept": "pass-by-value",
+      "code": "static void bump(int x) { x++; }\n// in main:\nint v = 1;\nbump(v);\nSystem.out.println(v);",
+      "prompt": "What does main print?",
+      "choices": [
+        "1",
+        "2",
+        "0",
+        "Compile error"
+      ],
+      "answer": 0,
+      "explanation": "Java passes a copy of the primitive value, so the caller's v is unchanged."
+    },
+    {
+      "id": "java-s04-short",
+      "node": "stage-04",
+      "type": "short_answer",
+      "concept": "overloading",
+      "code": "static String f(int x) { return \"int\"; }\nstatic String f(long x) { return \"long\"; }\n// in main:\nSystem.out.println(f(5) + \" \" + f(5L));",
+      "prompt": "Type exactly what main prints.",
+      "answer": "int long",
+      "explanation": "Overload resolution picks the exact type: 5 is an int literal and 5L is a long."
+    },
+    {
+      "id": "java-s04-fix",
+      "node": "stage-04",
+      "type": "fix_bug",
+      "concept": "contracts",
+      "prompt": "distance(int a, int b) must return a non-negative distance. It can return negative numbers. Fix it.",
+      "code": "public int distance(int a, int b) {\n    return a - b;\n}",
+      "fn": "distance",
+      "solution": "public int distance(int a, int b) {\n    return Math.abs(a - b);\n}",
+      "tests": [
+        {
+          "args": [
+            2,
+            5
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            5,
+            2
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            0,
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            -3,
+            4
+          ],
+          "expected": 7
+        },
+        {
+          "args": [
+            -8,
+            -2
+          ],
+          "expected": 6
+        },
+        {
+          "args": [
+            10,
+            -10
+          ],
+          "expected": 20
+        }
+      ],
+      "explanation": "Math.abs makes the result independent of argument order."
+    },
+    {
+      "id": "java-s05-code",
+      "node": "stage-05",
+      "type": "mcq_code",
+      "concept": "char-arithmetic",
+      "code": "char c = 'a';\nSystem.out.println(c + 1);\nSystem.out.println((char) (c + 1));",
+      "prompt": "What does this print (two lines)?",
+      "choices": [
+        "b then b",
+        "98 then b",
+        "a1 then b",
+        "98 then 98"
+      ],
+      "answer": 1,
+      "explanation": "char + int promotes to int (98). Casting back to char gives 'b'."
+    },
+    {
+      "id": "java-s05-short",
+      "node": "stage-05",
+      "type": "short_answer",
+      "concept": "immutability",
+      "code": "String s = \"java\";\ns.toUpperCase();\nSystem.out.println(s + \" \" + s.length());",
+      "prompt": "Type exactly what this prints.",
+      "answer": "java 4",
+      "explanation": "Strings are immutable; toUpperCase returns a new String that was discarded."
+    },
+    {
+      "id": "java-s05-fix",
+      "node": "stage-05",
+      "type": "fix_bug",
+      "concept": "string-matching",
+      "prompt": "countMatches(String[] words, String target) must count words that are exactly equal to target. It also counts words that merely contain it. Fix it.",
+      "code": "public int countMatches(String[] words, String target) {\n    int count = 0;\n    for (String w : words) if (w.contains(target)) count++;\n    return count;\n}",
+      "fn": "countMatches",
+      "solution": "public int countMatches(String[] words, String target) {\n    int count = 0;\n    for (String w : words) if (w.equals(target)) count++;\n    return count;\n}",
+      "tests": [
+        {
+          "args": [
+            [],
+            "a"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "a"
+            ],
+            "a"
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            [
+              "a",
+              "b",
+              "a"
+            ],
+            "a"
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              "ab"
+            ],
+            "a"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "x",
+              "xx"
+            ],
+            "x"
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            [
+              "b"
+            ],
+            "c"
+          ],
+          "expected": 0
+        }
+      ],
+      "explanation": "contains matches substrings; equals compares the whole string's contents (never ==, which compares references)."
+    },
+    {
+      "id": "java-s06-code",
+      "node": "stage-06",
+      "type": "mcq_code",
+      "concept": "array-aliasing",
+      "code": "int[] a = {1, 2};\nint[] b = a;\nb[0] = 9;\nSystem.out.println(a[0]);",
+      "prompt": "What does this print?",
+      "choices": [
+        "1",
+        "9",
+        "2",
+        "Compile error"
+      ],
+      "answer": 1,
+      "explanation": "b refers to the same array object as a; use a.clone() or Arrays.copyOf for a copy."
+    },
+    {
+      "id": "java-s06-short",
+      "node": "stage-06",
+      "type": "short_answer",
+      "concept": "array-default",
+      "code": "int[] counts = new int[3];\ncounts[1]++;\nSystem.out.println(java.util.Arrays.toString(counts));",
+      "prompt": "Type exactly what this prints.",
+      "answer": "[0, 1, 0]",
+      "explanation": "New int arrays are filled with 0."
+    },
+    {
+      "id": "java-s06-fix",
+      "node": "stage-06",
+      "type": "fix_bug",
+      "concept": "bounds",
+      "prompt": "maxOf(int[] values) returns the largest value of a non-empty array. It throws ArrayIndexOutOfBoundsException. Fix it.",
+      "code": "public int maxOf(int[] values) {\n    int best = values[0];\n    for (int i = 1; i <= values.length; i++) best = Math.max(best, values[i]);\n    return best;\n}",
+      "fn": "maxOf",
+      "solution": "public int maxOf(int[] values) {\n    int best = values[0];\n    for (int i = 1; i < values.length; i++) best = Math.max(best, values[i]);\n    return best;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              5
+            ]
+          ],
+          "expected": 5
+        },
+        {
+          "args": [
+            [
+              1,
+              3,
+              2
+            ]
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            [
+              -5,
+              -2
+            ]
+          ],
+          "expected": -2
+        },
+        {
+          "args": [
+            [
+              4,
+              4
+            ]
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [
+              9,
+              1,
+              8
+            ]
+          ],
+          "expected": 9
+        },
+        {
+          "args": [
+            [
+              0,
+              0,
+              1
+            ]
+          ],
+          "expected": 1
+        }
+      ],
+      "explanation": "The last valid index is length - 1, so the loop needs <."
+    },
+    {
+      "id": "java-s07-code",
+      "node": "stage-07",
+      "type": "mcq_code",
+      "concept": "getordefault",
+      "code": "Map<String, Integer> m = new HashMap<>();\nm.put(\"a\", m.getOrDefault(\"a\", 0) + 1);\nm.put(\"a\", m.getOrDefault(\"a\", 0) + 1);\nSystem.out.println(m.get(\"a\") + \" \" + m.get(\"b\"));",
+      "prompt": "What does this print?",
+      "choices": [
+        "2 0",
+        "2 null",
+        "1 null",
+        "NullPointerException"
+      ],
+      "answer": 1,
+      "explanation": "getOrDefault supplies 0 for the first read; get on a missing key returns null."
+    },
+    {
+      "id": "java-s07-short",
+      "node": "stage-07",
+      "type": "short_answer",
+      "concept": "merge",
+      "code": "Map<Character, Integer> m = new TreeMap<>();\nfor (char c : \"abca\".toCharArray()) m.merge(c, 1, Integer::sum);\nSystem.out.println(m);",
+      "prompt": "Type exactly what this prints.",
+      "answer": "{a=2, b=1, c=1}",
+      "explanation": "merge adds 1 for each occurrence; TreeMap keeps keys sorted."
+    },
+    {
+      "id": "java-s07-fix",
+      "node": "stage-07",
+      "type": "fix_bug",
+      "concept": "missing-key",
+      "prompt": "countOf(String[] words, String target) builds a frequency map, then returns target's count. It throws NullPointerException. Fix it.",
+      "code": "public int countOf(String[] words, String target) {\n    Map<String, Integer> counts = new HashMap<>();\n    for (String w : words) counts.put(w, counts.get(w) + 1);\n    return counts.getOrDefault(target, 0);\n}",
+      "fn": "countOf",
+      "solution": "public int countOf(String[] words, String target) {\n    Map<String, Integer> counts = new HashMap<>();\n    for (String w : words) counts.put(w, counts.getOrDefault(w, 0) + 1);\n    return counts.getOrDefault(target, 0);\n}",
+      "tests": [
+        {
+          "args": [
+            [],
+            "a"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "a"
+            ],
+            "a"
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            [
+              "a",
+              "b",
+              "a"
+            ],
+            "a"
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            "c"
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "x",
+              "x",
+              "x"
+            ],
+            "x"
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            [
+              "aa",
+              "a"
+            ],
+            "a"
+          ],
+          "expected": 1
+        }
+      ],
+      "explanation": "get returns null for a new key and unboxing null throws; use getOrDefault."
+    },
+    {
+      "id": "java-s08-code",
+      "node": "stage-08",
+      "type": "mcq_code",
+      "concept": "set-add",
+      "code": "Set<Integer> s = new HashSet<>();\nboolean first = s.add(3);\nboolean second = s.add(3);\nSystem.out.println(first + \" \" + second + \" \" + s.size());",
+      "prompt": "What does this print?",
+      "choices": [
+        "true true 2",
+        "true false 1",
+        "false false 1",
+        "true true 1"
+      ],
+      "answer": 1,
+      "explanation": "add returns false when the element was already present; the set keeps one copy."
+    },
+    {
+      "id": "java-s08-short",
+      "node": "stage-08",
+      "type": "short_answer",
+      "concept": "integer-cache",
+      "code": "Integer a = 1000, b = 1000;\nSystem.out.println((a == b) + \" \" + a.equals(b));",
+      "prompt": "Type exactly what this prints.",
+      "answer": "false true",
+      "explanation": "Boxed values outside the -128..127 cache are separate objects, so == is false while equals is true."
+    },
+    {
+      "id": "java-s08-fix",
+      "node": "stage-08",
+      "type": "fix_bug",
+      "concept": "membership",
+      "prompt": "hasDuplicate(int[] values) should return true when any value repeats. It always returns false. Fix it.",
+      "code": "public boolean hasDuplicate(int[] values) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) {\n        seen.add(v);\n        if (seen.contains(v)) return false;\n    }\n    return false;\n}",
+      "fn": "hasDuplicate",
+      "solution": "public boolean hasDuplicate(int[] values) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) {\n        if (!seen.add(v)) return true;\n    }\n    return false;\n}",
+      "tests": [
+        {
+          "args": [
+            []
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              1
+            ]
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              1,
+              1
+            ]
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              3,
+              1,
+              3
+            ]
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              -1,
+              0,
+              -1
+            ]
+          ],
+          "expected": true
+        }
+      ],
+      "explanation": "Check membership before adding (or use the boolean that add returns)."
+    },
+    {
+      "id": "java-s09-code",
+      "node": "stage-09",
+      "type": "mcq_code",
+      "concept": "static-field",
+      "code": "class Counter { static int total = 0; int mine = 0;\n  void hit() { total++; mine++; } }\n// in main:\nCounter a = new Counter(), b = new Counter();\na.hit(); b.hit(); b.hit();\nSystem.out.println(Counter.total + \" \" + a.mine);",
+      "prompt": "What does main print?",
+      "choices": [
+        "1 1",
+        "3 1",
+        "3 3",
+        "2 1"
+      ],
+      "answer": 1,
+      "explanation": "A static field is shared by every instance; mine belongs to each object."
+    },
+    {
+      "id": "java-s09-short",
+      "node": "stage-09",
+      "type": "short_answer",
+      "concept": "equals-hashcode",
+      "code": "record Point(int x, int y) {}\n// in main:\nSet<Point> s = new HashSet<>();\ns.add(new Point(1, 2));\nSystem.out.println(s.contains(new Point(1, 2)));",
+      "prompt": "Type exactly what main prints.",
+      "answer": "true",
+      "explanation": "Records generate equals and hashCode from their components, so equal points are found in a HashSet."
+    },
+    {
+      "id": "java-s09-fix",
+      "node": "stage-09",
+      "type": "fix_bug",
+      "concept": "shadowing",
+      "prompt": "finalBalance(int initial, int[] changes) applies changes to an account object. A local variable in the initializer shadows the field, so the balance always starts at 0. Fix it.",
+      "code": "public int finalBalance(int initial, int[] changes) {\n    var account = new Object() {\n        int balance;\n        { int balance = initial; }\n    };\n    for (int c : changes) account.balance += c;\n    return account.balance;\n}",
+      "fn": "finalBalance",
+      "solution": "public int finalBalance(int initial, int[] changes) {\n    var account = new Object() {\n        int balance;\n        { balance = initial; }\n    };\n    for (int c : changes) account.balance += c;\n    return account.balance;\n}",
+      "tests": [
+        {
+          "args": [
+            0,
+            []
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            10,
+            [
+              5,
+              -3
+            ]
+          ],
+          "expected": 12
+        },
+        {
+          "args": [
+            0,
+            [
+              -5
+            ]
+          ],
+          "expected": -5
+        },
+        {
+          "args": [
+            7,
+            [
+              0,
+              0
+            ]
+          ],
+          "expected": 7
+        },
+        {
+          "args": [
+            -2,
+            [
+              2
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            100,
+            [
+              -20,
+              -30,
+              10
+            ]
+          ],
+          "expected": 60
+        }
+      ],
+      "explanation": "int balance = initial declares a new local that hides the field. Assign the field itself."
+    },
+    {
+      "id": "java-s10-code",
+      "node": "stage-10",
+      "type": "mcq_code",
+      "concept": "exceptions",
+      "code": "try {\n  Integer.parseInt(\"12a\");\n  System.out.println(\"ok\");\n} catch (NumberFormatException e) {\n  System.out.println(\"bad\");\n} finally {\n  System.out.println(\"done\");\n}",
+      "prompt": "What does this print?",
+      "choices": [
+        "ok then done",
+        "bad then done",
+        "bad",
+        "done"
+      ],
+      "answer": 1,
+      "explanation": "parseInt throws for '12a'; the catch prints bad and finally always runs."
+    },
+    {
+      "id": "java-s10-short",
+      "node": "stage-10",
+      "type": "short_answer",
+      "concept": "optional",
+      "code": "Optional<String> name = Optional.empty();\nSystem.out.println(name.orElse(\"guest\") + \" \" + name.isPresent());",
+      "prompt": "Type exactly what this prints.",
+      "answer": "guest false",
+      "explanation": "orElse supplies the fallback for an empty Optional."
+    },
+    {
+      "id": "java-s10-fix",
+      "node": "stage-10",
+      "type": "fix_bug",
+      "concept": "validation",
+      "prompt": "safeAt(int[] values, int index, int fallback) must return fallback for any invalid index, including negative ones. Fix it.",
+      "code": "public int safeAt(int[] values, int index, int fallback) {\n    if (index > values.length) return fallback;\n    return values[index];\n}",
+      "fn": "safeAt",
+      "solution": "public int safeAt(int[] values, int index, int fallback) {\n    if (index < 0 || index >= values.length) return fallback;\n    return values[index];\n}",
+      "tests": [
+        {
+          "args": [
+            [],
+            0,
+            9
+          ],
+          "expected": 9
+        },
+        {
+          "args": [
+            [
+              2,
+              4
+            ],
+            0,
+            9
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              4
+            ],
+            1,
+            9
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [
+              2,
+              4
+            ],
+            2,
+            9
+          ],
+          "expected": 9
+        },
+        {
+          "args": [
+            [
+              2,
+              4
+            ],
+            -1,
+            9
+          ],
+          "expected": 9
+        },
+        {
+          "args": [
+            [
+              7
+            ],
+            5,
+            0
+          ],
+          "expected": 0
+        }
+      ],
+      "explanation": "Valid indices are 0 through length - 1; check both ends."
+    },
+    {
+      "id": "java-s11-code",
+      "node": "stage-11",
+      "type": "mcq_code",
+      "concept": "recursion-trace",
+      "code": "static int f(int n) { return n == 0 ? 0 : n % 10 + f(n / 10); }\n// in main:\nSystem.out.println(f(472));",
+      "prompt": "What does main print?",
+      "choices": [
+        "472",
+        "13",
+        "7",
+        "274"
+      ],
+      "answer": 1,
+      "explanation": "f sums the digits: 2 + 7 + 4 = 13."
+    },
+    {
+      "id": "java-s11-short",
+      "node": "stage-11",
+      "type": "short_answer",
+      "concept": "base-case",
+      "code": "static int steps(int n) { if (n <= 1) return 1; return steps(n - 1) + steps(n - 2); }\n// in main:\nSystem.out.println(steps(4));",
+      "prompt": "Type exactly what main prints.",
+      "answer": "5",
+      "explanation": "steps(0) = steps(1) = 1, then 2, 3, 5."
+    },
+    {
+      "id": "java-s11-fix",
+      "node": "stage-11",
+      "type": "fix_bug",
+      "concept": "base-case",
+      "prompt": "factorial(int n) should return n! for n from 0 to 12. It recurses forever on 0. Fix it.",
+      "code": "public int factorial(int n) {\n    if (n == 1) return 1;\n    return n * factorial(n - 1);\n}",
+      "fn": "factorial",
+      "solution": "public int factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}",
+      "tests": [
+        {
+          "args": [
+            0
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            1
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            2
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            5
+          ],
+          "expected": 120
+        },
+        {
+          "args": [
+            10
+          ],
+          "expected": 3628800
+        },
+        {
+          "args": [
+            12
+          ],
+          "expected": 479001600
+        }
+      ],
+      "explanation": "The base case must also stop at 0."
+    },
+    {
+      "id": "java-s12-code",
+      "node": "stage-12",
+      "type": "mcq_code",
+      "concept": "complexity",
+      "code": "List<Integer> list = new ArrayList<>();\n// n add() calls, then:\nfor (int i = 0; i < list.size(); i++) list.contains(i);",
+      "prompt": "What is the time complexity of the loop?",
+      "choices": [
+        "O(n)",
+        "O(n log n)",
+        "O(n²)",
+        "O(1)"
+      ],
+      "answer": 2,
+      "explanation": "ArrayList.contains scans the list, O(n), and it runs n times."
+    },
+    {
+      "id": "java-s12-short",
+      "node": "stage-12",
+      "type": "short_answer",
+      "concept": "priority-queue",
+      "code": "PriorityQueue<Integer> pq = new PriorityQueue<>(List.of(5, 1, 4));\npq.add(0);\nSystem.out.println(pq.poll() + \" \" + pq.poll());",
+      "prompt": "Type exactly what this prints.",
+      "answer": "0 1",
+      "explanation": "PriorityQueue is a min-heap by default."
+    },
+    {
+      "id": "java-s12-fix",
+      "node": "stage-12",
+      "type": "fix_bug",
+      "concept": "one-pass",
+      "prompt": "hasPair(int[] values, int target) must not pair an element with itself. Fix it.",
+      "code": "public boolean hasPair(int[] values, int target) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) seen.add(v);\n    for (int v : values) if (seen.contains(target - v)) return true;\n    return false;\n}",
+      "fn": "hasPair",
+      "solution": "public boolean hasPair(int[] values, int target) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) {\n        if (seen.contains(target - v)) return true;\n        seen.add(v);\n    }\n    return false;\n}",
+      "tests": [
+        {
+          "args": [
+            [],
+            2
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            2
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              1,
+              1
+            ],
+            2
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              2,
+              7,
+              11
+            ],
+            9
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ],
+            9
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              3
+            ],
+            6
+          ],
+          "expected": false
+        }
+      ],
+      "explanation": "Check before adding so the set only contains earlier elements."
+    },
+    {
+      "id": "java-m-generics-mcq",
+      "node": "module-generics",
+      "type": "mcq",
+      "concept": "invariance",
+      "prompt": "Integer is a subtype of Number. Why does `List<Number> nums = new ArrayList<Integer>();` not compile?",
+      "choices": [
+        "ArrayList<Integer> is a raw type, and raw types cannot be assigned to a parameterized variable",
+        "Number is abstract, so it cannot be used as a type argument of List",
+        "Generics are invariant: allowing it would let a Double be added to a list of Integers",
+        "Type erasure removes Integer, so the compiler cannot tell the two lists apart"
+      ],
+      "answer": 2,
+      "explanation": "List<Integer> is not a subtype of List<Number>. If it were, code could insert a Double through the List<Number> reference into a list that must hold only Integers."
+    },
+    {
+      "id": "java-m-generics-pecs-mcq",
+      "node": "module-generics",
+      "type": "mcq",
+      "concept": "pecs",
+      "prompt": "A generic method must copy every element of a source list into a destination list: `static <T> void copyAll(?? src, ?? dst)`. Which parameter types follow the producer-extends, consumer-super guideline?",
+      "choices": [
+        "List<? super T> src, List<? extends T> dst",
+        "List<T> src, List<?> dst",
+        "List<? extends T> src, List<? extends T> dst",
+        "List<? extends T> src, List<? super T> dst"
+      ],
+      "answer": 3,
+      "explanation": "The source only produces values, so it is `? extends T`; the destination only consumes values, so it is `? super T`. A `List<?>` or `? extends T` destination cannot accept additions."
+    },
+    {
+      "id": "java-m-generics-erasure-mcq",
+      "node": "module-generics",
+      "type": "mcq",
+      "concept": "type-erasure",
+      "prompt": "Inside `class Box<T> { ... }`, which of these statements does not compile?",
+      "choices": [
+        "List<T> items = new ArrayList<>();",
+        "T[] items = new T[8];",
+        "Class<?> k = this.getClass();",
+        "T item = null;"
+      ],
+      "answer": 1,
+      "explanation": "Generic arrays cannot be created because T is erased at run time and the array's element type could not be checked. Pass an IntFunction<T[]> or use a List<T> instead."
+    },
+    {
+      "id": "java-m-generics-wild-code",
+      "node": "module-generics",
+      "type": "mcq_code",
+      "concept": "super-wildcard",
+      "code": "List<Number> nums = new ArrayList<>();\nList<? super Integer> sink = nums;\nsink.add(3);\nsink.add(4);\nObject first = sink.get(0);\nSystem.out.println(first + \" \" + nums.size());",
+      "prompt": "What does main print?",
+      "choices": [
+        "Compile error",
+        "3 1",
+        "3 2",
+        "null 2"
+      ],
+      "answer": 2,
+      "explanation": "A `? super Integer` list accepts Integer values, so both adds compile and write into nums. Reads only give Object, which is enough to print 3."
+    },
+    {
+      "id": "java-m-generics-array-short",
+      "node": "module-generics",
+      "type": "short_answer",
+      "concept": "array-covariance",
+      "code": "Number[] nums = new Integer[2];\ntry {\n    nums[0] = 1.5;\n} catch (ArrayStoreException e) {\n    System.out.println(e.getClass().getSimpleName());\n}",
+      "prompt": "Type exactly what main prints.",
+      "answer": "ArrayStoreException",
+      "explanation": "Arrays are covariant, so the assignment compiles, but the array remembers its real element type (Integer) and rejects the Double at run time."
+    },
+    {
+      "id": "java-m-generics-erasure-short",
+      "node": "module-generics",
+      "type": "short_answer",
+      "concept": "type-erasure",
+      "code": "List<String> a = new ArrayList<>();\nList<Integer> b = new ArrayList<>();\nSystem.out.println((a.getClass() == b.getClass()) + \" \" + a.getClass().getSimpleName());",
+      "prompt": "Type exactly what main prints.",
+      "answer": "true ArrayList",
+      "explanation": "Type arguments are erased after compilation, so both lists share one runtime class."
+    },
+    {
+      "id": "java-m-generics-fix",
+      "node": "module-generics",
+      "type": "fix_bug",
+      "concept": "wildcards",
+      "prompt": "sumAll(int[] values) should return the sum of the values, but the class does not compile. Repair the helper's parameter type so any list of numbers can be passed in.",
+      "code": "static double total(List<Number> xs) {\n    double t = 0;\n    for (Number n : xs) t += n.doubleValue();\n    return t;\n}\npublic int sumAll(int[] values) {\n    List<Integer> list = new ArrayList<>();\n    for (int v : values) list.add(v);\n    return (int) total(list);\n}",
+      "fn": "sumAll",
+      "solution": "static double total(List<? extends Number> xs) {\n    double t = 0;\n    for (Number n : xs) t += n.doubleValue();\n    return t;\n}\npublic int sumAll(int[] values) {\n    List<Integer> list = new ArrayList<>();\n    for (int v : values) list.add(v);\n    return (int) total(list);\n}",
+      "tests": [
+        {
+          "args": [
+            []
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              5
+            ]
+          ],
+          "expected": 5
+        },
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": 6
+        },
+        {
+          "args": [
+            [
+              -4,
+              4
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              10,
+              -3,
+              7
+            ]
+          ],
+          "expected": 14
+        },
+        {
+          "args": [
+            [
+              100,
+              200,
+              300,
+              400
+            ]
+          ],
+          "expected": 1000
+        }
+      ],
+      "explanation": "The helper only reads from the list, so it should accept `List<? extends Number>`; List<Integer> is not a List<Number>."
+    },
+    {
+      "id": "java-m-generics-explain",
+      "node": "module-generics",
+      "type": "explain",
+      "concept": "extends-wildcard-add",
+      "prompt": "In your own words: why does the compiler reject `numbers.add(Integer.valueOf(1))` when `numbers` is declared as `List<? extends Number>`?",
+      "answer": "The wildcard means the list's real element type is some unknown subtype of Number. The reference might point at a List<Double>, so the compiler cannot prove an Integer is safe to insert. Only null can be added, while reads are fine and give Number.",
+      "keywords": [
+        [
+          "unknown",
+          "might be",
+          "could be",
+          "some subtype",
+          "actual element type",
+          "real element type",
+          "exact type",
+          "not known"
+        ],
+        [
+          "double",
+          "other subtype",
+          "different subtype",
+          "another subtype",
+          "a list of something else"
+        ],
+        [
+          "only null",
+          "except null",
+          "can read",
+          "reads are",
+          "producer",
+          "read-only",
+          "read only",
+          "safe to"
+        ]
+      ]
+    },
+    {
+      "id": "java-m-collections-treeset-short",
+      "node": "module-collections-contracts",
+      "type": "short_answer",
+      "concept": "comparator-duplicates",
+      "code": "TreeSet<String> s = new TreeSet<>(Comparator.comparingInt(String::length));\ns.add(\"aa\");\ns.add(\"bb\");\ns.add(\"c\");\nSystem.out.println(s.size() + \" \" + s);",
+      "prompt": "Type exactly what main prints.",
+      "answer": "2 [c, aa]",
+      "explanation": "A TreeSet uses only the comparator. \"aa\" and \"bb\" compare as 0, so the second is treated as a duplicate and dropped."
+    },
+    {
+      "id": "java-m-collections-mutkey-code",
+      "node": "module-collections-contracts",
+      "type": "mcq_code",
+      "concept": "mutable-hash-key",
+      "code": "List<Integer> key = new ArrayList<>(List.of(1));\nSet<List<Integer>> set = new HashSet<>();\nset.add(key);\nkey.add(2);\nSystem.out.println(set.contains(key) + \" \" + set.size());",
+      "prompt": "What does main print?",
+      "choices": [
+        "true 1",
+        "false 1",
+        "true 0",
+        "false 0"
+      ],
+      "answer": 1,
+      "explanation": "The list's hashCode depends on its contents. After it changes, the lookup hashes to a different value than the one stored, so the element is still counted but cannot be found."
+    },
+    {
+      "id": "java-m-collections-arrays-short",
+      "node": "module-collections-contracts",
+      "type": "short_answer",
+      "concept": "array-equality",
+      "code": "int[] a = {1, 2};\nint[] b = {1, 2};\nSystem.out.println(a.equals(b) + \" \" + Arrays.equals(a, b) + \" \" + List.of(1, 2).equals(List.of(1, 2)));",
+      "prompt": "Type exactly what main prints.",
+      "answer": "false true true",
+      "explanation": "Arrays do not override equals, so it compares identity. Arrays.equals and List.equals compare contents."
+    },
+    {
+      "id": "java-m-collections-pq-mcq",
+      "node": "module-collections-contracts",
+      "type": "mcq",
+      "concept": "complexity",
+      "prompt": "Which of these PriorityQueue operations does the documentation list as linear time?",
+      "choices": [
+        "peek() and element()",
+        "contains(Object)",
+        "offer(E) and add(E)",
+        "poll() and remove()"
+      ],
+      "answer": 1,
+      "explanation": "PriorityQueue is a heap: offer and poll are O(log n), peek is O(1), but contains (like remove(Object)) must scan the elements."
+    },
+    {
+      "id": "java-m-collections-order-mcq",
+      "node": "module-collections-contracts",
+      "type": "mcq",
+      "concept": "iteration-order",
+      "prompt": "Your test prints the elements of a HashSet<String> and passes today. What does the API documentation say about relying on that order?",
+      "choices": [
+        "It is insertion order as long as nothing has been removed",
+        "It is sorted by each element's hash code, so it is predictable",
+        "It stays the same for a given set of elements on every JVM run",
+        "It makes no guarantee, and the order can change over time"
+      ],
+      "answer": 3,
+      "explanation": "HashSet and HashMap promise no iteration order. Use LinkedHashSet for insertion order or TreeSet for sorted order."
+    },
+    {
+      "id": "java-m-collections-fix",
+      "node": "module-collections-contracts",
+      "type": "fix_bug",
+      "concept": "comparator-overflow",
+      "prompt": "isLess(int a, int b) should report whether a sorts before b, the test a comparator would make. It gives wrong answers for some extreme values. Fix it.",
+      "code": "public boolean isLess(int a, int b) {\n    return a - b < 0;\n}",
+      "fn": "isLess",
+      "solution": "public boolean isLess(int a, int b) {\n    return Integer.compare(a, b) < 0;\n}",
+      "tests": [
+        {
+          "args": [
+            1,
+            2
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            2,
+            1
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            3,
+            3
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            -5,
+            -2
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            2147483647,
+            -5
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            -2147483648,
+            5
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            -5,
+            2147483647
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            2,
+            3
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            0,
+            1
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            -2147483648,
+            2147483647
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            2147483647,
+            -2147483648
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            -2147483648,
+            -2147483648
+          ],
+          "expected": false
+        }
+      ],
+      "explanation": "a - b can overflow for large or negative ints. Integer.compare never subtracts."
+    },
+    {
+      "id": "java-m-collections-explain",
+      "node": "module-collections-contracts",
+      "type": "explain",
+      "concept": "comparator-consistency",
+      "prompt": "A TreeSet<Employee> built with a comparator on salary silently lost an employee whose name differs from everyone else's. In your own words, explain why it was lost and what to change.",
+      "answer": "A TreeSet decides whether two elements are duplicates using only the comparator, never equals. Two employees whose salaries compare as 0 are treated as the same element, so the second add is ignored. Add a tie-breaker such as thenComparing on a unique field so the ordering is consistent with equals.",
+      "keywords": [
+        [
+          "returns 0",
+          "compares as 0",
+          "compare as 0",
+          "zero",
+          "compare equal",
+          "compares equal",
+          "same salary",
+          " tie"
+        ],
+        [
+          "not equals",
+          "instead of equals",
+          "ignores equals",
+          "never calls equals",
+          "doesn't use equals",
+          "does not use equals",
+          "only the comparator",
+          "only uses the comparator"
+        ],
+        [
+          "thenComparing",
+          "tiebreak",
+          "tie-break",
+          "tie break",
+          "secondary",
+          "additional field",
+          "second field",
+          "another field",
+          "unique"
+        ]
+      ]
+    },
+    {
+      "id": "java-m-streams-lazy-short",
+      "node": "module-streams",
+      "type": "short_answer",
+      "concept": "lazy-pipeline",
+      "code": "Stream<Integer> s = Stream.of(1, 2, 3).map(x -> {\n    System.out.print(\"m\" + x + \" \");\n    return x;\n});\nSystem.out.print(\"built \");\ns.toList();",
+      "prompt": "Type exactly what main prints.",
+      "answer": "built m1 m2 m3",
+      "explanation": "map is lazy: nothing runs when the pipeline is built. The terminal operation toList triggers the traversal."
+    },
+    {
+      "id": "java-m-streams-reuse-short",
+      "node": "module-streams",
+      "type": "short_answer",
+      "concept": "single-use",
+      "code": "Stream<Integer> s = Stream.of(1, 2, 3);\nSystem.out.print(s.count() + \" \");\ntry {\n    s.count();\n} catch (IllegalStateException e) {\n    System.out.println(\"reused\");\n}",
+      "prompt": "Type exactly what main prints.",
+      "answer": "3 reused",
+      "explanation": "A stream is consumed by its terminal operation. Using it again throws IllegalStateException; get a new stream from the source."
+    },
+    {
+      "id": "java-m-streams-shortcircuit-code",
+      "node": "module-streams",
+      "type": "mcq_code",
+      "concept": "short-circuit",
+      "code": "List<String> out = new ArrayList<>();\nOptional<String> r = Stream.of(\"a\", \"bb\", \"ccc\", \"dd\")\n    .filter(s -> { out.add(\"f\" + s); return s.length() > 1; })\n    .map(s -> { out.add(\"m\" + s); return s.toUpperCase(); })\n    .findFirst();\nSystem.out.println(out);",
+      "prompt": "What does main print?",
+      "choices": [
+        "[fa, fbb, fccc, fdd, mbb]",
+        "[fa, fbb, mbb]",
+        "[fa, fbb, fccc, fdd, mbb, mccc, mdd]",
+        "[mbb]"
+      ],
+      "answer": 1,
+      "explanation": "Elements flow through the whole pipeline one at a time, and findFirst stops traversal after the first result, so ccc and dd are never touched."
+    },
+    {
+      "id": "java-m-streams-parallel-mcq",
+      "node": "module-streams",
+      "type": "mcq",
+      "concept": "parallel-streams",
+      "prompt": "Which statement about parallel streams is consistent with the Stream documentation?",
+      "choices": [
+        "A parallel stream is faster than a sequential one once the source holds a few thousand elements",
+        "Calling parallel() makes a lambda that appends to a shared ArrayList thread-safe",
+        "A parallel stream is not automatically faster, and it does not make shared mutable state safe",
+        "Lambdas in a parallel pipeline always run in the source's encounter order"
+      ],
+      "answer": 2,
+      "explanation": "Speed depends on source size, splitting, operation cost and the environment, so measure. Shared mutation stays unsafe; prefer a collector or reduction."
+    },
+    {
+      "id": "java-m-streams-fix",
+      "node": "module-streams",
+      "type": "fix_bug",
+      "concept": "reduction-vs-mutation",
+      "prompt": "sumPositive(int[] a) should return the sum of the positive values, but the class does not compile. Repair it using a reduction rather than mutating a captured variable.",
+      "code": "public int sumPositive(int[] a) {\n    int total = 0;\n    Arrays.stream(a).filter(x -> x > 0).forEach(x -> total += x);\n    return total;\n}",
+      "fn": "sumPositive",
+      "solution": "public int sumPositive(int[] a) {\n    return Arrays.stream(a).filter(x -> x > 0).sum();\n}",
+      "tests": [
+        {
+          "args": [
+            []
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": 6
+        },
+        {
+          "args": [
+            [
+              -1,
+              -2
+            ]
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              5,
+              -5,
+              5
+            ]
+          ],
+          "expected": 10
+        },
+        {
+          "args": [
+            [
+              0,
+              0,
+              7
+            ]
+          ],
+          "expected": 7
+        },
+        {
+          "args": [
+            [
+              10,
+              -20,
+              30,
+              -40,
+              50
+            ]
+          ],
+          "expected": 90
+        }
+      ],
+      "explanation": "A lambda can only capture effectively final locals. A terminal reduction such as sum() avoids the external accumulator, and is also safe in parallel."
+    },
+    {
+      "id": "java-m-streams-write",
+      "node": "module-streams",
+      "type": "write_snippet",
+      "concept": "filter-count",
+      "prompt": "Write countLong(String[] words, int minLen) that returns how many words have at least minLen characters. Use a stream pipeline.",
+      "starter": "public int countLong(String[] words, int minLen) {\n    // build a stream, filter, then count\n    return 0;\n}",
+      "fn": "countLong",
+      "solution": "public int countLong(String[] words, int minLen) {\n    return (int) Arrays.stream(words).filter(w -> w.length() >= minLen).count();\n}",
+      "tests": [
+        {
+          "args": [
+            [],
+            1
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "a",
+              "bb",
+              "ccc"
+            ],
+            2
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              "a",
+              "bb",
+              "ccc"
+            ],
+            4
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "",
+              "x"
+            ],
+            0
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              "java",
+              "stream",
+              "lazy"
+            ],
+            4
+          ],
+          "expected": 3
+        },
+        {
+          "args": [
+            [
+              "one",
+              "two",
+              "three"
+            ],
+            5
+          ],
+          "expected": 1
+        }
+      ],
+      "explanation": "filter keeps matching words and count() is the terminal operation; count returns long, so cast it to int."
+    },
+    {
+      "id": "java-m-streams-explain",
+      "node": "module-streams",
+      "type": "explain",
+      "concept": "intermediate-ops",
+      "prompt": "A teammate claims that the line `names.stream().map(String::trim);` has already trimmed every name. In your own words, what is wrong with that claim?",
+      "answer": "Intermediate operations such as map are lazy: calling them only describes the pipeline. Nothing is traversed until a terminal operation such as collect, count or reduce runs, and the result of that line is just an unconsumed stream. The source list is never modified.",
+      "keywords": [
+        [
+          "lazy",
+          "lazily",
+          "deferred",
+          "does not run",
+          "doesn't run",
+          "not run",
+          "nothing happens",
+          "nothing is done",
+          "only describes",
+          "only sets up",
+          "not executed"
+        ],
+        [
+          "terminal",
+          "collect",
+          "count()",
+          "toList",
+          "reduce"
+        ],
+        [
+          "never modif",
+          "does not modify",
+          "doesn't modify",
+          "source list",
+          "original list",
+          "unchanged",
+          "not changed",
+          "result is discarded",
+          "discarded",
+          "new stream"
+        ]
+      ]
+    },
+    {
+      "id": "java-m-conc-join-short",
+      "node": "module-concurrency",
+      "type": "short_answer",
+      "concept": "join-atomic",
+      "code": "java.util.concurrent.atomic.AtomicInteger n = new java.util.concurrent.atomic.AtomicInteger();\nRunnable r = () -> { for (int i = 0; i < 1000; i++) n.incrementAndGet(); };\nThread a = new Thread(r), b = new Thread(r);\na.start();\nb.start();\na.join();\nb.join();\nSystem.out.println(n.get());",
+      "prompt": "Type exactly what main prints.",
+      "answer": "2000",
+      "explanation": "incrementAndGet is atomic, so no update is lost, and join() makes main wait until both threads have finished."
+    },
+    {
+      "id": "java-m-conc-compose-short",
+      "node": "module-concurrency",
+      "type": "short_answer",
+      "concept": "thenCompose",
+      "code": "var f = java.util.concurrent.CompletableFuture.supplyAsync(() -> 5)\n    .thenApply(x -> x * 2)\n    .thenCompose(x -> java.util.concurrent.CompletableFuture.supplyAsync(() -> x + 1));\nSystem.out.println(f.join());",
+      "prompt": "Type exactly what main prints.",
+      "answer": "11",
+      "explanation": "thenApply turns 5 into 10; thenCompose chains a step that itself returns a future, flattening it, so the result is 10 + 1."
+    },
+    {
+      "id": "java-m-conc-handle-code",
+      "node": "module-concurrency",
+      "type": "mcq_code",
+      "concept": "completion-exception",
+      "code": "var f = java.util.concurrent.CompletableFuture.supplyAsync(() -> { if (true) throw new IllegalStateException(\"boom\"); return 1; })\n    .thenApply(x -> x + 1)\n    .handle((v, e) -> e == null ? \"ok\" : e.getClass().getSimpleName() + \"/\" + e.getCause().getMessage());\nSystem.out.println(f.join());",
+      "prompt": "What does main print?",
+      "choices": [
+        "ok",
+        "IllegalStateException/boom",
+        "ExecutionException/boom",
+        "CompletionException/boom"
+      ],
+      "answer": 3,
+      "explanation": "A failure in one stage skips the dependent thenApply and reaches handle wrapped in a CompletionException; getCause() gives the original exception."
+    },
+    {
+      "id": "java-m-conc-interrupt-mcq",
+      "node": "module-concurrency",
+      "type": "mcq",
+      "concept": "interruption",
+      "prompt": "A task catches InterruptedException from a blocking call and cannot rethrow it. What should it normally do?",
+      "choices": [
+        "Log it and carry on, because catching the exception already ended the interruption request",
+        "Call Thread.currentThread().stop() so the thread cannot keep running",
+        "Restore the flag with Thread.currentThread().interrupt() and stop the interrupted work",
+        "Ignore it, since interruption only applies to virtual threads"
+      ],
+      "answer": 2,
+      "explanation": "Interruption is a cooperative signal. Throwing InterruptedException clears the flag, so code that cannot propagate it should restore the flag and stop what it was doing."
+    },
+    {
+      "id": "java-m-conc-cancel-mcq",
+      "node": "module-concurrency",
+      "type": "mcq",
+      "concept": "cancellation",
+      "prompt": "`cf.cancel(true)` is called on a CompletableFuture while its supplier is still running. According to the documentation, what happens?",
+      "choices": [
+        "The thread running the supplier is interrupted and the supplier stops early",
+        "It completes with CancellationException, but the computation keeps running",
+        "The call blocks until the supplier finishes, then completes the future normally",
+        "Nothing happens, because a future whose work has started cannot be cancelled"
+      ],
+      "answer": 1,
+      "explanation": "cancel(true) completes the future with CancellationException, but the documentation says it does not interrupt the computation, so long-running suppliers need their own cancellation check."
+    },
+    {
+      "id": "java-m-conc-virtual-mcq",
+      "node": "module-concurrency",
+      "type": "mcq",
+      "concept": "virtual-threads",
+      "prompt": "A service moves to virtual threads, but its database allows only 20 concurrent connections. How should that limit be enforced?",
+      "choices": [
+        "Bound access to the database, for example with a semaphore around the calls",
+        "Create a pool of 20 virtual threads, because virtual threads are expensive to create",
+        "Do nothing: virtual threads remove database and memory limits",
+        "Switch back to platform threads, which throttle database calls automatically"
+      ],
+      "answer": 0,
+      "explanation": "Virtual threads are cheap, so you should not pool them to limit concurrency. They do not lift downstream limits; admission to the scarce resource must be bounded explicitly."
+    },
+    {
+      "id": "java-m-conc-fix",
+      "node": "module-concurrency",
+      "type": "fix_bug",
+      "concept": "thenCompose",
+      "prompt": "doubledSum(int a, int b) should return (a + b) * 2 using chained futures, but the class does not compile. Fix the chain.",
+      "code": "public int doubledSum(int a, int b) {\n    java.util.concurrent.CompletableFuture<Integer> f = java.util.concurrent.CompletableFuture.supplyAsync(() -> a)\n        .thenApply(x -> java.util.concurrent.CompletableFuture.supplyAsync(() -> x + b));\n    return f.join() * 2;\n}",
+      "fn": "doubledSum",
+      "solution": "public int doubledSum(int a, int b) {\n    java.util.concurrent.CompletableFuture<Integer> f = java.util.concurrent.CompletableFuture.supplyAsync(() -> a)\n        .thenCompose(x -> java.util.concurrent.CompletableFuture.supplyAsync(() -> x + b));\n    return f.join() * 2;\n}",
+      "tests": [
+        {
+          "args": [
+            1,
+            2
+          ],
+          "expected": 6
+        },
+        {
+          "args": [
+            0,
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            -3,
+            3
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            10,
+            5
+          ],
+          "expected": 30
+        },
+        {
+          "args": [
+            -4,
+            -6
+          ],
+          "expected": -20
+        },
+        {
+          "args": [
+            100,
+            1
+          ],
+          "expected": 202
+        }
+      ],
+      "explanation": "thenApply wraps the returned future, giving CompletableFuture<CompletableFuture<Integer>>. thenCompose flattens it."
+    },
+    {
+      "id": "java-m-conc-explain",
+      "node": "module-concurrency",
+      "type": "explain",
+      "concept": "thenCompose-vs-thenApply",
+      "prompt": "In your own words: when the next step of a CompletableFuture chain itself returns a CompletableFuture, why use thenCompose rather than thenApply?",
+      "answer": "thenApply wraps whatever the function returns, so a function that returns a future produces a nested CompletableFuture<CompletableFuture<T>> that still has to be unwrapped. thenCompose flattens it, like flatMap, so the chain continues with the inner future's result.",
+      "keywords": [
+        [
+          "nested",
+          "future of a future",
+          "future of future",
+          "wrapped",
+          "double wrap",
+          "future inside",
+          "CompletableFuture<CompletableFuture"
+        ],
+        [
+          "flatten",
+          "flatmap",
+          "flat map",
+          "unwrap",
+          "flat-map"
+        ],
+        [
+          "inner",
+          "result of the returned",
+          "returned future",
+          "actual result",
+          "underlying value",
+          "underlying result"
+        ]
+      ]
+    },
+    {
+      "id": "java-m-junit-beforeall-mcq",
+      "node": "module-junit",
+      "type": "mcq",
+      "concept": "lifecycle",
+      "prompt": "With default JUnit Jupiter settings, which rule applies to a @BeforeAll method?",
+      "choices": [
+        "It must be an instance method, because it runs before each test instance exists",
+        "It must be static, unless the class uses @TestInstance(Lifecycle.PER_CLASS)",
+        "It must also carry @Test, or the runner ignores it",
+        "It must be public, and the test class must be public too"
+      ],
+      "answer": 1,
+      "explanation": "@BeforeAll and @AfterAll run once per class, so by default they are static. PER_CLASS lifecycle lets them be instance methods. Jupiter test classes and methods need not be public."
+    },
+    {
+      "id": "java-m-junit-instance-code",
+      "node": "module-junit",
+      "type": "mcq_code",
+      "concept": "instance-per-test",
+      "code": "class CounterTest {\n    int calls = 0;\n\n    @Test\n    void first() {\n        calls++;\n        assertEquals(1, calls);\n    }\n\n    @Test\n    void second() {\n        calls++;\n        assertEquals(1, calls);\n    }\n}",
+      "prompt": "With default Jupiter settings, what happens when both tests run, in either order?",
+      "choices": [
+        "Whichever test runs second fails, because calls is already 1",
+        "Neither compiles, because test instance fields must be static",
+        "Both fail, because calls starts at 0 and the assertion expects 1",
+        "Both pass: each test method gets its own new instance of the class"
+      ],
+      "answer": 3,
+      "explanation": "Jupiter creates a new test-class instance for every test method, so the field starts at 0 each time and instance state does not leak between tests."
+    },
+    {
+      "id": "java-m-junit-zero-tests-mcq",
+      "node": "module-junit",
+      "type": "mcq",
+      "concept": "engine-mismatch",
+      "prompt": "A build passes but reports 0 tests. The test class imports @Test from org.junit.Test (JUnit 4), and the build only has the Jupiter engine. Why are no tests found?",
+      "choices": [
+        "Jupiter tests must be public methods declared in public classes",
+        "Jupiter does not discover methods annotated with the JUnit 4 @Test",
+        "@Test only takes effect when the class also declares a @BeforeAll method",
+        "assertEquals was not statically imported, so the whole class was skipped"
+      ],
+      "answer": 1,
+      "explanation": "Jupiter's annotations live in org.junit.jupiter.api. Mixing in JUnit 4's @Test is a common reason tests silently do not run."
+    },
+    {
+      "id": "java-m-junit-assertthrows-mcq",
+      "node": "module-junit",
+      "type": "mcq",
+      "concept": "assertThrows",
+      "prompt": "What does `assertThrows(IllegalArgumentException.class, () -> graph.addEdge(-1, 0))` return when the exception is thrown?",
+      "choices": [
+        "Nothing, so the exception message cannot be inspected",
+        "true, meaning the expected exception type was thrown",
+        "The value that addEdge would have returned",
+        "The thrown exception, so its message can be checked"
+      ],
+      "answer": 3,
+      "explanation": "assertThrows returns the exception it caught, so a test can assert on getMessage() as well as the type."
+    },
+    {
+      "id": "java-m-junit-params-mcq",
+      "node": "module-junit",
+      "type": "mcq",
+      "concept": "parameterized-deps",
+      "prompt": "A test file using @ParameterizedTest fails to compile because org.junit.jupiter.params cannot be found, though @Test from Jupiter works. Which dependency is missing?",
+      "choices": [
+        "junit-jupiter-params, included in the junit-jupiter aggregate",
+        "junit-vintage-engine, the engine that runs parameterized tests",
+        "mockito-core, the library that supplies parameter sources",
+        "assertj-core, the library that provides @ValueSource"
+      ],
+      "answer": 0,
+      "explanation": "Parameterized tests need the junit-jupiter-params artifact. Vintage runs old JUnit 3/4 tests, and Mockito and AssertJ are separate libraries."
+    },
+    {
+      "id": "java-m-junit-isolation-explain",
+      "node": "module-junit",
+      "type": "explain",
+      "concept": "test-isolation",
+      "prompt": "A unit test passes when run by itself but fails when the whole build runs. In your own words, what kind of hidden coupling could cause this, and how would you make the test reliable?",
+      "answer": "Tests can depend on shared static state, a clock, an external service, or on running after another test. Leftover state from an earlier test changes the result, so the outcome depends on execution order. Make each test set up its own fresh state, for example in @BeforeEach, clean up what it owns, and never depend on another test running first.",
+      "keywords": [
+        [
+          "static",
+          "shared state",
+          "global",
+          "singleton",
+          "leftover",
+          "left over",
+          "shared field",
+          "shared data"
+        ],
+        [
+          "execution order",
+          "test order",
+          "order matters",
+          "order of other",
+          "order of the tests",
+          "order-dependent",
+          "order dependent",
+          "depends on the order",
+          "depend on the order",
+          "depends on another",
+          "depend on another",
+          "depends on the previous",
+          "run first",
+          "runs first",
+          "ran before"
+        ],
+        [
+          "beforeeach",
+          "fresh",
+          "set up",
+          "setup",
+          "own state",
+          "clean up",
+          "cleanup",
+          "reset",
+          "isolat",
+          "independent"
+        ]
+      ]
+    },
+    {
+      "id": "java-m-junit-instance-explain",
+      "node": "module-junit",
+      "type": "explain",
+      "concept": "instance-lifecycle",
+      "prompt": "In your own words: what does JUnit Jupiter do by default so that fields set in one test method are not visible in the next one?",
+      "answer": "By default Jupiter creates a new instance of the test class for each test method, so every test starts with fresh field values and nothing is shared. @BeforeEach runs around every test for per-test setup, while @BeforeAll runs once and has to be static unless the class opts into the PER_CLASS lifecycle.",
+      "keywords": [
+        [
+          "new instance",
+          "fresh instance",
+          "separate instance",
+          "new object",
+          "own instance",
+          "another instance",
+          "one instance per",
+          "instantiat",
+          "new copy"
+        ],
+        [
+          "for each test method",
+          "for every test method",
+          "per test method",
+          "per method",
+          "each test method gets",
+          "each method gets",
+          "every test gets",
+          "each test gets",
+          "for each test",
+          "for every test",
+          "one per test"
+        ],
+        [
+          "fresh field",
+          "fields start",
+          "start with fresh",
+          "starts with fresh",
+          "fresh values",
+          "initial value",
+          "starts at 0",
+          "from scratch",
+          "not shared",
+          "not leak",
+          "no leaking"
+        ]
+      ]
     }
-   ],
-   "explanation": "Integer division happens before the result is widened; cast an operand to double first."
-  },
-  {
-   "id": "java-s02-code",
-   "node": "stage-02",
-   "type": "mcq_code",
-   "concept": "string-equality",
-   "code": "String a = new String(\"hi\");\nString b = \"hi\";\nSystem.out.println((a == b) + \" \" + a.equals(b));",
-   "prompt": "What does this print?",
-   "choices": [
-    "true true",
-    "false true",
-    "false false",
-    "true false"
-   ],
-   "answer": 1,
-   "explanation": "== compares references; new String creates a separate object. equals compares contents."
-  },
-  {
-   "id": "java-s02-short",
-   "node": "stage-02",
-   "type": "short_answer",
-   "concept": "short-circuit",
-   "code": "int[] xs = {};\nboolean ok = xs.length > 0 && xs[0] > 0;\nSystem.out.println(ok);",
-   "prompt": "Type exactly what this prints.",
-   "answer": "false",
-   "explanation": "&& short-circuits: the length check is false, so xs[0] is never read."
-  },
-  {
-   "id": "java-s02-fix",
-   "node": "stage-02",
-   "type": "fix_bug",
-   "concept": "boundaries",
-   "prompt": "isTeen(int age) must return true for 13 through 19 inclusive. Fix the boundaries.",
-   "code": "public boolean isTeen(int age) {\n    return age > 13 && age < 19;\n}",
-   "fn": "isTeen",
-   "solution": "public boolean isTeen(int age) {\n    return age >= 13 && age <= 19;\n}",
-   "tests": [
-    {
-     "args": [
-      13
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      19
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      16
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      12
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      20
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      0
-     ],
-     "expected": false
-    }
-   ],
-   "explanation": "Inclusive boundaries need >= and <=."
-  },
-  {
-   "id": "java-s03-code",
-   "node": "stage-03",
-   "type": "mcq_code",
-   "concept": "loop-bounds",
-   "code": "int count = 0;\nfor (int i = 0; i <= 5; i += 2) count++;\nSystem.out.println(count);",
-   "prompt": "What does this print?",
-   "choices": [
-    "2",
-    "3",
-    "4",
-    "6"
-   ],
-   "answer": 1,
-   "explanation": "i takes 0, 2 and 4, so the body runs three times."
-  },
-  {
-   "id": "java-s03-short",
-   "node": "stage-03",
-   "type": "short_answer",
-   "concept": "accumulator",
-   "code": "int total = 0;\nfor (int i = 1; i <= 4; i++) total += i * i;\nSystem.out.println(total);",
-   "prompt": "Type exactly what this prints.",
-   "answer": "30",
-   "explanation": "1 + 4 + 9 + 16 = 30."
-  },
-  {
-   "id": "java-s03-fix",
-   "node": "stage-03",
-   "type": "fix_bug",
-   "concept": "off-by-one",
-   "prompt": "sumTo(int n) should return 1 + 2 + ... + n. It misses n. Fix it.",
-   "code": "public int sumTo(int n) {\n    int total = 0;\n    for (int i = 1; i < n; i++) total += i;\n    return total;\n}",
-   "fn": "sumTo",
-   "solution": "public int sumTo(int n) {\n    int total = 0;\n    for (int i = 1; i <= n; i++) total += i;\n    return total;\n}",
-   "tests": [
-    {
-     "args": [
-      0
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      1
-     ],
-     "expected": 1
-    },
-    {
-     "args": [
-      2
-     ],
-     "expected": 3
-    },
-    {
-     "args": [
-      5
-     ],
-     "expected": 15
-    },
-    {
-     "args": [
-      10
-     ],
-     "expected": 55
-    },
-    {
-     "args": [
-      100
-     ],
-     "expected": 5050
-    }
-   ],
-   "explanation": "Use <= so the loop includes n."
-  },
-  {
-   "id": "java-s04-code",
-   "node": "stage-04",
-   "type": "mcq_code",
-   "concept": "pass-by-value",
-   "code": "static void bump(int x) { x++; }\n// in main:\nint v = 1;\nbump(v);\nSystem.out.println(v);",
-   "prompt": "What does main print?",
-   "choices": [
-    "1",
-    "2",
-    "0",
-    "Compile error"
-   ],
-   "answer": 0,
-   "explanation": "Java passes a copy of the primitive value, so the caller's v is unchanged."
-  },
-  {
-   "id": "java-s04-short",
-   "node": "stage-04",
-   "type": "short_answer",
-   "concept": "overloading",
-   "code": "static String f(int x) { return \"int\"; }\nstatic String f(long x) { return \"long\"; }\n// in main:\nSystem.out.println(f(5) + \" \" + f(5L));",
-   "prompt": "Type exactly what main prints.",
-   "answer": "int long",
-   "explanation": "Overload resolution picks the exact type: 5 is an int literal and 5L is a long."
-  },
-  {
-   "id": "java-s04-fix",
-   "node": "stage-04",
-   "type": "fix_bug",
-   "concept": "contracts",
-   "prompt": "distance(int a, int b) must return a non-negative distance. It can return negative numbers. Fix it.",
-   "code": "public int distance(int a, int b) {\n    return a - b;\n}",
-   "fn": "distance",
-   "solution": "public int distance(int a, int b) {\n    return Math.abs(a - b);\n}",
-   "tests": [
-    {
-     "args": [
-      2,
-      5
-     ],
-     "expected": 3
-    },
-    {
-     "args": [
-      5,
-      2
-     ],
-     "expected": 3
-    },
-    {
-     "args": [
-      0,
-      0
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      -3,
-      4
-     ],
-     "expected": 7
-    },
-    {
-     "args": [
-      -8,
-      -2
-     ],
-     "expected": 6
-    },
-    {
-     "args": [
-      10,
-      -10
-     ],
-     "expected": 20
-    }
-   ],
-   "explanation": "Math.abs makes the result independent of argument order."
-  },
-  {
-   "id": "java-s05-code",
-   "node": "stage-05",
-   "type": "mcq_code",
-   "concept": "char-arithmetic",
-   "code": "char c = 'a';\nSystem.out.println(c + 1);\nSystem.out.println((char) (c + 1));",
-   "prompt": "What does this print (two lines)?",
-   "choices": [
-    "b then b",
-    "98 then b",
-    "a1 then b",
-    "98 then 98"
-   ],
-   "answer": 1,
-   "explanation": "char + int promotes to int (98). Casting back to char gives 'b'."
-  },
-  {
-   "id": "java-s05-short",
-   "node": "stage-05",
-   "type": "short_answer",
-   "concept": "immutability",
-   "code": "String s = \"java\";\ns.toUpperCase();\nSystem.out.println(s + \" \" + s.length());",
-   "prompt": "Type exactly what this prints.",
-   "answer": "java 4",
-   "explanation": "Strings are immutable; toUpperCase returns a new String that was discarded."
-  },
-  {
-   "id": "java-s05-fix",
-   "node": "stage-05",
-   "type": "fix_bug",
-   "concept": "string-matching",
-   "prompt": "countMatches(String[] words, String target) must count words that are exactly equal to target. It also counts words that merely contain it. Fix it.",
-   "code": "public int countMatches(String[] words, String target) {\n    int count = 0;\n    for (String w : words) if (w.contains(target)) count++;\n    return count;\n}",
-   "fn": "countMatches",
-   "solution": "public int countMatches(String[] words, String target) {\n    int count = 0;\n    for (String w : words) if (w.equals(target)) count++;\n    return count;\n}",
-   "tests": [
-    {
-     "args": [
-      [],
-      "a"
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      [
-       "a"
-      ],
-      "a"
-     ],
-     "expected": 1
-    },
-    {
-     "args": [
-      [
-       "a",
-       "b",
-       "a"
-      ],
-      "a"
-     ],
-     "expected": 2
-    },
-    {
-     "args": [
-      [
-       "ab"
-      ],
-      "a"
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      [
-       "x",
-       "xx"
-      ],
-      "x"
-     ],
-     "expected": 1
-    },
-    {
-     "args": [
-      [
-       "b"
-      ],
-      "c"
-     ],
-     "expected": 0
-    }
-   ],
-   "explanation": "contains matches substrings; equals compares the whole string's contents (never ==, which compares references)."
-  },
-  {
-   "id": "java-s06-code",
-   "node": "stage-06",
-   "type": "mcq_code",
-   "concept": "array-aliasing",
-   "code": "int[] a = {1, 2};\nint[] b = a;\nb[0] = 9;\nSystem.out.println(a[0]);",
-   "prompt": "What does this print?",
-   "choices": [
-    "1",
-    "9",
-    "2",
-    "Compile error"
-   ],
-   "answer": 1,
-   "explanation": "b refers to the same array object as a; use a.clone() or Arrays.copyOf for a copy."
-  },
-  {
-   "id": "java-s06-short",
-   "node": "stage-06",
-   "type": "short_answer",
-   "concept": "array-default",
-   "code": "int[] counts = new int[3];\ncounts[1]++;\nSystem.out.println(java.util.Arrays.toString(counts));",
-   "prompt": "Type exactly what this prints.",
-   "answer": "[0, 1, 0]",
-   "explanation": "New int arrays are filled with 0."
-  },
-  {
-   "id": "java-s06-fix",
-   "node": "stage-06",
-   "type": "fix_bug",
-   "concept": "bounds",
-   "prompt": "maxOf(int[] values) returns the largest value of a non-empty array. It throws ArrayIndexOutOfBoundsException. Fix it.",
-   "code": "public int maxOf(int[] values) {\n    int best = values[0];\n    for (int i = 1; i <= values.length; i++) best = Math.max(best, values[i]);\n    return best;\n}",
-   "fn": "maxOf",
-   "solution": "public int maxOf(int[] values) {\n    int best = values[0];\n    for (int i = 1; i < values.length; i++) best = Math.max(best, values[i]);\n    return best;\n}",
-   "tests": [
-    {
-     "args": [
-      [
-       5
-      ]
-     ],
-     "expected": 5
-    },
-    {
-     "args": [
-      [
-       1,
-       3,
-       2
-      ]
-     ],
-     "expected": 3
-    },
-    {
-     "args": [
-      [
-       -5,
-       -2
-      ]
-     ],
-     "expected": -2
-    },
-    {
-     "args": [
-      [
-       4,
-       4
-      ]
-     ],
-     "expected": 4
-    },
-    {
-     "args": [
-      [
-       9,
-       1,
-       8
-      ]
-     ],
-     "expected": 9
-    },
-    {
-     "args": [
-      [
-       0,
-       0,
-       1
-      ]
-     ],
-     "expected": 1
-    }
-   ],
-   "explanation": "The last valid index is length - 1, so the loop needs <."
-  },
-  {
-   "id": "java-s07-code",
-   "node": "stage-07",
-   "type": "mcq_code",
-   "concept": "getordefault",
-   "code": "Map<String, Integer> m = new HashMap<>();\nm.put(\"a\", m.getOrDefault(\"a\", 0) + 1);\nm.put(\"a\", m.getOrDefault(\"a\", 0) + 1);\nSystem.out.println(m.get(\"a\") + \" \" + m.get(\"b\"));",
-   "prompt": "What does this print?",
-   "choices": [
-    "2 0",
-    "2 null",
-    "1 null",
-    "NullPointerException"
-   ],
-   "answer": 1,
-   "explanation": "getOrDefault supplies 0 for the first read; get on a missing key returns null."
-  },
-  {
-   "id": "java-s07-short",
-   "node": "stage-07",
-   "type": "short_answer",
-   "concept": "merge",
-   "code": "Map<Character, Integer> m = new TreeMap<>();\nfor (char c : \"abca\".toCharArray()) m.merge(c, 1, Integer::sum);\nSystem.out.println(m);",
-   "prompt": "Type exactly what this prints.",
-   "answer": "{a=2, b=1, c=1}",
-   "explanation": "merge adds 1 for each occurrence; TreeMap keeps keys sorted."
-  },
-  {
-   "id": "java-s07-fix",
-   "node": "stage-07",
-   "type": "fix_bug",
-   "concept": "missing-key",
-   "prompt": "countOf(String[] words, String target) builds a frequency map, then returns target's count. It throws NullPointerException. Fix it.",
-   "code": "public int countOf(String[] words, String target) {\n    Map<String, Integer> counts = new HashMap<>();\n    for (String w : words) counts.put(w, counts.get(w) + 1);\n    return counts.getOrDefault(target, 0);\n}",
-   "fn": "countOf",
-   "solution": "public int countOf(String[] words, String target) {\n    Map<String, Integer> counts = new HashMap<>();\n    for (String w : words) counts.put(w, counts.getOrDefault(w, 0) + 1);\n    return counts.getOrDefault(target, 0);\n}",
-   "tests": [
-    {
-     "args": [
-      [],
-      "a"
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      [
-       "a"
-      ],
-      "a"
-     ],
-     "expected": 1
-    },
-    {
-     "args": [
-      [
-       "a",
-       "b",
-       "a"
-      ],
-      "a"
-     ],
-     "expected": 2
-    },
-    {
-     "args": [
-      [
-       "a",
-       "b"
-      ],
-      "c"
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      [
-       "x",
-       "x",
-       "x"
-      ],
-      "x"
-     ],
-     "expected": 3
-    },
-    {
-     "args": [
-      [
-       "aa",
-       "a"
-      ],
-      "a"
-     ],
-     "expected": 1
-    }
-   ],
-   "explanation": "get returns null for a new key and unboxing null throws; use getOrDefault."
-  },
-  {
-   "id": "java-s08-code",
-   "node": "stage-08",
-   "type": "mcq_code",
-   "concept": "set-add",
-   "code": "Set<Integer> s = new HashSet<>();\nboolean first = s.add(3);\nboolean second = s.add(3);\nSystem.out.println(first + \" \" + second + \" \" + s.size());",
-   "prompt": "What does this print?",
-   "choices": [
-    "true true 2",
-    "true false 1",
-    "false false 1",
-    "true true 1"
-   ],
-   "answer": 1,
-   "explanation": "add returns false when the element was already present; the set keeps one copy."
-  },
-  {
-   "id": "java-s08-short",
-   "node": "stage-08",
-   "type": "short_answer",
-   "concept": "integer-cache",
-   "code": "Integer a = 1000, b = 1000;\nSystem.out.println((a == b) + \" \" + a.equals(b));",
-   "prompt": "Type exactly what this prints.",
-   "answer": "false true",
-   "explanation": "Boxed values outside the -128..127 cache are separate objects, so == is false while equals is true."
-  },
-  {
-   "id": "java-s08-fix",
-   "node": "stage-08",
-   "type": "fix_bug",
-   "concept": "membership",
-   "prompt": "hasDuplicate(int[] values) should return true when any value repeats. It always returns false. Fix it.",
-   "code": "public boolean hasDuplicate(int[] values) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) {\n        seen.add(v);\n        if (seen.contains(v)) return false;\n    }\n    return false;\n}",
-   "fn": "hasDuplicate",
-   "solution": "public boolean hasDuplicate(int[] values) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) {\n        if (!seen.add(v)) return true;\n    }\n    return false;\n}",
-   "tests": [
-    {
-     "args": [
-      []
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      [
-       1
-      ]
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      [
-       1,
-       1
-      ]
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      [
-       1,
-       2,
-       3
-      ]
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      [
-       3,
-       1,
-       3
-      ]
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      [
-       -1,
-       0,
-       -1
-      ]
-     ],
-     "expected": true
-    }
-   ],
-   "explanation": "Check membership before adding (or use the boolean that add returns)."
-  },
-  {
-   "id": "java-s09-code",
-   "node": "stage-09",
-   "type": "mcq_code",
-   "concept": "static-field",
-   "code": "class Counter { static int total = 0; int mine = 0;\n  void hit() { total++; mine++; } }\n// in main:\nCounter a = new Counter(), b = new Counter();\na.hit(); b.hit(); b.hit();\nSystem.out.println(Counter.total + \" \" + a.mine);",
-   "prompt": "What does main print?",
-   "choices": [
-    "1 1",
-    "3 1",
-    "3 3",
-    "2 1"
-   ],
-   "answer": 1,
-   "explanation": "A static field is shared by every instance; mine belongs to each object."
-  },
-  {
-   "id": "java-s09-short",
-   "node": "stage-09",
-   "type": "short_answer",
-   "concept": "equals-hashcode",
-   "code": "record Point(int x, int y) {}\n// in main:\nSet<Point> s = new HashSet<>();\ns.add(new Point(1, 2));\nSystem.out.println(s.contains(new Point(1, 2)));",
-   "prompt": "Type exactly what main prints.",
-   "answer": "true",
-   "explanation": "Records generate equals and hashCode from their components, so equal points are found in a HashSet."
-  },
-  {
-   "id": "java-s09-fix",
-   "node": "stage-09",
-   "type": "fix_bug",
-   "concept": "shadowing",
-   "prompt": "finalBalance(int initial, int[] changes) applies changes to an account object. A local variable in the initializer shadows the field, so the balance always starts at 0. Fix it.",
-   "code": "public int finalBalance(int initial, int[] changes) {\n    var account = new Object() {\n        int balance;\n        { int balance = initial; }\n    };\n    for (int c : changes) account.balance += c;\n    return account.balance;\n}",
-   "fn": "finalBalance",
-   "solution": "public int finalBalance(int initial, int[] changes) {\n    var account = new Object() {\n        int balance;\n        { balance = initial; }\n    };\n    for (int c : changes) account.balance += c;\n    return account.balance;\n}",
-   "tests": [
-    {
-     "args": [
-      0,
-      []
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      10,
-      [
-       5,
-       -3
-      ]
-     ],
-     "expected": 12
-    },
-    {
-     "args": [
-      0,
-      [
-       -5
-      ]
-     ],
-     "expected": -5
-    },
-    {
-     "args": [
-      7,
-      [
-       0,
-       0
-      ]
-     ],
-     "expected": 7
-    },
-    {
-     "args": [
-      -2,
-      [
-       2
-      ]
-     ],
-     "expected": 0
-    },
-    {
-     "args": [
-      100,
-      [
-       -20,
-       -30,
-       10
-      ]
-     ],
-     "expected": 60
-    }
-   ],
-   "explanation": "int balance = initial declares a new local that hides the field. Assign the field itself."
-  },
-  {
-   "id": "java-s10-code",
-   "node": "stage-10",
-   "type": "mcq_code",
-   "concept": "exceptions",
-   "code": "try {\n  Integer.parseInt(\"12a\");\n  System.out.println(\"ok\");\n} catch (NumberFormatException e) {\n  System.out.println(\"bad\");\n} finally {\n  System.out.println(\"done\");\n}",
-   "prompt": "What does this print?",
-   "choices": [
-    "ok then done",
-    "bad then done",
-    "bad",
-    "done"
-   ],
-   "answer": 1,
-   "explanation": "parseInt throws for '12a'; the catch prints bad and finally always runs."
-  },
-  {
-   "id": "java-s10-short",
-   "node": "stage-10",
-   "type": "short_answer",
-   "concept": "optional",
-   "code": "Optional<String> name = Optional.empty();\nSystem.out.println(name.orElse(\"guest\") + \" \" + name.isPresent());",
-   "prompt": "Type exactly what this prints.",
-   "answer": "guest false",
-   "explanation": "orElse supplies the fallback for an empty Optional."
-  },
-  {
-   "id": "java-s10-fix",
-   "node": "stage-10",
-   "type": "fix_bug",
-   "concept": "validation",
-   "prompt": "safeAt(int[] values, int index, int fallback) must return fallback for any invalid index, including negative ones. Fix it.",
-   "code": "public int safeAt(int[] values, int index, int fallback) {\n    if (index > values.length) return fallback;\n    return values[index];\n}",
-   "fn": "safeAt",
-   "solution": "public int safeAt(int[] values, int index, int fallback) {\n    if (index < 0 || index >= values.length) return fallback;\n    return values[index];\n}",
-   "tests": [
-    {
-     "args": [
-      [],
-      0,
-      9
-     ],
-     "expected": 9
-    },
-    {
-     "args": [
-      [
-       2,
-       4
-      ],
-      0,
-      9
-     ],
-     "expected": 2
-    },
-    {
-     "args": [
-      [
-       2,
-       4
-      ],
-      1,
-      9
-     ],
-     "expected": 4
-    },
-    {
-     "args": [
-      [
-       2,
-       4
-      ],
-      2,
-      9
-     ],
-     "expected": 9
-    },
-    {
-     "args": [
-      [
-       2,
-       4
-      ],
-      -1,
-      9
-     ],
-     "expected": 9
-    },
-    {
-     "args": [
-      [
-       7
-      ],
-      5,
-      0
-     ],
-     "expected": 0
-    }
-   ],
-   "explanation": "Valid indices are 0 through length - 1; check both ends."
-  },
-  {
-   "id": "java-s11-code",
-   "node": "stage-11",
-   "type": "mcq_code",
-   "concept": "recursion-trace",
-   "code": "static int f(int n) { return n == 0 ? 0 : n % 10 + f(n / 10); }\n// in main:\nSystem.out.println(f(472));",
-   "prompt": "What does main print?",
-   "choices": [
-    "472",
-    "13",
-    "7",
-    "274"
-   ],
-   "answer": 1,
-   "explanation": "f sums the digits: 2 + 7 + 4 = 13."
-  },
-  {
-   "id": "java-s11-short",
-   "node": "stage-11",
-   "type": "short_answer",
-   "concept": "base-case",
-   "code": "static int steps(int n) { if (n <= 1) return 1; return steps(n - 1) + steps(n - 2); }\n// in main:\nSystem.out.println(steps(4));",
-   "prompt": "Type exactly what main prints.",
-   "answer": "5",
-   "explanation": "steps(0) = steps(1) = 1, then 2, 3, 5."
-  },
-  {
-   "id": "java-s11-fix",
-   "node": "stage-11",
-   "type": "fix_bug",
-   "concept": "base-case",
-   "prompt": "factorial(int n) should return n! for n from 0 to 12. It recurses forever on 0. Fix it.",
-   "code": "public int factorial(int n) {\n    if (n == 1) return 1;\n    return n * factorial(n - 1);\n}",
-   "fn": "factorial",
-   "solution": "public int factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}",
-   "tests": [
-    {
-     "args": [
-      0
-     ],
-     "expected": 1
-    },
-    {
-     "args": [
-      1
-     ],
-     "expected": 1
-    },
-    {
-     "args": [
-      2
-     ],
-     "expected": 2
-    },
-    {
-     "args": [
-      5
-     ],
-     "expected": 120
-    },
-    {
-     "args": [
-      10
-     ],
-     "expected": 3628800
-    },
-    {
-     "args": [
-      12
-     ],
-     "expected": 479001600
-    }
-   ],
-   "explanation": "The base case must also stop at 0."
-  },
-  {
-   "id": "java-s12-code",
-   "node": "stage-12",
-   "type": "mcq_code",
-   "concept": "complexity",
-   "code": "List<Integer> list = new ArrayList<>();\n// n add() calls, then:\nfor (int i = 0; i < list.size(); i++) list.contains(i);",
-   "prompt": "What is the time complexity of the loop?",
-   "choices": [
-    "O(n)",
-    "O(n log n)",
-    "O(n²)",
-    "O(1)"
-   ],
-   "answer": 2,
-   "explanation": "ArrayList.contains scans the list, O(n), and it runs n times."
-  },
-  {
-   "id": "java-s12-short",
-   "node": "stage-12",
-   "type": "short_answer",
-   "concept": "priority-queue",
-   "code": "PriorityQueue<Integer> pq = new PriorityQueue<>(List.of(5, 1, 4));\npq.add(0);\nSystem.out.println(pq.poll() + \" \" + pq.poll());",
-   "prompt": "Type exactly what this prints.",
-   "answer": "0 1",
-   "explanation": "PriorityQueue is a min-heap by default."
-  },
-  {
-   "id": "java-s12-fix",
-   "node": "stage-12",
-   "type": "fix_bug",
-   "concept": "one-pass",
-   "prompt": "hasPair(int[] values, int target) must not pair an element with itself. Fix it.",
-   "code": "public boolean hasPair(int[] values, int target) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) seen.add(v);\n    for (int v : values) if (seen.contains(target - v)) return true;\n    return false;\n}",
-   "fn": "hasPair",
-   "solution": "public boolean hasPair(int[] values, int target) {\n    Set<Integer> seen = new HashSet<>();\n    for (int v : values) {\n        if (seen.contains(target - v)) return true;\n        seen.add(v);\n    }\n    return false;\n}",
-   "tests": [
-    {
-     "args": [
-      [],
-      2
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      [
-       1
-      ],
-      2
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      [
-       1,
-       1
-      ],
-      2
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      [
-       2,
-       7,
-       11
-      ],
-      9
-     ],
-     "expected": true
-    },
-    {
-     "args": [
-      [
-       1,
-       2,
-       3
-      ],
-      9
-     ],
-     "expected": false
-    },
-    {
-     "args": [
-      [
-       3
-      ],
-      6
-     ],
-     "expected": false
-    }
-   ],
-   "explanation": "Check before adding so the set only contains earlier elements."
-  }
- ]
+  ]
 }
