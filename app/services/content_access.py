@@ -20,8 +20,41 @@ def public_text(markdown: str) -> str:
     return markdown[:match.start()].rstrip() if match else markdown
 
 
-def learner_document(content_id: str) -> str:
-    return public_text(read_content(content_id))
+LANGUAGE_ALIASES = {"js": "javascript", "ts": "typescript", "py": "python",
+                    "c++": "cpp", "c#": "csharp", "cs": "csharp", "rb": "ruby",
+                    "golang": "go"}
+CODE_LANGUAGES = {"python", "javascript", "java", "typescript", "cpp", "c",
+                  "rust", "ruby", "go", "csharp", "html", "css", "scss"}
+
+
+def scoped_markdown(markdown: str, language: str) -> str:
+    """Keep shared prose, but only the selected language's example sections/fences."""
+    def canonical(label):
+        key = label.strip().lower()
+        return LANGUAGE_ALIASES.get(key, key)
+    # Shared algorithm articles have per-language subsections, not just fences.
+    sections = re.split(r"(?=^#{2,6} +)", markdown, flags=re.M)
+    kept, skip_depth = [], None
+    for section in sections:
+        heading = re.match(r"^(#{2,6}) +([^\n]+)", section)
+        if heading:
+            depth, label = len(heading[1]), canonical(heading[2])
+            if skip_depth is not None and depth <= skip_depth:
+                skip_depth = None
+            if label in CODE_LANGUAGES and label != language:
+                skip_depth = depth
+        if skip_depth is None:
+            kept.append(section)
+    def fence(match):
+        label = canonical(match[1])
+        return "" if label in CODE_LANGUAGES and label != language else match[0]
+    return re.sub(r"^```([^\s`]*)[^\n]*\n.*?^```[ \t]*$", fence,
+                  "".join(kept), flags=re.M | re.S).strip()
+
+
+def learner_document(content_id: str, language: str | None = None) -> str:
+    text = public_text(read_content(content_id))
+    return scoped_markdown(text, language) if language else text
 
 
 def solution_document(content_id: str, language: str) -> str:

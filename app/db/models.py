@@ -400,3 +400,20 @@ class VectorCleanupJob(Base):
     attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     last_error: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class DebugChallengeAttempt(Base):
+    """A problem is reserved once per learner, even across devices or retries."""
+    __tablename__ = "debug_challenge_attempts"
+    __table_args__ = (UniqueConstraint("user_id", "challenge_id", name="uq_debug_challenge_user_problem"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    challenge_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    subject: Mapped[str] = mapped_column(String(80), nullable=False)
+    difficulty: Mapped[str] = mapped_column(String(20), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="assigned")
+    diagnosis: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

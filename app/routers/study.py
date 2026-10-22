@@ -72,6 +72,14 @@ async def path(language: str, user: User = Depends(get_current_user),
             "readiness": learning_path.readiness(language), "levels": learning_path.LEVEL_LABELS}
 
 
+@router.get("/explain-pathway")
+async def explain_pathway(language: str, user: User = Depends(get_current_user),
+                          session: AsyncSession = Depends(get_session)):
+    await require_language(session, user, language)
+    from app.services.explain_pathway import pathway
+    return await pathway(session, user.id, language)
+
+
 @router.get("/nodes/{node_id}/lesson")
 async def lesson(node_id: str, language: str, user: User = Depends(get_current_user),
                  session: AsyncSession = Depends(get_session)):
@@ -87,6 +95,14 @@ async def allowance(user: User = Depends(get_current_user), session: AsyncSessio
     return await study_room.allowance(session, user.id)
 
 
+@router.get("/progress-overview")
+async def progress_overview(language: str, user: User = Depends(get_current_user),
+                            session: AsyncSession = Depends(get_session)):
+    await require_language(session, user, language)
+    from app.services.study_progress import overview
+    return await overview(session, user.id, language)
+
+
 @router.get("/next")
 async def what_next(language: str, user: User = Depends(get_current_user),
                     session: AsyncSession = Depends(get_session)):
@@ -98,7 +114,10 @@ async def what_next(language: str, user: User = Depends(get_current_user),
 async def notes(language: str, user: User = Depends(get_current_user),
                 session: AsyncSession = Depends(get_session)):
     await require_language(session, user, language)
-    return {"notes": await study_room.notes(session, user.id, language)}
+    permitted = await allowed_languages(session, user)
+    rows = await study_room.notes(session, user.id, language)
+    return {"notes": [n for n in rows if n["mode"] != "compare" or
+                      all(n["body"].get(key) in permitted for key in ("first", "second"))]}
 
 
 @router.get("/insights")
@@ -140,6 +159,8 @@ async def message(request: StudyMessage, user: User = Depends(get_current_user),
         if not request.compare_language or request.compare_language == request.language:
             raise HTTPException(422, "Choose a second language to compare with.")
         await require_language(session, user, request.compare_language)
+        if {request.language, request.compare_language} != {"javascript", "typescript"}:
+            raise HTTPException(422, "Comparisons are available only for JavaScript and TypeScript.")
     if request.mode == "debug" and not (request.code.strip() and request.error.strip()):
         raise HTTPException(422, "Paste your code and the actual error or output.")
     provider = "auto" if user.role == "student" else request.provider
@@ -268,3 +289,53 @@ async def quiz_summary(quiz_id: str, user: User = Depends(get_current_user),
     if row.language not in await allowed_languages(session, user):
         raise HTTPException(403, "An active subscription covering this language is required.")
     return await quiz.summary(session, user, quiz_id)
+
+
+class DebugChallengeSelection(BaseModel):
+    language: str = Field(min_length=1, max_length=32)
+    subject: str = Field(min_length=1, max_length=80)
+    difficulty: Literal['easy', 'medium', 'hard', 'expert', 'extreme'] = 'easy'
+    focus_id: str | None = Field(default=None, min_length=1, max_length=120)
+
+
+class DebugChallengeReview(BaseModel):
+    diagnosis: str = Field(min_length=10, max_length=4000)
+
+
+async def _debug_topic(session, user, language, focus_id):
+    if focus_id:
+        return focus_id
+    # Older clients also stay on the current topic; omission must not widen
+    # the pool to every framework/problem in the language.
+    from app.services.learning_path import LANGUAGE_LABELS
+    if language not in LANGUAGE_LABELS:
+        return 'subject:' + language
+    current = await study_room.resolve_focus(session, user.id, language, None)
+    if not current['id']:
+        raise HTTPException(409, 'Choose a path topic to continue debugging.')
+    return current['id']
+
+
+@router.get('/debug/challenges')
+async def debug_catalog(language: str, focus_id: str | None = None, user: User = Depends(get_current_user),
+                        session: AsyncSession = Depends(get_session)):
+    await require_language(session, user, language)
+    from app.services import debug_challenges
+    focus_id = await _debug_topic(session, user, language, focus_id)
+    return await debug_challenges.catalog(session, user, language, focus_id)
+
+
+@router.post('/debug/challenges/next')
+async def next_debug_challenge(request: DebugChallengeSelection, user: User = Depends(get_current_user),
+                               session: AsyncSession = Depends(get_session)):
+    await require_language(session, user, request.language)
+    from app.services import debug_challenges
+    focus_id = await _debug_topic(session, user, request.language, request.focus_id)
+    return await debug_challenges.next_challenge(session, user, request.language, request.subject, request.difficulty, focus_id)
+
+
+@router.post('/debug/challenges/{attempt_id}/review')
+async def review_debug_challenge(attempt_id: str, request: DebugChallengeReview,
+                                 user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    from app.services import debug_challenges
+    return await debug_challenges.review(session, user, attempt_id, request.diagnosis.strip())

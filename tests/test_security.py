@@ -167,3 +167,31 @@ async def test_admin_can_reinstate(client, monkeypatch, subscribe_user):
     assert r.status_code == 200
     assert r.json()["status"] == "active"
     assert r.json()["strikes"] == 0
+
+
+@pytest.mark.parametrize('code', [
+    "throw new Error(require('f'+'s').readFileSync('/tmp/test-secret', 'utf8'))",
+    "const load = require; load('node:fs').readFileSync('secret')",
+    "require /* comment */ ('fs').readFileSync('secret')",
+    "import('node:fs').then(fs => fs.readFileSync('secret'))",
+    "import fs from 'node:fs'",
+    "module['require']('fs')",
+    "process['env']",
+    "globalThis['process']",
+    "({}).constructor.constructor('return process')()",
+    r"const load = requ\u0069re; load('fs')",
+])
+def test_javascript_runtime_access_blocked(code):
+    assert screen(code, 'javascript').verdict == 'block'
+
+
+@pytest.mark.parametrize('code', [
+    BENIGN['js'],
+    'function solve(nums) { const seen = new Map(); return nums.filter(x => x > 0).sort((a,b) => a-b); }',
+    # Class-based exercises (stacks, LRU caches) use `constructor`; a task
+    # scheduler may legitimately declare a function named `process`.
+    'class Stack { constructor() { this.items = []; } push(x) { this.items.push(x); } }',
+    'function process(tasks) { return tasks.length; }\nprocess([1]);',
+])
+def test_javascript_dsa_allowed(code):
+    assert screen(code, 'javascript').allowed

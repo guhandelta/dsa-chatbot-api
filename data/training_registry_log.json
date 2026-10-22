@@ -325,5 +325,25 @@
       "report": "reports/knowledge-base-training-2026-10-18/PENDING_TASKS_RECHECK.md",
       "semantic_index": "awaiting_explicit_provider_upload_approval"
     }
+  },
+  {
+    "id": "tr-evt-9f82b61152ed",
+    "timestamp": "2026-10-18T18:07:32.017736+00:00",
+    "action": "validate_semantic_reference_index",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "",
+    "record_count": 10037,
+    "vectors_count": 10037,
+    "status": "completed",
+    "details": {
+      "exact_document_context_cases": "58/60",
+      "expected_or_reviewed_alternative_context_cases": "60/60",
+      "scope_safety_passed": true,
+      "integrity_passed": true,
+      "regression_tests_passed": 72,
+      "report": "reports/knowledge-base-training-2026-10-18/PENDING_TASKS_RECHECK.md",
+      "new_embedding_calls_for_integrity_reconciliation": 0
+    }
   }
 ]

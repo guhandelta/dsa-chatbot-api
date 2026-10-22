@@ -22,17 +22,17 @@ async def get_problems(language: str | None = None, user: User = Depends(get_cur
 
 @router.get("/{problem_id}")
 async def get_problem(problem_id: str, language: str | None = None, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
-    await require_content(session, user, problem_id, language)
+    language = await require_content(session, user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
-    return {"id": problem_id, "markdown": learner_document(problem_id)}
+    return {"id": problem_id, "markdown": learner_document(problem_id, language)}
 
 
 @router.get("/{problem_id}/solution-access")
 async def solution_access(problem_id: str, language: str,
                           user: User = Depends(get_current_user),
                           session: AsyncSession = Depends(get_session)):
-    await require_content(session, user, problem_id, language)
+    language = await require_content(session, user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     return {"available": bool(solution_document(problem_id, language)) and
@@ -43,7 +43,7 @@ async def solution_access(problem_id: str, language: str,
 async def reveal_solution(problem_id: str, language: str,
                           user: User = Depends(get_current_user),
                           session: AsyncSession = Depends(get_session)):
-    await require_content(session, user, problem_id, language)
+    language = await require_content(session, user, problem_id, language)
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     if not await can_reveal(session, user.id, problem_id, language):

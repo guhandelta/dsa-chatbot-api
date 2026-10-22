@@ -1,0 +1,3417 @@
+{
+  "version": 2,
+  "language": "javascript",
+  "status": "javascript-pilot",
+  "tiers": [
+    {
+      "id": 1,
+      "title": "Basic data structures",
+      "description": "Learn each structure on its own: structure and operations → applied problems → a DSA connection."
+    },
+    {
+      "id": 2,
+      "title": "Combined data structures",
+      "description": "Combine structures deliberately: model the relationship → handle edge cases → connect it to DSA. A combination is not automatically a harder problem."
+    },
+    {
+      "id": 3,
+      "title": "Easy to medium DSA",
+      "description": "Practice contracts, traces, brute force, invariants, correctness and complexity; build from easy problems to medium ones."
+    }
+  ],
+  "units": [
+    {
+      "id": "explain:javascript:arrays",
+      "slug": "arrays",
+      "tier": 1,
+      "title": "Arrays",
+      "prerequisite_ids": [],
+      "objective": "Traverse, transform and copy an ordered collection; distinguish index, value and shared references.",
+      "mental_model": "An array is an ordered indexed collection. A new outer array does not automatically copy objects stored inside it.",
+      "structure": {
+        "code": "const values = [2, 4, 6];\nconst doubled = values.map(value => value * 2);\nconsole.log(JSON.stringify([values, doubled]));",
+        "expected_output": "[[2,4,6],[4,8,12]]"
+      },
+      "applied_task": "Given a list of readings, preserve the original, keep only readings above a threshold, and return their original positions. Handle empty input and equal-to-threshold values.",
+      "pitfall": "Assignment aliases an array; slice/spread copy only one level. Check whether an operation mutates its input.",
+      "dsa_bridge": "Move from a direct scan to a running-best invariant, then compare that approach with nested scans.",
+      "practice_ids": [
+        "best-time-to-buy-and-sell-stock"
+      ],
+      "assessment_node_id": "javascript:stage-06",
+      "activities": [
+        {
+          "id": "arrays-01",
+          "family_id": "javascript:arrays:understand",
+          "title": "Trace the structure",
+          "prompt": "Start with values = [2, 4]. Trace values.push(6), values.pop(), then values[0] = 9. Write the array contents and each expression’s result separately after every step.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-02",
+          "family_id": "javascript:arrays:understand",
+          "title": "Contrast a second case",
+          "prompt": "Compare [0, false, \"\", null] filtered by truthiness with a filter that removes only null. Explain which contract each filter satisfies.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-03",
+          "family_id": "javascript:arrays:operate",
+          "title": "Practice the operation",
+          "prompt": "Implement countAbove for finite numeric readings and a threshold. Count strictly greater values; include empty input and values equal to the threshold.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-04",
+          "family_id": "javascript:arrays:operate",
+          "title": "Preserve the contract",
+          "prompt": "Return a new array with one valid index replaced, leaving the input unchanged. Explain what is and is not copied if an element is itself an object.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-05",
+          "family_id": "javascript:arrays:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Specify an index-replacement contract that throws RangeError for non-integer or out-of-range indices. Test -1, length, fractional indices and an empty array.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-06",
+          "family_id": "javascript:arrays:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Remove only null entries while retaining 0, false and empty strings in their original order. Explain why the choice of predicate matters.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-07",
+          "family_id": "javascript:arrays:apply",
+          "title": "Solve an applied task",
+          "prompt": "Find the longest consecutive run of readings strictly above a threshold. Empty input returns 0 and an equal reading breaks the run. Trace [2, 8, 9, 1, 7] with threshold 5.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-08",
+          "family_id": "javascript:arrays:apply",
+          "title": "Extend the same structure",
+          "prompt": "Rotate a dense array right by nonnegative integer k without mutating it. Define empty-input behavior and support k larger than the array length.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-09",
+          "family_id": "javascript:arrays:justify",
+          "title": "Diagnose a defect",
+          "prompt": "A function does const copy = values; copy.push(7), but promises not to change values. Diagnose the violated contract and propose a test that checks the original input.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-10",
+          "family_id": "javascript:arrays:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare filter followed by map with one traversal producing the same output. Count inspected elements and intermediate collections; explain a readability trade-off.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-11",
+          "family_id": "javascript:arrays:transfer",
+          "title": "Transfer independently",
+          "prompt": "Find the second-largest distinct finite number without sorting. Return null if fewer than two distinct numbers exist. Explain your maintained state for duplicates and negative values.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-12",
+          "family_id": "javascript:arrays:review",
+          "title": "Return for review",
+          "prompt": "Without notes, revisit ordered readings with a changed contract: return the second-smallest distinct value, or null if absent. Explain how the earlier invariant must change; this is deliberate review.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:strings",
+      "slug": "strings",
+      "tier": 1,
+      "title": "Strings",
+      "prerequisite_ids": [],
+      "objective": "Read and transform text while stating the character and normalization contract.",
+      "mental_model": "Strings are immutable text values. JavaScript indexing uses UTF-16 code units; for...of iterates code points, which are not always whole user-perceived characters.",
+      "structure": {
+        "code": "const text = \"cat\";\nconst letters = [...text];\nletters[0] = \"b\";\nconsole.log(JSON.stringify([text, letters.join(\"\")]));",
+        "expected_output": "[\"cat\",\"bat\"]"
+      },
+      "applied_task": "Normalize a small ASCII search phrase: trim it, lowercase it, and count non-space letters without changing the original. Then explain what changes if the contract includes emoji or combining marks.",
+      "pitfall": "Do not assume string length, code-point count and visible character count are the same.",
+      "dsa_bridge": "Use text traversal and frequency counting before combining strings with objects or Map.",
+      "practice_ids": [],
+      "assessment_node_id": "javascript:stage-05",
+      "activities": [
+        {
+          "id": "strings-01",
+          "family_id": "javascript:strings:understand",
+          "title": "Trace the structure",
+          "prompt": "Start with text = \"  Cat  \". Trace text.trim().toLowerCase().slice(0, 2), showing the value after each call. State whether the original text changes.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-02",
+          "family_id": "javascript:strings:understand",
+          "title": "Contrast a second case",
+          "prompt": "Compare the length and iteration count of a string containing an emoji. Distinguish UTF-16 code units from code points and visible graphemes without treating them as interchangeable.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-03",
+          "family_id": "javascript:strings:operate",
+          "title": "Practice the operation",
+          "prompt": "For ASCII-only input, count occurrences of one specified character. State whether case matters, and test empty text, no match and repeated matches.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-04",
+          "family_id": "javascript:strings:operate",
+          "title": "Preserve the contract",
+          "prompt": "Return an ASCII string with only leading and trailing spaces removed while preserving internal spacing. Explain how this differs from removing every space.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-05",
+          "family_id": "javascript:strings:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Design a first-match contract returning -1 if a nonempty literal fragment is absent. Test empty text, a match at index 0 and repeated fragments.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-06",
+          "family_id": "javascript:strings:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Validate a nonempty ASCII identifier under the explicit rule: letters first, then letters or digits. Explain why accepting a prefix does not validate the whole string.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-07",
+          "family_id": "javascript:strings:apply",
+          "title": "Solve an applied task",
+          "prompt": "Normalize an ASCII search phrase by trimming, lowercasing and collapsing internal runs of spaces to one. Preserve the original and specify the all-space case.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-08",
+          "family_id": "javascript:strings:apply",
+          "title": "Extend the same structure",
+          "prompt": "Truncate a title by a stated code-point limit rather than a code-unit limit. Explain what still needs a separate policy for combining marks and grapheme clusters.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-09",
+          "family_id": "javascript:strings:justify",
+          "title": "Diagnose a defect",
+          "prompt": "A helper loops over text[i] and calls each item a complete character. Diagnose which declared text contracts make that assumption unsafe and propose a revealing input.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-10",
+          "family_id": "javascript:strings:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare repeatedly concatenating one character with collecting pieces and joining. Explain the observable equivalence and avoid claiming a universal engine-specific performance guarantee.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-11",
+          "family_id": "javascript:strings:transfer",
+          "title": "Transfer independently",
+          "prompt": "For an ASCII string, report the longest run of the same character and its length; choose the earliest on ties and return null for empty input. Explain the reset rule.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-12",
+          "family_id": "javascript:strings:review",
+          "title": "Return for review",
+          "prompt": "Review the earlier normalization task with a new requirement: preserve original capitalization for display while keeping a separate normalized search value. State which value each comparison uses.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:objects",
+      "slug": "objects",
+      "tier": 1,
+      "title": "Objects",
+      "prerequisite_ids": [],
+      "objective": "Model a record, distinguish missing properties from falsy values, and reason about shallow copies.",
+      "mental_model": "An object groups named properties. Variables store references to the same object unless you construct a new one.",
+      "structure": {
+        "code": "const account = { name: \"Asha\", points: 0 };\nconst updated = { ...account, points: account.points + 1 };\nconsole.log(JSON.stringify([account.points, updated.points]));",
+        "expected_output": "[0,1]"
+      },
+      "applied_task": "Merge a settings patch into a record without mutating the original. Preserve explicit false and 0, reject unexpected keys, and state whether nested records are copied.",
+      "pitfall": "The || fallback replaces valid false/0/empty-string values; ?? only falls back for null or undefined. Shallow copies still share nested objects.",
+      "dsa_bridge": "Use objects for fixed record shapes, then learn when arbitrary-key lookup belongs in a Map.",
+      "practice_ids": [],
+      "assessment_node_id": "javascript:stage-09",
+      "activities": [
+        {
+          "id": "objects-01",
+          "family_id": "javascript:objects:understand",
+          "title": "Trace the structure",
+          "prompt": "Start with record = { points: 0 }, alias = record and copy = { ...record }. Trace alias.points += 1, then copy.points += 2. State each value and which variables refer to the same object.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-02",
+          "family_id": "javascript:objects:understand",
+          "title": "Contrast a second case",
+          "prompt": "Compare a missing property with one explicitly set to undefined, and compare || with ??. Explain which observations distinguish absence from a falsy value.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-03",
+          "family_id": "javascript:objects:operate",
+          "title": "Practice the operation",
+          "prompt": "Create an updated settings record from a patch without mutating the original. Only allow known keys and retain explicit false, 0 and empty-string values.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-04",
+          "family_id": "javascript:objects:operate",
+          "title": "Preserve the contract",
+          "prompt": "Project a record to a small allowed list of fields, returning a new record. Define whether missing source properties are omitted or included as undefined.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-05",
+          "family_id": "javascript:objects:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Define validation for a plain input record with a required nonempty name and nonnegative finite score. State the handling of null, arrays and unexpected properties.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-06",
+          "family_id": "javascript:objects:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Explain a duplicate-field update policy and the difference between deleting a property and assigning undefined. Write examples under each contract.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-07",
+          "family_id": "javascript:objects:apply",
+          "title": "Solve an applied task",
+          "prompt": "Implement a state transition from a valid ticket record to another valid ticket state. Reject unsupported transitions and preserve the original record.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-08",
+          "family_id": "javascript:objects:apply",
+          "title": "Extend the same structure",
+          "prompt": "Update a nested contact address while keeping the original address independent. Identify every level that must be copied under this contract.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-09",
+          "family_id": "javascript:objects:justify",
+          "title": "Diagnose a defect",
+          "prompt": "A shallow-copied profile and its original share the same preferences object. Diagnose why editing a nested flag changes both and propose a regression test.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-10",
+          "family_id": "javascript:objects:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare a fixed-shape record with an arbitrary-key Map for storing user-defined labels. Explain the data model, missing-key handling and identity assumptions before choosing.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-11",
+          "family_id": "javascript:objects:transfer",
+          "title": "Transfer independently",
+          "prompt": "Given a finite numeric price record, compute a new validated quote with a discount and surcharge. Specify rounding, allowed ranges and the failure contract before coding.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-12",
+          "family_id": "javascript:objects:review",
+          "title": "Return for review",
+          "prompt": "Review record updates with an explicit undo requirement. Explain what history must preserve and why storing the same mutable reference repeatedly is insufficient.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:maps",
+      "slug": "maps",
+      "tier": 1,
+      "title": "Map",
+      "prerequisite_ids": [],
+      "objective": "Choose and use key/value lookup, counting and insertion-order traversal.",
+      "mental_model": "Map stores key/value entries and accepts object keys by identity. It separates entries from ordinary object properties.",
+      "structure": {
+        "code": "const visits = new Map([[\"home\", 2]]);\nvisits.set(\"help\", (visits.get(\"help\") ?? 0) + 1);\nconsole.log(JSON.stringify([...visits]));",
+        "expected_output": "[[\"home\",2],[\"help\",1]]"
+      },
+      "applied_task": "Build a visit counter that updates one key at a time. Explain the absent-key case and why two separately-created object keys do not identify the same entry.",
+      "pitfall": "map[key] accesses an ordinary property; use get/set/has for entries. get returning undefined does not by itself prove a key is absent.",
+      "dsa_bridge": "Use a lookup table to avoid repeatedly scanning for a matching value.",
+      "practice_ids": [
+        "two-sum"
+      ],
+      "assessment_node_id": "javascript:stage-07",
+      "activities": [
+        {
+          "id": "maps-01",
+          "family_id": "javascript:maps:understand",
+          "title": "Trace the structure",
+          "prompt": "Start with new Map([[\"a\", 1]]). Trace set(\"b\", 2), set(\"a\", 3), has(\"b\"), delete(\"b\") and get(\"b\"). Distinguish each result, the remaining entries and ordinary object properties.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-02",
+          "family_id": "javascript:maps:understand",
+          "title": "Contrast a second case",
+          "prompt": "Use two separately created object keys with equal fields. Predict which lookups succeed, then contrast object identity with using a stable string identifier.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-03",
+          "family_id": "javascript:maps:operate",
+          "title": "Practice the operation",
+          "prompt": "Count visits per ASCII page key using Map. Start absent keys at zero, preserve existing counts and test an empty input.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-04",
+          "family_id": "javascript:maps:operate",
+          "title": "Preserve the contract",
+          "prompt": "Merge two numeric counters under an explicit sum-on-duplicate policy without mutating either input Map. State the output’s iteration order.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-05",
+          "family_id": "javascript:maps:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Design a lookup result that distinguishes an absent key from a present entry whose value is undefined. Demonstrate both cases.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-06",
+          "family_id": "javascript:maps:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Validate an update contract that accepts only finite nonnegative counts. Explain what should happen when an update tries to delete a missing key.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-07",
+          "family_id": "javascript:maps:apply",
+          "title": "Solve an applied task",
+          "prompt": "Maintain inventory counts under add, reserve and release commands. Reject negative resulting stock and explain which commands leave state unchanged.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-08",
+          "family_id": "javascript:maps:apply",
+          "title": "Extend the same structure",
+          "prompt": "Implement a small bounded key/value cache with a stated FIFO eviction policy. State what updating an existing key does to its eviction position; do not silently call it LRU.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-09",
+          "family_id": "javascript:maps:justify",
+          "title": "Diagnose a defect",
+          "prompt": "A counter writes counts[key] = 1 and then reads counts.get(key). Diagnose the missing entry and specify a regression test.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-10",
+          "family_id": "javascript:maps:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare scanning a list for every lookup with building an index once. Discuss one-time construction, repeated queries and consistency after updates.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-11",
+          "family_id": "javascript:maps:transfer",
+          "title": "Transfer independently",
+          "prompt": "Process a stream of key/value updates into final per-key balances under a reject-invalid-command contract. Preserve earlier valid state when a command fails.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-12",
+          "family_id": "javascript:maps:review",
+          "title": "Return for review",
+          "prompt": "Review indexing with a changed duplicate policy: reject duplicate keys instead of overwriting. Explain which earlier assumptions and tests must change.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:sets",
+      "slug": "sets",
+      "tier": 1,
+      "title": "Set",
+      "prerequisite_ids": [],
+      "objective": "Model uniqueness and membership while preserving a clear equality contract.",
+      "mental_model": "Set holds unique values. Objects are compared by identity; two separate records with equal fields are still different values.",
+      "structure": {
+        "code": "const tags = new Set([\"js\", \"js\", \"web\"]);\nconsole.log(JSON.stringify([tags.size, tags.has(\"web\"), [...tags]]));",
+        "expected_output": "[2,true,[\"js\",\"web\"]]"
+      },
+      "applied_task": "Return the first occurrence of each identifier while preserving input order. Handle empty input and explain why record deduplication needs an explicit key.",
+      "pitfall": "A Set of objects does not deduplicate by an id field automatically.",
+      "dsa_bridge": "Use a seen-values invariant to detect duplicates in one traversal.",
+      "practice_ids": [
+        "contains-duplicate"
+      ],
+      "assessment_node_id": "javascript:stage-08",
+      "activities": [
+        {
+          "id": "sets-01",
+          "family_id": "javascript:sets:understand",
+          "title": "Trace the structure",
+          "prompt": "Start with new Set([\"a\"]). Trace add(\"a\"), add(\"b\"), has(\"b\") and delete(\"a\"), writing the members and size after each operation.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-02",
+          "family_id": "javascript:sets:understand",
+          "title": "Contrast a second case",
+          "prompt": "Predict the size of a Set containing two separate objects with identical id fields. Explain identity versus deduplication by a chosen field.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-03",
+          "family_id": "javascript:sets:operate",
+          "title": "Practice the operation",
+          "prompt": "Return the first occurrence of each primitive identifier while preserving input order. State the accepted primitive types and equality contract.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-04",
+          "family_id": "javascript:sets:operate",
+          "title": "Preserve the contract",
+          "prompt": "Compute union and intersection of two Sets using loops and existing membership operations, preserving each input.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-05",
+          "family_id": "javascript:sets:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Specify behavior for empty sets, identical sets and disjoint sets. Author tests that distinguish union, intersection and difference.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-06",
+          "family_id": "javascript:sets:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Explain why turning records into a Set does not enforce uniqueness of their id field. Describe a stable-key contract without silently changing equality.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-07",
+          "family_id": "javascript:sets:apply",
+          "title": "Solve an applied task",
+          "prompt": "Reconcile current and requested permissions into additions and removals. Keep each set independent and define the behavior of an unchanged permission.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-08",
+          "family_id": "javascript:sets:apply",
+          "title": "Extend the same structure",
+          "prompt": "Design a case-insensitive ASCII tag collection that preserves a chosen display spelling. Specify how normalization affects lookup and duplicates.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-09",
+          "family_id": "javascript:sets:justify",
+          "title": "Diagnose a defect",
+          "prompt": "Two groups accidentally reference the same Set, so adding a member to one changes both. Diagnose the shared-state defect and design a test for independence.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-10",
+          "family_id": "javascript:sets:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare a Set with an array when order, duplicate counts and membership queries each matter. Explain information lost by converting representations.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-11",
+          "family_id": "javascript:sets:transfer",
+          "title": "Transfer independently",
+          "prompt": "Given allowed and submitted identifiers, produce valid unique submissions and rejected identifiers under an explicit duplicate-reporting policy.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "sets-12",
+          "family_id": "javascript:sets:review",
+          "title": "Return for review",
+          "prompt": "Review permissions reconciliation with an explicit protected-permission rule. Explain how the earlier difference operation must be constrained.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:stacks",
+      "slug": "stacks",
+      "tier": 1,
+      "title": "Stacks",
+      "prerequisite_ids": [
+        "explain:javascript:arrays"
+      ],
+      "objective": "Model last-in, first-out operations and an explicit empty-stack contract.",
+      "mental_model": "A stack exposes one end: the most recently pushed item is the next one popped.",
+      "structure": {
+        "code": "const history = [\"open\"];\nhistory.push(\"edit\");\nconst undone = history.pop();\nconsole.log(JSON.stringify([undone, history]));",
+        "expected_output": "[\"edit\",[\"open\"]]"
+      },
+      "applied_task": "Model undo/redo using two stacks. Explain how a new edit changes the redo history and what undo does when no edit remains.",
+      "pitfall": "Do not confuse stack top with the oldest element; define behavior for an empty pop.",
+      "dsa_bridge": "Apply the stack invariant to nested delimiters and iterative traversal; dedicated graded stack questions are still to be authored.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "stacks-01",
+          "family_id": "javascript:stacks:understand",
+          "title": "Trace the structure",
+          "prompt": "Starting from an empty array-backed stack, trace push(\"a\"), push(\"b\"), pop(), pop() and pop(). State the top, result and remaining contents after each operation, including the empty pop.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-02",
+          "family_id": "javascript:stacks:understand",
+          "title": "Contrast a second case",
+          "prompt": "Contrast LIFO and FIFO by tracing the same three input actions. Explain which behavior represents undo and which represents a waiting line.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-03",
+          "family_id": "javascript:stacks:operate",
+          "title": "Practice the operation",
+          "prompt": "Implement a stack wrapper with push, pop, peek and size. Choose and document one empty-result contract for pop and peek.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-04",
+          "family_id": "javascript:stacks:operate",
+          "title": "Preserve the contract",
+          "prompt": "Implement an independent stack snapshot. State whether the contract copies only the outer collection or also mutable stored values.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-05",
+          "family_id": "javascript:stacks:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Test empty, one-item and repeated-value stacks. Explain why duplicate values do not make distinct pushes one operation.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-06",
+          "family_id": "javascript:stacks:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Define a capacity-limited stack that rejects a push at capacity without changing prior state. State the zero-capacity and invalid-capacity contracts.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-07",
+          "family_id": "javascript:stacks:apply",
+          "title": "Solve an applied task",
+          "prompt": "Model undo and redo with two stacks. A fresh edit clears redo history. Trace edits, two undos, one redo and a new edit.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-08",
+          "family_id": "javascript:stacks:apply",
+          "title": "Extend the same structure",
+          "prompt": "Support grouped edits as one undo action. Explain what data the group must capture and how a partial failed edit should behave.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-09",
+          "family_id": "javascript:stacks:justify",
+          "title": "Diagnose a defect",
+          "prompt": "An undo history repeatedly stores one mutable record, so every snapshot shows the latest value. Diagnose why the stack order can be correct while history is wrong.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-10",
+          "family_id": "javascript:stacks:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare an explicit stack with recursive processing at the level of represented pending work. State which input-depth assumptions matter without promising unlimited recursion.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-11",
+          "family_id": "javascript:stacks:transfer",
+          "title": "Transfer independently",
+          "prompt": "Process a command sequence supporting push, pop and peek under an explicit invalid-command policy. Preserve order and explain each empty-state transition.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-12",
+          "family_id": "javascript:stacks:review",
+          "title": "Return for review",
+          "prompt": "Review undo with a changed requirement: redo only survives navigation, not a new edit. Design a minimal trace that proves the distinction.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:queues",
+      "slug": "queues",
+      "tier": 1,
+      "title": "Queues",
+      "prerequisite_ids": [
+        "explain:javascript:arrays"
+      ],
+      "objective": "Model first-in, first-out processing without accidentally processing a new task first.",
+      "mental_model": "A queue serves the oldest pending entry. A head index can advance without shifting every stored element.",
+      "structure": {
+        "code": "const queue = [\"first\", \"second\"];\nlet head = 0;\nconst served = queue[head++];\nconsole.log(JSON.stringify([served, queue.slice(head)]));",
+        "expected_output": "[\"first\",[\"second\"]]"
+      },
+      "applied_task": "Simulate a service queue: add requests, serve the oldest, and report pending requests. Define the empty case and when consumed storage should be reclaimed.",
+      "pitfall": "A head-index queue still retains consumed storage until compacted or replaced; do not claim it uses bounded memory without cleanup.",
+      "dsa_bridge": "Use FIFO order for breadth-first exploration; graded queue/BFS exercises are a later content addition.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "queues-01",
+          "family_id": "javascript:queues:understand",
+          "title": "Trace the structure",
+          "prompt": "Starting from an empty FIFO queue, trace enqueue(\"a\"), enqueue(\"b\"), dequeue(), enqueue(\"c\") and peek(). Write the head and pending order after every operation and declare the peek contract.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-02",
+          "family_id": "javascript:queues:understand",
+          "title": "Contrast a second case",
+          "prompt": "Trace a queue represented by an array and a head index. Distinguish logical pending length from allocated backing-array length.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-03",
+          "family_id": "javascript:queues:operate",
+          "title": "Practice the operation",
+          "prompt": "Implement a FIFO wrapper with an explicit empty-result contract and a pending-count operation.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-04",
+          "family_id": "javascript:queues:operate",
+          "title": "Preserve the contract",
+          "prompt": "Implement a head-index queue and explain when consumed storage can be reclaimed without changing pending order.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-05",
+          "family_id": "javascript:queues:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Test empty, one-item and repeated-value queues. Demonstrate that a newly enqueued value does not jump ahead of older work.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-06",
+          "family_id": "javascript:queues:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Specify a bounded queue that rejects overflow without losing pending work. Explain how capacity and empty behavior interact.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-07",
+          "family_id": "javascript:queues:apply",
+          "title": "Solve an applied task",
+          "prompt": "Simulate a service desk processing at most two waiting requests per tick. New arrivals go to the tail; define within-tick arrival order.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-08",
+          "family_id": "javascript:queues:apply",
+          "title": "Extend the same structure",
+          "prompt": "Design a round-robin queue for unfinished jobs. State when a job is re-enqueued and how completed jobs leave the system.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-09",
+          "family_id": "javascript:queues:justify",
+          "title": "Diagnose a defect",
+          "prompt": "A queue computes size from backingArray.length after advancing head. Diagnose the incorrect pending count and propose a revealing test.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-10",
+          "family_id": "javascript:queues:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare repeatedly removing the first array element with advancing a head index. Discuss bookkeeping and retained storage under a stated collection cost model.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-11",
+          "family_id": "javascript:queues:transfer",
+          "title": "Transfer independently",
+          "prompt": "Process enqueue, serve and cancel-oldest commands. Define all empty cases, preserve FIFO order and explain a trace with duplicate-valued jobs.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-12",
+          "family_id": "javascript:queues:review",
+          "title": "Return for review",
+          "prompt": "Review the service desk with cancellations by stable identifier. Explain why efficient cancellation introduces a new representation decision and belongs in a composition unit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:linked-lists",
+      "slug": "linked-lists",
+      "tier": 1,
+      "title": "Linked lists",
+      "prerequisite_ids": [
+        "explain:javascript:objects"
+      ],
+      "objective": "Trace nodes and next references, preserve the remaining chain, and handle a missing head.",
+      "mental_model": "A linked list is a chain of separate nodes. A reference identifies a node; changing next rewires the chain.",
+      "structure": {
+        "code": "const tail = { value: 2, next: null };\nconst head = { value: 1, next: tail };\nconsole.log(JSON.stringify([head.value, head.next.value, tail.next]));",
+        "expected_output": "[1,2,null]"
+      },
+      "applied_task": "Draw and trace removal of one node from a three-node chain. Explain the head-removal, single-node and empty-list cases before writing code.",
+      "pitfall": "Overwriting the only reference to the remaining chain can make nodes unreachable.",
+      "dsa_bridge": "Keep a precise reference invariant while reversing a list.",
+      "practice_ids": [
+        "reverse-linked-list"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "linked-lists-01",
+          "family_id": "javascript:linked-lists:understand",
+          "title": "Trace the structure",
+          "prompt": "Draw a three-node chain and trace value and next references. Distinguish a node’s identity from the value it stores.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-02",
+          "family_id": "javascript:linked-lists:understand",
+          "title": "Contrast a second case",
+          "prompt": "Draw two references to the same tail and predict which observations change after editing that tail’s value.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "extension",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-03",
+          "family_id": "javascript:linked-lists:operate",
+          "title": "Practice the operation",
+          "prompt": "Count nodes in an acyclic singly linked list. Empty input returns zero; state the acyclic precondition explicitly.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-04",
+          "family_id": "javascript:linked-lists:operate",
+          "title": "Preserve the contract",
+          "prompt": "Prepend one new node without losing the old head. State whether existing nodes are reused and whether the input head node is mutated.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-05",
+          "family_id": "javascript:linked-lists:boundaries",
+          "title": "Handle boundaries",
+          "prompt": "Define removal of the first matching value, including empty input, no match and head removal. State the mutation contract.",
+          "step": "boundaries",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-06",
+          "family_id": "javascript:linked-lists:boundaries",
+          "title": "Make assumptions explicit",
+          "prompt": "Explain what changes when duplicates are allowed and only the first match may be removed. Author a trace that distinguishes removing one from removing every match.",
+          "step": "boundaries",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Make missing, empty, duplicate and invalid cases explicit where relevant.",
+            "Explain why the chosen test distinguishes the required behavior."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-07",
+          "family_id": "javascript:linked-lists:apply",
+          "title": "Solve an applied task",
+          "prompt": "Append to a list that keeps both head and tail references. Define how both change for empty and one-node states.",
+          "step": "apply",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-08",
+          "family_id": "javascript:linked-lists:apply",
+          "title": "Extend the same structure",
+          "prompt": "Design a list snapshot with fresh nodes rather than copied head references. State whether node values themselves are copied.",
+          "step": "apply",
+          "kind": "design",
+          "route": "extension",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-09",
+          "family_id": "javascript:linked-lists:justify",
+          "title": "Diagnose a defect",
+          "prompt": "A removal overwrites current.next before preserving the rest of the chain. Diagnose the lost-reference risk using a small drawing and a regression test.",
+          "step": "justify",
+          "kind": "debug",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-10",
+          "family_id": "javascript:linked-lists:justify",
+          "title": "Compare approaches",
+          "prompt": "Compare indexed array access with following next references. Explain which operations need traversal and which require an already-known node.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-11",
+          "family_id": "javascript:linked-lists:transfer",
+          "title": "Transfer independently",
+          "prompt": "Split an acyclic chain after a specified count under a contract that reuses nodes. Preserve both resulting chains and explain the zero and beyond-length cases.",
+          "step": "transfer",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "Try the task before requesting a hint.",
+            "Explain why the approach works and check a fresh boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "linked-lists-12",
+          "family_id": "javascript:linked-lists:review",
+          "title": "Return for review",
+          "prompt": "Review append with an explicit delete-last requirement. Explain the additional information or traversal needed to maintain head/tail invariants.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:arrays-strings",
+      "slug": "arrays-strings",
+      "tier": 2,
+      "title": "Arrays with Strings",
+      "prerequisite_ids": [
+        "explain:javascript:arrays",
+        "explain:javascript:strings"
+      ],
+      "objective": "Transform collections of text while keeping ordering, normalization and duplicate rules explicit.",
+      "mental_model": "The outer array controls collection order; each string has its own text contract. Define transformations at each level separately.",
+      "structure": {
+        "code": "const names = [\" Ada \", \"BO\", \"\"];\nconst clean = names.map(name => name.trim().toLowerCase()).filter(Boolean);\nconsole.log(JSON.stringify(clean));",
+        "expected_output": "[\"ada\",\"bo\"]"
+      },
+      "applied_task": "Group ASCII words by a chosen normalized signature, preserving original spellings and order inside each group. First trace the result on repeated words and empty strings.",
+      "pitfall": "Sorting an array mutates it; decide whether signatures may ignore order or case before grouping.",
+      "dsa_bridge": "This prepares grouping/anagram and text-window problems. A dedicated graded combined-structure exercise is coming soon.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "arrays-strings-trace",
+          "family_id": "javascript:arrays-strings:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace trimming, lowercasing and filtering of [\" Ada \", \"\", \"BO\"]. State which transformation changes membership versus spelling.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-strings-build",
+          "family_id": "javascript:arrays-strings:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build an ordered text-cleaning pipeline under explicit ASCII, empty-string and duplicate rules. Preserve the original list and original display spellings.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-strings-update",
+          "family_id": "javascript:arrays-strings:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Extend a text group with a new normalized word. Define whether duplicates are kept and demonstrate that one group’s changes cannot change another’s contents.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-strings-compare",
+          "family_id": "javascript:arrays-strings:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare an array of display strings with a keyed grouping representation. Choose one for ordered display and one for repeated group lookup, explaining the extra structure’s prerequisite.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:strings-objects",
+      "slug": "strings-objects",
+      "tier": 2,
+      "title": "Strings with Objects",
+      "prerequisite_ids": [
+        "explain:javascript:strings",
+        "explain:javascript:objects"
+      ],
+      "objective": "Move from raw text to structured records without losing zero values or confusing parsing with validation.",
+      "mental_model": "Parsing text creates a value; validation establishes whether its shape and fields satisfy your contract.",
+      "structure": {
+        "code": "const raw = '{\"name\":\"Ada\",\"visits\":0}';\nconst profile = JSON.parse(raw);\nconsole.log(JSON.stringify([profile.name, profile.visits ?? 1]));",
+        "expected_output": "[\"Ada\",0]"
+      },
+      "applied_task": "Design a text-to-record import for name and visit count. Specify how to handle malformed text, missing fields, negative counts and unexpected properties before implementing it.",
+      "pitfall": "JSON.parse can throw and can return null, an array or a primitive. Successful parsing is not shape validation.",
+      "dsa_bridge": "Use explicit record contracts before indexing or counting imported records. Dedicated combined-structure grading is coming soon.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "strings-objects-trace",
+          "family_id": "javascript:strings-objects:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace valid JSON text representing null, an array and a record. Explain why successful parsing alone does not establish the required record shape.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-objects-build",
+          "family_id": "javascript:strings-objects:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Design a text-to-profile import requiring name and a nonnegative finite visit count. Define malformed text, missing fields and unexpected-property handling.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-objects-update",
+          "family_id": "javascript:strings-objects:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Apply a validated text patch to a profile without losing valid 0 and false values or partially applying a rejected patch.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-objects-compare",
+          "family_id": "javascript:strings-objects:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare storing raw input text, parsed values and validated records. Explain which form is appropriate for error messages, editing and trusted application use.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:objects-map",
+      "slug": "objects-map",
+      "tier": 2,
+      "title": "Objects with Map",
+      "prerequisite_ids": [
+        "explain:javascript:objects",
+        "explain:javascript:maps"
+      ],
+      "objective": "Index records by a stable identifier and distinguish record identity from identifier equality.",
+      "mental_model": "A record stores related fields; a Map supplies an index. Decide how duplicate identifiers should be handled.",
+      "structure": {
+        "code": "const users = [{ id: \"a\", score: 1 }, { id: \"b\", score: 0 }];\nconst byId = new Map(users.map(user => [user.id, user]));\nconsole.log(JSON.stringify([byId.get(\"b\").score, byId.has(\"x\")]));",
+        "expected_output": "[0,false]"
+      },
+      "applied_task": "Maintain a user index under add, update and delete operations. Choose whether duplicate ids overwrite or fail, and explain how mutating an indexed record affects other references.",
+      "pitfall": "Creating an index does not deep-copy its records; later duplicate keys overwrite earlier entries when constructed this way.",
+      "dsa_bridge": "Compare indexed lookup with repeated linear searches, then practice the hashing invariant.",
+      "practice_ids": [
+        "two-sum"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "objects-map-trace",
+          "family_id": "javascript:objects-map:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace two Map entries referring to records, including two separate records with equal IDs. Distinguish identifier equality from object identity.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-map-build",
+          "family_id": "javascript:objects-map:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build an index by validated record ID with an explicit reject-or-overwrite duplicate policy and no silent loss of the earlier record.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-map-update",
+          "family_id": "javascript:objects-map:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Update and remove an indexed record. Define whether another reference sees the update and how the index behaves when an identifier changes.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "objects-map-compare",
+          "family_id": "javascript:objects-map:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare repeated record scans with a reusable index. Explain the consistency work required when records can be edited.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:arrays-objects",
+      "slug": "arrays-objects",
+      "tier": 2,
+      "title": "Arrays with Objects",
+      "prerequisite_ids": [
+        "explain:javascript:arrays",
+        "explain:javascript:objects"
+      ],
+      "objective": "Filter, aggregate and update lists of records while making shared references explicit.",
+      "mental_model": "The array stores record references. Selecting records makes a new outer array but may preserve the same inner objects.",
+      "structure": {
+        "code": "const orders = [{ total: 5, paid: true }, { total: 8, paid: false }];\nconst paid = orders.filter(order => order.paid);\nconsole.log(JSON.stringify(paid.map(order => order.total)));",
+        "expected_output": "[5]"
+      },
+      "applied_task": "Summarize orders by customer, preserving source records. Handle no orders, zero totals and repeated customers, and explain which intermediate objects are newly created.",
+      "pitfall": "filter and map do not guarantee deep independence of the records they return.",
+      "dsa_bridge": "Separate the aggregation state from input traversal before analyzing time and extra space.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "arrays-objects-trace",
+          "family_id": "javascript:arrays-objects:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace filter and map over order records. Draw the outer arrays and identify which resulting records still share references.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-objects-build",
+          "family_id": "javascript:arrays-objects:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Summarize validated orders by a stated rule, preserving source records and correctly handling no orders, zero totals and repeated customers.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-objects-update",
+          "family_id": "javascript:arrays-objects:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Update one selected record and its nested address without changing other records or the original nested address under an immutable-update contract.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-objects-compare",
+          "family_id": "javascript:arrays-objects:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare an array of records with parallel arrays of fields. Explain how insertions or deletions can preserve or break relationships.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:maps-sets",
+      "slug": "maps-sets",
+      "tier": 2,
+      "title": "Map with Set",
+      "prerequisite_ids": [
+        "explain:javascript:maps",
+        "explain:javascript:sets"
+      ],
+      "objective": "Represent one-to-many unique relationships and reason about nested mutable collections.",
+      "mental_model": "The outer Map identifies an owner; each inner Set tracks unique relationships for that owner.",
+      "structure": {
+        "code": "const teams = new Map();\nteams.set(\"web\", new Set([\"Ada\", \"Bo\", \"Ada\"]));\nconsole.log(JSON.stringify([...teams.get(\"web\")]));",
+        "expected_output": "[\"Ada\",\"Bo\"]"
+      },
+      "applied_task": "Maintain group memberships with add/remove operations. Decide what happens when a group becomes empty, and demonstrate why each group needs its own Set.",
+      "pitfall": "Reusing one Set for multiple keys creates shared membership state.",
+      "dsa_bridge": "Build an adjacency-list representation and a visited-set contract before later graph traversal. Graph assessments are beyond this initial DSA tier.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "maps-sets-trace",
+          "family_id": "javascript:maps-sets:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace membership updates for two groups and show why each group must own a separate Set.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-sets-build",
+          "family_id": "javascript:maps-sets:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build unique group memberships from validated owner/member pairs. State duplicate-pair and missing-owner behavior.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-sets-update",
+          "family_id": "javascript:maps-sets:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Remove a member and then the last member of a group. Choose whether empty groups remain and preserve independence of other groups.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-sets-compare",
+          "family_id": "javascript:maps-sets:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare a Map of Sets with a flat list of relationship pairs. Explain membership lookup, duplicate rules and iteration needs.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:nested-arrays",
+      "slug": "nested-arrays",
+      "tier": 2,
+      "title": "Nested arrays and grids",
+      "prerequisite_ids": [
+        "explain:javascript:arrays"
+      ],
+      "objective": "Traverse nested collections and distinguish rectangular grids from ragged rows.",
+      "mental_model": "Each row is a separate array with its own extent. A grid contract may require equal row lengths, but JavaScript does not enforce that.",
+      "structure": {
+        "code": "const rows = [[1, 2], [3]];\nconst totals = rows.map(row => row.reduce((sum, value) => sum + value, 0));\nconsole.log(JSON.stringify(totals));",
+        "expected_output": "[3,3]"
+      },
+      "applied_task": "Compute row totals and an overall total for a ragged collection. Then define a separate rectangular-grid validation rule, including empty input and empty rows.",
+      "pitfall": "Array.fill with one inner array aliases that same row; create a fresh row for every position.",
+      "dsa_bridge": "State row/column bounds before grid search. Dedicated graded matrix problems are coming soon.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "nested-arrays-trace",
+          "family_id": "javascript:nested-arrays:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace row-wise traversal of [[1, 2], [3], []]. Explain which rectangular-grid assumptions would be invalid.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "nested-arrays-build",
+          "family_id": "javascript:nested-arrays:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Validate and summarize ragged numeric rows, returning row totals and an overall total without changing input rows.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "nested-arrays-update",
+          "family_id": "javascript:nested-arrays:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Update one cell under a nonmutating rectangular-grid contract. Define bounds, empty grids and row independence.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "nested-arrays-compare",
+          "family_id": "javascript:nested-arrays:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare a nested grid with a flat array plus width. Explain shape validation, coordinate mapping and the costs of changing shape.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:maps-arrays",
+      "slug": "maps-arrays",
+      "tier": 2,
+      "title": "Map with Arrays",
+      "prerequisite_ids": [
+        "explain:javascript:maps",
+        "explain:javascript:arrays"
+      ],
+      "objective": "Group records by key while preserving event order and independent per-key collections.",
+      "mental_model": "The Map chooses a group; each array preserves that group’s event order. Define a group’s lifetime and the order of updates.",
+      "structure": {
+        "code": "const groups = new Map([[\"web\", [\"open\"]]]);\ngroups.get(\"web\").push(\"save\");\nconsole.log(JSON.stringify([...groups]));",
+        "expected_output": "[[\"web\",[\"open\",\"save\"]]]"
+      },
+      "applied_task": "Group timestamped events by a validated owner key, preserving input order within groups. Specify missing keys, empty input and whether output arrays share input records.",
+      "pitfall": "Reusing one array for every group makes later appends affect unrelated groups.",
+      "dsa_bridge": "Separate grouping from the later algorithm; grouping/indexing can prepare independent DSA practice.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "maps-arrays-trace",
+          "family_id": "javascript:maps-arrays:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace three interleaved events assigned to two owners. Show each owner’s event order and distinguish it from overall input order.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-arrays-build",
+          "family_id": "javascript:maps-arrays:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build per-owner event histories from validated events, defining duplicate event IDs and whether original event objects may be shared.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-arrays-update",
+          "family_id": "javascript:maps-arrays:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Delete an event from one history and append another. Define empty-history retention and verify other owners are unaffected.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "maps-arrays-compare",
+          "family_id": "javascript:maps-arrays:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare owner-first grouping with a single chronological event list. Explain which queries become direct and which require merging or scanning.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:arrays-sets",
+      "slug": "arrays-sets",
+      "tier": 2,
+      "title": "Arrays with Set",
+      "prerequisite_ids": [
+        "explain:javascript:arrays",
+        "explain:javascript:sets"
+      ],
+      "objective": "Reconcile ordered identifiers against membership rules without losing the intended order or duplicate policy.",
+      "mental_model": "The array carries sequence; the Set answers membership. Converting between them can lose duplicate information.",
+      "structure": {
+        "code": "const requested = [\"b\", \"a\", \"b\"];\nconst allowed = new Set([\"a\"]);\nconsole.log(JSON.stringify(requested.filter(id => allowed.has(id))));",
+        "expected_output": "[\"a\"]"
+      },
+      "applied_task": "Reconcile requested and current identifiers into additions and removals. Preserve requested order for additions and define whether duplicates are reported or ignored.",
+      "pitfall": "A membership filter alone does not deduplicate repeated allowed identifiers.",
+      "dsa_bridge": "Explain the visited/seen invariant before using membership to avoid repeated scans.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "arrays-sets-trace",
+          "family_id": "javascript:arrays-sets:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace membership filtering for a request list containing duplicates. Explain why filtering and deduplication are separate operations.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-sets-build",
+          "family_id": "javascript:arrays-sets:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Compute ordered additions and removals between current and requested IDs, with a documented duplicate and equality policy.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-sets-update",
+          "family_id": "javascript:arrays-sets:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Apply a change batch containing repeated adds and removals. Choose rejection or idempotent handling and preserve the final sequence contract.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "arrays-sets-compare",
+          "family_id": "javascript:arrays-sets:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare keeping only a Set with keeping an ordered array plus a Set. Explain what information each representation loses or must keep synchronized.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:strings-maps",
+      "slug": "strings-maps",
+      "tier": 2,
+      "title": "Strings with Map",
+      "prerequisite_ids": [
+        "explain:javascript:strings",
+        "explain:javascript:maps"
+      ],
+      "objective": "Count tokens under a declared normalization and character contract.",
+      "mental_model": "The text contract defines tokens; the Map records their counts. Normalization and identity are separate decisions.",
+      "structure": {
+        "code": "const counts = new Map();\nfor (const letter of \"aba\") counts.set(letter, (counts.get(letter) ?? 0) + 1);\nconsole.log(JSON.stringify([...counts]));",
+        "expected_output": "[[\"a\",2],[\"b\",1]]"
+      },
+      "applied_task": "Count normalized ASCII words in a text input. Declare splitting, case, punctuation and tie rules before returning the most frequent word.",
+      "pitfall": "A character-frequency map and a word-frequency map answer different questions; normalization must be explicit.",
+      "dsa_bridge": "Use frequency invariants as preparation for matching and anagram-style problems.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "strings-maps-trace",
+          "family_id": "javascript:strings-maps:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace frequency updates for repeated normalized ASCII tokens. Write the count state after each token.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-maps-build",
+          "family_id": "javascript:strings-maps:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Implement word counts under explicit splitting, punctuation and case rules. Return a result consistent with an empty-text contract.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-maps-update",
+          "family_id": "javascript:strings-maps:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Update counts when a text segment is added or removed. Reject a removal that would make a count negative and define zero-count key retention.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-maps-compare",
+          "family_id": "javascript:strings-maps:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare a token-frequency Map with a Set of tokens. Explain which questions about repeated words each can and cannot answer.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:strings-sets",
+      "slug": "strings-sets",
+      "tier": 2,
+      "title": "Strings with Set",
+      "prerequisite_ids": [
+        "explain:javascript:strings",
+        "explain:javascript:sets"
+      ],
+      "objective": "Validate vocabulary and uniqueness while stating which text units are compared.",
+      "mental_model": "The text parser supplies tokens; the Set records allowed or observed tokens without storing their frequencies.",
+      "structure": {
+        "code": "const vocabulary = new Set([\"red\", \"blue\"]);\nconst tokens = \"red green red\".split(\" \");\nconsole.log(JSON.stringify(tokens.filter(token => !vocabulary.has(token))));",
+        "expected_output": "[\"green\"]"
+      },
+      "applied_task": "Report unknown normalized ASCII words against an allowed vocabulary. Choose first-occurrence order versus occurrence-by-occurrence reporting.",
+      "pitfall": "Set membership discards frequency information; repeated invalid words need a separate reporting contract.",
+      "dsa_bridge": "Contrast membership with counts before selecting a structure for a new text problem.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "strings-sets-trace",
+          "family_id": "javascript:strings-sets:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace known and unknown vocabulary tokens with repeats. Distinguish per-occurrence errors from unique unknown-token reports.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-sets-build",
+          "family_id": "javascript:strings-sets:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Produce unique unknown normalized ASCII tokens in first-occurrence order, preserving the original text for display.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-sets-update",
+          "family_id": "javascript:strings-sets:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Update the allowed vocabulary and reevaluate text. State whether existing reports are snapshots or derived results that must be refreshed.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "strings-sets-compare",
+          "family_id": "javascript:strings-sets:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare a vocabulary Set with a frequency Map for spell-check-style feedback. Explain when membership alone is insufficient.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:nested-maps",
+      "slug": "nested-maps",
+      "tier": 2,
+      "title": "Nested Maps",
+      "prerequisite_ids": [
+        "explain:javascript:maps"
+      ],
+      "objective": "Design a two-level lookup whose nesting order matches the queries and update lifecycle.",
+      "mental_model": "An outer key selects an inner index. Region-first and product-first representations support different direct queries.",
+      "structure": {
+        "code": "const stock = new Map([[\"west\", new Map([[\"book\", 3]])]]);\nconsole.log(stock.get(\"west\").get(\"book\"));",
+        "expected_output": "3"
+      },
+      "applied_task": "Maintain stock by region and product. Define absent pairs, duplicate updates and whether empty inner Maps remain after removing the last product.",
+      "pitfall": "Creating or sharing one inner Map can join states that should be independent.",
+      "dsa_bridge": "Model multi-key state carefully before optimizing query cost or adding algorithmic constraints.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "nested-maps-trace",
+          "family_id": "javascript:nested-maps:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace queries and updates for region/product stock, distinguishing an absent region, absent product and present zero stock.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "nested-maps-build",
+          "family_id": "javascript:nested-maps:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build a validated two-key stock index with explicit behavior for duplicate input pairs and invalid quantities.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "nested-maps-update",
+          "family_id": "javascript:nested-maps:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Remove a product, remove a region’s last product and move stock between regions. Define atomic failure behavior and inner-Map cleanup.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "nested-maps-compare",
+          "family_id": "javascript:nested-maps:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare region-first with product-first nesting under two different query workloads. Explain the cost of maintaining both indexes.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:stacks-strings",
+      "slug": "stacks-strings",
+      "tier": 2,
+      "title": "Stacks with Strings",
+      "prerequisite_ids": [
+        "explain:javascript:stacks",
+        "explain:javascript:strings"
+      ],
+      "objective": "Trace restricted delimiter nesting with a declared token contract.",
+      "mental_model": "Each opening delimiter represents pending work. A closing token must satisfy the current nesting contract.",
+      "structure": {
+        "code": "const pending = [];\nfor (const token of \"((\") pending.push(token);\nconsole.log(pending.length);",
+        "expected_output": "2"
+      },
+      "applied_task": "Validate only parentheses in an ASCII text under a stated ignore-other-characters rule. Then specify what would change for several delimiter types and quoted literals.",
+      "pitfall": "A delimiter scanner is not automatically a full language parser; quotes and escapes require their own token rules.",
+      "dsa_bridge": "The stack invariant connects nested structures to later parsing and traversal work.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "stacks-strings-trace",
+          "family_id": "javascript:stacks-strings:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace pending delimiters for a short parenthesis-only input, showing the stack after each relevant character.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-strings-build",
+          "family_id": "javascript:stacks-strings:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Validate parentheses while ignoring other ASCII characters. State empty-input behavior and report the first position that breaks the contract.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-strings-update",
+          "family_id": "javascript:stacks-strings:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Extend the contract to several delimiter types. Explain mismatched closers and remaining openers before adding quote or escape rules.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "stacks-strings-compare",
+          "family_id": "javascript:stacks-strings:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare a simple count with an explicit stack. Explain which restricted contracts a count can handle and which require remembered nesting types.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:queues-maps",
+      "slug": "queues-maps",
+      "tier": 2,
+      "title": "Queues with Map",
+      "prerequisite_ids": [
+        "explain:javascript:queues",
+        "explain:javascript:maps"
+      ],
+      "objective": "Maintain pending order and identifier lookup under cancellation and repeated updates.",
+      "mental_model": "The queue defines service order; the Map identifies current jobs. Both representations must agree on the meaning of pending.",
+      "structure": {
+        "code": "const order = [\"a\", \"b\"];\nconst jobs = new Map([[\"a\", { status: \"pending\" }], [\"b\", { status: \"done\" }]]);\nconsole.log(JSON.stringify(order.filter(id => jobs.get(id).status === \"pending\")));",
+        "expected_output": "[\"a\"]"
+      },
+      "applied_task": "Design enqueue, cancel and serve commands for uniquely identified jobs. Specify repeated IDs, cancelled queue entries and whether re-enqueued IDs reuse an old position.",
+      "pitfall": "An entry can remain in queue storage after its lookup record changes; stale entries need an explicit lifecycle policy.",
+      "dsa_bridge": "State consistency and amortized cleanup matter before choosing a more advanced scheduling algorithm.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "queues-maps-trace",
+          "family_id": "javascript:queues-maps:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace enqueue, cancel and serve on jobs a and b, distinguishing queue storage from the current job lookup.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-maps-build",
+          "family_id": "javascript:queues-maps:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build a pending-job model with validated unique IDs, a specified duplicate policy and an explicit empty-queue contract.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-maps-update",
+          "family_id": "javascript:queues-maps:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Cancel and re-enqueue the same ID. Prevent an old queue entry from silently giving the new job an obsolete position.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "queues-maps-compare",
+          "family_id": "javascript:queues-maps:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare eager removal with lazy cancellation markers. Explain service-order correctness, stale storage and cleanup responsibilities.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:record-index",
+      "slug": "record-index",
+      "tier": 2,
+      "title": "Arrays, Objects and Map",
+      "prerequisite_ids": [
+        "explain:javascript:arrays-objects",
+        "explain:javascript:objects-map"
+      ],
+      "objective": "Build a small editable record collection with one authoritative representation and an index.",
+      "mental_model": "Choose which representation owns the truth. Every accepted edit must preserve record identity, ordering and index consistency.",
+      "structure": {
+        "code": "const records = [{ id: \"a\", points: 0 }];\nconst byId = new Map(records.map(record => [record.id, record]));\nbyId.get(\"a\").points += 1;\nconsole.log(records[0].points);",
+        "expected_output": "1"
+      },
+      "applied_task": "Build a bounded record-store model supporting create, rename, update and delete. Define duplicate IDs, ordering, aliasing and failed-command behavior; demonstrate consistency after each command.",
+      "pitfall": "Updating one representation while forgetting the other creates a convincing but inconsistent result.",
+      "dsa_bridge": "Use this as a small composition capstone before tackling larger independent DSA or application projects.",
+      "practice_ids": [],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "record-index-trace",
+          "family_id": "javascript:record-index:understand",
+          "title": "Trace the relationship",
+          "prompt": "Trace create, update and delete operations across a record array and its Map index. Identify the authoritative state after each operation.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "record-index-build",
+          "family_id": "javascript:record-index:operate",
+          "title": "Build under a clear contract",
+          "prompt": "Build a validated record store with stable IDs, deterministic display order and one chosen duplicate policy.",
+          "step": "operate",
+          "kind": "implement",
+          "route": "core",
+          "checklist": [
+            "State inputs, outputs and the mutation contract.",
+            "Demonstrate an ordinary input and a boundary case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "record-index-update",
+          "family_id": "javascript:record-index:apply",
+          "title": "Preserve the relationship during updates",
+          "prompt": "Support ID renaming and a failing edit batch. Specify rollback or rejection so the display collection and index cannot disagree.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "record-index-compare",
+          "family_id": "javascript:record-index:justify",
+          "title": "Compare another representation",
+          "prompt": "Compare shared record references with immutable record replacement. Explain how each design keeps the index synchronized and how a test would expose drift.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "extension",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-linear-scans",
+      "slug": "dsa-linear-scans",
+      "tier": 3,
+      "title": "Easy DSA: linear scans",
+      "prerequisite_ids": [
+        "explain:javascript:arrays"
+      ],
+      "objective": "Maintain a running invariant and explain why one pass is sufficient.",
+      "mental_model": "At each position, summarize exactly what the processed prefix tells you; update that summary before proceeding.",
+      "structure": {
+        "code": "const values = [3, 1, 4];\nlet seen = 0;\nfor (const value of values) { seen += 1; }\nconsole.log(seen);",
+        "expected_output": "3"
+      },
+      "applied_task": "For each linked problem, state the input contract, a brute-force approach, a prefix invariant and boundary tests before optimizing.",
+      "pitfall": "Do not claim constant extra space while allocating a copy or an auxiliary collection.",
+      "dsa_bridge": "Begin with easy traversal and running-state problems.",
+      "practice_ids": [
+        "missing-number",
+        "best-time-to-buy-and-sell-stock"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-linear-scans-trace",
+          "family_id": "javascript:dsa-linear-scans:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For the linked stock-price problem, trace [7, 1, 5, 3, 6, 4] and an always-decreasing input. State why a sale cannot precede its purchase and what the no-profitable-sale result should mean.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-linear-scans-reason",
+          "family_id": "javascript:dsa-linear-scans:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Compare enumerating every allowed buy/sell pair with maintaining a summary of the processed price prefix. Explain what information the summary must preserve and why future prices cannot repair an invalid time order.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-linear-scans-test",
+          "family_id": "javascript:dsa-linear-scans:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "For each linked problem, state the input contract, a brute-force approach, a prefix invariant and boundary tests before optimizing. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-linear-scans-review",
+          "family_id": "javascript:dsa-linear-scans:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-hashing",
+      "slug": "dsa-hashing",
+      "tier": 3,
+      "title": "Easy DSA: hashing and membership",
+      "prerequisite_ids": [
+        "explain:javascript:maps",
+        "explain:javascript:sets",
+        "explain:javascript:arrays"
+      ],
+      "objective": "Choose Map versus Set and state what each stored entry means.",
+      "mental_model": "Store only the lookup information needed from the processed prefix, then justify when a match is valid.",
+      "structure": {
+        "code": "const index = new Map([[\"Ada\", 0], [\"Bo\", 1]]);\nconsole.log(JSON.stringify([index.has(\"Ada\"), index.get(\"Bo\")]));",
+        "expected_output": "[true,1]"
+      },
+      "applied_task": "Explain what is stored before and after each iteration. Check duplicate values and whether one input position can accidentally be reused.",
+      "pitfall": "Storing values, counts and positions solve different contracts; choose deliberately.",
+      "dsa_bridge": "Progress from duplicate detection to matching with an index.",
+      "practice_ids": [
+        "contains-duplicate",
+        "two-sum"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-hashing-trace",
+          "family_id": "javascript:dsa-hashing:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For Two Sum, trace [3, 3] with target 6 and distinguish two equal values at different positions from reusing one position. Also state the duplicate-detection contract of Contains Duplicate.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-hashing-reason",
+          "family_id": "javascript:dsa-hashing:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Explain what a lookup entry represents in your Two Sum approach and when it becomes eligible to match. Compare that state with the simpler membership state used for duplicate detection.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-hashing-test",
+          "family_id": "javascript:dsa-hashing:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "Explain what is stored before and after each iteration. Check duplicate values and whether one input position can accidentally be reused. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-hashing-review",
+          "family_id": "javascript:dsa-hashing:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-linked-lists",
+      "slug": "dsa-linked-lists",
+      "tier": 3,
+      "title": "Easy DSA: reference updates",
+      "prerequisite_ids": [
+        "explain:javascript:linked-lists"
+      ],
+      "objective": "Track current and remaining nodes while changing references.",
+      "mental_model": "Draw each reference before a mutation. Your invariant should identify the processed and unprocessed chains.",
+      "structure": {
+        "code": "const node = { value: 7, next: null };\nconst alias = node;\nalias.value = 8;\nconsole.log(node.value);",
+        "expected_output": "8"
+      },
+      "applied_task": "Trace a three-node input on paper, then test an empty and one-node list. Explain why every node remains reachable when needed.",
+      "pitfall": "A visually plausible pointer update can still lose the rest of the list.",
+      "dsa_bridge": "Apply the reference invariant to the linked exercise.",
+      "practice_ids": [
+        "reverse-linked-list"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-linked-lists-trace",
+          "family_id": "javascript:dsa-linked-lists:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For Reverse Linked List, draw a three-node chain and an empty chain. For each reference change in your proposed approach, identify which nodes remain reachable.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-linked-lists-reason",
+          "family_id": "javascript:dsa-linked-lists:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Compare rebuilding fresh nodes with changing existing next references under the linked problem’s contract. State what each approach preserves and justify the reference invariant of the approach you choose.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-linked-lists-test",
+          "family_id": "javascript:dsa-linked-lists:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "Trace a three-node input on paper, then test an empty and one-node list. Explain why every node remains reachable when needed. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-linked-lists-review",
+          "family_id": "javascript:dsa-linked-lists:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-search",
+      "slug": "dsa-search",
+      "tier": 3,
+      "title": "Easy to medium DSA: search",
+      "prerequisite_ids": [
+        "explain:javascript:arrays"
+      ],
+      "objective": "Define search bounds, a loop invariant and an interval-shrinking argument.",
+      "mental_model": "Every iteration must preserve the target candidates while making the remaining interval smaller.",
+      "structure": {
+        "code": "const values = [2, 5, 9];\nconst left = 0, right = values.length - 1;\nconst middle = left + Math.floor((right - left) / 2);\nconsole.log(JSON.stringify([middle, values[middle]]));",
+        "expected_output": "[1,5]"
+      },
+      "applied_task": "Start with ordinary sorted search. Explain your closed or half-open interval convention before attempting rotated search.",
+      "pitfall": "Switching interval conventions mid-loop creates skipped candidates or non-termination.",
+      "dsa_bridge": "Pass ordinary binary search before attempting the rotated-array variant.",
+      "practice_ids": [
+        "binary-search",
+        "search-in-rotated-sorted-array"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-search-trace",
+          "family_id": "javascript:dsa-search:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For Binary Search, trace [1, 4, 8] with target 4, target 0 and target 9. State whether your interval includes its right endpoint before describing any update.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-search-reason",
+          "family_id": "javascript:dsa-search:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Compare scanning sorted values with shrinking a candidate interval. Explain why each proposed interval update preserves every possible match and guarantees progress; only then consider the rotated-search extension.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-search-test",
+          "family_id": "javascript:dsa-search:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "Start with ordinary sorted search. Explain your closed or half-open interval convention before attempting rotated search. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-search-review",
+          "family_id": "javascript:dsa-search:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-two-pointers",
+      "slug": "dsa-two-pointers",
+      "tier": 3,
+      "title": "Medium DSA: sorting and two pointers",
+      "prerequisite_ids": [
+        "explain:javascript:arrays",
+        "explain:javascript:dsa-linear-scans"
+      ],
+      "objective": "Justify each pointer movement and distinguish mutation costs from search costs.",
+      "mental_model": "Two pointers are useful only when the contract or ordering gives a reason to eliminate candidates safely.",
+      "structure": {
+        "code": "const values = [10, 2, 1];\nconst ordered = [...values].sort((a, b) => a - b);\nconsole.log(JSON.stringify([values, ordered]));",
+        "expected_output": "[[10,2,1],[1,2,10]]"
+      },
+      "applied_task": "Explain which candidates a pointer movement rules out. Include duplicates and small inputs, and account for sorting in the total cost.",
+      "pitfall": "The default array sort compares string forms; sorting with a comparator still requires a clear mutation contract.",
+      "dsa_bridge": "These medium problems require different elimination arguments; do not apply one pointer rule blindly.",
+      "practice_ids": [
+        "container-with-most-water",
+        "3sum"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-two-pointers-trace",
+          "family_id": "javascript:dsa-two-pointers:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For Container With Most Water, draw a short height input and identify the two indices defining each candidate. Distinguish the candidate’s width from its limiting height.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-two-pointers-reason",
+          "family_id": "javascript:dsa-two-pointers:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Explain why your proposed pointer movement can discard candidates safely for the container problem. Then explain why 3Sum needs its own ordering and duplicate-handling argument rather than blindly copying that rule.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-two-pointers-test",
+          "family_id": "javascript:dsa-two-pointers:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "Explain which candidates a pointer movement rules out. Include duplicates and small inputs, and account for sorting in the total cost. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-two-pointers-review",
+          "family_id": "javascript:dsa-two-pointers:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-prefix-state",
+      "slug": "dsa-prefix-state",
+      "tier": 3,
+      "title": "Medium DSA: prefix and suffix state",
+      "prerequisite_ids": [
+        "explain:javascript:arrays",
+        "explain:javascript:dsa-linear-scans"
+      ],
+      "objective": "Use information from both sides of an element without accidentally depending on an overwritten value.",
+      "mental_model": "A prefix summarizes items before a position; a suffix summarizes items after it. State exactly which positions are included.",
+      "structure": {
+        "code": "const values = [2, 4, 6];\nconst firstTwoTotal = values.slice(0, 2).reduce((sum, value) => sum + value, 0);\nconsole.log(firstTwoTotal);",
+        "expected_output": "6"
+      },
+      "applied_task": "Draw the auxiliary state for a small array, including a zero. Separate the reference implementation from a space-optimized variant.",
+      "pitfall": "Off-by-one boundaries and zero handling can invalidate an otherwise convincing aggregate formula.",
+      "dsa_bridge": "Use independent prefix/suffix summaries for the linked medium exercise.",
+      "practice_ids": [
+        "product-of-array-except-self"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-prefix-state-trace",
+          "family_id": "javascript:dsa-prefix-state:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For Product of Array Except Self, trace a short nonzero input and a version containing one zero. State exactly which positions each output excludes.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-prefix-state-reason",
+          "family_id": "javascript:dsa-prefix-state:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Compare recomputing the product for every position with reusing information about ranges. State the included and excluded boundaries of each summary, and explain why a division shortcut needs a separate zero contract.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-prefix-state-test",
+          "family_id": "javascript:dsa-prefix-state:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "Draw the auxiliary state for a small array, including a zero. Separate the reference implementation from a space-optimized variant. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-prefix-state-review",
+          "family_id": "javascript:dsa-prefix-state:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    },
+    {
+      "id": "explain:javascript:dsa-intro-dp",
+      "slug": "dsa-intro-dp",
+      "tier": 3,
+      "title": "Easy to medium DSA: state and recurrence",
+      "prerequisite_ids": [
+        "explain:javascript:arrays",
+        "explain:javascript:dsa-linear-scans"
+      ],
+      "objective": "Define a state, base cases and a dependency order before implementing a recurrence.",
+      "mental_model": "Dynamic programming reuses results of well-defined smaller subproblems; a recurrence without a precise state is not yet an algorithm.",
+      "structure": {
+        "code": "const totals = [0];\nfor (const cost of [2, 5, 3]) {\n  totals.push(totals.at(-1) + cost);\n}\nconsole.log(JSON.stringify(totals));",
+        "expected_output": "[0,2,7,10]"
+      },
+      "applied_task": "First describe the state in one sentence and enumerate small cases manually. For minimum-count tasks, distinguish unreachable from a valid zero count.",
+      "pitfall": "A recurrence can count ordered sequences instead of combinations, or mishandle unreachable states, unless the contract is explicit.",
+      "dsa_bridge": "Start with a small recurrence, then move to a medium minimum-count problem.",
+      "practice_ids": [
+        "climbing-stairs",
+        "coin-change"
+      ],
+      "assessment_node_id": null,
+      "activities": [
+        {
+          "id": "dsa-intro-dp-trace",
+          "family_id": "javascript:dsa-intro-dp:understand",
+          "title": "Start with a contract and trace",
+          "prompt": "For Climbing Stairs, enumerate small cases before writing a recurrence. For Coin Change, distinguish a valid zero-coin result from an unreachable amount.",
+          "step": "understand",
+          "kind": "trace",
+          "route": "core",
+          "checklist": [
+            "Show the state or output at each relevant step.",
+            "Explain the rule behind the first surprising result."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-intro-dp-reason",
+          "family_id": "javascript:dsa-intro-dp:justify",
+          "title": "From brute force to a justified approach",
+          "prompt": "Write one sentence defining the state for each linked recurrence problem. Explain its base cases, dependency order and whether it minimizes a count or counts possible sequences.",
+          "step": "justify",
+          "kind": "explain",
+          "route": "core",
+          "checklist": [
+            "Support the diagnosis or choice with a counterexample or trace.",
+            "Explain one alternative and its trade-off."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-intro-dp-test",
+          "family_id": "javascript:dsa-intro-dp:apply",
+          "title": "Challenge your approach with a counterexample",
+          "prompt": "First describe the state in one sentence and enumerate small cases manually. For minimum-count tasks, distinguish unreachable from a valid zero count. After drafting your approach, design a counterexample to a plausible wrong implementation and explain which assumption it breaks.",
+          "step": "apply",
+          "kind": "design",
+          "route": "core",
+          "checklist": [
+            "Trace a small case before implementing.",
+            "State the maintained state and test the failure or reset case."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        },
+        {
+          "id": "dsa-intro-dp-review",
+          "family_id": "javascript:dsa-intro-dp:review",
+          "title": "Return for deliberate review",
+          "prompt": "Later, return to a linked problem or a related fresh variant without notes. State what you remember, explain the invariant, and record whether you needed hints. This is deliberate review, not another independent solve credit.",
+          "step": "review",
+          "kind": "review",
+          "route": "review",
+          "checklist": [
+            "Attempt from memory before revisiting the lesson.",
+            "Explain how the changed contract affects the earlier approach."
+          ],
+          "assessment": "ungraded",
+          "source": "authored"
+        }
+      ]
+    }
+  ],
+  "authoring_profile": {
+    "version": 1,
+    "progression": [
+      "understand",
+      "operate",
+      "boundaries",
+      "apply",
+      "justify",
+      "transfer",
+      "review"
+    ],
+    "routes": [
+      "core",
+      "extension",
+      "review"
+    ],
+    "assessment": "ungraded",
+    "note": "A reusable activity format, instantiated and reviewed per language or framework. Task counts do not confer mastery."
+  }
+}

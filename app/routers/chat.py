@@ -9,7 +9,7 @@
 import logging
 
 from fastapi import APIRouter, Depends, Header, HTTPException
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -136,7 +136,9 @@ async def list_threads(
     languages = await allowed_languages(session, current_user)
     statement = select(ChatThread)
     if current_user.role != 'admin':
-        statement = statement.where(ChatThread.language.in_(languages))
+        statement = statement.where(ChatThread.language.in_(languages),
+                                    or_(ChatThread.compare_language == "",
+                                        ChatThread.compare_language.in_(languages)))
     result = await session.execute(
         statement
         .where(ChatThread.user_id == current_user.id)
@@ -156,6 +158,8 @@ async def thread_messages(
         raise HTTPException(status_code=404, detail="Thread not found")
     if current_user.role != 'admin' or thread.language:
         await require_language(session, current_user, thread.language)
+    if thread.compare_language:
+        await require_language(session, current_user, thread.compare_language)
     result = await session.execute(
         select(ChatMessage)
         .where(ChatMessage.thread_id == thread_id)

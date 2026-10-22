@@ -117,6 +117,19 @@ def screen(code: str, language: str = "python") -> ScreenResult:
         return ScreenResult("block", ["Submission exceeds the size limit."],
                             ["size_limit"])
 
+    if language == "javascript":
+        # DSA solutions need no module loader or host globals. Block identifiers,
+        # not literal module names: require('f'+'s') and loader aliases count too.
+        js_rules = (
+            (r"\b(?:require|import|module|global|globalThis|exports)\b|\bprocess\b(?!\s*\()",
+             "accesses module loading or host runtime globals"),
+            (r"\b(?:eval|Function|__proto__)\b|[.\[]\s*['\"]?constructor\b|\\(?:u|x)[0-9a-fA-F]",
+             "uses dynamic execution or obfuscated runtime access"),
+        )
+        for pattern, reason in js_rules:
+            if re.search(pattern, code):
+                return ScreenResult("block", [reason], ["javascript_runtime_access"])
+
     if language == "python":
         import ast
         import io

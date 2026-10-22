@@ -65,6 +65,8 @@ def _authored(language: str, version) -> tuple[dict, ...]:
     if not version[1]:
         return ()
     data = json.loads(Path(version[0]).read_text(encoding="utf-8"))
+    if data.get("language") != language:
+        raise ValueError(f"Quiz bank language does not match {language}")
     return tuple({**item, "language": language, "source": "authored",
                   "node_id": f"{language}:{item['node']}"} for item in data["items"])
 
@@ -96,7 +98,7 @@ def _node_for_row(language: str, keys: set[str], text: str) -> str | None:
 _LESSON_CODE = re.compile(r"Incorrect:\n(.*?)\nCorrect:\n(.*?)(?:\n(?:Complexity|Notes?|See also):|\Z)", re.S)
 
 
-def lesson_code(document: str) -> str:
+def lesson_code(document: str, language: str = "python") -> str:
     """The incorrect and correct snippets of an answer-free concept row. KB
     questions refer to these functions (e.g. subsets_bad), so they are shown
     with the question; the row's prose explanation is not, as it can give the
@@ -104,7 +106,8 @@ def lesson_code(document: str) -> str:
     match = _LESSON_CODE.search(document)
     if not match:
         return ""
-    return f"# Incorrect version\n{match.group(1).strip()}\n\n# Correct version\n{match.group(2).strip()}"
+    comment = "#" if language in ("python", "ruby") else "//"
+    return f"{comment} Incorrect version\n{match.group(1).strip()}\n\n{comment} Correct version\n{match.group(2).strip()}"
 
 
 def _concept_code(rows: list[dict]) -> dict[str, str]:
@@ -112,7 +115,7 @@ def _concept_code(rows: list[dict]) -> dict[str, str]:
     for row in rows:
         meta = row["metadata"]
         if meta.get("kind") == "concept" and meta.get("contains_answer") is False:
-            code = lesson_code(row["document"])
+            code = lesson_code(row["document"], meta.get("language", "python"))
             if code:
                 out[_inner(row.get("payload") or {}).get("id") or row["id"]] = code
     return out
@@ -522,7 +525,9 @@ async def insights(session: AsyncSession, user_id: str, language: str, limit: in
                                          QuizAnswer.item_type.in_(TEXT_TYPES))
                                   .order_by(QuizAnswer.created_at.desc()).limit(limit))).scalars().all()
     prompts = items(language)
+    from app.services.learning_guidance import guidance
     return {
+        'guidance': await guidance(session, user_id, language),
         "weak_concepts": await weak_concepts(session, user_id, language),
         "responses": [{"item_id": a.item_id, "prompt": prompts.get(a.item_id, {}).get("prompt", ""),
                        "response": a.response, "correct": a.correct, "score": a.score,

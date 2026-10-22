@@ -2,7 +2,7 @@
   "collection": "curated_refs_fe50ce36efc226e9bf6c",
   "provider": "google",
   "model": "models/gemini-embedding-001",
-  "source_sha256": "fe50ce36efc226e9bf6c80ad7f2e59eea2d7f3b34336a4ee7b2b7739353320b7",
+  "source_sha256": "ea06a37756397018652f988fa1892b02223fa7d705b1efa804daa1b2860fcbf4",
   "records": 10037,
   "by_subject": {
     "bootstrap": 95,
@@ -35,5 +35,9 @@
     "typescript": 1290
   },
   "completed_at": "2026-10-18T15:00:55.547117+00:00",
-  "scope": "All learner-retrievable reference records; legacy collection preserved"
+  "scope": "All learner-retrievable reference records; legacy collection preserved",
+  "revalidated_at": "2026-10-18T18:04:38.582402+00:00",
+  "previous_source_sha256": "fe50ce36efc226e9bf6c80ad7f2e59eea2d7f3b34336a4ee7b2b7739353320b7",
+  "snapshot_reconciliation": "All stored documents and metadata exactly matched the active corpus; no embedding changes",
+  "embedding_build_source_sha256": "fe50ce36efc226e9bf6c80ad7f2e59eea2d7f3b34336a4ee7b2b7739353320b7"
 }

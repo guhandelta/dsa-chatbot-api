@@ -6,14 +6,14 @@ this collection never mixes vectors from the legacy unlabelled index.
 import json
 from pathlib import Path
 from functools import lru_cache
-from threading import Lock
 
 from app.core.config import settings
 from app.services.reference_library import current_document
+from app.services.knowledge_base import VECTOR_CLIENT_LOCK
 
 MANIFEST = Path(__file__).resolve().parents[2] / 'data/reference_library/semantic-index.json'
 MODEL = 'models/gemini-embedding-001'
-_STORE_LOCK = Lock()
+_STORE_LOCK = VECTOR_CLIENT_LOCK
 
 
 def embeddings():

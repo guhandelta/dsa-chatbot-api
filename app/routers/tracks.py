@@ -179,9 +179,9 @@ async def algorithm_practice(
 
 @router.get("/items/{content_id}")
 async def get_item(content_id: str, language: str | None = None, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
-    await require_content(session, user, content_id, language)
+    language = await require_content(session, user, content_id, language)
     body = read_content(content_id)
     if not body:
         raise HTTPException(status_code=404, detail="Content not found")
     from app.services.content_access import learner_document
-    return {"id": content_id, "markdown": learner_document(content_id)}
+    return {"id": content_id, "markdown": learner_document(content_id, language)}

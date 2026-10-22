@@ -12,6 +12,7 @@ import logging
 from pathlib import Path
 import re
 import time
+from threading import RLock
 from typing import Any
 
 from app.core.config import settings
@@ -19,6 +20,7 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 
 COLLECTION_NAME = "dsa_problems"
+VECTOR_CLIENT_LOCK = RLock()
 
 
 def get_embeddings() -> Any:
@@ -95,11 +97,12 @@ def get_vectorstore():
 
     from langchain_chroma import Chroma
 
-    return Chroma(
-        collection_name=COLLECTION_NAME,
-        embedding_function=embeddings,
-        persist_directory=settings.chroma_persist_dir,
-    )
+    with VECTOR_CLIENT_LOCK:
+        return Chroma(
+            collection_name=COLLECTION_NAME,
+            embedding_function=embeddings,
+            persist_directory=settings.chroma_persist_dir,
+        )
 
 
 def pgvector_connection_string() -> str:

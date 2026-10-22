@@ -132,10 +132,10 @@ async def test_explain_without_a_takeaway_saves_no_note_and_honours_focus(client
 
 
 async def test_thread_guards(client, db, model):
-    headers, _ = await register(client, db, 'threads@example.com')
+    headers, _ = await register(client, db, 'threads@example.com', ('python', 'javascript', 'typescript'))
     first = (await client.post('/study/message', headers=headers, json=ask())).json()
     wrong_mode = await client.post('/study/message', headers=headers, json=ask(
-        mode='compare', compare_language='javascript', thread_id=first['thread_id']))
+        language='javascript', mode='compare', compare_language='typescript', thread_id=first['thread_id']))
     assert wrong_mode.status_code == 409
     other, _ = await register(client, db, 'other-threads@example.com')
     stolen = await client.post('/study/message', headers=other, json=ask(thread_id=first['thread_id']))
@@ -233,18 +233,19 @@ def test_split_takeaway_and_text_blocks():
 # ---------------------------------------------------------------- compare
 
 async def test_compare_needs_two_languages_and_saves_a_side_by_side_note(client, db, model):
-    headers, _ = await register(client, db, 'compare@example.com')
-    base = ask(mode='compare', message='How do maps handle a missing key?')
+    headers, _ = await register(client, db, 'compare@example.com', ('javascript', 'typescript', 'python'))
+    base = ask(language='javascript', mode='compare', message='How do maps handle a missing key?')
     assert (await client.post('/study/message', headers=headers, json=base)).status_code == 422
-    assert (await client.post('/study/message', headers=headers, json={**base, 'compare_language': 'python'})).status_code == 422
+    assert (await client.post('/study/message', headers=headers, json={**base, 'compare_language': 'javascript'})).status_code == 422
     assert (await client.post('/study/message', headers=headers, json={**base, 'compare_language': 'rust'})).status_code == 403
-    model.replies = ['| Aspect | python | javascript |\n|---|---|---|\n| syntax | d[k] | m.get(k) |\nWatch out: undefined.']
-    r = await client.post('/study/message', headers=headers, json={**base, 'compare_language': 'javascript'})
+    assert (await client.post('/study/message', headers=headers, json={**base, 'compare_language': 'python'})).status_code == 422
+    model.replies = ['| Aspect | JavaScript | TypeScript |\n|---|---|---|\n| syntax | m.get(k) | m.get(k) |\nWatch out: types do not change runtime.']
+    r = await client.post('/study/message', headers=headers, json={**base, 'compare_language': 'typescript'})
     assert r.status_code == 200, r.text
     system = model.calls[0][0].content
-    assert '<python_reference>' in system and '<javascript_reference>' in system
-    note = (await client.get('/study/notes', headers=headers, params={'language': 'python'})).json()['notes'][0]
-    assert note['mode'] == 'compare' and note['body']['second'] == 'javascript'
+    assert '<javascript_reference>' in system and '<typescript_reference>' in system
+    note = (await client.get('/study/notes', headers=headers, params={'language': 'javascript'})).json()['notes'][0]
+    assert note['mode'] == 'compare' and note['body']['second'] == 'typescript'
     assert note['body']['comparison'].startswith('| Aspect')
 
 

@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[2]
 ALTERNATIVES={
  'js-unicode':{'ids':['corpus-js-string-graphemes-intl-segmenter','corpus-js-ref-strings-unicode-track-p1','corpus-js-string-length'],
                'reason':'Explains UTF-16 length, code points, and grapheme segmentation.'},
- 'ruby-dp':{'ids':['ref-3dd0c8bbe1a1095fe503a264'],
+ 'ruby-dp':{'ids':['ref-3dd0c8bbe1a1095fe503a264','ref-8bb1a036fae754c1cfabd3d5'],
             'reason':'Explains the shared Array.new row and the per-row block constructor.'},
  'ts-assert':{'ids':['ref-ce31ae25839685d1913c87d4'],
               'reason':'Explicitly says as User performs no runtime validation; recommends unknown and shape checking.'},

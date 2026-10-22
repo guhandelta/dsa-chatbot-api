@@ -59,7 +59,8 @@ class Settings(BaseSettings):
     admin_emails: str = ""
 
     # Sandbox limits for executing submitted solutions
-    exec_backend: Literal["subprocess", "docker"] = "subprocess"
+    app_env: Literal["development", "test", "production"] = "development"
+    exec_backend: Literal["subprocess", "docker"] = "docker"
     exec_container_image: str = ""
     exec_timeout_seconds: int = 8
     exec_memory_mb: int = 512
@@ -116,6 +117,10 @@ class Settings(BaseSettings):
     # Traces older than this are removed by DELETE /admin/traces?older_than_days=
     trace_retention_days: int = 14
 
+
+    def validate_execution_policy(self) -> None:
+        if self.app_env == "production" and self.exec_backend != "docker":
+            raise RuntimeError("Production requires EXEC_BACKEND=docker")
 
     @property
     def resolved_database_url(self) -> str:

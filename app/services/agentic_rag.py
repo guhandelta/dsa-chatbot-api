@@ -315,7 +315,7 @@ async def run(message, provider, history, tools, *, model_factory=None, strategy
             report['clarification']=True
             return finish('I could not find approved references in this language and scope. Which concept should we examine?')
         from app.services.teaching_constraints import constraints
-        answer_prompt=ANSWER+'\n\nTrusted implementation qualifications:\n'+constraints(tools.scope.language)
+        answer_prompt=ANSWER+'\n\nTrusted implementation qualifications:\n'+constraints(tools.scope.language, tools.scope.subject)
         raw=await call(answer_prompt,{'scope':scope,'question':message,'history':prior,'sources':entries},ANSWER_TOKENS)
         answer=parse(raw,GroundedAnswer)
         allowed={f'S{i+1}':d for i,d in enumerate(docs)}

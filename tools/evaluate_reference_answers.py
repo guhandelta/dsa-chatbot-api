@@ -1,5 +1,6 @@
 """Save a small live-answer probe for manual review; never auto-certify correctness."""
 import asyncio
+import argparse
 from datetime import datetime,timezone
 import json
 from pathlib import Path
@@ -7,8 +8,15 @@ from app.services.rag_pipeline import run_rag_chat
 ROOT=Path(__file__).resolve().parents[2]
 
 async def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--case',action='append',help='Repeat to restrict the public probes')
+    parser.add_argument('--output',type=Path)
+    args=parser.parse_args()
     cases=[json.loads(l) for l in (ROOT/'Training Data/generated/knowledge-gap-fill-v1/evaluation/retrieval_cases.jsonl').open()]
     selected={'java-generics','java-map','js-number','embedded-python','embedded-c'}
+    if args.case:
+        if not set(args.case)<=selected:raise SystemExit('Unknown public answer probe')
+        selected=set(args.case)
     gate=asyncio.Semaphore(2)
     async def one(c):
         async with gate:
@@ -19,7 +27,8 @@ async def main():
     results=await asyncio.gather(*(one(c) for c in cases if c['id'] in selected))
     report={'checked_at':datetime.now(timezone.utc).isoformat(),'provider':'gemini','cases':len(results),'results':results,
             'limitations':'Five public questions; manual review required, not exhaustive correctness certification.'}
-    (ROOT/'reports/knowledge-base-training-2026-10-18/live-answer-probe.json').write_text(json.dumps(report,indent=2)+'\n')
+    output=args.output or ROOT/'reports/knowledge-base-training-2026-10-18/live-answer-probe.json'
+    output.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 
 if __name__=='__main__':asyncio.run(main())

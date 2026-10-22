@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 from app.services import reference_semantics as semantic, reference_library, rag_pipeline
 from app.services.content_access import public_text
+from tools.audit_active_reference_retrieval import ALTERNATIVES
 
 ROOT=Path(__file__).resolve().parents[2]
 CAPTURE=ContextVar('evaluation_prompt')
@@ -42,8 +43,11 @@ async def main():
                 await rag_pipeline.run_rag_chat(case['question'],'gemini',[],case['language'],track='language',subject=subject)
                 ids=[d.metadata.get('problem_id') for d in docs]
                 expected=case['expected_record_ids']
+                alternatives=ALTERNATIVES.get(case['id'],{}).get('ids',[])
                 return {'id':case['id'],'semantic_top4':bool(set(ids)&set(expected)),
                         'expected_in_final_prompt':any(public_text(rows[rid]['document']) in capture[0] for rid in expected),
+                        'reviewed_alternative_in_final_prompt':any(public_text(rows[rid]['document']) in capture[0] for rid in alternatives if rid in rows),
+                        'alternative_review':ALTERNATIVES.get(case['id']),
                         'scope_safe':all(d.metadata.get('language')==case['language'] and d.metadata.get('subject')==case['subject']
                                          and d.metadata.get('contains_answer') is False for d in docs),
                         'semantic_ids':ids}
@@ -55,13 +59,15 @@ async def main():
     report={'checked_at':datetime.now(timezone.utc).isoformat(),'index':json.loads(semantic.MANIFEST.read_text()),
             'cases':len(results),'semantic_expected_at_4':sum(r['semantic_top4'] for r in results),
             'expected_in_actual_final_prompt':sum(r['expected_in_final_prompt'] for r in results),
+            'expected_or_reviewed_alternative_in_final_prompt':sum(r['expected_in_final_prompt'] or r.get('reviewed_alternative_in_final_prompt',False) for r in results),
             'scope_safety_passed':all(r['scope_safe'] for r in results),'live_answer_model_calls':0,
             'limitations':['Authored 60-question probe; no generated-answer correctness certification.'],
             'results':results}
     out=ROOT/'reports/knowledge-base-training-2026-10-18/semantic-retrieval-recheck.json'
     out.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({k:v for k,v in report.items() if k not in ('results','index')},indent=2))
-    print('Final-context misses:',[r['id'] for r in results if not r['expected_in_final_prompt']])
+    print('Exact expected-document misses:',[r['id'] for r in results if not r['expected_in_final_prompt']])
+    print('Unresolved context cases:',[r['id'] for r in results if not (r['expected_in_final_prompt'] or r.get('reviewed_alternative_in_final_prompt',False))])
     if not report['scope_safety_passed']:raise SystemExit(1)
 
 if __name__=='__main__':asyncio.run(main())

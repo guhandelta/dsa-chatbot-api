@@ -8,6 +8,8 @@ import pytest
 import pytest_asyncio
 
 # Provide dummy settings BEFORE importing the app, so config validation passes
+os.environ.setdefault("EXEC_BACKEND", "subprocess")
+os.environ.setdefault("APP_ENV", "test")
 os.environ.setdefault("OPENAI_API_KEY", "test-key")
 os.environ.setdefault("JWT_SECRET", "test-secret-for-offline-tests-at-least-32-bytes")
 os.environ.setdefault("SIGNUP_BONUS", "50")

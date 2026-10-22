@@ -34,6 +34,11 @@ from app.routers import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    settings.validate_execution_policy()
+    if settings.exec_backend == "docker":
+        # Validate image pinning and CLI availability before accepting requests.
+        from app.services.container_executor import command
+        command(["true"], _root, "dsa-startup-validation")
     # Create tables on startup (use Alembic migrations once you deploy)
     await init_db()
     from app.services.maintenance import worker

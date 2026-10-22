@@ -35,6 +35,10 @@ def main():
     rows=[r for r in records() if eligible(r)]
     identity=hashlib.sha256(json.dumps([(r['id'],r['document'],r['metadata']) for r in rows],sort_keys=True).encode()).hexdigest()
     name='curated_refs_'+identity[:20]
+    if MANIFEST.exists():
+        previous=json.loads(MANIFEST.read_text())
+        if previous.get('source_sha256')==identity and previous.get('model')==MODEL:
+            name=previous['collection']
     import chromadb
     client=chromadb.PersistentClient(path=settings.chroma_persist_dir)
     collection=client.get_or_create_collection(name,metadata={'embedding_model':MODEL,'source_sha256':identity,'hnsw:space':'cosine'})

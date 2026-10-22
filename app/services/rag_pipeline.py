@@ -111,7 +111,8 @@ async def run_rag_chat(
         # Upload vectors are never authoritative: they can be stale, unapproved,
         # or missing safety metadata. Approved DB projections are passed by router.
         vector = [d for d in vector if not str(d.metadata.get("problem_id", "")).startswith("upload:")
-                  and not d.metadata.get("document_id") and not d.metadata.get("user_id")]
+                  and not d.metadata.get("document_id") and not d.metadata.get("user_id")
+                  and d.metadata.get("language") == language]
         from app.services.reference_library import current_document
         vector = [current for d in vector if (current := current_document(d)) is not None]
         from app.services.reference_semantics import search as reference_search, balanced_results
@@ -130,7 +131,7 @@ async def run_rag_chat(
                 continue
             if meta.get("track") not in tracks:
                 continue
-            if track == "language" and meta.get("language") != language:
+            if meta.get("language") not in (None, language):
                 continue
             if focus_id and meta.get("problem_id") != focus_id:
                 continue
@@ -144,7 +145,7 @@ async def run_rag_chat(
         return out[:4]
 
     docs = await asyncio.to_thread(_search)
-    from app.services.content_access import public_text
+    from app.services.content_access import public_text, scoped_markdown
     safe_docs = [d for d in docs if getattr(d, "metadata", {}).get("contains_answer") is not True]
     if subject:
         safe_docs = [d for d in safe_docs if d.metadata.get('subject') == subject
@@ -158,7 +159,7 @@ async def run_rag_chat(
                                   "filename": doc.metadata["source"],
                                   "revision": doc.metadata["revision"],
                                   "excerpt": doc.page_content[:500]})
-    context = "\n\n---\n\n".join(public_text(doc.page_content) for doc in safe_docs)
+    context = "\n\n---\n\n".join(scoped_markdown(public_text(doc.page_content), language) for doc in safe_docs)
     if not context:
         context = "(No matching documents found in the knowledge base.)"
 
@@ -168,7 +169,7 @@ async def run_rag_chat(
                        "constraints; never describe imported verification claims as local execution evidence."
                        if subject else "")
     from app.services.teaching_constraints import constraints
-    qualifications=constraints(language)
+    qualifications=constraints(language, subject)
     system_prompt = f"""{persona}
 Trusted implementation qualifications: {qualifications}
 {reference_scope}

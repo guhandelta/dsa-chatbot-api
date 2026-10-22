@@ -82,6 +82,10 @@ uvicorn app.main:app --reload --port 8000
 
 Interactive docs at http://localhost:8000/docs
 
+Startup validates the execution backend. The default is `EXEC_BACKEND=docker`, so
+either set a digest-pinned `EXEC_CONTAINER_IMAGE` (and have Docker running), or
+for trusted local development set `EXEC_BACKEND=subprocess` in `.env`.
+
 ## API overview
 
 | Method | Path | Auth | Cost | Notes |
@@ -217,13 +221,12 @@ LLM but not executed. They are never counted as passing.
 
 ### Security note on code execution
 
-Submitted code runs in a subprocess with a wall-clock timeout, CPU/memory/
-file-size limits, a scratch working directory, and a stripped environment (it
-cannot read your `.env`). That is appropriate for a trusted local setup, but it
-is not a true sandbox. Before exposing training to untrusted users, replace
-`_run` in `app/services/code_runner.py` with a container-per-run executor
-(Docker) or an external judge (Judge0/Piston) — the rest of the pipeline talks
-to that one function.
+By default (`EXEC_BACKEND=docker`) submitted code runs in a per-command container
+from the digest-pinned `EXEC_CONTAINER_IMAGE` (see "Known limits" under Abuse
+prevention). The opt-in `EXEC_BACKEND=subprocess` mode runs on the host with a
+wall-clock timeout, CPU/memory/file-size limits, a scratch working directory and
+a stripped environment (it cannot read your `.env`). That is appropriate only for
+a trusted local setup: it is not a true sandbox, and production refuses it.
 
 ## Three learning tracks
 
@@ -330,14 +333,17 @@ forfeit by policy.
 
 ### Known limits
 
-- `RLIMIT_NPROC` is **not** used: it caps processes per UID, not per process
-  tree, so any workable value breaks the compiler. Fork bombs are contained by
-  the timeout and screener instead.
-- The sandbox does **not** block network egress at the OS level. The screener
-  catches the obvious cases, but a determined attacker could evade it. Before
-  untrusted users reach this in production, replace `_run` in `code_runner.py`
-  with a container-per-run executor (`--network=none`, read-only rootfs,
-  non-root user, cgroup limits) or an external judge (Judge0/Piston).
+- Docker is the default execution backend. Set `APP_ENV=production`,
+  `EXEC_BACKEND=docker`, and `EXEC_CONTAINER_IMAGE=your-image@sha256:<64 hex digits>`
+  in the deployment environment. Install Docker and preload the pinned image
+  with the supported toolchains; execution never pulls images automatically.
+  Startup rejects production subprocess mode, missing/unpinned images, and a
+  missing Docker CLI. Docker runtime failures refuse execution without fallback.
+- Docker runs use network isolation, a read-only root, a non-root user, dropped
+  capabilities, and per-container memory/process limits. Only scratch is mounted.
+- Trusted local development can explicitly set `APP_ENV=development` and
+  `EXEC_BACKEND=subprocess`. Host mode cannot isolate files or network access;
+  never use it for untrusted submissions.
 - A static screener is defence in depth, never the boundary. Treat `allow` as
   "nothing obvious found", not "this code is safe".
 
@@ -580,3 +586,129 @@ Run `alembic upgrade head` for migration `0009_language_access`. Assign instruct
 languages from Admin, then use Chat's language/reference selectors to browse
 permitted material. See [the full access contract](docs/ROLE_LANGUAGE_ACCESS.md)
 for expiry, instructor upload provenance and older chat history behavior.
+
+
+## Language integrity and subscription audit
+
+Run the offline content audit after editing exercises, examples, or course sources:
+
+```bash
+.venv/bin/python tools/audit_language_integrity.py
+.venv/bin/pytest tests/test_language_integrity.py tests/test_language_access.py
+```
+
+The audit checks all released quiz banks, distinctive snippet syntax, starter
+code, path/pool assignments, source language metadata, and selected-language
+learner views. Subscription tests exercise all twelve supported language scopes,
+unauthorized API calls, and saved quizzes/comparisons after expiry. Multiple
+active subscriptions permit their respective languages; a saved preference or
+URL never grants access. Static checks do not prove arbitrary code semantics or
+live model response accuracy.
+
+
+## Debugging challenge library
+
+Study Room → Debug with Me now offers 1,982 debugging and code investigation problems across all 28
+current language/framework subjects, with Easy, Medium, Hard, Expert and Extreme
+choices. Each subject has at least two distinct problems per difficulty. The
+subject chooser is scoped to the selected language and checked against the
+student's active subscription by the API.
+
+Assignments are stored per learner in `debug_challenge_attempts`. Refreshing
+resumes the current assignment; asking for the next problem reserves an unseen
+one. Skipped and reviewed assignments remain in history, including across
+sessions and devices. Exhaustion never silently resets the pool. Review saves
+the student's diagnosis and regression-test proposal; it does not execute code,
+award mastery, or claim automatic test success. Existing bring-your-own-code
+Socratic debugging remains available.
+
+Deployments must run `.venv/bin/alembic upgrade head` to install migration
+`0016_debug_challenges` before starting the updated API. The local SQLite
+migration has already been applied for this workspace.
+
+To audit or extend the authored cases:
+
+```bash
+.venv/bin/python tools/build_debug_challenges.py
+.venv/bin/python tools/compile_debug_knowledge.py
+.venv/bin/python tools/audit_debug_challenges.py
+.venv/bin/pytest tests/test_debug_challenges.py
+```
+
+The bank includes 207 new authored scenarios, 434 existing authored quiz code investigations,
+and 1,341 reference bad/good example pairs after code deduplication.
+Only the code under investigation and the problem brief are sent to students
+or the debug coach; corrected examples/QA diagnoses remain server-side. Reference-derived
+cases are reasoning material and are not represented as independently executed
+or hardware-verified tests.
+
+
+## Roles of the Study Room modes
+
+| Mode | Purpose and contents |
+|---|---|
+| Explain | Understand the selected concept through its mental model, one small correct worked example, follow-up questions, a pitfall, and a saved takeaway. Optional reflection prompts are ungraded. |
+| Debug with Me | Investigate a bug or trace output/state changes in code tied to the current topic. The coach guides the learner’s diagnosis; correct trace snippets are not falsely described as buggy. |
+| JavaScript vs TypeScript | Same-topic reference for this pair only: runtime behavior, static types, narrowing and migration traps. Both subscriptions are required; UI and API enforce the pair restriction. |
+| What next? | Separate charts for path mastery, unique DSA solves and debugging self-review; Design Patterns explicitly marks its assessed pathway as coming soon. Also recommends one activity and shows weak spots, recent responses and notes. |
+
+Reflection questions are shown only in Explain. Sending a message does not mark
+an exercise complete or unlock a stage. Progress comes from the backend's graded
+checks and exercise results.
+
+Debug requests carry the resolved selected/current path topic, even when the
+URL has no explicit focus. The server filters candidates, progress counts and
+resumable assignments to that topic. An omitted API focus uses the learner's
+current topic. Framework collection context is retained when moving from Open
+chat into the other modes. A missing/exhausted difficulty never substitutes an
+unrelated topic. All 180 core path nodes have at least one relevant investigation;
+not every introductory topic needs every advanced difficulty level.
+
+The runtime debugging KB is `data/debug/knowledge-base.json`, separate from quiz and
+reference retrieval. `tools/compile_debug_knowledge.py` is an explicit offline publishing
+step. Changes to quiz/reference sources do not silently enter live debugging sessions.
+Missing topic/difficulty content shows **Coming soon**; exhausted pools have a distinct
+message. See [the debugging authoring guide](data/debug/README.md).
+
+Explain adds a per-topic pathway: lesson and worked example → reflection → graded
+checks → application → related debugging/review. Reflection/reading do not earn mastery.
+The progress overview is a free deterministic `GET /study/progress-overview?language=...`
+endpoint scoped to the authenticated user and subscribed language. It never invokes a model.
+Charts use different denominators; there is no combined mastery percentage. Design Patterns
+has reference lessons, but a graded pathway and progress tracking are still to be built.
+See [the product and cost roadmap](reports/study-progress-2026-10-22/ROADMAP.md).
+
+
+## Tiered Explain pilot and personal study tips
+
+JavaScript Explain now offers 29 authored units across three tiers: basic structures
+(8), combined structures (14), and easy-to-medium DSA (7). Each has a mental model,
+a verified worked example, an applied prompt, a pitfall and a DSA bridge. Existing
+foundation checks/exercises are linked where appropriate. New combined-topic
+assessment is explicitly coming soon; reading or solving a linked foundation
+exercise does not certify a whole tier. Other languages retain their current
+Explain paths while the tiered version awaits language-specific review.
+
+`GET /study/explain-pathway?language=javascript` is subscription-scoped and free;
+`explain:javascript:<slug>` is the stable lesson/coaching focus. What next includes
+separate focus/honing and strengths/extension sections from completed quiz answers
+and unique recorded DSA solves. They use deterministic rules, require evidence,
+and do not invoke a model. Dedicated debugging cases can be tagged with optional
+`explain_unit_ids`; empty combined-topic banks show Coming soon without broadening
+into another topic. See [the JavaScript tier plan](reports/explain-tiers-2026-10-22/PLAN.md).
+
+The deeper Explain edition adds 180 guided activities: 12 per basic structure
+(8 core, 3 extensions and 1 deliberate review), 4 per combined unit and 4 per DSA
+unit. Activities have stable IDs, family IDs, routes, forms, prompts and checklists;
+selecting one pins the coach to that exact activity. These are ungraded activities,
+not new automatically validated coding problems. Canonical DSA practice IDs and
+existing mastery totals are preserved. `tools/deepen_js_explain.py` rebuilds this
+static authored bank without model calls.
+
+Use [the reusable curriculum blueprint](docs/curriculum/BLUEPRINT.md),
+[the unit authoring template](docs/curriculum/UNIT_TEMPLATE.md), and
+[the JSON unit template](docs/curriculum/unit-template.json) when crafting language
+or framework profiles. Frameworks should adapt the last tier to independent
+integration/design practice where a DSA endpoint does not fit.
+
+Review activities are manually accessible today; automatic review scheduling is not yet implemented.

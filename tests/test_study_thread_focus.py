@@ -21,12 +21,13 @@ async def test_auto_focus_stays_pinned_after_stage_completion(client, db, model)
 
 
 async def test_comparison_thread_rejects_changing_second_language(client, db, model):
-    headers, _ = await register(client, db, "compare-focus@example.com", ("python", "javascript", "java"))
-    body = ask(mode="compare", compare_language="javascript")
+    headers, _ = await register(client, db, "compare-focus@example.com", ("javascript", "typescript", "java"))
+    body = ask(language="javascript", mode="compare", compare_language="typescript")
     first = (await client.post("/study/message", headers=headers, json=body)).json()
     changed = await client.post("/study/message", headers=headers, json={
         **body, "thread_id": first["thread_id"], "compare_language": "java"})
-    assert changed.status_code == 409
+    assert changed.status_code == 422
+    assert len(model.calls) == 1
 
 
 async def test_legacy_unpinned_threads_require_a_fresh_conversation(client, db, model):

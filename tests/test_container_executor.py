@@ -64,3 +64,31 @@ def test_symlink_alias_for_scratch_maps_to_same_container_path(configured,tmp_pa
     alias=tmp_path/'alias';alias.symlink_to(scratch,target_is_directory=True)
     args=ce.command(['java','-cp',str(alias),'Main'],alias,'test')
     assert args[-3:]==['-cp','/work','Main']
+
+
+def test_default_backend_is_docker():
+    from app.core.config import Settings
+    assert Settings.model_fields['exec_backend'].default == 'docker'
+
+
+@pytest.mark.parametrize('backend', ['subprocess', 'docker'])
+async def test_production_startup_rejects_unsafe_configuration(monkeypatch, backend):
+    from app.main import lifespan, app
+    import app.main as main
+    monkeypatch.setattr(settings, 'app_env', 'production')
+    monkeypatch.setattr(settings, 'exec_backend', backend)
+    monkeypatch.setattr(settings, 'exec_container_image', '')
+    async def forbidden_db():
+        pytest.fail('database startup preceded execution validation')
+    monkeypatch.setattr(main, 'init_db', forbidden_db)
+    with pytest.raises(RuntimeError, match='EXEC_BACKEND=docker|digest-pinned'):
+        async with lifespan(app):
+            pytest.fail('unsafe application started')
+
+
+def test_production_execution_cannot_use_host(monkeypatch, tmp_path):
+    monkeypatch.setattr(settings, 'app_env', 'production')
+    monkeypatch.setattr(settings, 'exec_backend', 'subprocess')
+    monkeypatch.setattr(code_runner, '_run_host', lambda *a, **kw: pytest.fail('host execution'))
+    with pytest.raises(RuntimeError, match='Production requires'):
+        code_runner._run(['node', 'solution.js'], tmp_path)

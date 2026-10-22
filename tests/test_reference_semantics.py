@@ -44,3 +44,25 @@ def test_concurrent_store_open_is_serialized(tmp_path,monkeypatch):
     with ThreadPoolExecutor(max_workers=4) as pool:
         assert list(pool.map(lambda _:REAL_SEARCH('query','java'),range(8)))==[[]]*8
     assert state['peak']==1
+
+
+def test_legacy_and_curated_cold_stores_share_safe_initialization(tmp_path,monkeypatch):
+    from app.services import knowledge_base
+    from langchain_core.embeddings import DeterministicFakeEmbedding
+    path=tmp_path/'index.json';path.write_text(json.dumps({'collection':'test_curated','model':semantic.MODEL}))
+    monkeypatch.setattr(semantic,'MANIFEST',path)
+    monkeypatch.setattr(semantic.settings,'vector_store','chroma')
+    monkeypatch.setattr(semantic.settings,'chroma_persist_dir',str(tmp_path/'chroma'))
+    fake=DeterministicFakeEmbedding(size=16)
+    monkeypatch.setattr(semantic,'embeddings',lambda:fake)
+    monkeypatch.setattr(knowledge_base,'get_embeddings',lambda:fake)
+    semantic._store.cache_clear()
+    def open_store(i):
+        if i%2:
+            return REAL_SEARCH('query','java')
+        return knowledge_base.get_vectorstore().get()['ids']
+    try:
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            assert list(pool.map(open_store,range(8)))==[[]]*8
+    finally:
+        semantic._store.cache_clear()

@@ -32,3 +32,35 @@ def test_known_overgeneralizations_are_withheld_but_qualified_claims_survive():
     assert guard('HashMap uses hashCode; TreeMap uses comparator ordering.', 'java') is None
     assert guard('The specification does not guarantee contiguous array storage.', 'javascript') is None
     assert guard('ArrayList has resizable capacity.', 'java') is None
+
+
+def test_numeric_and_embedded_qualifiers_reach_the_model():
+    js=constraints('javascript')
+    assert 'BigInt(5.5) throws RangeError' in js
+    assert 'some integers outside the safe-integer range' in js
+    embedded=constraints('c','embedded-c')
+    assert 'compiler-defined' in embedded and 'Write-through memory alone does not solve' in embedded
+    assert 'cache-line sizes' in embedded
+    irq=constraints('python','embedded-python')
+    assert 'Hard IRQs must avoid heap allocation' in irq
+    assert 'overflow policy' in irq
+    assert 'Do not invent board pins' in irq
+
+
+def test_treemap_put_retains_comparison_equivalent_existing_key():
+    code='''public String retained(String first,String second){
+        java.util.TreeMap<String,Integer> map=new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        map.put(first,1);map.put(second,2);
+        return map.firstKey()+":"+map.get(first);
+    }'''
+    cases=[['A','a'],['B','b'],['MiX','mix'],['XYZ','xyz'],['KEY','key'],['Java','java']]
+    result=run_suite({'java':code},{'java':'retained'},cases,[a+':2' for a,b in cases])
+    assert result['can_publish'],result
+
+
+def test_bigint_constructor_rejects_fractional_numbers():
+    code='''function convert(value){try { BigInt(value); return "accepted"; }
+        catch(error){ return error.name; }}'''
+    result=run_suite({'javascript':code},{'javascript':'convert'},
+                     [[n] for n in (5.5,1.1,-1.5,0.5,2.25,7.75)],['RangeError']*6)
+    assert result['can_publish'],result

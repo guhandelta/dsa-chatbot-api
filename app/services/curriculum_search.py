@@ -27,7 +27,7 @@ def _index(track: str, language: str, focus_id: str | None, subject: str | None 
     for c in ([] if subject else filter_content(language=language)):
         if c.source == "curriculum" or c.track not in tracks or (focus_id and c.id != focus_id):
             continue
-        text = learner_document(c.id)
+        text = learner_document(c.id, language)
         # Preserve headings and code blocks in each locally retrieved section.
         sections = [text] if focus_id else re.split(r"(?=^## )", text, flags=re.M)
         for section in sections:

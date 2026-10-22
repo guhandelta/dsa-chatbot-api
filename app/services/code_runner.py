@@ -4,7 +4,7 @@ SECURITY NOTE
 -------------
 EXEC_BACKEND=docker uses a digest-pinned operator-provided toolchain image,
 network isolation, a read-only root, dropped capabilities and resource limits.
-It fails closed if Docker/image startup fails. The default subprocess backend
+It fails closed if Docker/image startup fails. The opt-in subprocess backend
 is for trusted local development: resource limits are NOT filesystem/network
 isolation and static screening is not a security boundary.
 
@@ -143,6 +143,7 @@ def _limits(apply_address_space: bool = True):
 
 def _run(cmd: list[str], cwd: Path, stdin: str = "",
          apply_address_space: bool = True) -> tuple[int, str, str]:
+    settings.validate_execution_policy()
     if settings.exec_backend == "docker":
         from app.services.container_executor import run
         return run(cmd, cwd, stdin, _run_host)

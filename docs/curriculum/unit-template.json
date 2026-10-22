@@ -1,0 +1,36 @@
+{
+  "_authoring_note": "Copy and adapt this unit; validate it within a reviewed language/framework course before publication. This is not an automatic cross-language import.",
+  "id": "explain:LANGUAGE:UNIT",
+  "slug": "UNIT",
+  "tier": 1,
+  "title": "Unit title",
+  "prerequisite_ids": [],
+  "objective": "Observable learner capability",
+  "mental_model": "Native language/framework mental model",
+  "structure": {
+    "code": "Replace with a correct native worked example",
+    "expected_output": "Document and reproduce expected behavior"
+  },
+  "applied_task": "A precise applied prompt with an input/output or behavior contract",
+  "pitfall": "A relevant misconception and its observable symptom",
+  "dsa_bridge": "For languages: algorithm connection. For frameworks: integration/design connection.",
+  "practice_ids": [],
+  "assessment_node_id": null,
+  "activities": [
+    {
+      "id": "UNIT-trace",
+      "family_id": "LANGUAGE:UNIT:capability",
+      "title": "Trace the concept",
+      "prompt": "State a concrete contract and ask for a trace or attempt.",
+      "step": "understand",
+      "kind": "trace",
+      "route": "core",
+      "checklist": [
+        "Show relevant state changes.",
+        "Explain one boundary case."
+      ],
+      "assessment": "ungraded",
+      "source": "authored"
+    }
+  ]
+}
