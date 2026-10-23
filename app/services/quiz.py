@@ -518,6 +518,26 @@ async def summary(session: AsyncSession, user: User, quiz_id: str) -> dict:
     }
 
 
+async def evidence(session: AsyncSession, user_id: str, language: str) -> list[dict]:
+    """The learner's own passing code for each concept, most recent first.
+
+    Only the learner's correct code answers count, and only their own. Reference
+    solutions and answer keys never appear here.
+    """
+    rows = (await session.execute(select(QuizAnswer)
+                                  .join(QuizSession, QuizSession.id == QuizAnswer.quiz_id)
+                                  .where(QuizAnswer.user_id == user_id, QuizSession.language == language,
+                                         QuizAnswer.correct.is_(True), QuizAnswer.item_type.in_(CODE_TYPES))
+                                  .order_by(QuizAnswer.created_at.desc()))).scalars().all()
+    latest: dict[str, dict] = {}
+    for row in rows:
+        if row.concept in latest:
+            continue
+        latest[row.concept] = {"concept": row.concept, "item_id": row.item_id, "item_type": row.item_type,
+                               "code": row.response, "passed_at": row.created_at.isoformat()}
+    return list(latest.values())
+
+
 async def insights(session: AsyncSession, user_id: str, language: str, limit: int = 10) -> dict:
     """Weak spots plus the learner's own recent typed explanations."""
     rows = (await session.execute(select(QuizAnswer).join(QuizSession, QuizSession.id == QuizAnswer.quiz_id)

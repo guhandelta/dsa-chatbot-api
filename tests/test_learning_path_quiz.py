@@ -558,3 +558,28 @@ async def test_module_mastery_requires_a_lesson_and_passed_checks(db, monkeypatc
     assert node['checks_passed'] and node['assessment_passed']
     assert node['complete'] is has_lesson and node['mastered'] is has_lesson
     assert node['coverage_ready'] is has_lesson
+
+
+async def test_evidence_is_the_learners_own_passing_code_per_concept(db, monkeypatch):
+    monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
+    user = await make_user(db, 'evidence@example.com')
+    node = next(n for n in lp.nodes('c') if any(i['type'] == 'fix_bug' for i in quiz.pool('c', n['id'])))
+    started = await quiz.start(db, user, 'c', node['id'], len(quiz.pool('c', node['id'])))
+    code_item = next(quiz.items('c')[i['id']] for i in started['items'] if i['type'] == 'fix_bug')
+    fixed = code_item['solution']
+    await quiz.answer(db, user, started['quiz_id'], code_item['id'], fixed)
+    rows = await quiz.evidence(db, user.id, 'c')
+    assert len(rows) == 1 and rows[0]['code'] == fixed and rows[0]['concept'] == code_item['concept']
+    assert 'answer' not in rows[0] and 'expected' not in rows[0] and 'solution' not in rows[0]
+    assert all(r['code'] != '' for r in rows)
+    assert await quiz.evidence(db, user.id, 'python') == []
+
+
+async def test_a_wrong_code_answer_is_not_evidence(db, monkeypatch):
+    monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
+    user = await make_user(db, 'wrong-evidence@example.com')
+    node = next(n for n in lp.nodes('c') if any(i['type'] == 'fix_bug' for i in quiz.pool('c', n['id'])))
+    started = await quiz.start(db, user, 'c', node['id'], len(quiz.pool('c', node['id'])))
+    code_item = next(quiz.items('c')[i['id']] for i in started['items'] if i['type'] == 'fix_bug')
+    await quiz.answer(db, user, started['quiz_id'], code_item['id'], code_item['code'])
+    assert await quiz.evidence(db, user.id, 'c') == []

@@ -120,6 +120,14 @@ async def notes(language: str, user: User = Depends(get_current_user),
                       all(n["body"].get(key) in permitted for key in ("first", "second"))]}
 
 
+@router.get("/evidence")
+async def evidence(language: str, user: User = Depends(get_current_user),
+                   session: AsyncSession = Depends(get_session)):
+    """Concepts the learner has shown in their own passing code."""
+    await require_language(session, user, language)
+    return {"language": language, "items": await quiz.evidence(session, user.id, language)}
+
+
 @router.get("/insights")
 async def insights(language: str, user: User = Depends(get_current_user),
                    session: AsyncSession = Depends(get_session)):
