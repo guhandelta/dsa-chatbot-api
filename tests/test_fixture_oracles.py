@@ -187,6 +187,74 @@ def dll_remove_all(values, target):
     return [v for v in values if v != target]
 
 
+def o_has_repeat(values):
+    return any(values.count(v) >= 2 for v in values)
+
+
+def o_are_rearrangements(first, second):
+    return sorted(first) == sorted(second)
+
+
+def o_find_pair_indices(values, target):
+    n = len(values)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if values[i] + values[j] == target:
+                return [i, j]
+    return []
+
+
+def o_count_word_families(words):
+    groups = []
+    for w in words:
+        key = sorted(w)
+        if key not in groups:
+            groups.append(key)
+    return len(groups)
+
+
+def o_top_frequent(values, k):
+    distinct = set(values)
+    freq = {v: values.count(v) for v in distinct}
+    ranked = sorted(distinct, key=lambda v: (-freq[v], v))
+    return ranked[:k]
+
+
+def o_product_except_index(values):
+    out = []
+    for i in range(len(values)):
+        p = 1
+        for j, v in enumerate(values):
+            if j != i:
+                p *= v
+        out.append(p)
+    return out
+
+
+def o_grid_is_consistent(cells):
+    units = [[cells[r * 9 + c] for c in range(9)] for r in range(9)]
+    units += [[cells[r * 9 + c] for r in range(9)] for c in range(9)]
+    units += [[cells[(br * 3 + i) * 9 + bc * 3 + j] for i in range(3) for j in range(3)] for br in range(3) for bc in range(3)]
+    return all(len(set(d for d in u if d)) == len([d for d in u if d]) for u in units)
+
+
+def o_encoded_length(words):
+    return sum(len(f"{len(w)}#{w}") for w in words)
+
+
+def o_longest_run(values):
+    s = set(values)
+    best = 0
+    for x in s:
+        if x - 1 in s:
+            continue
+        length = 1
+        while x + length in s:
+            length += 1
+        best = max(best, length)
+    return best
+
+
 ORACLES = {
     'best-time-to-buy-and-sell-stock': lambda a:max([0]+[a[j]-a[i] for i in range(len(a)) for j in range(i+1,len(a))]),
     'binary-search': lambda a,t:a.index(t) if t in a else -1,
@@ -215,6 +283,15 @@ ORACLES = {
     'b-tree': btree_height,
     'matrix-and-grid': rotate_grid,
     'doubly-linked-list': dll_remove_all,
+    'duplicate-presence': o_has_repeat,
+    'rearranged-letters': o_are_rearrangements,
+    'complement-indices': o_find_pair_indices,
+    'word-families': o_count_word_families,
+    'most-frequent-values': o_top_frequent,
+    'all-but-one-product': o_product_except_index,
+    'grid-consistency': o_grid_is_consistent,
+    'encoded-length': o_encoded_length,
+    'longest-run': o_longest_run,
 }
 
 
