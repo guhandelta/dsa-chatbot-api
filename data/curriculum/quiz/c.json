@@ -1177,6 +1177,742 @@
     }
    ],
    "explanation": "Return -1 for the empty string, test each character, and stop as soon as the value exceeds the limit. Because the value never exceeds 1000000000 before the next step, value * 10 + digit cannot overflow a long long."
+  },
+  {
+   "id": "c-s01-short-division",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "truncating-division",
+   "prompt": "Type both numbers this program prints, including their signs.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    long long a = -7;\n    printf(\"%lld %lld\\n\", a / 2, a % 2);\n    return 0;\n}",
+   "answer": "-3 -1",
+   "explanation": "C99 and later round integer division toward zero, so -7 / 2 is -3 rather than -4. The remainder takes the sign of the dividend, so -7 % 2 is -1."
+  },
+  {
+   "id": "c-s01-mcq-uint8-sum",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "narrow-unsigned-wrap",
+   "prompt": "With uint8_t a = 200 and uint8_t b = 100, what value does s hold after uint8_t s = a + b;?",
+   "choices": [
+    "300",
+    "-56",
+    "44",
+    "255"
+   ],
+   "answer": 2,
+   "explanation": "a + b is computed as an int, 300, and storing it in a uint8_t keeps the value modulo 256, so 300 - 256 = 44. The result is never 300 or negative because uint8_t is unsigned."
+  },
+  {
+   "id": "c-s01-code-int-division",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "division-before-widening",
+   "prompt": "Choose the line this program prints.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int total = 7;\n    double average = total / 2;\n    printf(\"%.1f\\n\", average);\n    return 0;\n}",
+   "choices": [
+    "3",
+    "3.5",
+    "3.0",
+    "3.50"
+   ],
+   "answer": 2,
+   "explanation": "total / 2 divides two int values, so the division truncates to 3 before the result is converted to double. The .5 is lost, and %.1f prints 3.0."
+  },
+  {
+   "id": "c-s01-explain-widen",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "widen-before-operation",
+   "prompt": "Explain why assigning int a * int b to a long long can overflow even though the destination is wide enough, and what changes when one operand is converted first.",
+   "answer": "The multiplication is computed in int first, so an overflowing product is already undefined behaviour before it is stored in the long long. Casting one operand to long long, or otherwise converting one operand first, makes the multiplication itself happen in the wider type, so the product fits.",
+   "keywords": [
+    [
+     "computed in int",
+     "runs in int",
+     "done in int",
+     "performed in int",
+     "narrow type"
+    ],
+    [
+     "cast",
+     "widen",
+     "converts one operand",
+     "convert one operand",
+     "wider type"
+    ],
+    [
+     "undefined",
+     "already overflowed",
+     "overflows first"
+    ]
+   ]
+  },
+  {
+   "id": "c-s01-write-count-bits",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "bit-count-loop",
+   "fn": "count_bits",
+   "prompt": "Write count_bits(x): return the number of 1 bits in the binary form of x. x is zero or a positive integer below 2^40.",
+   "starter": "long long count_bits(long long x) {\n    /* your code here */\n    return 0;\n}",
+   "solution": "long long count_bits(long long x) {\n    long long count = 0;\n    while (x > 0) {\n        count += x & 1;\n        x >>= 1;\n    }\n    return count;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      255
+     ],
+     "expected": 8
+    },
+    {
+     "args": [
+      1023
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      1000000
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      1099511627775
+     ],
+     "expected": 40
+    }
+   ],
+   "explanation": "x & 1 tests the lowest bit and x >>= 1 moves the next bit into that position. The loop stops when no 1 bits remain, so the accumulator holds the count."
+  },
+  {
+   "id": "c-s02-short-short-circuit",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "short-circuit-operators",
+   "prompt": "Type the three numbers this program prints, in order.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int checked = 0;\n    int n = 4;\n    int big = n > 5 && ++checked > 0;\n    int any = n > 1 || ++checked > 0;\n    printf(\"%d %d %d\\n\", big, any, checked);\n    return 0;\n}",
+   "answer": "0 1 0",
+   "explanation": "n > 5 is false, so && skips ++checked and big is 0. n > 1 is true, so || skips ++checked and any is 1. checked never changes and stays 0."
+  },
+  {
+   "id": "c-s02-mcq-inclusive-range",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "inclusive-range",
+   "prompt": "A rule accepts a score from 60 to 79 inclusive and rejects everything else. Which condition is correct?",
+   "choices": [
+    "60 < score && score < 79",
+    "60 <= score && score <= 79",
+    "60 <= score <= 79",
+    "score >= 60 || score <= 79 || score < 0"
+   ],
+   "answer": 1,
+   "explanation": "The && form with <= on both sides accepts exactly 60 through 79. Strict comparisons drop both boundaries. The chained form parses as (60 <= score) <= 79 and accepts 0. The || form is true for every score, so it accepts everything."
+  },
+  {
+   "id": "c-s02-code-chained",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "chained-comparison",
+   "prompt": "Pick the number this program prints.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int low = 1;\n    int value = 0;\n    int high = 5;\n    printf(\"%d\\n\", low <= value <= high);\n    return 0;\n}",
+   "choices": [
+    "0",
+    "1",
+    "5",
+    "-1"
+   ],
+   "answer": 1,
+   "explanation": "low <= value is 0 because 1 <= 0 is false, and then 0 <= high is 1. The chain prints 1 even though 0 lies outside the range 1 to 5. Write each comparison out and join them with &&."
+  },
+  {
+   "id": "c-s02-explain-guard",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "guarded-read",
+   "prompt": "Why must a bounds check placed before an array read be joined to that read with &&, and why does the read never happen when the check fails?",
+   "answer": "The && operator is short-circuit: when the bounds check is false the whole expression is already false, so the array read is not evaluated. That order keeps an out of bounds index from ever being read.",
+   "keywords": [
+    [
+     "short-circuit",
+     "short circuit",
+     "stops early",
+     "not evaluated"
+    ],
+    [
+     "already false",
+     "whole expression is false",
+     "result is known",
+     "answer is known"
+    ],
+    [
+     "out of bounds",
+     "out-of-bounds",
+     "outside the array",
+     "past the end"
+    ]
+   ]
+  },
+  {
+   "id": "c-s02-write-leap-year",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "gregorian-leap-rule",
+   "fn": "is_leap_year",
+   "prompt": "Write is_leap_year(year): return 1 when year is a leap year in the Gregorian calendar and 0 otherwise. year is between 1 and 9999.",
+   "starter": "long long is_leap_year(long long year) {\n    /* your code here */\n    return 0;\n}",
+   "solution": "long long is_leap_year(long long year) {\n    return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;\n}",
+   "tests": [
+    {
+     "args": [
+      1
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1900
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2000
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2023
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2024
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2400
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "A year is a leap year when it is divisible by 4, except century years, which must also be divisible by 400. && binds tighter than ||, so the parentheses group the 4 and 100 tests before the 400 test is added."
+  },
+  {
+   "id": "c-s05-short-length-size",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "terminator-counted",
+   "prompt": "Type both numbers this program prints, in the order they appear.",
+   "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[] = \"cat\";\n    printf(\"%zu %zu\\n\", strlen(word), sizeof word);\n    return 0;\n}",
+   "answer": "3 4",
+   "explanation": "strlen counts the three letters before the terminator, but sizeof word counts the whole array, including the zero byte, which makes 4."
+  },
+  {
+   "id": "c-s05-mcq-terminator-loop",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "terminator-loop",
+   "prompt": "The string text is valid and terminated. Which loop visits every character exactly once and stops at the terminator?",
+   "choices": [
+    "for (size_t i = 0; i <= strlen(text); i++) { use(text[i]); }",
+    "for (size_t i = 1; text[i] != '\\0'; i++) { use(text[i]); }",
+    "size_t i = 0; while (text[i] != '\\0') { use(text[i]); i++; }",
+    "for (size_t i = 0; text[i] != '\\0' || i < 100; i++) { use(text[i]); }"
+   ],
+   "answer": 2,
+   "explanation": "The while loop starts at index 0, stops when it reads the terminator, and increments once per character. The first loop also visits the terminator, the second skips the first character, and the third reads past the terminator when the string is shorter than 100."
+  },
+  {
+   "id": "c-s05-code-char-next",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "char-is-integer",
+   "prompt": "Pick the text this program prints.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    char digit = '7';\n    char next = digit + 1;\n    printf(\"%c%c\\n\", digit, next);\n    return 0;\n}",
+   "choices": [
+    "77",
+    "78",
+    "88",
+    "7100"
+   ],
+   "answer": 1,
+   "explanation": "C requires the digit characters to be consecutive, so '7' + 1 is '8'. The output is 78."
+  },
+  {
+   "id": "c-s05-explain-terminator",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "terminator-byte",
+   "prompt": "Explain why a string of 5 letters needs 6 bytes of storage, and what the extra byte holds.",
+   "answer": "The extra byte is the terminating zero byte, '\\0'. It marks the end of the string, so functions such as strlen can find the length by stopping there; strlen does not count it, which is why the array needs one more byte than the length.",
+   "keywords": [
+    [
+     "zero byte",
+     "null byte",
+     "'\\0'",
+     "nul terminator",
+     "terminator"
+    ],
+    [
+     "marks the end",
+     "end marker",
+     "ends the string",
+     "where the string ends",
+     "end of the string"
+    ],
+    [
+     "strlen does not count",
+     "not counted",
+     "not part of the length",
+     "does not count"
+    ]
+   ]
+  },
+  {
+   "id": "c-s06-short-partial-init",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "partial-initializer",
+   "prompt": "Type the sum this program prints.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int values[5] = {3, 1};\n    int sum = 0;\n    for (int i = 0; i < 5; i++) {\n        sum += values[i];\n    }\n    printf(\"%d\\n\", sum);\n    return 0;\n}",
+   "answer": "4",
+   "explanation": "The initializer list sets the first two elements, and the remaining three are zeroed, so the sum is 3 + 1 + 0 + 0 + 0 = 4."
+  },
+  {
+   "id": "c-s06-mcq-array-param",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "array-parameter-decay",
+   "prompt": "A function is declared as long long count_above(const long long* values, size_t n). Which statement about values is correct?",
+   "choices": [
+    "sizeof(values) / sizeof(values[0]) gives n inside the function",
+    "values holds its own copy of the caller's array, so writes stay local",
+    "values is a pointer, so the callee needs the parameter n to know the length",
+    "values is an array of n elements, so sizeof(values) equals n times the element size"
+   ],
+   "answer": 2,
+   "explanation": "An array parameter is adjusted to a pointer to its first element, so sizeof measures the pointer and the length must be passed separately. The const promises that the function does not write through values."
+  },
+  {
+   "id": "c-s06-code-alias",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "pointer-into-array",
+   "prompt": "Choose the exact output of this program.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int a[3] = {1, 2, 3};\n    int *p = a;\n    p[1] = 9;\n    printf(\"%d %d\\n\", a[1], *(p + 2));\n    return 0;\n}",
+   "choices": [
+    "1 3",
+    "9 3",
+    "2 9",
+    "9 3 3"
+   ],
+   "answer": 1,
+   "explanation": "p points at the first element of a, so p[1] = 9 writes a[1]. *(p + 2) reads a[2], which is still 3, so the program prints 9 3."
+  },
+  {
+   "id": "c-s06-explain-resize",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "index-not-pointer",
+   "prompt": "A dynamic array grows by allocating a larger block and copying. Why must code that holds a pointer to an element re-read it after a push, and what should it keep instead?",
+   "answer": "The growth step can move the whole block to a new address, so the old pointer is stale and using it is undefined behaviour. Keep the index of the element instead and read it again through the array after each push.",
+   "keywords": [
+    [
+     "moves",
+     "relocat",
+     "new address",
+     "different address",
+     "may move"
+    ],
+    [
+     "keep the index",
+     "store the index",
+     "remember the index",
+     "keep an index",
+     "store an index"
+    ],
+    [
+     "stale",
+     "dangling",
+     "no longer valid",
+     "invalid"
+    ]
+   ]
+  },
+  {
+   "id": "c-s07-mcq-first-insert",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "first-occurrence",
+   "prompt": "A frequency map is built from parallel arrays of words and counts. What must happen the first time a word is seen?",
+   "choices": [
+    "Its existing count must be incremented before any entry exists",
+    "The count is set to 0 and the word is ignored until it appears again",
+    "A new entry is added with the word as its key and a count of 1",
+    "The whole table must be rebuilt from scratch before the count changes"
+   ],
+   "answer": 2,
+   "explanation": "There is no entry to increment yet, so the word must be added as a new entry with count 1. Incrementing a missing entry, or ignoring the word, gives wrong counts."
+  },
+  {
+   "id": "c-s07-short-strcmp-count",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "content-equality-count",
+   "prompt": "Type the count this program prints.",
+   "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    const char *words[] = {\"ab\", \"a\", \"ab\", \"b\", \"ab\"};\n    int count = 0;\n    for (int i = 0; i < 5; i++) {\n        if (strcmp(words[i], \"ab\") == 0) {\n            count++;\n        }\n    }\n    printf(\"%d\\n\", count);\n    return 0;\n}",
+   "answer": "3",
+   "explanation": "strcmp returns 0 when the two strings have the same characters, so the three entries equal to ab are counted. The entries a and b differ."
+  },
+  {
+   "id": "c-s07-explain-missing-key",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "missing-key-handling",
+   "prompt": "Explain what goes wrong if a frequency map increments the count for a key it has never stored, and what the program should do first.",
+   "answer": "The lookup finds no entry, so the key is not found, and reading or incrementing a count there is undefined. The program should first add a new entry for the key with a count of 1, or treat the missing count as 0 before adding.",
+   "keywords": [
+    [
+     "not found",
+     "absent",
+     "no entry",
+     "not present"
+    ],
+    [
+     "new entry",
+     "adds it",
+     "add it",
+     "count 1",
+     "count of 1",
+     "creates an entry",
+     "create an entry"
+    ],
+    [
+     "undefined",
+     "garbage",
+     "uninitialized",
+     "no valid count",
+     "does not exist"
+    ]
+   ]
+  },
+  {
+   "id": "c-m-pointers-short-scale",
+   "node": "module-pointers-storage",
+   "type": "short_answer",
+   "concept": "pointer-scaled-arithmetic",
+   "prompt": "Type the two values printed by this program, in order.",
+   "code": "#include <stdio.h>\n\nint main(void) {\n    int data[4] = {10, 20, 30, 40};\n    int *p = data;\n    int *q = data + 3;\n    printf(\"%td %d\\n\", q - p, *(p + 1));\n    return 0;\n}",
+   "answer": "3 20",
+   "explanation": "Subtracting two pointers gives the number of elements between them, 3 here, and p + 1 points to the second element, which holds 20."
+  },
+  {
+   "id": "c-m-pointers-mcq-return-static",
+   "node": "module-pointers-storage",
+   "type": "mcq",
+   "concept": "static-local-lifetime",
+   "prompt": "Which function is safe to call and then dereference the returned pointer?",
+   "choices": [
+    "int *f(void) { int x = 4; return &x; }",
+    "int *f(void) { static int x = 4; return &x; }",
+    "int *f(void) { int x = 4; int *p = &x; return p + 1; }",
+    "int *f(void) { int xs[2] = {1, 2}; return xs; }"
+   ],
+   "answer": 1,
+   "explanation": "A static local has static storage duration and lives for the whole program, so its address stays valid after the call. The other three return an address into, or just past, a local variable whose lifetime has ended when the function returns."
+  },
+  {
+   "id": "c-m-pointers-code-static-counter",
+   "node": "module-pointers-storage",
+   "type": "mcq_code",
+   "concept": "static-local-state",
+   "prompt": "Pick the value this program prints.",
+   "code": "#include <stdio.h>\n\nstatic int counter(void) {\n    static int calls = 0;\n    calls++;\n    return calls;\n}\n\nint main(void) {\n    counter();\n    counter();\n    printf(\"%d\\n\", counter());\n    return 0;\n}",
+   "choices": [
+    "1",
+    "2",
+    "3",
+    "30"
+   ],
+   "answer": 2,
+   "explanation": "calls is a static local, so it keeps its value between calls and is initialized only once. The third call makes it 3."
+  },
+  {
+   "id": "c-m-pointers-explain-lifetime",
+   "node": "module-pointers-storage",
+   "type": "explain",
+   "concept": "storage-lifetime",
+   "prompt": "Explain the difference between an object with automatic storage and one with static storage, and what happens to a pointer to each after the function that made it returns.",
+   "answer": "Automatic storage, such as a local variable, lives on the stack only while its function runs, so a pointer to it dangles after the return and using it is undefined. Static storage lasts for the whole program, so a pointer to a static local stays valid.",
+   "keywords": [
+    [
+     "stack",
+     "local variable",
+     "frame"
+    ],
+    [
+     "whole program",
+     "program lifetime",
+     "until the program ends",
+     "lasts for the program"
+    ],
+    [
+     "dangling",
+     "undefined",
+     "no longer exists"
+    ]
+   ]
+  },
+  {
+   "id": "c-m-pointers-mcq-const",
+   "node": "module-pointers-storage",
+   "type": "mcq",
+   "concept": "const-placement",
+   "prompt": "Given const int *p and int *const q, which statement is correct?",
+   "choices": [
+    "p can be moved to point at another object, but *p cannot be written through p",
+    "q can point elsewhere, but *q can never change",
+    "Both p and *p are read-only",
+    "Neither p nor *p can ever be changed, so the declaration of q is useless and should be removed"
+   ],
+   "answer": 0,
+   "explanation": "In const int *p the const applies to the int, so p may change while *p may not. In int *const q the const applies to the pointer, so q is fixed while *q may change."
+  },
+  {
+   "id": "c-m-integer-short-uint8",
+   "node": "module-integer-ub",
+   "type": "short_answer",
+   "concept": "uint8-promotion",
+   "prompt": "Type both numbers printed on the one line, in order.",
+   "code": "#include <stdio.h>\n#include <stdint.h>\n\nint main(void) {\n    uint8_t a = 250;\n    uint8_t b = 10;\n    uint8_t sum = a + b;\n    printf(\"%d %u\\n\", sum, (unsigned)(a + b));\n    return 0;\n}",
+   "answer": "4 260",
+   "explanation": "a + b is computed as int, 260, so the second value printed is 260. Storing the sum in a uint8_t keeps 260 modulo 256, which is 4."
+  },
+  {
+   "id": "c-m-integer-mcq-add-check",
+   "node": "module-integer-ub",
+   "type": "mcq",
+   "concept": "pre-add-bounds",
+   "prompt": "A function must return a + b for int a and b without overflowing. Which check is valid under C's rules?",
+   "choices": [
+    "if (a + b < a) { return INT_MAX; }",
+    "if (b > 0 ? a > INT_MAX - b : a < INT_MIN - b) { return error; }",
+    "if (a + b < 0) { return error; }",
+    "if (a > INT_MAX - b) { return error; } /* assumes b is never negative */"
+   ],
+   "answer": 1,
+   "explanation": "Check before adding. For positive b the sum overflows exactly when a is above INT_MAX - b, and for zero or negative b it overflows exactly when a is below INT_MIN - b; both subtractions stay in range. The other three tests run after an overflow has already happened or ignore negative b."
+  },
+  {
+   "id": "c-m-integer-code-shift",
+   "node": "module-integer-ub",
+   "type": "mcq_code",
+   "concept": "unsigned-shift",
+   "prompt": "Choose the printed result of this program.",
+   "code": "#include <stdio.h>\n#include <stdint.h>\n\nint main(void) {\n    uint32_t bit = UINT32_C(1) << 31;\n    printf(\"%u\\n\", (unsigned)(bit >> 30));\n    return 0;\n}",
+   "choices": [
+    "0",
+    "1",
+    "2",
+    "4294967296"
+   ],
+   "answer": 2,
+   "explanation": "Shifting 1 left by 31 sets the top bit of an unsigned 32-bit value, which is defined for unsigned types. Shifting it right by 30 leaves 2. Shifting a signed 1 into the sign bit would be undefined behaviour."
+  },
+  {
+   "id": "c-m-integer-explain-overflow",
+   "node": "module-integer-ub",
+   "type": "explain",
+   "concept": "post-overflow-check",
+   "prompt": "Explain why comparing result with value after computing value + 1 does not detect signed overflow in C, and what a correct check does instead.",
+   "answer": "Signed overflow is undefined behaviour, so once value + 1 has overflowed there is no defined result to compare, and an optimizer may delete the test. A correct check compares value with INT_MAX before the addition and returns early when they are equal.",
+   "keywords": [
+    [
+     "undefined behaviour",
+     "undefined behavior",
+     "already undefined"
+    ],
+    [
+     "before the addition",
+     "before the add",
+     "before adding",
+     "before the arithmetic"
+    ],
+    [
+     "INT_MAX",
+     "upper limit",
+     "largest value"
+    ]
+   ]
+  },
+  {
+   "id": "c-m-integer-write-clamp",
+   "node": "module-integer-ub",
+   "type": "write_snippet",
+   "concept": "clamped-addition",
+   "fn": "add_or_clamp",
+   "prompt": "Write add_or_clamp(a, b): return a + b, except that the result is LLONG_MAX when the true sum is above LLONG_MAX and LLONG_MIN when it is below LLONG_MIN. The function must never overflow.",
+   "starter": "long long add_or_clamp(long long a, long long b) {\n    /* your code here */\n    return 0;\n}",
+   "solution": "#include <limits.h>\n\nlong long add_or_clamp(long long a, long long b) {\n    if (b > 0 && a > LLONG_MAX - b) {\n        return LLONG_MAX;\n    }\n    if (b < 0 && a < LLONG_MIN - b) {\n        return LLONG_MIN;\n    }\n    return a + b;\n}",
+   "tests": [
+    {
+     "args": [
+      9223372036854775807,
+      1
+     ],
+     "expected": 9223372036854775807
+    },
+    {
+     "args": [
+      9223372036854775800,
+      8
+     ],
+     "expected": 9223372036854775807
+    },
+    {
+     "args": [
+      9223372036854775800,
+      7
+     ],
+     "expected": 9223372036854775807
+    },
+    {
+     "args": [
+      5,
+      -7
+     ],
+     "expected": -2
+    },
+    {
+     "args": [
+      -10,
+      -20
+     ],
+     "expected": -30
+    },
+    {
+     "args": [
+      -9223372036854775807,
+      -2
+     ],
+     "expected": -9223372036854775808
+    }
+   ],
+   "explanation": "Each overflow test runs before the addition: a positive b overflows when a exceeds LLONG_MAX - b, and a negative b overflows when a is below LLONG_MIN - b. Both subtractions stay in range, so the function never overflows."
+  },
+  {
+   "id": "c-m-build-short-directive",
+   "node": "module-build-link",
+   "type": "short_answer",
+   "concept": "preprocessor-conditional",
+   "prompt": "Type the line this program prints.",
+   "code": "#include <stdio.h>\n\n#define SCALE 3\n\n#if SCALE > 2\n#define MODE \"wide\"\n#else\n#define MODE \"narrow\"\n#endif\n\nint main(void) {\n    printf(\"%s %d\\n\", MODE, SCALE * 2);\n    return 0;\n}",
+   "answer": "wide 6",
+   "explanation": "The #if line is evaluated by the preprocessor before compilation, so only the wide definition reaches the compiler. SCALE * 2 is 6."
+  },
+  {
+   "id": "c-m-build-mcq-undefined-ref",
+   "node": "module-build-link",
+   "type": "mcq",
+   "concept": "declaration-vs-definition",
+   "prompt": "main.c declares int transform(int); and calls it. cc -c main.c succeeds. What happens when main.o alone is linked into a program?",
+   "choices": [
+    "The program links and transform returns 0",
+    "The compiler reports the missing body during cc -c main.c",
+    "The linker reports an undefined reference to transform",
+    "The declaration satisfies the linker, so the call runs without a body"
+   ],
+   "answer": 2,
+   "explanation": "A prototype lets the compiler check the call, so cc -c succeeds, but the call needs a definition of transform from some object file or library. main.o alone has none, so the link step fails with an undefined reference to transform."
+  },
+  {
+   "id": "c-m-build-mcq-multiple-def",
+   "node": "module-build-link",
+   "type": "mcq",
+   "concept": "header-definition",
+   "prompt": "A header counter.h is included by two .c files. Which line in the header makes linking both objects fail with a multiple definition error?",
+   "choices": [
+    "extern int total;",
+    "int total = 0;",
+    "int total(void);",
+    "static int total = 0; /* one copy per file */"
+   ],
+   "answer": 1,
+   "explanation": "Every object file that includes int total = 0; defines the same external symbol, so the linker sees two definitions. An extern declaration, a function prototype, or a static definition does not produce this error."
+  },
+  {
+   "id": "c-m-build-mcq-static-helper",
+   "node": "module-build-link",
+   "type": "mcq",
+   "concept": "internal-linkage",
+   "prompt": "util.c defines static int helper(void), and main.c declares int helper(void); and calls it. What happens when both are linked?",
+   "choices": [
+    "The call runs util.c's helper and the link succeeds",
+    "The linker reports multiple definitions of helper",
+    "The linker keeps main.c's version and ignores util.c's helper",
+    "The linker reports an undefined reference to helper"
+   ],
+   "answer": 3,
+   "explanation": "static gives helper internal linkage, so the symbol is invisible to other object files. The declaration in main.c refers to an external helper that nothing defines, so the linker reports an undefined reference."
+  },
+  {
+   "id": "c-m-build-explain-link",
+   "node": "module-build-link",
+   "type": "explain",
+   "concept": "compile-vs-link",
+   "prompt": "Explain the difference between compiling and linking a C program, and say which step reports a call to a function whose body is in another file.",
+   "answer": "Compiling turns each translation unit into an object file of machine code that still refers to outside functions by name. Linking combines the object files and resolves each call to its definition; if none exists, the linker reports an undefined reference.",
+   "keywords": [
+    [
+     "object file",
+     "object code",
+     ".o file"
+    ],
+    [
+     "resolves",
+     "resolve each",
+     "matches each call"
+    ],
+    [
+     "linker"
+    ]
+   ]
   }
  ]
 }

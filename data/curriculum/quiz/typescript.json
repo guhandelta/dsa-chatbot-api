@@ -883,6 +883,131 @@
    ],
    "answer": 0,
    "explanation": "paths and baseUrl tell the compiler how to resolve imports; the tool that runs or bundles the code must be configured separately with the same aliases."
+  },
+  {
+   "id": "ts-s01-bitwise",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "bitwise-truncates",
+   "prompt": "What does `7.9 | 0` evaluate to in TypeScript?",
+   "choices": [
+    "7.9",
+    "8",
+    "7",
+    "A compile error, because | needs integer operands"
+   ],
+   "answer": 2,
+   "explanation": "The bitwise OR converts each operand to a 32-bit integer by truncating toward zero, so 7.9 becomes 7 and the result is 7. Rounding to nearest would give 8, and TypeScript accepts number operands for bitwise operators, so there is no compile error."
+  },
+  {
+   "id": "ts-s01-remainder",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "remainder-sign",
+   "code": "console.log((-7 / 2) | 0, -7 % 2);",
+   "prompt": "Type exactly what this prints, including spacing.",
+   "answer": "-3 -1",
+   "explanation": "-7 / 2 is -3.5, and | 0 truncates toward zero to -3. The % operator takes the sign of the left operand, so -7 % 2 is -1, not 1."
+  },
+  {
+   "id": "ts-s01-float",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "float-precision",
+   "prompt": "In your own words: why does `0.1 + 0.2 === 0.3` evaluate to false in TypeScript, and what is a safer way to compare two computed decimal amounts?",
+   "answer": "JavaScript numbers are IEEE 754 binary doubles, so 0.1 and 0.2 cannot be stored exactly and their sum is 0.30000000000000004. Compare with a small tolerance, such as Math.abs(a - b) < epsilon, or store money in integer units such as cents.",
+   "keywords": [
+    [
+     "binary",
+     "ieee",
+     "double",
+     "floating"
+    ],
+    [
+     "exact",
+     "precision",
+     "cannot be stored",
+     "rounding"
+    ],
+    [
+     "tolerance",
+     "epsilon",
+     "integer",
+     "cents"
+    ]
+   ]
+  },
+  {
+   "id": "ts-s05-split",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "split-keeps-empty",
+   "code": "const parts = \"a,,b\".split(\",\");\nconsole.log(parts.length, parts[1] === \"\");",
+   "prompt": "What does this split example print, and why?",
+   "choices": [
+    "2 true",
+    "3 false",
+    "3 true",
+    "2 false"
+   ],
+   "answer": 2,
+   "explanation": "split returns an empty string for the gap between the two commas, so the array is [\"a\", \"\", \"b\"]. It has length 3, and parts[1] is the empty string."
+  },
+  {
+   "id": "ts-s05-slice",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "slice-negative-index",
+   "code": "const word = \"typescript\";\nconsole.log(word.slice(-6), word.indexOf(\"s\"));",
+   "prompt": "Type exactly what this prints, including spacing.",
+   "answer": "script 4",
+   "explanation": "A negative slice start counts from the end, so slice(-6) starts at index 4 and returns \"script\". indexOf(\"s\") finds the first s at index 4."
+  },
+  {
+   "id": "ts-s05-utf16",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "utf16-length",
+   "prompt": "What is the value of `\"😀\".length` in TypeScript?",
+   "choices": [
+    "1",
+    "4",
+    "Compile error: an emoji is not valid inside a string",
+    "2"
+   ],
+   "answer": 3,
+   "explanation": "A string's length counts UTF-16 code units. The emoji U+1F600 is stored as a surrogate pair of two code units, so the length is 2, not 1 for the one visible character and not 4 for its UTF-8 bytes."
+  },
+  {
+   "id": "ts-s05-immutable",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "string-immutability",
+   "prompt": "In your own words: a learner writes `name.toUpperCase();` and then expects `name` to be uppercase. Why does `name` stay as it was, and what must they write instead?",
+   "answer": "Strings are immutable: toUpperCase returns a new string and leaves name as it was. Assign the result back, as in name = name.toUpperCase(), or use the returned value.",
+   "keywords": [
+    [
+     "immutable",
+     "immutability",
+     "not change",
+     "does not modify",
+     "doesn't modify",
+     "never changes"
+    ],
+    [
+     "new string",
+     "returns a new",
+     "returned value",
+     "return value",
+     "new value"
+    ],
+    [
+     "assign",
+     "reassign",
+     "store",
+     "use the result"
+    ]
+   ]
   }
  ]
 }

@@ -1971,6 +1971,332 @@
      "top-level"
     ]
    ]
+  },
+  {
+   "id": "js-s01-typeof",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "typeof-null",
+   "prompt": "Which string does the typeof operator return for the value null?",
+   "choices": [
+    "'null'",
+    "'object'",
+    "'function'",
+    "'number'"
+   ],
+   "answer": 1,
+   "explanation": "typeof null is 'object', a long-standing quirk of the language; null is its own primitive value."
+  },
+  {
+   "id": "js-s01-nan",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "nan-and-signed-zero",
+   "code": "console.log(NaN === NaN, Object.is(-0, 0), 1 / -0)",
+   "prompt": "Give the exact line this code prints, with values separated by one space.",
+   "answer": "false false -Infinity",
+   "explanation": "NaN never equals itself; Object.is tells -0 and 0 apart; dividing by negative zero gives -Infinity."
+  },
+  {
+   "id": "js-s01-safeint",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "safe-integer-limit",
+   "code": "console.log(2 ** 53 === 2 ** 53 + 1, Number.isSafeInteger(2 ** 53))",
+   "prompt": "Which pair of values does this line print?",
+   "choices": [
+    "false false",
+    "true true",
+    "true false",
+    "false true"
+   ],
+   "answer": 2,
+   "explanation": "2 ** 53 + 1 rounds back to 2 ** 53 in a double, and 2 ** 53 is outside the safe-integer range."
+  },
+  {
+   "id": "js-s02-truthy",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "truthiness-of-empty",
+   "code": "console.log([] ? 'yes' : 'no', '' ? 'yes' : 'no', [] == false)",
+   "prompt": "Which three words or values does this line print, in order?",
+   "choices": [
+    "yes no false",
+    "no no true",
+    "yes no true",
+    "no yes false"
+   ],
+   "answer": 2,
+   "explanation": "An empty array is truthy, an empty string is falsy, and [] == false is true because both sides convert to 0."
+  },
+  {
+   "id": "js-s02-shortcircuit",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "short-circuit-side-effects",
+   "code": "let calls = 0;\nconst bump = () => { calls++; return true; };\nconst r = false && bump();\nconst s = true || bump();\nconsole.log(calls, r, s)",
+   "prompt": "Give the exact line this code prints; the counter is the first value.",
+   "answer": "0 false true",
+   "explanation": "&& and || skip the right operand when the left operand already decides the result, so bump never runs."
+  },
+  {
+   "id": "js-s02-not",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "double-negation",
+   "prompt": "What does the expression !!'0' evaluate to?",
+   "choices": [
+    "false",
+    "true",
+    "'0'",
+    "0"
+   ],
+   "answer": 1,
+   "explanation": "'0' is a non-empty string and therefore truthy; !! converts that to true. Only the empty string is falsy among strings."
+  },
+  {
+   "id": "js-s03-reduce",
+   "node": "stage-03",
+   "type": "mcq_code",
+   "concept": "reduce-accumulator",
+   "code": "console.log([1, 2, 3].reduce((acc, x) => acc + x * x, 0))",
+   "prompt": "What number does this line print?",
+   "choices": [
+    "6",
+    "14",
+    "36",
+    "149"
+   ],
+   "answer": 1,
+   "explanation": "Each step adds x * x to the accumulator, which starts at 0: 1 + 4 + 9 = 14."
+  },
+  {
+   "id": "js-s03-continue",
+   "node": "stage-03",
+   "type": "short_answer",
+   "concept": "continue-skips",
+   "code": "let out = [];\nfor (let i = 0; i < 6; i++) {\n  if (i % 2) continue;\n  out.push(i);\n}\nconsole.log(out.join(' '))",
+   "prompt": "Type the single printed line exactly as it appears.",
+   "answer": "0 2 4",
+   "explanation": "continue jumps to the next iteration, so odd values never reach push."
+  },
+  {
+   "id": "js-s03-sum-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "accumulator-init",
+   "prompt": "sumArray(xs) must return the sum of the numbers in xs, and 0 for an empty array. The total is never initialised. Fix it.",
+   "code": "function sumArray(xs) {\n  let total;\n  for (const x of xs) total += x;\n  return total;\n}",
+   "fn": "sumArray",
+   "solution": "function sumArray(xs) {\n  let total = 0;\n  for (const x of xs) total += x;\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -1,
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10,
+       20
+      ]
+     ],
+     "expected": 30
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       5
+      ]
+     ],
+     "expected": 15
+    }
+   ],
+   "explanation": "An uninitialised let is undefined, so the first addition gives NaN, and an empty array returns undefined."
+  },
+  {
+   "id": "js-s04-rest",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "rest-parameters",
+   "code": "function f(first, ...rest) { return rest.length; }\nconsole.log(f(1, 2, 3), f(1))",
+   "prompt": "Which pair of numbers does this line print?",
+   "choices": [
+    "3 1",
+    "2 0",
+    "2 undefined",
+    "3 0"
+   ],
+   "answer": 1,
+   "explanation": "A rest parameter collects the arguments after the named ones into an array; the first call has two extra arguments and the second has none."
+  },
+  {
+   "id": "js-s04-hoist",
+   "node": "stage-04",
+   "type": "short_answer",
+   "concept": "hoisting-declaration-vs-assignment",
+   "code": "console.log(typeof early, typeof later);\nfunction early() {}\nvar later = function () {};",
+   "prompt": "Give the exact line this code prints, starting with the first typeof result.",
+   "answer": "function undefined",
+   "explanation": "Function declarations are hoisted with their bodies; a var is hoisted but its assignment only runs when its line is reached."
+  },
+  {
+   "id": "js-s04-pure",
+   "node": "stage-04",
+   "type": "mcq_code",
+   "concept": "pure-function-contract",
+   "code": "let rate = 2;\nfunction scale(x) { return x * rate; }\nconsole.log(scale(3));\nrate = 10;\nconsole.log(scale(3));",
+   "prompt": "What does this print? scale reads a global value, rate.",
+   "choices": [
+    "6 6",
+    "6 30",
+    "30 30",
+    "6 2"
+   ],
+   "answer": 1,
+   "explanation": "The first call uses rate 2 and prints 6. Changing rate to 10 changes what the same argument returns, so the second call prints 30. A function whose result depends only on its arguments would print the same value twice."
+  },
+  {
+   "id": "js-s05-slice",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "slice-vs-substring",
+   "code": "const s = 'javascript';\nconsole.log(s.slice(-6, -2), s.substring(4, 1))",
+   "prompt": "Type the single printed line, with values separated by one space.",
+   "answer": "scri ava",
+   "explanation": "slice reads negative indices from the end; substring swaps its two arguments when the start is larger than the end."
+  },
+  {
+   "id": "js-s05-padstart",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "pad-start-number",
+   "code": "console.log('7'.padStart(3, '0'))",
+   "prompt": "Which text does this call print?",
+   "choices": [
+    "007",
+    "700",
+    "0007",
+    "07"
+   ],
+   "answer": 0,
+   "explanation": "padStart adds the fill string to the start until the result reaches the target length of 3."
+  },
+  {
+   "id": "js-s05-words-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "split-whitespace",
+   "prompt": "countWords(text) should count the words separated by any run of spaces, tabs or newlines, and return 0 for an empty string. Fix it.",
+   "code": "function countWords(text) {\n  return text.split(' ').length;\n}",
+   "fn": "countWords",
+   "solution": "function countWords(text) {\n  return text.split(/\\s+/).filter(Boolean).length;\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      "a b c"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "  a   b  "
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "one\ttwo"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "x\ny"
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "Splitting on a single space counts empty pieces from repeated spaces; splitting on a whitespace run and filtering out empty strings does not."
+  },
+  {
+   "id": "js-s10-isnan",
+   "node": "stage-10",
+   "type": "mcq_code",
+   "concept": "isnan-coercion",
+   "code": "console.log(isNaN('abc'), Number.isNaN('abc'))",
+   "prompt": "Compare the two checks: what does this line print?",
+   "choices": [
+    "false false",
+    "true true",
+    "true false",
+    "false true"
+   ],
+   "answer": 2,
+   "explanation": "The global isNaN converts 'abc' to a number first, so it returns true; Number.isNaN does not coerce and returns false for a string."
+  },
+  {
+   "id": "js-s10-integer",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "integer-check",
+   "code": "console.log(Number.isInteger(5.0), Number.isInteger('5'), Number.isSafeInteger(2 ** 53))",
+   "prompt": "Give the exact line this code prints, one value per check.",
+   "answer": "true false false",
+   "explanation": "Number.isInteger does not coerce strings, and 2 ** 53 is outside the safe-integer range."
+  },
+  {
+   "id": "js-s10-failfast",
+   "node": "stage-10",
+   "type": "short_answer",
+   "concept": "fail-fast-validation",
+   "code": "function double(n) {\n  if (typeof n !== 'number') throw new TypeError('expected a number');\n  return n * 2;\n}\nconst log = [];\ntry { double('x'); } catch (e) { log.push(e.name); }\nconsole.log(log.join(','), double(4));",
+   "prompt": "Type exactly what this prints.",
+   "answer": "TypeError 8",
+   "explanation": "The entry check rejects 'x' before any work happens, so the caught error's name is TypeError. The valid call then returns 8."
   }
  ]
 }

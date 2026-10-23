@@ -862,6 +862,346 @@
      "seed"
     ]
    ]
+  },
+  {
+   "id": "rb-s01-mcq-xor",
+   "node": "stage-01",
+   "type": "mcq",
+   "concept": "bitwise-xor",
+   "prompt": "What is the value of 6 ^ 3 in Ruby?",
+   "choices": [
+    "2",
+    "5",
+    "7",
+    "It raises a SyntaxError"
+   ],
+   "answer": 1,
+   "explanation": "^ is bitwise XOR: a bit is set in the result where exactly one operand has it. 6 is 110 and 3 is 011, so the result is 101, which is 5. & would give 2 and | would give 7."
+  },
+  {
+   "id": "rb-s01-floor-div",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "floor-division",
+   "code": "puts [(-7) / 2, (-7) % 3].inspect",
+   "prompt": "Floor division and modulo of negative numbers: type exactly what this prints.",
+   "answer": "[-4, 2]",
+   "explanation": "Integer division rounds toward negative infinity, so -7 / 2 is -4, not -3. The % result takes the sign of the divisor, so (-7) % 3 is 2."
+  },
+  {
+   "id": "rb-s01-shift",
+   "node": "stage-01",
+   "type": "mcq_code",
+   "concept": "right-shift",
+   "code": "x = 0b1010\np x >> 1",
+   "prompt": "Right shift of 0b1010: what does this print?",
+   "choices": [
+    "10",
+    "20",
+    "5",
+    "2"
+   ],
+   "answer": 2,
+   "explanation": "0b1010 is 10. >> 1 moves every bit one place to the right and drops the lowest bit, which gives 5. << 1 would double the value to 20."
+  },
+  {
+   "id": "rb-s01-bit-count",
+   "node": "stage-01",
+   "type": "short_answer",
+   "concept": "bit-count",
+   "code": "puts 0b1011.to_s(2).count(\"1\")",
+   "prompt": "Counting the set bits of 0b1011: type exactly what this prints.",
+   "answer": "3",
+   "explanation": "0b1011 is the number 11. to_s(2) writes it in binary as \"1011\", and count(\"1\") counts its three set bits."
+  },
+  {
+   "id": "rb-s01-division-explain",
+   "node": "stage-01",
+   "type": "explain",
+   "concept": "division-result-type",
+   "prompt": "In your own words: why does 7 / 2 give a different kind of result from 7.0 / 2, and what is one way to get a fractional result from two whole numbers?",
+   "answer": "Dividing two Integers in Ruby floors the quotient, rounding toward negative infinity, so 7 / 2 is 3 and the fraction is lost. Making one operand a Float, as in 7.0 / 2, gives a Float result of 3.5. To get a fractional result from whole numbers, convert one of them with to_f or call fdiv, for example 7.fdiv(2).",
+   "keywords": [
+    [
+     "floor",
+     "truncat",
+     "round down",
+     "rounds down",
+     "drops the fraction",
+     "loses the fraction"
+    ],
+    [
+     "float",
+     "decimal"
+    ],
+    [
+     "to_f",
+     "fdiv",
+     "convert"
+    ]
+   ]
+  },
+  {
+   "id": "rb-s02-falsy",
+   "node": "stage-02",
+   "type": "mcq",
+   "concept": "falsy-values",
+   "prompt": "Which of these is falsy in a Ruby condition?",
+   "choices": [
+    "The number 0",
+    "An empty string",
+    "An empty array",
+    "nil"
+   ],
+   "answer": 3,
+   "explanation": "Only nil and false are falsy in Ruby. 0, the empty string and the empty array are all truthy, unlike in some other languages."
+  },
+  {
+   "id": "rb-s02-union",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "array-union",
+   "code": "p([1, 2] | [2, 3])",
+   "prompt": "Array union with the | operator: type exactly what this prints.",
+   "answer": "[1, 2, 3]",
+   "explanation": "The | operator on arrays returns a new array with the elements of both, duplicates removed, in first-seen order."
+  },
+  {
+   "id": "rb-s02-and-precedence",
+   "node": "stage-02",
+   "type": "mcq_code",
+   "concept": "and-precedence",
+   "code": "x = true and false\np x",
+   "prompt": "Low-precedence and inside an assignment: what does this print?",
+   "choices": [
+    "false",
+    "true",
+    "nil",
+    "an error"
+   ],
+   "answer": 1,
+   "explanation": "and has lower precedence than =, so x = true runs first and x is true; the false is evaluated and discarded. With && the expression would group as x = (true && false), giving false."
+  },
+  {
+   "id": "rb-s02-case-range",
+   "node": "stage-02",
+   "type": "short_answer",
+   "concept": "case-range",
+   "code": "case 15\nwhen 1..10 then puts \"low\"\nwhen 11..20 then puts \"high\"\nend",
+   "prompt": "A case statement with Range branches: type exactly what this prints.",
+   "answer": "high",
+   "explanation": "case tests each when value with ===, and for a Range that is an inclusion test. 15 is inside 11..20, so the second branch runs."
+  },
+  {
+   "id": "rb-s02-or-assign-explain",
+   "node": "stage-02",
+   "type": "explain",
+   "concept": "or-assign",
+   "prompt": "In your own words: what does x ||= 5 do, and why does it leave 0 alone when x already holds 0?",
+   "answer": "x ||= 5 means x = x || 5. It assigns 5 only when x is nil or false, which are the falsy values. 0 is truthy in Ruby, so the || keeps 0 and nothing is overwritten. A plain x = 5 would replace it.",
+   "keywords": [
+    [
+     "nil or false",
+     "nil",
+     "falsy",
+     "only when"
+    ],
+    [
+     "truthy",
+     "keeps",
+     "stays"
+    ],
+    [
+     "plain assignment",
+     "x = 5 would",
+     "overwrites"
+    ]
+   ]
+  },
+  {
+   "id": "rb-s05-split-whitespace",
+   "node": "stage-05",
+   "type": "mcq",
+   "concept": "split-whitespace",
+   "prompt": "What does the string \"a  b\" (two spaces between a and b) return from split(\" \")?",
+   "choices": [
+    "[\"a  b\"]",
+    "[\"a\", \"\", \"b\"]",
+    "[\"a\", \"b\"]",
+    "[\"a\", \" \", \"b\"]"
+   ],
+   "answer": 2,
+   "explanation": "split with a single space string works awk-style: it ignores leading whitespace and treats any run of whitespace as one separator. split(/ /) with a regexp keeps the empty string between the two spaces."
+  },
+  {
+   "id": "rb-s05-each-char-sum",
+   "node": "stage-05",
+   "type": "short_answer",
+   "concept": "each-char-sum",
+   "code": "s = \"abc\"\nputs s.each_char.map { |c| c.ord - 96 }.sum",
+   "prompt": "Summing character codes with each_char: type exactly what this prints.",
+   "answer": "6",
+   "explanation": "each_char yields each character and ord gives its code point, 97 for a. Subtracting 96 maps a to 1, b to 2 and c to 3, and the sum is 6."
+  },
+  {
+   "id": "rb-s05-scan-digits",
+   "node": "stage-05",
+   "type": "mcq_code",
+   "concept": "scan-match-list",
+   "code": "p \"a1b22c333\".scan(/\\d+/)",
+   "prompt": "Scanning a string for digit runs: what does this print?",
+   "choices": [
+    "[1, 22, 333]",
+    "[\"1\", \"2\", \"2\", \"3\"]",
+    "[\"a\", \"b\", \"c\"]",
+    "[\"1\", \"22\", \"333\"]"
+   ],
+   "answer": 3,
+   "explanation": "scan with a pattern that has no groups returns each full match as a String. \\d+ matches runs of digits, so 22 and 333 stay whole."
+  },
+  {
+   "id": "rb-s05-sub-vs-gsub",
+   "node": "stage-05",
+   "type": "explain",
+   "concept": "sub-vs-gsub",
+   "prompt": "In your own words: what is the difference between sub and gsub, and what does a block passed to gsub receive?",
+   "answer": "sub replaces only the first match, while gsub replaces every match. Both return a new string and leave the receiver unchanged unless you call the bang version. When a block is given, gsub yields each matched text, and the value the block returns becomes the replacement.",
+   "keywords": [
+    [
+     "first",
+     "only once",
+     "one match"
+    ],
+    [
+     "every",
+     "all matches",
+     "all occurrences"
+    ],
+    [
+     "replacement",
+     "yield"
+    ]
+   ]
+  },
+  {
+   "id": "rb-s06-each-slice",
+   "node": "stage-06",
+   "type": "mcq",
+   "concept": "each-slice",
+   "prompt": "What does [1, 2, 3].each_slice(2).to_a return?",
+   "choices": [
+    "[[1, 2], [3]]",
+    "[[1, 2, 3]]",
+    "[[1], [2], [3]]",
+    "[1, 2]"
+   ],
+   "answer": 0,
+   "explanation": "each_slice(2) groups the elements into disjoint chunks of at most two, so the last chunk can be shorter. each_cons(2) would give overlapping pairs instead."
+  },
+  {
+   "id": "rb-s06-values-at",
+   "node": "stage-06",
+   "type": "short_answer",
+   "concept": "values-at-missing",
+   "code": "a = [1, 2, 3]\nputs a.values_at(0, 2, 5).inspect",
+   "prompt": "values_at with an index past the end: type exactly what this prints.",
+   "answer": "[1, 3, nil]",
+   "explanation": "values_at returns one entry per index asked for. An index past the end gives nil instead of raising an error, so the result still has three elements."
+  },
+  {
+   "id": "rb-s06-sort-copy",
+   "node": "stage-06",
+   "type": "mcq_code",
+   "concept": "sort-returns-copy",
+   "code": "a = [3, 1, 2]\nb = a.sort\np a",
+   "prompt": "Does sort change its receiver? What does this print?",
+   "choices": [
+    "[1, 2, 3]",
+    "[3, 1, 2]",
+    "nil",
+    "It raises TypeError"
+   ],
+   "answer": 1,
+   "explanation": "sort returns a new sorted array and leaves the receiver alone. Only sort! changes a in place, so p a still shows the original order."
+  },
+  {
+   "id": "rb-s06-queue-vs-stack",
+   "node": "stage-06",
+   "type": "explain",
+   "concept": "queue-vs-stack",
+   "prompt": "In your own words: when would you use push and shift together, and what goes wrong if you take the next item with pop instead of shift?",
+   "answer": "push and shift together make a queue: items are added at the end and removed from the front, so the oldest item comes out first (first in, first out). pop removes from the same end that push adds to, which makes the newest item come out first, so the order is reversed.",
+   "keywords": [
+    [
+     "queue",
+     "fifo",
+     "first in",
+     "first out"
+    ],
+    [
+     "front",
+     "oldest",
+     "beginning"
+    ],
+    [
+     "reverse",
+     "newest",
+     "lifo",
+     "stack"
+    ]
+   ]
+  },
+  {
+   "id": "rb-s07-default-not-stored",
+   "node": "stage-07",
+   "type": "mcq",
+   "concept": "default-value-not-stored",
+   "prompt": "After h = Hash.new(0), what does h[:missing] return, and does it add the key to h?",
+   "choices": [
+    "0 and the hash is unchanged",
+    "0, and the key is then stored in the hash",
+    "nil and the hash is unchanged",
+    "KeyError"
+   ],
+   "answer": 0,
+   "explanation": "A default given to Hash.new is returned for a missing key but is not stored, so h stays empty. Only an assignment such as h[:missing] = 0 adds the key."
+  },
+  {
+   "id": "rb-s07-max-by-count",
+   "node": "stage-07",
+   "type": "short_answer",
+   "concept": "max-by-count",
+   "code": "h = Hash.new(0)\n%w[a b a c a].each { |w| h[w] += 1 }\nputs h.max_by { |_, v| v }.inspect",
+   "prompt": "Finding the most frequent word with max_by: type exactly what this prints.",
+   "answer": "[\"a\", 3]",
+   "explanation": "The loop counts each word: a 3 times, b once and c once. max_by returns the [key, count] pair with the largest count, so the result is [\"a\", 3]."
+  },
+  {
+   "id": "rb-s07-hash-order",
+   "node": "stage-07",
+   "type": "explain",
+   "concept": "hash-insertion-order",
+   "prompt": "In your own words: in what order does a hash give its keys when you loop over it, and what happens to a key's position when you delete it and then add it back?",
+   "answer": "A Ruby hash keeps insertion order, so iteration visits keys in the order they were first added. Assigning a new value to an existing key keeps its place. Deleting a key and inserting it again moves it to the end.",
+   "keywords": [
+    [
+     "insertion",
+     "inserted",
+     "added in",
+     "order they were"
+    ],
+    [
+     "keeps its place",
+     "same place",
+     "stays",
+     "reassign"
+    ],
+    [
+     "to the end",
+     "moves it",
+     "last position"
+    ]
+   ]
   }
  ]
 }

@@ -3693,6 +3693,297 @@
     }
    ],
    "explanation": "pytest's default file patterns are test_*.py and *_test.py. The buggy version only checked the prefix form, so cart_test.py was missed."
+  },
+  {
+   "id": "py-m-gen-mcq-return",
+   "node": "module-iterators-generators",
+   "type": "mcq",
+   "concept": "generator-function-return",
+   "prompt": "What does calling a generator function (a def whose body contains yield) return?",
+   "choices": [
+    "A list of every value it will yield",
+    "A generator object",
+    "The first value it yields",
+    "Nothing; the body runs at once"
+   ],
+   "answer": 1,
+   "explanation": "Calling the function returns a generator object. Its body does not run until values are requested with next() or a for loop."
+  },
+  {
+   "id": "py-m-gen-mcq-default",
+   "node": "module-iterators-generators",
+   "type": "mcq_code",
+   "concept": "next-default",
+   "code": "def gen():\n    yield 1\n    yield 2\n\ng = gen()\nprint(next(g), next(g), next(g, 'done'))",
+   "prompt": "Three next() calls are made on g: what text does the print show?",
+   "choices": [
+    "1 2",
+    "1 2 []",
+    "1 2 done",
+    "1 2 StopIteration"
+   ],
+   "answer": 2,
+   "explanation": "next(g, default) returns the default once the generator is exhausted. Without a default it would raise StopIteration."
+  },
+  {
+   "id": "py-m-gen-short-yieldfrom",
+   "node": "module-iterators-generators",
+   "type": "short_answer",
+   "concept": "yield-from",
+   "prompt": "Trace the yield from delegation: what list does this print?",
+   "code": "def inner():\n    yield 1\n    yield 2\n\ndef outer():\n    yield from inner()\n    yield 3\n\nprint(list(outer()))",
+   "answer": "[1, 2, 3]",
+   "explanation": "yield from delegates to inner(), passing its values through before outer() yields 3."
+  },
+  {
+   "id": "py-m-gen-explain-memory",
+   "node": "module-iterators-generators",
+   "type": "explain",
+   "concept": "lazy-memory",
+   "prompt": "Why might a generator be better than building a list when processing a very large file, one record after another?",
+   "answer": "A generator produces one item at a time, on demand, and keeps only its current state in memory. A list would hold every item in memory at once, which is wasteful for a huge input.",
+   "keywords": [
+    [
+     "memory",
+     "ram"
+    ],
+    [
+     "one at a time",
+     "one by one",
+     "on demand",
+     "lazy"
+    ],
+    [
+     "at once",
+     "all at once",
+     "entire",
+     "every item"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-ctx-mcq-suppress",
+   "node": "module-context-managers",
+   "type": "mcq",
+   "concept": "exit-suppress",
+   "prompt": "Inside a with block the body raises ValueError, and the manager's __exit__ returns True. What happens to the exception?",
+   "choices": [
+    "The exception is re-raised after the block ends",
+    "The exception is silently suppressed",
+    "The with block runs again from the start",
+    "The program exits immediately"
+   ],
+   "answer": 1,
+   "explanation": "A true return value from __exit__ suppresses the exception, and execution continues after the with statement."
+  },
+  {
+   "id": "py-m-ctx-code-contextmanager",
+   "node": "module-context-managers",
+   "type": "mcq_code",
+   "concept": "contextmanager-finally",
+   "code": "from contextlib import contextmanager\n\n@contextmanager\ndef tag():\n    print('open', end=' ')\n    try:\n        yield\n    finally:\n        print('close', end=' ')\n\ntry:\n    with tag():\n        raise KeyError('k')\nexcept KeyError:\n    print('caught')",
+   "prompt": "With the tag() manager and the KeyError raised inside, what text is printed?",
+   "choices": [
+    "open caught",
+    "open close caught",
+    "open close",
+    "open, then an unhandled KeyError"
+   ],
+   "answer": 1,
+   "explanation": "The finally block in the generator runs when the exception is thrown into it, so close is printed before the KeyError reaches the except clause."
+  },
+  {
+   "id": "py-m-ctx-short-exitstack",
+   "node": "module-context-managers",
+   "type": "short_answer",
+   "concept": "exitstack-lifo",
+   "prompt": "Which lines does the ExitStack callback print, and in what order?",
+   "code": "from contextlib import ExitStack\n\nwith ExitStack() as st:\n    st.callback(print, 'first registered')\n    st.callback(print, 'second registered')",
+   "answer": "second registered\nfirst registered",
+   "explanation": "ExitStack runs its callbacks in reverse order of registration when the with block ends."
+  },
+  {
+   "id": "py-m-ctx-explain-suppress",
+   "node": "module-context-managers",
+   "type": "explain",
+   "concept": "suppress-scope",
+   "prompt": "Why is it safer to wrap only a single statement in contextlib.suppress rather than a large section of code?",
+   "answer": "suppress silently ignores the named exception, so a large block can swallow unrelated errors and hide bugs. Keeping it narrow means only the expected failure is ignored.",
+   "keywords": [
+    [
+     "silently",
+     "ignores",
+     "swallow"
+    ],
+    [
+     "unrelated",
+     "bugs",
+     "other errors"
+    ],
+    [
+     "narrow",
+     "expected",
+     "specific"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-dc-mcq-eq",
+   "node": "module-dataclasses",
+   "type": "mcq",
+   "concept": "dataclass-eq",
+   "prompt": "Two separately created Point(1, 2) instances of a plain @dataclass are compared with ==. What is the result?",
+   "choices": [
+    "False, compared by identity",
+    "True, fields compare equal",
+    "TypeError",
+    "None"
+   ],
+   "answer": 1,
+   "explanation": "The generated __eq__ compares the declared fields, so two instances with the same field values are equal."
+  },
+  {
+   "id": "py-m-dc-mcq-hash",
+   "node": "module-dataclasses",
+   "type": "mcq",
+   "concept": "dataclass-unhashable",
+   "prompt": "A plain @dataclass (eq=True, frozen=False) instance is added to a set. What happens?",
+   "choices": [
+    "It is stored, unhashed",
+    "TypeError: unhashable type",
+    "It is stored, hashed by id",
+    "Set rejects it with ValueError"
+   ],
+   "answer": 1,
+   "explanation": "With eq=True and frozen=False the generated __hash__ is None, so the instance cannot be put in a set or used as a dict key."
+  },
+  {
+   "id": "py-m-dc-code-postinit",
+   "node": "module-dataclasses",
+   "type": "mcq_code",
+   "concept": "post-init-derived",
+   "code": "from dataclasses import dataclass, field\n\n@dataclass\nclass Box:\n    w: int\n    area: int = field(init=False)\n\n    def __post_init__(self):\n        self.area = self.w * self.w\n\nprint(Box(3).area)",
+   "prompt": "Box(3) is built and its area is printed. What is shown?",
+   "choices": [
+    "3",
+    "None",
+    "9",
+    "TypeError"
+   ],
+   "answer": 2,
+   "explanation": "__post_init__ runs after the generated __init__ and computes the field with init=False, so area is 3 * 3."
+  },
+  {
+   "id": "py-m-dc-short-repr",
+   "node": "module-dataclasses",
+   "type": "short_answer",
+   "concept": "dataclass-repr",
+   "prompt": "Print a Pt with x=3 and the default y. What text appears?",
+   "code": "from dataclasses import dataclass\n\n@dataclass\nclass Pt:\n    x: int\n    y: int = 0\n\nprint(Pt(3))",
+   "answer": "Pt(x=3, y=0)",
+   "explanation": "The generated __repr__ shows the class name and each field with its current value."
+  },
+  {
+   "id": "py-m-dc-explain-frozen",
+   "node": "module-dataclasses",
+   "type": "explain",
+   "concept": "frozen-shallow",
+   "prompt": "A frozen dataclass has a list field. What does frozen=True stop, and what does it not stop?",
+   "answer": "frozen=True stops reassignment of the fields, so obj.field = x raises FrozenInstanceError. It does not freeze the list, so obj.items.append(1) still works, and the hash can change because the contents changed.",
+   "keywords": [
+    [
+     "reassign",
+     "assignment",
+     "setattr"
+    ],
+    [
+     "contents",
+     "mutate",
+     "append",
+     "mutable"
+    ],
+    [
+     "not freeze",
+     "not frozen",
+     "doesn't freeze",
+     "shallow",
+     "contained objects"
+    ]
+   ]
+  },
+  {
+   "id": "py-m-exc-mcq-order",
+   "node": "module-exceptions",
+   "type": "mcq",
+   "concept": "except-order",
+   "prompt": "A try raises KeyError. The handlers are written as except LookupError: first and except KeyError: second. Which handler runs?",
+   "choices": [
+    "The KeyError handler, since it is the more specific one",
+    "Both handlers run, one after the other",
+    "A SyntaxError is raised at compile time",
+    "The LookupError handler, since it matches first"
+   ],
+   "answer": 3,
+   "explanation": "except clauses are tested in order and the first matching one wins. KeyError is a subclass of LookupError, so the first clause handles it."
+  },
+  {
+   "id": "py-m-exc-mcq-bare",
+   "node": "module-exceptions",
+   "type": "mcq",
+   "concept": "bare-except-scope",
+   "prompt": "Which exceptions does a bare except: catch that except Exception does not?",
+   "choices": [
+    "Ordinary errors such as ValueError",
+    "KeyboardInterrupt and SystemExit",
+    "Only KeyError",
+    "Nothing"
+   ],
+   "answer": 1,
+   "explanation": "A bare except catches BaseException, which includes KeyboardInterrupt and SystemExit. Those do not derive from Exception."
+  },
+  {
+   "id": "py-m-exc-short-cause",
+   "node": "module-exceptions",
+   "type": "short_answer",
+   "concept": "exception-cause",
+   "prompt": "Which exception type is recorded as the cause of the ValueError?",
+   "code": "try:\n    try:\n        {}['k']\n    except KeyError as e:\n        raise ValueError('bad config') from e\nexcept ValueError as err:\n    print(type(err.__cause__).__name__)",
+   "answer": "KeyError",
+   "explanation": "raise ... from e sets __cause__ to the original KeyError, which is available to the outer handler."
+  },
+  {
+   "id": "py-m-exc-short-else",
+   "node": "module-exceptions",
+   "type": "short_answer",
+   "concept": "try-else-finally-order",
+   "prompt": "Trace check(0) and check(5) with their finally blocks. What is the printed output?",
+   "code": "def check(n):\n    try:\n        x = 10 // n\n    except ZeroDivisionError:\n        return 'zero'\n    else:\n        return 'ok'\n    finally:\n        print('done', end=' ')\n\nprint(check(0), check(5))",
+   "answer": "done done zero ok",
+   "explanation": "finally runs on every return path, so it prints before each call returns. The else clause runs only when try raises nothing, which is why check(5) returns 'ok'."
+  },
+  {
+   "id": "py-m-exc-explain-star",
+   "node": "module-exceptions",
+   "type": "explain",
+   "concept": "except-star",
+   "prompt": "What does except* do differently from a plain except when an ExceptionGroup is raised?",
+   "answer": "except* matches the individual members of the group by type, handles the matching members, and lets the remaining members keep propagating. A plain except matches the group object as a whole, so it does not catch a group that merely contains a ValueError.",
+   "keywords": [
+    [
+     "members",
+     "individual",
+     "each member"
+    ],
+    [
+     "propagat",
+     "remaining"
+    ],
+    [
+     "group object",
+     "whole",
+     "entire"
+    ]
+   ]
   }
  ]
 }
