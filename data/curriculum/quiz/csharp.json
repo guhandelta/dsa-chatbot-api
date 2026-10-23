@@ -1,7 +1,7 @@
 {
  "language": "csharp",
  "version": 1,
- "note": "Authored Study Room quiz items for nodes that had no checks. short_answer snippets are top-level-statement Program.cs bodies that are compiled and run (dotnet 8, C# 12) by the verifier and compared exactly; mcq and mcq_code claims were checked by running the snippets with the .NET 8 SDK or are stated in the knowledge base. C# has no runner in the app, so there are no fix_bug or write_snippet items.",
+ "note": "Authored Study Room quiz items. short_answer snippets are compiled and run as Program.cs bodies in the sandbox (.NET 8, C# 12) and compared exactly. mcq and mcq_code claims were checked by running the snippets or are stated in the knowledge base. fix_bug and write_snippet items are graded by the sandbox runner, whose reference solutions pass and whose buggy code and starters fail.",
  "items": [
   {
    "id": "cs-s01-mcq",
@@ -1557,6 +1557,1501 @@
    ],
    "answer": 3,
    "explanation": "A CancellationTokenSource owns resources such as timers and registrations, so dispose it (for example with `using var`) when finished. Garbage collection does not give a deterministic release time."
+  },
+  {
+   "id": "cs-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "non-negative-modulo",
+   "prompt": "PositiveMod(a, m) must return the mathematical modulus of a for m > 0: the result is always from 0 to m - 1, even when a is negative. The buggy version returns the % operator result, which takes the sign of a.",
+   "code": "public static long PositiveMod(long a, long m)\n{\n    return a % m;\n}",
+   "fn": "PositiveMod",
+   "solution": "public static long PositiveMod(long a, long m)\n{\n    return ((a % m) + m) % m;\n}",
+   "tests": [
+    {
+     "args": [
+      7,
+      3
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      -7,
+      3
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      -1,
+      5
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      0,
+      4
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -9,
+      3
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      4
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      -10,
+      4
+     ],
+     "expected": 2
+    }
+   ],
+   "explanation": "C# % keeps the sign of the dividend, so -7 % 3 is -1. Adding m and taking % again shifts the result into 0 to m - 1."
+  },
+  {
+   "id": "cs-s01-write",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "minutes-total",
+   "prompt": "Minutes(hours, minutes) returns the total number of minutes in a duration given as whole hours plus extra minutes. Both inputs are non-negative. Return a long.",
+   "starter": "public static long Minutes(long hours, long minutes)\n{\n    return 0;\n}",
+   "fn": "Minutes",
+   "solution": "public static long Minutes(long hours, long minutes)\n{\n    return hours * 60 + minutes;\n}",
+   "tests": [
+    {
+     "args": [
+      1,
+      30
+     ],
+     "expected": 90
+    },
+    {
+     "args": [
+      0,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2,
+      5
+     ],
+     "expected": 125
+    },
+    {
+     "args": [
+      10,
+      59
+     ],
+     "expected": 659
+    },
+    {
+     "args": [
+      0,
+      45
+     ],
+     "expected": 45
+    },
+    {
+     "args": [
+      3,
+      0
+     ],
+     "expected": 180
+    }
+   ],
+   "explanation": "Each hour has 60 minutes, so the total is hours * 60 + minutes."
+  },
+  {
+   "id": "cs-s02-fix",
+   "node": "stage-02",
+   "type": "fix_bug",
+   "concept": "range-boundary",
+   "prompt": "InRange(x, lo, hi) must return true when x is between lo and hi, including both endpoints. The buggy version uses strict comparisons and wrongly excludes the endpoints.",
+   "code": "public static bool InRange(long x, long lo, long hi)\n{\n    return x > lo && x < hi;\n}",
+   "fn": "InRange",
+   "solution": "public static bool InRange(long x, long lo, long hi)\n{\n    return x >= lo && x <= hi;\n}",
+   "tests": [
+    {
+     "args": [
+      1,
+      1,
+      5
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      5,
+      1,
+      5
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      0,
+      1,
+      5
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      6,
+      1,
+      5
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      3,
+      1,
+      5
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      -1,
+      -5,
+      -1
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "The bounds are inclusive, so the comparisons must be >= and <=. Strict > and < reject both endpoints."
+  },
+  {
+   "id": "cs-s02-write",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "sign-classify",
+   "prompt": "Classify(n) returns \"negative\", \"zero\" or \"positive\" depending on the sign of n. Use exactly these lowercase strings.",
+   "starter": "public static string Classify(long n)\n{\n    return \"\";\n}",
+   "fn": "Classify",
+   "solution": "public static string Classify(long n)\n{\n    if (n < 0) return \"negative\";\n    if (n == 0) return \"zero\";\n    return \"positive\";\n}",
+   "tests": [
+    {
+     "args": [
+      -3
+     ],
+     "expected": "negative"
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": "zero"
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": "positive"
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": "negative"
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": "positive"
+    },
+    {
+     "args": [
+      -250
+     ],
+     "expected": "negative"
+    }
+   ],
+   "explanation": "Test the negative case first, then zero, and let everything else fall through to positive."
+  },
+  {
+   "id": "cs-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "inclusive-sum-bound",
+   "prompt": "SumTo(n) returns 1 + 2 + ... + n for n >= 0, and 0 when n is 0. The buggy loop stops one step early and leaves n out of the total.",
+   "code": "public static long SumTo(long n)\n{\n    long total = 0;\n    for (long i = 1; i < n; i++)\n    {\n        total += i;\n    }\n    return total;\n}",
+   "fn": "SumTo",
+   "solution": "public static long SumTo(long n)\n{\n    long total = 0;\n    for (long i = 1; i <= n; i++)\n    {\n        total += i;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    }
+   ],
+   "explanation": "The loop must include i equal to n, so its condition is i <= n. With i < n the last term is skipped."
+  },
+  {
+   "id": "cs-s03-write",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "product-loop",
+   "prompt": "Factorial(n) returns n! = 1 * 2 * ... * n for n >= 0, with Factorial(0) equal to 1. Return a long.",
+   "starter": "public static long Factorial(long n)\n{\n    return 0;\n}",
+   "fn": "Factorial",
+   "solution": "public static long Factorial(long n)\n{\n    long result = 1;\n    for (long i = 2; i <= n; i++)\n    {\n        result *= i;\n    }\n    return result;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": 24
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 120
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 3628800
+    }
+   ],
+   "explanation": "Start the running product at 1 and multiply by each integer from 2 up to n. An empty loop for n of 0 or 1 leaves the product at 1."
+  },
+  {
+   "id": "cs-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "clamp-bounds",
+   "prompt": "Clamp(value, lo, hi) limits value to the range lo to hi. A value below lo becomes lo, and a value above hi becomes hi. The buggy version returns the wrong bound in each case.",
+   "code": "public static long Clamp(long value, long lo, long hi)\n{\n    if (value < lo) return hi;\n    if (value > hi) return lo;\n    return value;\n}",
+   "fn": "Clamp",
+   "solution": "public static long Clamp(long value, long lo, long hi)\n{\n    if (value < lo) return lo;\n    if (value > hi) return hi;\n    return value;\n}",
+   "tests": [
+    {
+     "args": [
+      5,
+      0,
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -3,
+      0,
+      10
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      12,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      0,
+      0,
+      10
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      0,
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      -1,
+      -5,
+      -2
+     ],
+     "expected": -2
+    }
+   ],
+   "explanation": "The bound must match the side it limits: below lo returns lo, and above hi returns hi. The buggy version swapped them."
+  },
+  {
+   "id": "cs-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "max-of-three",
+   "prompt": "Max3(a, b, c) returns the largest of three integers. Ties are allowed, and negative numbers are valid inputs.",
+   "starter": "public static long Max3(long a, long b, long c)\n{\n    return a;\n}",
+   "fn": "Max3",
+   "solution": "public static long Max3(long a, long b, long c)\n{\n    long best = a;\n    if (b > best) best = b;\n    if (c > best) best = c;\n    return best;\n}",
+   "tests": [
+    {
+     "args": [
+      1,
+      2,
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      3,
+      2,
+      1
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      2,
+      3,
+      1
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      -1,
+      -2,
+      -3
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      5,
+      5,
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      0,
+      -7,
+      4
+     ],
+     "expected": 4
+    }
+   ],
+   "explanation": "Keep the best value seen so far and replace it whenever a later argument is larger."
+  },
+  {
+   "id": "cs-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "vowel-scan-start",
+   "prompt": "CountVowels(s) returns how many of the characters a, e, i, o, u appear in s, counting lowercase letters only. Every character must be checked, including the first. The buggy loop starts at index 1.",
+   "code": "public static long CountVowels(string s)\n{\n    long count = 0;\n    for (int i = 1; i < s.Length; i++)\n    {\n        if (\"aeiou\".IndexOf(s[i]) >= 0) count++;\n    }\n    return count;\n}",
+   "fn": "CountVowels",
+   "solution": "public static long CountVowels(string s)\n{\n    long count = 0;\n    for (int i = 0; i < s.Length; i++)\n    {\n        if (\"aeiou\".IndexOf(s[i]) >= 0) count++;\n    }\n    return count;\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "xyz"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "aeiou"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "banana"
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Indexes in C# start at 0. Starting at 1 skips s[0], which is why a one-letter vowel string is miscounted."
+  },
+  {
+   "id": "cs-s05-write",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "string-reverse",
+   "prompt": "ReverseText(s) returns the characters of s in reverse order. The empty string reverses to the empty string.",
+   "starter": "public static string ReverseText(string s)\n{\n    return s;\n}",
+   "fn": "ReverseText",
+   "solution": "public static string ReverseText(string s)\n{\n    var chars = new char[s.Length];\n    for (int i = 0; i < s.Length; i++)\n    {\n        chars[i] = s[s.Length - 1 - i];\n    }\n    return new string(chars);\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": "a"
+    },
+    {
+     "args": [
+      "ab"
+     ],
+     "expected": "ba"
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": "cba"
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": "olleh"
+    },
+    {
+     "args": [
+      "12345"
+     ],
+     "expected": "54321"
+    }
+   ],
+   "explanation": "Build a char array of the same length and fill it from the end of the input toward the start, then convert it back to a string."
+  },
+  {
+   "id": "cs-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "max-initial-value",
+   "prompt": "LargestValue(values) returns the largest element of a non-empty long array. The buggy version starts its running best at 0, so it is wrong when every element is negative.",
+   "code": "public static long LargestValue(long[] values)\n{\n    long best = 0;\n    for (int i = 0; i < values.Length; i++)\n    {\n        if (values[i] > best) best = values[i];\n    }\n    return best;\n}",
+   "fn": "LargestValue",
+   "solution": "public static long LargestValue(long[] values)\n{\n    long best = values[0];\n    for (int i = 1; i < values.Length; i++)\n    {\n        if (values[i] > best) best = values[i];\n    }\n    return best;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       5,
+       3
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       -4,
+       -2,
+       -9
+      ]
+     ],
+     "expected": -2
+    },
+    {
+     "args": [
+      [
+       7
+      ]
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      [
+       -1
+      ]
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       2,
+       -3,
+       8,
+       1
+      ]
+     ],
+     "expected": 8
+    }
+   ],
+   "explanation": "The running best must start from a real element, values[0]. Starting from 0 wrongly claims 0 is present in an all-negative array."
+  },
+  {
+   "id": "cs-s06-write",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "sum-array",
+   "prompt": "SumAll(values) returns the sum of every element of a long array. The sum of an empty array is 0.",
+   "starter": "public static long SumAll(long[] values)\n{\n    return 0;\n}",
+   "fn": "SumAll",
+   "solution": "public static long SumAll(long[] values)\n{\n    long total = 0;\n    foreach (var v in values)\n    {\n        total += v;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -1,
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10,
+       20,
+       30,
+       40
+      ]
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       5,
+       5,
+       5
+      ]
+     ],
+     "expected": 25
+    }
+   ],
+   "explanation": "Start a total at 0 and add each element. An empty array never enters the loop, so it sums to 0."
+  },
+  {
+   "id": "cs-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "counter-overwrite",
+   "prompt": "CountOf(words, target) returns how many times target occurs in words. The buggy version stores 1 for each word it sees, so a repeated word never counts above 1.",
+   "code": "public static long CountOf(string[] words, string target)\n{\n    var counts = new Dictionary<string, long>();\n    foreach (var w in words)\n    {\n        counts[w] = 1;\n    }\n    return counts.ContainsKey(target) ? counts[target] : 0;\n}",
+   "fn": "CountOf",
+   "solution": "public static long CountOf(string[] words, string target)\n{\n    var counts = new Dictionary<string, long>();\n    foreach (var w in words)\n    {\n        if (counts.ContainsKey(w)) counts[w]++;\n        else counts[w] = 1;\n    }\n    return counts.ContainsKey(target) ? counts[target] : 0;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      "a"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ],
+      "b"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "x",
+       "y"
+      ],
+      "z"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a",
+       "a",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "A frequency map must read the current count and add one. Assigning 1 each time overwrites the earlier count."
+  },
+  {
+   "id": "cs-s07-write",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "parallel-lookup-default",
+   "prompt": "Lookup(keys, values, key) pairs keys[i] with values[i] and returns the value stored for key. If key is missing, return -1. If a key repeats, the later pair wins. Both arrays have the same length.",
+   "starter": "public static long Lookup(string[] keys, long[] values, string key)\n{\n    return -1;\n}",
+   "fn": "Lookup",
+   "solution": "public static long Lookup(string[] keys, long[] values, string key)\n{\n    var map = new Dictionary<string, long>();\n    for (int i = 0; i < keys.Length; i++)\n    {\n        map[keys[i]] = values[i];\n    }\n    return map.TryGetValue(key, out long v) ? v : -1;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      [],
+      "a"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       "a"
+      ],
+      [
+       5
+      ],
+      "a"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b"
+      ],
+      [
+       1,
+       2
+      ],
+      "b"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b"
+      ],
+      [
+       1,
+       2
+      ],
+      "c"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x"
+      ],
+      [
+       3,
+       4
+      ],
+      "x"
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       "k"
+      ],
+      [
+       0
+      ],
+      "k"
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "Build a dictionary from the pairs by assigning each one in order, so later pairs replace earlier ones. Then use TryGetValue to return the stored value or -1."
+  },
+  {
+   "id": "cs-s08-fix",
+   "node": "stage-08",
+   "type": "fix_bug",
+   "concept": "dedupe-with-hashset",
+   "prompt": "CountDistinct(words) returns how many different strings appear in words, so a repeated word is counted once. The buggy version counts every entry, including repeats.",
+   "code": "public static long CountDistinct(string[] words)\n{\n    var seen = new List<string>();\n    foreach (var w in words)\n    {\n        seen.Add(w);\n    }\n    return seen.Count;\n}",
+   "fn": "CountDistinct",
+   "solution": "public static long CountDistinct(string[] words)\n{\n    var seen = new HashSet<string>();\n    foreach (var w in words)\n    {\n        seen.Add(w);\n    }\n    return seen.Count;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "a"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "x",
+       "y",
+       "z"
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "q",
+       "q",
+       "q",
+       "q"
+      ]
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "A set keeps only one copy of each value, so its Count is the number of distinct values. A List keeps every entry."
+  },
+  {
+   "id": "cs-s08-write",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "set-equality-check",
+   "prompt": "SameValues(a, b) returns true when a and b contain exactly the same distinct values, ignoring order and repeats. Either array may be empty.",
+   "starter": "public static bool SameValues(long[] a, long[] b)\n{\n    return false;\n}",
+   "fn": "SameValues",
+   "solution": "public static bool SameValues(long[] a, long[] b)\n{\n    var x = new HashSet<long>(a);\n    var y = new HashSet<long>(b);\n    return x.SetEquals(y);\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      []
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       2
+      ],
+      [
+       2
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      [
+       2
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       2
+      ],
+      [
+       1,
+       2
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      [
+       3,
+       3,
+       3
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [],
+      [
+       1
+      ]
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "Convert both arrays to HashSet<long>, which drops repeats and ignores order. SetEquals then compares the two sets."
+  },
+  {
+   "id": "cs-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "alias-before-snapshot",
+   "prompt": "GrowthAfterBump(values) returns how much the sum of values grows when each element is increased by 1. The answer is the array length. The buggy version modifies the caller's array first, then reads the sum from that same array, so it sees no change.",
+   "code": "public static long GrowthAfterBump(long[] values)\n{\n    var bumped = values;\n    for (int i = 0; i < bumped.Length; i++)\n    {\n        bumped[i] = bumped[i] + 1;\n    }\n    long before = 0;\n    foreach (var v in values) before += v;\n    long after = 0;\n    foreach (var v in bumped) after += v;\n    return after - before;\n}",
+   "fn": "GrowthAfterBump",
+   "solution": "public static long GrowthAfterBump(long[] values)\n{\n    long before = 0;\n    foreach (var v in values) before += v;\n    long after = 0;\n    foreach (var v in values) after += v + 1;\n    return after - before;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       -1,
+       -1
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       10,
+       20,
+       30,
+       40
+      ]
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       0
+      ]
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "Assigning bumped = values creates a second name for the same array, not a copy. Reading the total after the change compares the array with itself, so the difference is 0."
+  },
+  {
+   "id": "cs-s09-write",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "input-not-mutated",
+   "prompt": "ReplaceAndSum(values, oldValue, newValue) returns the sum of values after every element equal to oldValue is replaced by newValue. Only the total is returned, so the caller's array is not changed.",
+   "starter": "public static long ReplaceAndSum(long[] values, long oldValue, long newValue)\n{\n    return 0;\n}",
+   "fn": "ReplaceAndSum",
+   "solution": "public static long ReplaceAndSum(long[] values, long oldValue, long newValue)\n{\n    long total = 0;\n    foreach (var v in values)\n    {\n        total += v == oldValue ? newValue : v;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      1,
+      2
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       1
+      ],
+      1,
+      5
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      [
+       3,
+       3
+      ],
+      3,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       4
+      ],
+      9,
+      1
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       2
+      ],
+      2,
+      1
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       -1,
+       2
+      ],
+      -1,
+      -5
+     ],
+     "expected": -3
+    }
+   ],
+   "explanation": "Walk the array once and add newValue in place of each match, without writing to values."
+  },
+  {
+   "id": "cs-s10-fix",
+   "node": "stage-10",
+   "type": "fix_bug",
+   "concept": "zero-divisor-fallback",
+   "prompt": "SafeDivide(a, b) returns a / b, and returns 0 when b is 0 instead of throwing. The buggy version returns a when b is 0, which reports the wrong value and hides the failure.",
+   "code": "public static long SafeDivide(long a, long b)\n{\n    if (b == 0) return a;\n    return a / b;\n}",
+   "fn": "SafeDivide",
+   "solution": "public static long SafeDivide(long a, long b)\n{\n    if (b == 0) return 0;\n    return a / b;\n}",
+   "tests": [
+    {
+     "args": [
+      10,
+      2
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      9,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      0,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -9,
+      3
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      7,
+      -2
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      100,
+      7
+     ],
+     "expected": 14
+    }
+   ],
+   "explanation": "The contract for a zero divisor is to return 0. Returning the dividend is a different, wrong answer."
+  },
+  {
+   "id": "cs-s10-write",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "positive-parse-check",
+   "prompt": "ParsePositive(s) returns the integer value of s when s is a whole number greater than zero, and -1 otherwise. Non-numeric text, zero and negative numbers all return -1.",
+   "starter": "public static long ParsePositive(string s)\n{\n    return 0;\n}",
+   "fn": "ParsePositive",
+   "solution": "public static long ParsePositive(string s)\n{\n    if (long.TryParse(s, out long n) && n > 0) return n;\n    return -1;\n}",
+   "tests": [
+    {
+     "args": [
+      "42"
+     ],
+     "expected": 42
+    },
+    {
+     "args": [
+      "0"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "-3"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "7"
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "long.TryParse reports failure without throwing, so you can check it and the sign in one condition and return the sentinel otherwise."
+  },
+  {
+   "id": "cs-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "zero-base-missing",
+   "prompt": "Triangle(n) returns 1 + 2 + ... + n for n >= 0, with Triangle(0) equal to 0. The buggy base case returns 1 for zero, so the result is wrong at the boundary.",
+   "code": "public static long Triangle(long n)\n{\n    if (n <= 1) return 1;\n    return n + Triangle(n - 1);\n}",
+   "fn": "Triangle",
+   "solution": "public static long Triangle(long n)\n{\n    if (n <= 0) return 0;\n    return n + Triangle(n - 1);\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    }
+   ],
+   "explanation": "The base case must cover n = 0 with answer 0. Lumping 0 into the n = 1 case makes every result one too large at the bottom of the recursion."
+  },
+  {
+   "id": "cs-s11-write",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "digit-count-recursion",
+   "prompt": "DigitCount(n) returns how many decimal digits a non-negative number has. Zero has one digit. Recurse by dividing by 10, and stop at a single digit.",
+   "starter": "public static long DigitCount(long n)\n{\n    return 0;\n}",
+   "fn": "DigitCount",
+   "solution": "public static long DigitCount(long n)\n{\n    if (n < 10) return 1;\n    return 1 + DigitCount(n / 10);\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      99
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      123456
+     ],
+     "expected": 6
+    }
+   ],
+   "explanation": "A number below 10 has one digit. Otherwise drop the last digit with n / 10 and add 1 for the digit removed."
+  },
+  {
+   "id": "cs-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "self-pair-reuse",
+   "prompt": "HasPairWithSum(values, target) returns true when two different positions in values add up to target. The buggy version records each value before checking it, so one element can pair with itself.",
+   "code": "public static bool HasPairWithSum(long[] values, long target)\n{\n    var seen = new HashSet<long>();\n    foreach (var v in values)\n    {\n        seen.Add(v);\n        if (seen.Contains(target - v)) return true;\n    }\n    return false;\n}",
+   "fn": "HasPairWithSum",
+   "solution": "public static bool HasPairWithSum(long[] values, long target)\n{\n    var seen = new HashSet<long>();\n    foreach (var v in values)\n    {\n        if (seen.Contains(target - v)) return true;\n        seen.Add(v);\n    }\n    return false;\n}",
+   "tests": [
+    {
+     "args": [
+      [],
+      5
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      6
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      5
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      7
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       4,
+       4
+      ],
+      8
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       2,
+       7,
+       11,
+       15
+      ],
+      9
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "Check for the complement first and only then add the current value. Adding first lets the same element match itself, as in [3] with target 6."
+  },
+  {
+   "id": "cs-s12-write",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "one-pass-duplicate",
+   "prompt": "AnyDuplicate(values) returns true when some value occurs at least twice in values, and false otherwise. Solve it in one pass, remembering the values already seen in a set.",
+   "starter": "public static bool AnyDuplicate(long[] values)\n{\n    return false;\n}",
+   "fn": "AnyDuplicate",
+   "solution": "public static bool AnyDuplicate(long[] values)\n{\n    var seen = new HashSet<long>();\n    foreach (var v in values)\n    {\n        if (!seen.Add(v)) return true;\n    }\n    return false;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       3
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       5,
+       6,
+       7,
+       8
+      ]
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "HashSet.Add returns false when the value is already present, which is a duplicate. This runs in O(n) average time, against O(n^2) for comparing every pair."
   }
  ]
 }

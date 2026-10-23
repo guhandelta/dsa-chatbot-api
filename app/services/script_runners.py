@@ -102,7 +102,7 @@ _CS_BUILD = (
 _CS_RUNTIMECONFIG = json.dumps({"runtimeOptions": {"tfm": "net8.0", "framework": {
     "name": "Microsoft.NETCore.App", "version": "8.0.0"}}})
 
-_GO_CANDIDATES = ("int", "int64")
+_GO_CANDIDATES = ("int", "int64")  # the int64 candidate is only ever tried for scalar signatures; see _run_typed
 _CS_CANDIDATES = ("wide", "narrow")
 
 
@@ -256,6 +256,8 @@ def _run_typed(language, solution, fn, cases, expected, equal, result):
         return _unverified(language, len(cases), "test-case shapes are not expressible as a typed "
                            "signature — execution skipped, nothing claimed")
     render, candidates = (render_go, _GO_CANDIDATES) if language == "go" else (render_csharp, _CS_CANDIDATES)
+    if language == "go" and any(t.endswith("[]") for t in [*sig.args, sig.ret]):
+        candidates = ("int",)  # []int64 never matches a solution written against []int
     errors: list[str] = []
     for width in candidates:
         with tempfile.TemporaryDirectory() as td:
@@ -263,7 +265,10 @@ def _run_typed(language, solution, fn, cases, expected, equal, result):
             for name, text in render(solution, fn, cases, sig, width, result).items():
                 (cwd / name).write_text(text, encoding="utf-8")
             if language == "go":
-                build = ["env", "GOMAXPROCS=2", "go", "build", "-p", "1", "-o", "m", "."]
+                # The baked standard-library cache is read-only, and Go's cache trimming writes
+                # to it and fails. Copy it into the run's tmpfs and build from that copy.
+                build = ["sh", "-c", "cp -r /opt/gocache /tmp/gc 2>/dev/null; GOCACHE=/tmp/gc "
+                                     "GOMAXPROCS=2 go build -p 1 -o m ."]
                 run_cmd = ["./m"]
             else:
                 build = ["sh", "-c", _CS_BUILD]

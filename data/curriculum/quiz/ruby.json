@@ -1,7 +1,7 @@
 {
  "language": "ruby",
  "version": 1,
- "note": "Authored Study Room quiz items for Ruby. short_answer snippets were validated by execution (Ruby 2.6.10 locally) and are written to print the same output on Ruby 2.6 and 3.x; RSpec and Bundler multiple-choice items are grounded in the knowledge base and were not executed (no RSpec or network access).",
+ "note": "Authored Study Room quiz items. short_answer snippets were run with Ruby 2.6.10 and are written to print the same output on Ruby 2.6 and 3.x. fix_bug and write_snippet items are graded by the sandbox runner. RSpec and Bundler multiple-choice items are grounded in the knowledge base and were not executed (no RSpec or network access).",
  "items": [
   {
    "id": "rb-s03-mcq",
@@ -1202,6 +1202,1525 @@
      "last position"
     ]
    ]
+  },
+  {
+   "id": "rb-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "float-division",
+   "prompt": "percent_of(part, whole) should return what percentage part is of whole, as a float (for example 25.0 for 1 out of 4). With integer arguments the division truncates, so it returns 0 for 1 of 4. Fix it.",
+   "code": "def percent_of(part, whole)\n  part / whole * 100\nend",
+   "fn": "percent_of",
+   "solution": "def percent_of(part, whole)\n  part.to_f / whole * 100\nend",
+   "tests": [
+    {
+     "args": [
+      1,
+      8
+     ],
+     "expected": 12.5
+    },
+    {
+     "args": [
+      1,
+      4
+     ],
+     "expected": 25.0
+    },
+    {
+     "args": [
+      0,
+      7
+     ],
+     "expected": 0.0
+    },
+    {
+     "args": [
+      7,
+      7
+     ],
+     "expected": 100.0
+    },
+    {
+     "args": [
+      5,
+      2
+     ],
+     "expected": 250.0
+    },
+    {
+     "args": [
+      3,
+      8
+     ],
+     "expected": 37.5
+    }
+   ],
+   "explanation": "Integer division in Ruby drops the fraction before the multiplication, so 1 / 4 is 0 and the result is 0. Converting part with to_f makes the division a float division."
+  },
+  {
+   "id": "rb-s01-write",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "digit-arithmetic",
+   "prompt": "digit_sum(n) receives a non-negative integer and returns the sum of its decimal digits, using only integer arithmetic (% and /). For example digit_sum(45) is 9.",
+   "starter": "def digit_sum(n)\n  0\nend",
+   "fn": "digit_sum",
+   "solution": "def digit_sum(n)\n  total = 0\n  while n > 0\n    total += n % 10\n    n /= 10\n  end\n  total\nend",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      7
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      45
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      999
+     ],
+     "expected": 27
+    },
+    {
+     "args": [
+      1000
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      123456
+     ],
+     "expected": 21
+    }
+   ],
+   "explanation": "n % 10 gives the last digit and n / 10 removes it, so the loop adds each digit until n reaches 0. Zero never enters the loop and correctly gives 0."
+  },
+  {
+   "id": "rb-s02-fix",
+   "node": "stage-02",
+   "type": "fix_bug",
+   "concept": "inclusive-bounds",
+   "prompt": "within_bounds(x, lo, hi) should return true when x is between lo and hi inclusive, so the endpoints count. The endpoints are excluded here. Fix it.",
+   "code": "def within_bounds(x, lo, hi)\n  x > lo && x < hi\nend",
+   "fn": "within_bounds",
+   "solution": "def within_bounds(x, lo, hi)\n  x >= lo && x <= hi\nend",
+   "tests": [
+    {
+     "args": [
+      5,
+      1,
+      10
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      1,
+      1,
+      10
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      10,
+      1,
+      10
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      0,
+      1,
+      10
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      11,
+      1,
+      10
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      5,
+      5,
+      5
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "> and < leave out the endpoints. >= and <= include lo and hi, which is what an inclusive range check needs."
+  },
+  {
+   "id": "rb-s02-write",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "sign-classification",
+   "prompt": "classify_sign(n) returns \"negative\", \"zero\" or \"positive\" for an integer n. Use if, elsif and else.",
+   "starter": "def classify_sign(n)\n  # return the category for n\nend",
+   "fn": "classify_sign",
+   "solution": "def classify_sign(n)\n  if n < 0\n    \"negative\"\n  elsif n == 0\n    \"zero\"\n  else\n    \"positive\"\n  end\nend",
+   "tests": [
+    {
+     "args": [
+      -3
+     ],
+     "expected": "negative"
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": "zero"
+    },
+    {
+     "args": [
+      8
+     ],
+     "expected": "positive"
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": "negative"
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": "positive"
+    },
+    {
+     "args": [
+      -250
+     ],
+     "expected": "negative"
+    }
+   ],
+   "explanation": "The first branch catches negatives and the second catches exactly zero, so everything else falls through to positive. Testing zero before the else keeps 0 out of the positive branch."
+  },
+  {
+   "id": "rb-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "inclusive-sum-loop",
+   "prompt": "sum_to(n) should return 1 + 2 + ... + n, and 0 when n is 0. The loop leaves out n itself. Fix it.",
+   "code": "def sum_to(n)\n  total = 0\n  (1...n).each { |i| total += i }\n  total\nend",
+   "fn": "sum_to",
+   "solution": "def sum_to(n)\n  total = 0\n  (1..n).each { |i| total += i }\n  total\nend",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 5050
+    }
+   ],
+   "explanation": "1...n excludes n, so the last term is never added. 1..n includes both ends, so every term from 1 through n is added."
+  },
+  {
+   "id": "rb-s03-write",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "downto-collect",
+   "prompt": "countdown(n) returns the integers from n down to 1 as an array, for example countdown(3) is [3, 2, 1]. countdown(0) is an empty array.",
+   "starter": "def countdown(n)\n  []\nend",
+   "fn": "countdown",
+   "solution": "def countdown(n)\n  result = []\n  n.downto(1) { |i| result << i }\n  result\nend",
+   "tests": [
+    {
+     "args": [
+      3
+     ],
+     "expected": [
+      3,
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": [
+      5,
+      4,
+      3,
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": [
+      2,
+      1
+     ]
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": [
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+     ]
+    }
+   ],
+   "explanation": "Integer#downto(1) yields n, n-1 and so on down to 1, and yields nothing when n is 0. Appending each value to result keeps the order the block sees them in."
+  },
+  {
+   "id": "rb-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "clamp-contract",
+   "prompt": "clamp_score(score) must return score limited to the range 0 to 100 inclusive. Scores above 100 are capped, but negative scores pass through unchanged. Fix it.",
+   "code": "def clamp_score(score)\n  return 100 if score > 100\n  score\nend",
+   "fn": "clamp_score",
+   "solution": "def clamp_score(score)\n  return 0 if score < 0\n  return 100 if score > 100\n  score\nend",
+   "tests": [
+    {
+     "args": [
+      50
+     ],
+     "expected": 50
+    },
+    {
+     "args": [
+      -5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      150
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      100
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      101
+     ],
+     "expected": 100
+    }
+   ],
+   "explanation": "The original checks only the upper bound. Adding the check for values below 0 returns 0 for negative scores, so every result stays in the 0 to 100 range."
+  },
+  {
+   "id": "rb-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "default-argument",
+   "prompt": "scale(x, factor = 2) returns x multiplied by factor. When the caller passes only x, the factor defaults to 2, so scale(3) is 6.",
+   "starter": "def scale(x, factor = 2)\n  x\nend",
+   "fn": "scale",
+   "solution": "def scale(x, factor = 2)\n  x * factor\nend",
+   "tests": [
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      5,
+      10
+     ],
+     "expected": 50
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -4
+     ],
+     "expected": -8
+    },
+    {
+     "args": [
+      7,
+      1
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      2,
+      3
+     ],
+     "expected": 6
+    }
+   ],
+   "explanation": "A default parameter is used when the caller omits the argument. Multiplying x by factor gives the scaled value. The starter ignores factor entirely, so it fails."
+  },
+  {
+   "id": "rb-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "case-folding",
+   "prompt": "count_vowels(s) should count the vowels a, e, i, o and u in either case. Uppercase vowels are not counted, so count_vowels(\"AEIOU\") gives 0. Fix it.",
+   "code": "def count_vowels(s)\n  s.count(\"aeiou\")\nend",
+   "fn": "count_vowels",
+   "solution": "def count_vowels(s)\n  s.downcase.count(\"aeiou\")\nend",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "banana"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "AEIOU"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "xyz"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "Hello World"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "Ruby"
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "String#count matches characters case-sensitively, so uppercase vowels are missed. Lowercasing the string first makes both cases match the set aeiou."
+  },
+  {
+   "id": "rb-s05-write",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "split-join",
+   "prompt": "reverse_words(s) returns the words of s in reverse order, joined by single spaces. For example reverse_words(\"a b c\") is \"c b a\". An empty string gives an empty string.",
+   "starter": "def reverse_words(s)\n  s\nend",
+   "fn": "reverse_words",
+   "solution": "def reverse_words(s)\n  s.split(\" \").reverse.join(\" \")\nend",
+   "tests": [
+    {
+     "args": [
+      "a b c"
+     ],
+     "expected": "c b a"
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": "hello"
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "one two"
+     ],
+     "expected": "two one"
+    },
+    {
+     "args": [
+      "x y z w"
+     ],
+     "expected": "w z y x"
+    },
+    {
+     "args": [
+      "ab cd ef"
+     ],
+     "expected": "ef cd ab"
+    }
+   ],
+   "explanation": "split(\" \") breaks the string into words, reverse flips their order, and join puts them back with single spaces. Splitting an empty string gives no words, so the result is empty."
+  },
+  {
+   "id": "rb-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "empty-array-boundary",
+   "prompt": "rotate_left(list) moves the first element to the end, so [1, 2, 3] becomes [2, 3, 1]. An empty list must come back as an empty list. Fix it.",
+   "code": "def rotate_left(list)\n  list[1..-1] + [list[0]]\nend",
+   "fn": "rotate_left",
+   "solution": "def rotate_left(list)\n  return [] if list.empty?\n  list[1..-1] + [list[0]]\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": [
+      2,
+      3,
+      1
+     ]
+    },
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       7
+      ]
+     ],
+     "expected": [
+      7
+     ]
+    },
+    {
+     "args": [
+      [
+       4,
+       4
+      ]
+     ],
+     "expected": [
+      4,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       -1,
+       0
+      ]
+     ],
+     "expected": [
+      -1,
+      0,
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ]
+     ],
+     "expected": [
+      2,
+      1
+     ]
+    }
+   ],
+   "explanation": "On an empty list, list[0] is nil, so the buggy version appends nil instead of returning an empty list. The guard returns [] before indexing."
+  },
+  {
+   "id": "rb-s06-write",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "prefix-sums",
+   "prompt": "running_totals(nums) returns an array where element i is the sum of nums[0] through nums[i]. For example running_totals([1, 2, 3]) is [1, 3, 6], and an empty array gives an empty array.",
+   "starter": "def running_totals(nums)\n  nums\nend",
+   "fn": "running_totals",
+   "solution": "def running_totals(nums)\n  total = 0\n  nums.map { |n| total += n }\nend",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       1,
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       2,
+       -2,
+       3
+      ]
+     ],
+     "expected": [
+      2,
+      0,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ]
+     ],
+     "expected": [
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       10,
+       20,
+       30
+      ]
+     ],
+     "expected": [
+      10,
+      30,
+      60
+     ]
+    }
+   ],
+   "explanation": "map visits each value in order and the running total is updated on each step, so each output is the sum up to that position. The block closes over total, which keeps its value between iterations."
+  },
+  {
+   "id": "rb-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "frequency-accumulator",
+   "prompt": "most_common_count(words) returns how many times the most frequent word appears, and 0 for an empty list. It records each word as seen once, so it always returns 1 for a non-empty list. Fix it.",
+   "code": "def most_common_count(words)\n  counts = Hash.new(0)\n  words.each { |w| counts[w] = 1 }\n  counts.values.max || 0\nend",
+   "fn": "most_common_count",
+   "solution": "def most_common_count(words)\n  counts = Hash.new(0)\n  words.each { |w| counts[w] += 1 }\n  counts.values.max || 0\nend",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "a"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "x",
+       "y",
+       "z"
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "a",
+       "a",
+       "a"
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "b",
+       "a",
+       "b",
+       "b",
+       "a"
+      ]
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Assigning counts[w] = 1 overwrites the count instead of adding to it, so every count stays at 1. counts[w] += 1 adds one for each occurrence, and max then gives the highest count."
+  },
+  {
+   "id": "rb-s07-write",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "default-value-lookup",
+   "prompt": "count_of(words, target) returns how many times target appears in words. Build a hash of counts with a default of 0, so a word that never appears gives 0.",
+   "starter": "def count_of(words, target)\n  0\nend",
+   "fn": "count_of",
+   "solution": "def count_of(words, target)\n  counts = Hash.new(0)\n  words.each { |w| counts[w] += 1 }\n  counts[target]\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "a"
+      ],
+      "z"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [],
+      "x"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x",
+       "x"
+      ],
+      "x"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "b",
+       "a"
+      ],
+      "b"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "p",
+       "q"
+      ],
+      "q"
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "Counting each word with += 1 builds the tally. Looking up target in a Hash.new(0) returns 0 for a word that never appeared, without adding that key."
+  },
+  {
+   "id": "rb-s08-fix",
+   "node": "stage-08",
+   "type": "fix_bug",
+   "concept": "unique-keep-first",
+   "prompt": "dedupe(list) returns the values of list with duplicates removed, keeping the first occurrence of each value in order. It currently removes every value that appears more than once. Fix it.",
+   "code": "def dedupe(list)\n  list.select { |x| list.count(x) == 1 }\nend",
+   "fn": "dedupe",
+   "solution": "def dedupe(list)\n  list.uniq\nend",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       2
+      ]
+     ],
+     "expected": [
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       3,
+       2,
+       1
+      ]
+     ],
+     "expected": [
+      3,
+      1,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       4,
+       4,
+       5
+      ]
+     ],
+     "expected": [
+      4,
+      5
+     ]
+    }
+   ],
+   "explanation": "select keeps only values that occur exactly once, so every repeated value disappears entirely. uniq keeps one copy of each value, at its first position."
+  },
+  {
+   "id": "rb-s08-write",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "set-equality",
+   "prompt": "same_members(a, b) returns true when a and b contain the same distinct values, regardless of order or repeats, and false otherwise. For example [1, 1, 2] and [2, 1] hold the same members.",
+   "starter": "def same_members(a, b)\n  false\nend",
+   "fn": "same_members",
+   "solution": "def same_members(a, b)\n  a.uniq.sort == b.uniq.sort\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       2
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [],
+      []
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      [
+       2
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       1
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       3,
+       3
+      ],
+      [
+       3
+      ]
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "uniq removes repeats and sort removes order, so two lists hold the same members exactly when their normalized forms are equal. Array#== compares the normalized arrays element by element."
+  },
+  {
+   "id": "rb-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "instance-variable-state",
+   "prompt": "bump_times(n) creates a Counter, calls bump n times, and returns the final count. bump should add one to the counter's stored count, but it writes to a local variable named count instead. Fix it.",
+   "code": "class Counter\n  attr_reader :count\n\n  def initialize\n    @count = 0\n  end\n\n  def bump\n    count += 1\n  end\nend\n\ndef bump_times(n)\n  c = Counter.new\n  n.times { c.bump }\n  c.count\nend",
+   "fn": "bump_times",
+   "solution": "class Counter\n  attr_reader :count\n\n  def initialize\n    @count = 0\n  end\n\n  def bump\n    @count += 1\n  end\nend\n\ndef bump_times(n)\n  c = Counter.new\n  n.times { c.bump }\n  c.count\nend",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Inside a method, count += 1 assigns a new local variable, which starts as nil, so the call raises and the stored count never changes. @count += 1 updates the instance variable that count reads, so each bump adds one."
+  },
+  {
+   "id": "rb-s09-write",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "dup-vs-reference",
+   "prompt": "copy_then_append(list, x) appends x to a copy of list and returns the sum of the original list, which must not change. Mutating list itself would make the sum include x.",
+   "starter": "def copy_then_append(list, x)\n  list << x\n  list.sum\nend",
+   "fn": "copy_then_append",
+   "solution": "def copy_then_append(list, x)\n  copy = list.dup\n  copy << x\n  list.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      3
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [],
+      5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10
+      ],
+      0
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      [
+       4,
+       4
+      ],
+      -1
+     ],
+     "expected": 8
+    },
+    {
+     "args": [
+      [
+       2,
+       3,
+       4
+      ],
+      10
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       7
+      ],
+      7
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "dup makes a separate array, so appending to the copy leaves list unchanged. Without dup, list << x mutates the caller's array, and the sum then includes x."
+  },
+  {
+   "id": "rb-s10-fix",
+   "node": "stage-10",
+   "type": "fix_bug",
+   "concept": "guard-zero-divisor",
+   "prompt": "safe_divide(a, b) returns the integer quotient a / b, and 0 when b is zero instead of raising ZeroDivisionError. Fix it.",
+   "code": "def safe_divide(a, b)\n  a / b\nend",
+   "fn": "safe_divide",
+   "solution": "def safe_divide(a, b)\n  return 0 if b == 0\n  a / b\nend",
+   "tests": [
+    {
+     "args": [
+      10,
+      2
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      7,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -9,
+      3
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      0,
+      5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      5,
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      7,
+      2
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Integer division by zero raises ZeroDivisionError in Ruby, which stops the call. The guard returns 0 before dividing when b is zero, and other divisions run as before."
+  },
+  {
+   "id": "rb-s10-write",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "rescue-to-default",
+   "prompt": "parse_count(s) returns the integer held by the string s when it is a non-negative whole number such as \"12\". Any other input, including \"abc\", \"\", \"-3\" or \"45x\", returns -1.",
+   "starter": "def parse_count(s)\n  s.to_i\nend",
+   "fn": "parse_count",
+   "solution": "def parse_count(s)\n  n = Integer(s)\n  n < 0 ? -1 : n\nrescue ArgumentError\n  -1\nend",
+   "tests": [
+    {
+     "args": [
+      "12"
+     ],
+     "expected": 12
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "-3"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "0"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "45x"
+     ],
+     "expected": -1
+    }
+   ],
+   "explanation": "Integer(s) accepts only a complete integer and raises ArgumentError for anything else, which the method-level rescue turns into -1. A negative value is also reported as -1. to_i would quietly read the leading digits of \"45x\" instead."
+  },
+  {
+   "id": "rb-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "recursion-base-case",
+   "prompt": "factorial(n) returns n! for n of 0 or more, and factorial(0) is 1. The base case only handles 1, so factorial(0) recurses without end. Fix it.",
+   "code": "def factorial(n)\n  return 1 if n == 1\n  n * factorial(n - 1)\nend",
+   "fn": "factorial",
+   "solution": "def factorial(n)\n  return 1 if n <= 1\n  n * factorial(n - 1)\nend",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 120
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 3628800
+    }
+   ],
+   "explanation": "A base case must cover every input the recursion can reach. With only n == 1, n = 0 keeps subtracting 1 and never stops. The base case n <= 1 returns 1 for both 0 and 1."
+  },
+  {
+   "id": "rb-s11-write",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "list-recursion",
+   "prompt": "sum_list(nums) returns the sum of an array of integers using recursion. The base case is an empty array, which sums to 0, and each call adds the first element to the sum of the rest.",
+   "starter": "def sum_list(nums)\n  0\nend",
+   "fn": "sum_list",
+   "solution": "def sum_list(nums)\n  return 0 if nums.empty?\n  nums[0] + sum_list(nums[1..-1])\nend",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       -1,
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       10,
+       20,
+       30,
+       40
+      ]
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      [
+       7,
+       0,
+       0
+      ]
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "Each call removes the first element and recurses on the rest, so the calls shrink toward the empty base case. nums[1..-1] of a one-element array is empty, which reaches the base case next."
+  },
+  {
+   "id": "rb-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "binary-search-bounds",
+   "prompt": "binary_search(nums, target) returns the index of target in the sorted array nums, or -1 if it is absent. The loop stops before it checks the last remaining element, so a target at the end is missed. Fix it.",
+   "code": "def binary_search(nums, target)\n  lo = 0\n  hi = nums.length - 1\n  while lo < hi\n    mid = (lo + hi) / 2\n    if nums[mid] == target\n      return mid\n    elsif nums[mid] < target\n      lo = mid + 1\n    else\n      hi = mid - 1\n    end\n  end\n  -1\nend",
+   "fn": "binary_search",
+   "solution": "def binary_search(nums, target)\n  lo = 0\n  hi = nums.length - 1\n  while lo <= hi\n    mid = (lo + hi) / 2\n    if nums[mid] == target\n      return mid\n    elsif nums[mid] < target\n      lo = mid + 1\n    else\n      hi = mid - 1\n    end\n  end\n  -1\nend",
+   "tests": [
+    {
+     "args": [
+      [],
+      5
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       5,
+       7
+      ],
+      5
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       5,
+       7
+      ],
+      1
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       5,
+       7
+      ],
+      7
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       5,
+       7
+      ],
+      4
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       2
+      ],
+      2
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       3
+      ],
+      3
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "With lo < hi the loop ends when one candidate remains, and that candidate is never compared. lo <= hi keeps the last candidate in range, so every index is checked and the search is correct."
+  },
+  {
+   "id": "rb-s12-write",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "hash-membership-scan",
+   "prompt": "has_duplicate(nums) returns true if any value appears twice in nums, and false otherwise. Track the values seen so far in a hash so each element is checked in one pass.",
+   "starter": "def has_duplicate(nums)\n  false\nend",
+   "fn": "has_duplicate",
+   "solution": "def has_duplicate(nums)\n  seen = {}\n  nums.each do |n|\n    return true if seen[n]\n    seen[n] = true\n  end\n  false\nend",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       1
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       5,
+       5
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       0,
+       -1,
+       0
+      ]
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       4,
+       8,
+       15,
+       16,
+       23,
+       42
+      ]
+     ],
+     "expected": false
+    }
+   ],
+   "explanation": "A hash lookup checks whether a value was seen before in roughly constant time, so one pass over the array is enough. return inside the block leaves the method at the first repeat."
   }
  ]
 }

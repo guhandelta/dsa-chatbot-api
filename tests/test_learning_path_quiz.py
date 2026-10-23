@@ -527,7 +527,8 @@ async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language, 
     assert 'stage_lesson' in node['missing_content'] and 'exercise' in node['missing_content']
     started = await quiz.start(db, user, language, node['id'], 1)
     full = quiz.items(language)[started['items'][0]['id']]
-    result = await quiz.answer(db, user, started['quiz_id'], full['id'], full['answer'])
+    response = full['answer'] if 'answer' in full else full['solution']
+    result = await quiz.answer(db, user, started['quiz_id'], full['id'], response)
     assert result['correct'] and result['complete']
     assert not any(reward['reason'] == 'earn:stage' for reward in result['rewards'])
     state = await lp.progress(db, user.id, language)

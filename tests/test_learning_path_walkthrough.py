@@ -19,6 +19,11 @@ def correct_response(item):
     return item['solution']  # fix_bug / write_snippet: the reference solution
 
 
+def runnable_here(language):
+    from app.services.code_runner import available_languages
+    return available_languages().get(language, False)
+
+
 async def walk(db, language):
     user = User(email=f'walk-{language}@example.com', hashed_password='x', peppercorns=500)
     db.add(user)
@@ -39,6 +44,9 @@ async def walk(db, language):
         started = await quiz.start(db, user, language, nid, node['checks_available'])
         for public_item in started['items']:
             full = quiz.items(language)[public_item['id']]
+            if full['type'] in quiz.CODE_TYPES and not runnable_here(language):
+                stuck.append(f"{nid}: code check {full['id']} needs the {language} runner, which this machine lacks")
+                continue
             result = await quiz.answer(db, user, started['quiz_id'], full['id'], correct_response(full))
             if not result['correct']:
                 stuck.append(f"{nid}: correct answer marked wrong for {full['id']} ({full['type']}): {result.get('feedback', '')[:120]}")
@@ -56,6 +64,8 @@ async def walk(db, language):
 
 @pytest.mark.parametrize('language', sorted(lp.LANGUAGE_LABELS))
 async def test_learner_can_finish_every_path_without_hitting_a_wall(db, language, monkeypatch):
+    if not runnable_here(language) and any(i['language'] == language and i['type'] in quiz.CODE_TYPES for i in quiz.items(language).values()):
+        pytest.skip(f'{language} code checks need its runner; run with EXEC_BACKEND=docker')
     from app.core.config import settings
     monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
     # Hourly caps are abuse limits, tested separately; here they must not stop a full path.

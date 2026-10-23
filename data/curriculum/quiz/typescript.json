@@ -1,7 +1,7 @@
 {
  "language": "typescript",
  "version": 1,
- "note": "Authored Study Room quiz items for the nodes that had no checks. short_answer snippets are type-checked with tsc --strict and executed with node by the verifier, and the expected output is compared exactly; mcq and mcq_code claims about compiler errors and output were checked by running tsc 5.4.5 and node. TypeScript has no runner in the app, so there are no fix_bug or write_snippet items.",
+ "note": "Authored Study Room quiz items. short_answer snippets are type-checked with tsc --strict and run with node, and compared exactly. mcq and mcq_code claims about compiler errors and output were checked by running tsc 5.4.5 and node. fix_bug and write_snippet items are graded by the sandbox runner, whose reference solutions pass and whose buggy code and starters fail.",
  "items": [
   {
    "id": "ts-s02-mcq",
@@ -1008,6 +1008,1858 @@
      "use the result"
     ]
    ]
+  },
+  {
+   "id": "ts-s01-fix",
+   "node": "stage-01",
+   "type": "fix_bug",
+   "concept": "floor-division",
+   "prompt": "half(n) must return n divided by two, rounded down to a whole number, for negative and positive integers. It currently keeps the fraction. Fix it.",
+   "code": "function half(n: number): number {\n  return n / 2;\n}",
+   "fn": "half",
+   "solution": "function half(n: number): number {\n  return Math.floor(n / 2);\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      -5
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -1
+    }
+   ],
+   "explanation": "/ returns a fractional number in JavaScript, so 5 / 2 is 2.5. Math.floor rounds toward negative infinity, which gives -3 for -5."
+  },
+  {
+   "id": "ts-s01-write",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "ceiling-division",
+   "prompt": "ceilDiv(a, b) returns a divided by b rounded up to a whole number, for non-negative integers a and b with b greater than zero. Write it.",
+   "starter": "function ceilDiv(a: number, b: number): number {\n  return a / b;\n}",
+   "fn": "ceilDiv",
+   "solution": "function ceilDiv(a: number, b: number): number {\n  return Math.floor((a + b - 1) / b);\n}",
+   "tests": [
+    {
+     "args": [
+      7,
+      2
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      6,
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      1,
+      5
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      0,
+      3
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      10,
+      10
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      11,
+      10
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      99,
+      100
+     ],
+     "expected": 1
+    }
+   ],
+   "explanation": "Adding b - 1 before the floor division pushes any remainder into the next whole number, so the result rounds up."
+  },
+  {
+   "id": "ts-s02-fix",
+   "node": "stage-02",
+   "type": "fix_bug",
+   "concept": "inclusive-bounds",
+   "prompt": "inRange(x, lo, hi) must return true when x is between lo and hi, and the two ends count as inside the range. Values equal to lo or hi must return true. Fix it.",
+   "code": "function inRange(x: number, lo: number, hi: number): boolean {\n  return x > lo && x < hi;\n}",
+   "fn": "inRange",
+   "solution": "function inRange(x: number, lo: number, hi: number): boolean {\n  return x >= lo && x <= hi;\n}",
+   "tests": [
+    {
+     "args": [
+      5,
+      1,
+      10
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      1,
+      1,
+      10
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      10,
+      1,
+      10
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      0,
+      1,
+      10
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      11,
+      1,
+      10
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      -3,
+      -5,
+      -1
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      -1,
+      -5,
+      -1
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "> and < exclude the end values. >= and <= include them, which matches an inclusive range."
+  },
+  {
+   "id": "ts-s02-write",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "if-else-chain",
+   "prompt": "grade(score) returns \"A\" for a score of 90 or more, \"B\" for 80 or more, \"C\" for 70 or more, and \"F\" for anything lower. Check the highest cut-off first. Write it.",
+   "starter": "function grade(score: number): string {\n  return \"\";\n}",
+   "fn": "grade",
+   "solution": "function grade(score: number): string {\n  if (score >= 90) return \"A\";\n  if (score >= 80) return \"B\";\n  if (score >= 70) return \"C\";\n  return \"F\";\n}",
+   "tests": [
+    {
+     "args": [
+      95
+     ],
+     "expected": "A"
+    },
+    {
+     "args": [
+      90
+     ],
+     "expected": "A"
+    },
+    {
+     "args": [
+      89
+     ],
+     "expected": "B"
+    },
+    {
+     "args": [
+      80
+     ],
+     "expected": "B"
+    },
+    {
+     "args": [
+      79
+     ],
+     "expected": "C"
+    },
+    {
+     "args": [
+      70
+     ],
+     "expected": "C"
+    },
+    {
+     "args": [
+      69
+     ],
+     "expected": "F"
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": "F"
+    }
+   ],
+   "explanation": "Each test is checked in order, so the first cut-off the score reaches decides the letter."
+  },
+  {
+   "id": "ts-s03-fix",
+   "node": "stage-03",
+   "type": "fix_bug",
+   "concept": "loop-bound",
+   "prompt": "sumTo(n) must return 1 + 2 + ... + n for a non-negative integer n, and 0 when n is 0. The total leaves out n itself. Fix it.",
+   "code": "function sumTo(n: number): number {\n  let total = 0;\n  for (let i = 1; i < n; i++) {\n    total += i;\n  }\n  return total;\n}",
+   "fn": "sumTo",
+   "solution": "function sumTo(n: number): number {\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    total += i;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      4
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 55
+    }
+   ],
+   "explanation": "A loop that tests i < n stops one short, so n is never added. i <= n includes it."
+  },
+  {
+   "id": "ts-s03-write",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "count-with-loop",
+   "prompt": "countEvens(xs) returns how many numbers in xs are even. Zero counts as even, and negative numbers can be even too. An empty array gives 0. Write it.",
+   "starter": "function countEvens(xs: number[]): number {\n  let count = 0;\n  for (const x of xs) {\n  }\n  return count;\n}",
+   "fn": "countEvens",
+   "solution": "function countEvens(xs: number[]): number {\n  let count = 0;\n  for (const x of xs) {\n    if (x % 2 === 0) count++;\n  }\n  return count;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       3
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       2
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3,
+       4
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       0,
+       -2,
+       5
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       7,
+       7,
+       8
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       -4,
+       -6,
+       -8,
+       -10
+      ]
+     ],
+     "expected": 4
+    }
+   ],
+   "explanation": "x % 2 is 0 for even numbers, including negative ones, because -4 % 2 is -0 and -0 === 0 is true."
+  },
+  {
+   "id": "ts-s04-fix",
+   "node": "stage-04",
+   "type": "fix_bug",
+   "concept": "default-parameter",
+   "prompt": "addWithDefault(a, b) returns a plus b, and b defaults to 10 only when it is not given. Passing 0 for b must add 0, not 10. Fix it.",
+   "code": "function addWithDefault(a: number, b?: number): number {\n  return a + (b || 10);\n}",
+   "fn": "addWithDefault",
+   "solution": "function addWithDefault(a: number, b: number = 10): number {\n  return a + b;\n}",
+   "tests": [
+    {
+     "args": [
+      5
+     ],
+     "expected": 15
+    },
+    {
+     "args": [
+      5,
+      0
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      5,
+      2
+     ],
+     "expected": 7
+    },
+    {
+     "args": [
+      -1,
+      0
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": 10
+    },
+    {
+     "args": [
+      0,
+      -3
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      100,
+      0
+     ],
+     "expected": 100
+    }
+   ],
+   "explanation": "|| replaces every falsy value, and 0 is falsy, so 0 became 10. A default parameter applies only when the argument is undefined."
+  },
+  {
+   "id": "ts-s04-write",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "optional-parameter",
+   "prompt": "formatName(first, last, title) returns \"first last\". When a title is given, it goes in front: \"title first last\". The title is optional. Write it.",
+   "starter": "function formatName(first: string, last: string, title?: string): string {\n  return \"\";\n}",
+   "fn": "formatName",
+   "solution": "function formatName(first: string, last: string, title?: string): string {\n  const name = `${first} ${last}`;\n  return title === undefined ? name : `${title} ${name}`;\n}",
+   "tests": [
+    {
+     "args": [
+      "Ada",
+      "Lovelace"
+     ],
+     "expected": "Ada Lovelace"
+    },
+    {
+     "args": [
+      "Ada",
+      "Lovelace",
+      "Dr."
+     ],
+     "expected": "Dr. Ada Lovelace"
+    },
+    {
+     "args": [
+      "Alan",
+      "Turing"
+     ],
+     "expected": "Alan Turing"
+    },
+    {
+     "args": [
+      "Grace",
+      "Hopper",
+      "Rear Admiral"
+     ],
+     "expected": "Rear Admiral Grace Hopper"
+    },
+    {
+     "args": [
+      "X",
+      "Y"
+     ],
+     "expected": "X Y"
+    },
+    {
+     "args": [
+      "Mary",
+      "Shelley",
+      "Mrs."
+     ],
+     "expected": "Mrs. Mary Shelley"
+    },
+    {
+     "args": [
+      "Linus",
+      "Torvalds"
+     ],
+     "expected": "Linus Torvalds"
+    }
+   ],
+   "explanation": "An optional parameter is undefined when it is not passed, so the title is added only when it is present."
+  },
+  {
+   "id": "ts-s05-fix",
+   "node": "stage-05",
+   "type": "fix_bug",
+   "concept": "case-folding",
+   "prompt": "countVowels(s) counts the letters a, e, i, o and u in s, in either case. Uppercase vowels are being missed. Fix it.",
+   "code": "function countVowels(s: string): number {\n  let n = 0;\n  for (const ch of s) {\n    if (\"aeiou\".includes(ch)) n++;\n  }\n  return n;\n}",
+   "fn": "countVowels",
+   "solution": "function countVowels(s: string): number {\n  let n = 0;\n  for (const ch of s.toLowerCase()) {\n    if (\"aeiou\".includes(ch)) n++;\n  }\n  return n;\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "hello"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      "AEIOU"
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      "rhythm"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "Banana"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      "sky"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "QUEUE"
+     ],
+     "expected": 4
+    }
+   ],
+   "explanation": "The vowel list is lowercase, so an uppercase A never matches. Lowercasing the string first makes the comparison case-blind."
+  },
+  {
+   "id": "ts-s05-write",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "string-iteration",
+   "prompt": "reverseString(s) returns the characters of s in reverse order. An empty string gives an empty string, and spaces are kept in place. Write it.",
+   "starter": "function reverseString(s: string): string {\n  return s;\n}",
+   "fn": "reverseString",
+   "solution": "function reverseString(s: string): string {\n  return [...s].reverse().join(\"\");\n}",
+   "tests": [
+    {
+     "args": [
+      ""
+     ],
+     "expected": ""
+    },
+    {
+     "args": [
+      "a"
+     ],
+     "expected": "a"
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": "cba"
+    },
+    {
+     "args": [
+      "ab"
+     ],
+     "expected": "ba"
+    },
+    {
+     "args": [
+      "racecar"
+     ],
+     "expected": "racecar"
+    },
+    {
+     "args": [
+      "hello world"
+     ],
+     "expected": "dlrow olleh"
+    },
+    {
+     "args": [
+      "12 34"
+     ],
+     "expected": "43 21"
+    }
+   ],
+   "explanation": "Spreading the string gives one entry per character, reverse() flips the order, and join(\"\") turns the characters back into one string."
+  },
+  {
+   "id": "ts-s06-fix",
+   "node": "stage-06",
+   "type": "fix_bug",
+   "concept": "empty-reduce",
+   "prompt": "maxOrZero(xs) returns the largest number in xs, and 0 when xs is empty. Calling it on an empty array currently crashes. Fix it.",
+   "code": "function maxOrZero(xs: number[]): number {\n  return xs.reduce((m, x) => (x > m ? x : m));\n}",
+   "fn": "maxOrZero",
+   "solution": "function maxOrZero(xs: number[]): number {\n  if (xs.length === 0) return 0;\n  return xs.reduce((m, x) => (x > m ? x : m));\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       1,
+       9,
+       3
+      ]
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       -4,
+       -2,
+       -7
+      ]
+     ],
+     "expected": -2
+    },
+    {
+     "args": [
+      [
+       0
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       3,
+       3,
+       3
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       -1,
+       0,
+       -5
+      ]
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "reduce with no initial value throws a TypeError on an empty array. The empty case must be handled before calling it."
+  },
+  {
+   "id": "ts-s06-write",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "array-slicing",
+   "prompt": "rotateLeft(xs, k) returns a new array that starts at index k of xs and then wraps around to the beginning. k is between 0 and the array length. The input array must not be changed. Write it.",
+   "starter": "function rotateLeft(xs: number[], k: number): number[] {\n  return xs;\n}",
+   "fn": "rotateLeft",
+   "solution": "function rotateLeft(xs: number[], k: number): number[] {\n  return [...xs.slice(k), ...xs.slice(0, k)];\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      1
+     ],
+     "expected": [
+      2,
+      3,
+      4,
+      5,
+      1
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      0
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      3
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       7
+      ],
+      1
+     ],
+     "expected": [
+      7
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3,
+       4
+      ],
+      2
+     ],
+     "expected": [
+      3,
+      4,
+      1,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       5,
+       6
+      ],
+      1
+     ],
+     "expected": [
+      6,
+      5
+     ]
+    }
+   ],
+   "explanation": "slice(k) takes the tail from k onward and slice(0, k) takes the head. Joining them in that order gives the rotation, and slice copies so the input is untouched."
+  },
+  {
+   "id": "ts-s07-fix",
+   "node": "stage-07",
+   "type": "fix_bug",
+   "concept": "map-default-count",
+   "prompt": "countOf(words, target) returns how many times target appears in words. Each repeat should add one to the count, but the running count never grows past one. Fix it.",
+   "code": "function countOf(words: string[], target: string): number {\n  const m = new Map<string, number>();\n  for (const w of words) {\n    m.set(w, m.get(w) ?? 0 + 1);\n  }\n  return m.get(target) ?? 0;\n}",
+   "fn": "countOf",
+   "solution": "function countOf(words: string[], target: string): number {\n  const m = new Map<string, number>();\n  for (const w of words) {\n    m.set(w, (m.get(w) ?? 0) + 1);\n  }\n  return m.get(target) ?? 0;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "a"
+      ],
+      "a"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "a"
+      ],
+      "b"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [],
+      "x"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       "x",
+       "x",
+       "x"
+      ],
+      "x"
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       "a",
+       "b",
+       "c"
+      ],
+      "c"
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       "q",
+       "q"
+      ],
+      "q"
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       "z",
+       "y",
+       "z",
+       "z"
+      ],
+      "z"
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "?? binds looser than +, so m.get(w) ?? 0 + 1 is m.get(w) ?? 1. An existing count is kept as is instead of being incremented. The sum must be parenthesised before ??."
+  },
+  {
+   "id": "ts-s07-write",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "frequency-map",
+   "prompt": "mostCommon(xs) returns the number that appears most often in xs. When two numbers tie, return the one that appears first in xs. Write it, and assume xs is not empty.",
+   "starter": "function mostCommon(xs: number[]): number {\n  return xs[0];\n}",
+   "fn": "mostCommon",
+   "solution": "function mostCommon(xs: number[]): number {\n  const counts = new Map<number, number>();\n  for (const x of xs) counts.set(x, (counts.get(x) ?? 0) + 1);\n  let best = xs[0];\n  for (const [value, n] of counts) {\n    if (n > (counts.get(best) ?? 0)) best = value;\n  }\n  return best;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       2,
+       3
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       1,
+       2
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       3,
+       3,
+       4,
+       4,
+       4,
+       3
+      ]
+     ],
+     "expected": 3
+    },
+    {
+     "args": [
+      [
+       7,
+       8,
+       8,
+       9,
+       9,
+       9
+      ]
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       -1,
+       -1,
+       -2
+      ]
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       4,
+       5,
+       6,
+       5
+      ]
+     ],
+     "expected": 5
+    }
+   ],
+   "explanation": "A Map keeps its keys in first-insertion order, and the comparison is strict, so an earlier number wins a tie."
+  },
+  {
+   "id": "ts-s08-fix",
+   "node": "stage-08",
+   "type": "fix_bug",
+   "concept": "set-dedupe",
+   "prompt": "commonItems(a, b) returns each number from a that also appears in b, with no repeats, in the order they first appear in a. Repeated numbers in a are being kept. Fix it.",
+   "code": "function commonItems(a: number[], b: number[]): number[] {\n  return a.filter((x) => b.includes(x));\n}",
+   "fn": "commonItems",
+   "solution": "function commonItems(a: number[], b: number[]): number[] {\n  const inB = new Set(b);\n  return [...new Set(a.filter((x) => inB.has(x)))];\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       2,
+       3,
+       4
+      ]
+     ],
+     "expected": [
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       2
+      ],
+      [
+       1
+      ]
+     ],
+     "expected": [
+      1
+     ]
+    },
+    {
+     "args": [
+      [],
+      [
+       1
+      ]
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       5,
+       5,
+       5
+      ],
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       4,
+       2,
+       4,
+       2
+      ],
+      [
+       2,
+       4
+      ]
+     ],
+     "expected": [
+      4,
+      2
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2
+      ],
+      [
+       3
+      ]
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       7,
+       8,
+       7
+      ],
+      [
+       8,
+       7
+      ]
+     ],
+     "expected": [
+      7,
+      8
+     ]
+    }
+   ],
+   "explanation": "filter keeps every match, including repeats. Passing the filtered values through a Set removes the repeats while keeping first-seen order."
+  },
+  {
+   "id": "ts-s08-write",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "sorted-union",
+   "prompt": "unionSorted(a, b) returns the distinct numbers found in either array, sorted from smallest to largest. Write it.",
+   "starter": "function unionSorted(a: number[], b: number[]): number[] {\n  return [...a, ...b];\n}",
+   "fn": "unionSorted",
+   "solution": "function unionSorted(a: number[], b: number[]): number[] {\n  return [...new Set([...a, ...b])].sort((x, y) => x - y);\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       3,
+       1
+      ],
+      [
+       2,
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "args": [
+      [],
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       5
+      ],
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       10,
+       2
+      ],
+      [
+       1
+      ]
+     ],
+     "expected": [
+      1,
+      2,
+      10
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       0
+      ],
+      [
+       0,
+       -2
+      ]
+     ],
+     "expected": [
+      -2,
+      -1,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       4,
+       4,
+       4
+      ],
+      []
+     ],
+     "expected": [
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       9,
+       8,
+       7
+      ],
+      [
+       6,
+       5,
+       4
+      ]
+     ],
+     "expected": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   ],
+   "explanation": "A Set removes duplicates across both arrays, and sort with x - y compares numbers numerically rather than as strings."
+  },
+  {
+   "id": "ts-s09-fix",
+   "node": "stage-09",
+   "type": "fix_bug",
+   "concept": "nested-spread",
+   "prompt": "setCity(person, city) returns a copy of person with only the city changed. The zip code inside address must be kept. The copy currently loses it. Fix it.",
+   "code": "function setCity(person: { name: string; address: { city: string; zip: string } }, city: string) {\n  return { ...person, address: { city } };\n}",
+   "fn": "setCity",
+   "solution": "function setCity(person: { name: string; address: { city: string; zip: string } }, city: string) {\n  return { ...person, address: { ...person.address, city } };\n}",
+   "tests": [
+    {
+     "args": [
+      {
+       "name": "Ada",
+       "address": {
+        "city": "Paris",
+        "zip": "75"
+       }
+      },
+      "Rome"
+     ],
+     "expected": {
+      "name": "Ada",
+      "address": {
+       "city": "Rome",
+       "zip": "75"
+      }
+     }
+    },
+    {
+     "args": [
+      {
+       "name": "Lin",
+       "address": {
+        "city": "Oslo",
+        "zip": "0150"
+       }
+      },
+      "Oslo"
+     ],
+     "expected": {
+      "name": "Lin",
+      "address": {
+       "city": "Oslo",
+       "zip": "0150"
+      }
+     }
+    },
+    {
+     "args": [
+      {
+       "name": "Kay",
+       "address": {
+        "city": "",
+        "zip": ""
+       }
+      },
+      "Bern"
+     ],
+     "expected": {
+      "name": "Kay",
+      "address": {
+       "city": "Bern",
+       "zip": ""
+      }
+     }
+    },
+    {
+     "args": [
+      {
+       "name": "Sam",
+       "address": {
+        "city": "Lima",
+        "zip": "15001"
+       }
+      },
+      "Quito"
+     ],
+     "expected": {
+      "name": "Sam",
+      "address": {
+       "city": "Quito",
+       "zip": "15001"
+      }
+     }
+    },
+    {
+     "args": [
+      {
+       "name": "Ola",
+       "address": {
+        "city": "Kyiv",
+        "zip": "01001"
+       }
+      },
+      "Kyiv"
+     ],
+     "expected": {
+      "name": "Ola",
+      "address": {
+       "city": "Kyiv",
+       "zip": "01001"
+      }
+     }
+    },
+    {
+     "args": [
+      {
+       "name": "Ina",
+       "address": {
+        "city": "A",
+        "zip": "9"
+       }
+      },
+      "B"
+     ],
+     "expected": {
+      "name": "Ina",
+      "address": {
+       "city": "B",
+       "zip": "9"
+      }
+     }
+    }
+   ],
+   "explanation": "Spreading person copies the top level, but the new address object replaces the old one entirely. Spreading person.address first keeps the zip, and city then overrides only the city."
+  },
+  {
+   "id": "ts-s09-write",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "object-array-total",
+   "prompt": "totalScore(players) adds up the score field of every player object in the array. An empty array gives 0. Write it.",
+   "starter": "function totalScore(players: { score: number }[]): number {\n  return 0;\n}",
+   "fn": "totalScore",
+   "solution": "function totalScore(players: { score: number }[]): number {\n  return players.reduce((sum, p) => sum + p.score, 0);\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       {
+        "score": 5
+       }
+      ]
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      [
+       {
+        "score": 1
+       },
+       {
+        "score": 2
+       },
+       {
+        "score": 3
+       }
+      ]
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      [
+       {
+        "score": -4
+       },
+       {
+        "score": 4
+       }
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       {
+        "score": 0
+       },
+       {
+        "score": 0
+       }
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       {
+        "score": 10
+       },
+       {
+        "score": -3
+       },
+       {
+        "score": 2
+       }
+      ]
+     ],
+     "expected": 9
+    },
+    {
+     "args": [
+      [
+       {
+        "score": 7
+       }
+      ]
+     ],
+     "expected": 7
+    }
+   ],
+   "explanation": "reduce with an initial value of 0 returns 0 for an empty array and adds each player's score otherwise."
+  },
+  {
+   "id": "ts-s10-fix",
+   "node": "stage-10",
+   "type": "fix_bug",
+   "concept": "empty-string-coercion",
+   "prompt": "parsePercent(s) returns the whole number in s when it is between 0 and 100 inclusive, and -1 for anything else, including blank text. Blank text currently returns 0. Fix it.",
+   "code": "function parsePercent(s: string): number {\n  const n = Number(s);\n  return Number.isInteger(n) && n >= 0 && n <= 100 ? n : -1;\n}",
+   "fn": "parsePercent",
+   "solution": "function parsePercent(s: string): number {\n  if (s.trim() === \"\") return -1;\n  const n = Number(s);\n  return Number.isInteger(n) && n >= 0 && n <= 100 ? n : -1;\n}",
+   "tests": [
+    {
+     "args": [
+      "50"
+     ],
+     "expected": 50
+    },
+    {
+     "args": [
+      "0"
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      "100"
+     ],
+     "expected": 100
+    },
+    {
+     "args": [
+      "101"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "-1"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "abc"
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      ""
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "   "
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      "7.5"
+     ],
+     "expected": -1
+    }
+   ],
+   "explanation": "Number(\"\") and Number(\"   \") both return 0, which is a valid integer in range. Blank text must be rejected before the conversion."
+  },
+  {
+   "id": "ts-s10-write",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "null-failure-value",
+   "prompt": "checkedDivide(a, b) returns a divided by b. When b is 0 there is no answer, so it returns null instead of Infinity. Write it.",
+   "starter": "function checkedDivide(a: number, b: number): number | null {\n  return a;\n}",
+   "fn": "checkedDivide",
+   "solution": "function checkedDivide(a: number, b: number): number | null {\n  if (b === 0) return null;\n  return a / b;\n}",
+   "tests": [
+    {
+     "args": [
+      10,
+      2
+     ],
+     "expected": 5
+    },
+    {
+     "args": [
+      7,
+      2
+     ],
+     "expected": 3.5
+    },
+    {
+     "args": [
+      1,
+      0
+     ],
+     "expected": null
+    },
+    {
+     "args": [
+      0,
+      5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      -9,
+      3
+     ],
+     "expected": -3
+    },
+    {
+     "args": [
+      5,
+      0
+     ],
+     "expected": null
+    },
+    {
+     "args": [
+      0,
+      0
+     ],
+     "expected": null
+    }
+   ],
+   "explanation": "Dividing by zero in JavaScript gives Infinity, not an error. Returning null when the divisor is zero makes the no-answer case explicit for the caller."
+  },
+  {
+   "id": "ts-s11-fix",
+   "node": "stage-11",
+   "type": "fix_bug",
+   "concept": "zero-base-case",
+   "prompt": "factorial(n) returns n multiplied by every whole number below it, and factorial(0) is 1. The recursion only stops at 1, so zero makes it run forever. Fix it.",
+   "code": "function factorial(n: number): number {\n  if (n === 1) return 1;\n  return n * factorial(n - 1);\n}",
+   "fn": "factorial",
+   "solution": "function factorial(n: number): number {\n  if (n <= 1) return 1;\n  return n * factorial(n - 1);\n}",
+   "tests": [
+    {
+     "args": [
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      1
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      3
+     ],
+     "expected": 6
+    },
+    {
+     "args": [
+      5
+     ],
+     "expected": 120
+    },
+    {
+     "args": [
+      10
+     ],
+     "expected": 3628800
+    }
+   ],
+   "explanation": "With n of 0 the call goes to -1, -2 and so on, never reaching the base case, so the stack overflows. Stopping at n <= 1 covers zero too."
+  },
+  {
+   "id": "ts-s11-write",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "power-recursion",
+   "prompt": "power(base, exp) returns base raised to exp, for a non-negative whole number exp. It is defined by recursion, with exp of 0 giving 1. Write it.",
+   "starter": "function power(base: number, exp: number): number {\n  return 0;\n}",
+   "fn": "power",
+   "solution": "function power(base: number, exp: number): number {\n  if (exp === 0) return 1;\n  return base * power(base, exp - 1);\n}",
+   "tests": [
+    {
+     "args": [
+      2,
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      2,
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      2,
+      10
+     ],
+     "expected": 1024
+    },
+    {
+     "args": [
+      3,
+      3
+     ],
+     "expected": 27
+    },
+    {
+     "args": [
+      5,
+      0
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      10,
+      4
+     ],
+     "expected": 10000
+    },
+    {
+     "args": [
+      0,
+      3
+     ],
+     "expected": 0
+    }
+   ],
+   "explanation": "The base case exp of 0 stops the recursion. Each call multiplies by base once and reduces exp by one."
+  },
+  {
+   "id": "ts-s12-fix",
+   "node": "stage-12",
+   "type": "fix_bug",
+   "concept": "prefix-sums",
+   "prompt": "prefixSums(xs) returns an array where entry i is the sum of xs[0] through xs[i]. Each entry is currently missing its own number. Fix it.",
+   "code": "function prefixSums(xs: number[]): number[] {\n  const out: number[] = [];\n  let acc = 0;\n  for (const x of xs) {\n    out.push(acc);\n    acc += x;\n  }\n  return out;\n}",
+   "fn": "prefixSums",
+   "solution": "function prefixSums(xs: number[]): number[] {\n  const out: number[] = [];\n  let acc = 0;\n  for (const x of xs) {\n    acc += x;\n    out.push(acc);\n  }\n  return out;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": []
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": [
+      5
+     ]
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ]
+     ],
+     "expected": [
+      1,
+      3,
+      6
+     ]
+    },
+    {
+     "args": [
+      [
+       -1,
+       1
+      ]
+     ],
+     "expected": [
+      -1,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ]
+     ],
+     "expected": [
+      0,
+      0
+     ]
+    },
+    {
+     "args": [
+      [
+       4,
+       -4,
+       4
+      ]
+     ],
+     "expected": [
+      4,
+      0,
+      4
+     ]
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       2,
+       2
+      ]
+     ],
+     "expected": [
+      2,
+      4,
+      6,
+      8
+     ]
+    }
+   ],
+   "explanation": "The buggy loop pushes the total before adding the current number, so each entry leaves it out. Adding first and then pushing builds the prefix in one O(n) pass."
+  },
+  {
+   "id": "ts-s12-write",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "complement-lookup",
+   "prompt": "hasPairWithSum(xs, target) returns true when two different positions in xs hold numbers that add up to target, and false otherwise. Use one pass with a Set of the numbers already seen, so it runs in O(n) time. A single number cannot pair with itself. Write it.",
+   "starter": "function hasPairWithSum(xs: number[], target: number): boolean {\n  return false;\n}",
+   "fn": "hasPairWithSum",
+   "solution": "function hasPairWithSum(xs: number[], target: number): boolean {\n  const seen = new Set<number>();\n  for (const x of xs) {\n    if (seen.has(target - x)) return true;\n    seen.add(x);\n  }\n  return false;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      5
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       3
+      ],
+      7
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       4
+      ],
+      8
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       4,
+       4
+      ],
+      8
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       -1,
+       1
+      ],
+      0
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      [
+       3,
+       1,
+       5
+      ],
+      6
+     ],
+     "expected": true
+    }
+   ],
+   "explanation": "For each number, its partner is target minus that number. If the partner was seen earlier, the pair exists. Checking before adding stops a number from pairing with itself."
   }
  ]
 }
