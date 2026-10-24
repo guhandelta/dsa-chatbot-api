@@ -16,3 +16,9 @@ import_times.log
 # Training corpora are kept outside the repository (see ../private-corpora)
 docs/training-corpora/
 docs/curriculum/*-debug-exercises.md
+
+# Knowledge base: training data only, never committed (built locally from private-corpora)
+data/reference_library/
+data/debug/knowledge-base.json
+data/curriculum/*.jsonl
+data/curriculum/manifest.json
