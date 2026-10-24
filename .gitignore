@@ -12,3 +12,7 @@ import_times.log
 .pytest_cache/
 .vscode/
 .patch_code_runner.py
+
+# Training corpora are kept outside the repository (see ../private-corpora)
+docs/training-corpora/
+docs/curriculum/*-debug-exercises.md
