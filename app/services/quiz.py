@@ -37,6 +37,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.db.models import QuizAnswer, QuizSession, User
+from app.services.assessment_contract import normalize_item
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ def _authored(language: str, version) -> tuple[dict, ...]:
     data = json.loads(Path(version[0]).read_text(encoding="utf-8"))
     if data.get("language") != language:
         raise ValueError(f"Quiz bank language does not match {language}")
-    return tuple({**item, "language": language, "source": "authored",
+    return tuple({**normalize_item(item, language=language), "language": language, "source": "authored",
                   "node_id": f"{language}:{item['node']}"} for item in data["items"])
 
 
