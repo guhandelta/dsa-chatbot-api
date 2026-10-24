@@ -101,7 +101,7 @@ class Settings(BaseSettings):
     # Quiz answers are free; these hourly caps bound grading and execution cost.
     # Sized so one sitting can finish the largest path (see tests/test_learning_path_walkthrough.py).
     quiz_answers_per_hour: int = 300
-    quiz_code_runs_per_hour: int = 60
+    quiz_code_runs_per_hour: int = 100
 
     # Stripe — checkout is hosted by Stripe; no card data reaches this server
     stripe_webhook_secret: str = ""
