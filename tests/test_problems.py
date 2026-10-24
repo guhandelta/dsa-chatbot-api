@@ -21,7 +21,7 @@ async def test_list_problems_returns_catalog(client, problem_headers):
 async def test_get_single_problem_markdown(client, problem_headers):
     r = await client.get("/problems/two-sum", headers=problem_headers)
     assert r.status_code == 200
-    assert "Two Sum" in r.json()["markdown"]
+    assert "Find a Pair That Sums to a Target" in r.json()["markdown"]
 
 
 async def test_unknown_problem_404(client, problem_headers):

@@ -123,7 +123,7 @@ async def test_explain_without_a_takeaway_saves_no_note_and_honours_focus(client
     model.replies = ['Plain answer.']
     headers, _ = await register(client, db, 'focus@example.com')
     r = await client.post('/study/message', headers=headers, json=ask(focus_id='two-sum'))
-    assert r.json()['focus'] == {'kind': 'problem', 'id': 'two-sum', 'title': 'Two Sum (LC 1)', 'auto': False}
+    assert r.json()['focus'] == {'kind': 'problem', 'id': 'two-sum', 'title': 'Find a Pair That Sums to a Target', 'auto': False}
     assert r.json()['note_id'] is None and 'takeaway' not in r.json()
     node = await client.post('/study/message', headers=headers, json=ask(focus_id='python:module-dataclasses'))
     assert node.json()['focus']['id'] == 'python:module-dataclasses'

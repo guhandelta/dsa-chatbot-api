@@ -1,85 +1,132 @@
 ---
 track: dsa
 difficulty: Easy
-source: leetcode
+source: authored
 io_mode: function
 algorithms: bit-manipulation, dynamic-programming
 fn_python: count_bits
 fn_javascript: countBits
-test_cases: [{"args": [2], "expected": [0, 1, 1]}, {"args": [5], "expected": [0, 1, 1, 2, 1, 2]}, {"args": [0], "expected": [0]}, {"args": [1], "expected": [0, 1]}, {"args": [8], "expected": [0, 1, 1, 2, 1, 2, 2, 3, 1]}, {"args": [3], "expected": [0, 1, 1, 2]}]
+fn_typescript: countBits
+fn_java: countBits
+fn_cpp: countBits
+fn_c: countBits
+fn_rust: count_bits
+fn_go: countBits
+fn_csharp: CountBits
+fn_ruby: count_bits
+test_cases: [{"args": [0], "expected": [0]}, {"args": [1], "expected": [0, 1]}, {"args": [4], "expected": [0, 1, 1, 2, 1]}, {"args": [7], "expected": [0, 1, 1, 2, 1, 2, 2, 3]}, {"args": [9], "expected": [0, 1, 1, 2, 1, 2, 2, 3, 1, 2]}, {"args": [10], "expected": [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2]}, {"args": [12], "expected": [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2]}, {"args": [15], "expected": [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4]}]
 ---
-# Counting Bits (LC 338) — Easy — DP, Bit Manipulation
+# Set-Bit Counts Up to a Limit — Easy — DP, Bit Manipulation
 
 ## Problem
-For every i in [0, n], compute the number of 1 bits in i. Return the array. Aim for O(n).
+Given a non-negative integer `limit`, return a list whose entry at index i, for every i from 0 through `limit` inclusive, is the number of 1 bits in the binary form of i. The list therefore has `limit + 1` entries. Aim for O(limit) time.
 
 ## Example
-n = 5 → [0,1,1,2,1,2]
+limit = 6 → [0,1,1,2,1,2,2]
 
 ## Approach
-DP: bits(i) = bits(i >> 1) + (i & 1) — shifting right drops the last bit, which contributes (i & 1). Time O(n), space O(n) output.
+Build the answer from left to right. The count for i equals the count for i shifted right by one (that is, i with its lowest bit removed) plus the lowest bit of i itself. Each value is looked up from an earlier entry, so the whole table takes O(limit) time and O(limit) space for the output.
 
 ## Hints
-- Relate i to i >> 1 (already computed).
-- Alternative recurrence: bits(i) = bits(i & (i-1)) + 1.
+- Shifting i right by one drops its lowest bit, and the lowest bit contributes 0 or 1 to the count.
+- An alternative: the count for i equals the count for (i AND (i - 1)) plus 1.
 
 ## Solutions
-*Conventions: C++ assumes `<bits/stdc++.h>` + `using namespace std;`. Java code sits in `class Solution` with `import java.util.*;`. Rust functions go inside `impl Solution` on LeetCode.*
+*Conventions: C++ code uses `std::`-qualified names. Java methods sit inside `class Solution` with `import java.util.*;`. Rust functions are free functions. C returns a heap array and writes its length to `returnSize`.*
 
 ### Python
 ```python
-def count_bits(n):
-    dp = [0] * (n + 1)
-    for i in range(1, n + 1):
-        dp[i] = dp[i >> 1] + (i & 1)
-    return dp
+def count_bits(limit):
+    ones = [0] * (limit + 1)
+    for i in range(1, limit + 1):
+        ones[i] = ones[i >> 1] + (i & 1)
+    return ones
 ```
 
 ### JavaScript
 ```javascript
-function countBits(n) {
-  const dp = new Array(n + 1).fill(0);
-  for (let i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
-  return dp;
+function countBits(limit) {
+  const ones = new Array(limit + 1).fill(0);
+  for (let i = 1; i <= limit; i++) ones[i] = ones[i >> 1] + (i & 1);
+  return ones;
+}
+```
+
+### TypeScript
+```typescript
+function countBits(limit: number): number[] {
+  const ones: number[] = new Array(limit + 1).fill(0);
+  for (let i = 1; i <= limit; i++) ones[i] = ones[i >> 1] + (i & 1);
+  return ones;
 }
 ```
 
 ### Java
 ```java
-public int[] countBits(int n) {
-    int[] dp = new int[n + 1];
-    for (int i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
-    return dp;
+public int[] countBits(int limit) {
+    int[] ones = new int[limit + 1];
+    for (int i = 1; i <= limit; i++) ones[i] = ones[i >> 1] + (i & 1);
+    return ones;
 }
 ```
 
 ### C++
 ```cpp
-vector<int> countBits(int n) {
-    vector<int> dp(n + 1, 0);
-    for (int i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
-    return dp;
+std::vector<int> countBits(int limit) {
+    std::vector<int> ones(limit + 1, 0);
+    for (int i = 1; i <= limit; i++) ones[i] = ones[i >> 1] + (i & 1);
+    return ones;
 }
 ```
 
 ### C
 ```c
-int* countBits(int n, int* returnSize) {
-    int* dp = calloc(n + 1, sizeof(int));
-    *returnSize = n + 1;
-    for (int i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
-    return dp;
+int* countBits(int limit, int* returnSize) {
+    int* ones = calloc(limit + 1, sizeof(int));
+    *returnSize = limit + 1;
+    for (int i = 1; i <= limit; i++) ones[i] = ones[i >> 1] + (i & 1);
+    return ones;
 }
 ```
 
 ### Rust
 ```rust
-pub fn count_bits(n: i32) -> Vec<i32> {
-    let n = n as usize;
-    let mut dp = vec![0; n + 1];
-    for i in 1..=n {
-        dp[i] = dp[i >> 1] + (i as i32 & 1);
+pub fn count_bits(limit: i32) -> Vec<i32> {
+    let top = limit as usize;
+    let mut ones = vec![0; top + 1];
+    for i in 1..=top {
+        ones[i] = ones[i >> 1] + ((i & 1) as i32);
     }
-    dp
+    ones
 }
+```
+
+### Go
+```go
+func countBits(limit int) []int {
+	ones := make([]int, limit+1)
+	for i := 1; i <= limit; i++ {
+		ones[i] = ones[i>>1] + (i & 1)
+	}
+	return ones
+}
+```
+
+### C#
+```csharp
+public static int[] CountBits(int limit)
+{
+    int[] ones = new int[limit + 1];
+    for (int i = 1; i <= limit; i++) ones[i] = ones[i >> 1] + (i & 1);
+    return ones;
+}
+```
+
+### Ruby
+```ruby
+def count_bits(limit)
+  ones = Array.new(limit + 1, 0)
+  (1..limit).each { |i| ones[i] = ones[i >> 1] + (i & 1) }
+  ones
+end
 ```

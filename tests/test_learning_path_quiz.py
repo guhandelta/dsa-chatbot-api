@@ -66,7 +66,7 @@ def test_practice_set_matches_the_learners_level(monkeypatch):
     stage = lp.SPINE[0]
     assert {p['difficulty'] for p in lp.practice_set(stage)} == {'Easy'}
     stretch = lp.practice_set(stage, 'L2')
-    assert {'id': 'sum-of-two-integers', 'title': 'Sum of Two Integers (LC 371)', 'difficulty': 'Medium',
+    assert {'id': 'sum-of-two-integers', 'title': 'Add Two Integers With Bit Operations Only', 'difficulty': 'Medium',
             'role': 'stretch'} in stretch
     assert all(p['role'] == 'apply' for p in stretch if p['difficulty'] == 'Easy')
     ghost = lp.Stage(1, 'values', 'Values', 'L1', (), ('no-such-problem', 'two-sum'))

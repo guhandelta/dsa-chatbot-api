@@ -54,7 +54,7 @@ Checking the formula on the example (rows = 2, cols = 3): output index 0 (i = 0,
 - Test a non-square case, such as 2×4 or 4×1. Mixing up `rows` and `cols` only shows up there.
 
 ## Solutions
-*Conventions: C++ assumes `<bits/stdc++.h>` + `using namespace std;`. Java code sits in `class Solution` with `import java.util.*;`. Rust functions go inside `impl Solution` on LeetCode. C returns a heap array and writes its length to `returnSize`.*
+*Conventions: C++ assumes `<bits/stdc++.h>` + `using namespace std;`. Java code sits in `class Solution` with `import java.util.*;`. Rust functions go inside `impl Solution`. C returns a heap array and writes its length to `returnSize`.*
 
 ### Python
 ```python

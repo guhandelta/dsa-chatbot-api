@@ -1,92 +1,156 @@
 ---
 track: dsa
 difficulty: Easy
-source: leetcode
+source: authored
 io_mode: function
 algorithms: bit-manipulation
 fn_python: hamming_weight
 fn_javascript: hammingWeight
-test_cases: [{"args": [11], "expected": 3}, {"args": [128], "expected": 1}, {"args": [0], "expected": 0}, {"args": [4294967293], "expected": 31}, {"args": [1], "expected": 1}, {"args": [255], "expected": 8}]
+fn_typescript: hammingWeight
+fn_java: hammingWeight
+fn_cpp: hammingWeight
+fn_c: hammingWeight
+fn_rust: hamming_weight
+fn_go: hammingWeight
+fn_csharp: HammingWeight
+fn_ruby: hamming_weight
+test_cases: [{"args": [0], "expected": 0}, {"args": [4294967295], "expected": 32}, {"args": [2], "expected": 1}, {"args": [6], "expected": 2}, {"args": [1024], "expected": 1}, {"args": [3000000000], "expected": 12}, {"args": [65535], "expected": 16}, {"args": [1431655765], "expected": 16}, {"args": [2147483648], "expected": 1}, {"args": [43690], "expected": 8}]
 ---
-# Number of 1 Bits (LC 191) — Easy — Bit Manipulation
+# Count the Set Bits in a Word — Easy — Bit Manipulation
 
 ## Problem
-Return the number of set bits (Hamming weight) in the binary representation of an unsigned 32-bit integer in [0, 4294967295]. Java uses `long` to represent the unsigned input.
+Given an integer `value` in the range 0 through 4294967295, read it as an unsigned 32-bit number and return how many bits of its binary representation are 1. Java receives the input as a `long` so that the full unsigned range is representable.
 
 ## Example
-n = 11 (1011) → 3
+value = 100 (binary 1100100) → 3
 
 ## Approach
-n & (n - 1) clears the lowest set bit; loop until zero, counting iterations. Runs once per set bit. Time O(k) where k = popcount.
+Use the fact that subtracting 1 from a number flips its lowest set bit and every bit below it. Doing a bitwise AND of the number with one less than itself therefore removes exactly one set bit. Repeat until the value becomes zero and count the steps. The loop runs once per set bit, so the time is O(k), where k is the number of set bits.
 
 ## Hints
-- Subtracting 1 flips the lowest set bit and everything below it.
-- Most languages also expose a builtin popcount.
+- What does value AND (value - 1) do to the lowest set bit?
+- Most languages also provide a built-in bit-count function, but the loop is the point of this exercise.
 
 ## Solutions
-*Conventions: C++ assumes `<bits/stdc++.h>` + `using namespace std;`. Java code sits in `class Solution` with `import java.util.*;`. Rust functions go inside `impl Solution` on LeetCode.*
+*Conventions: C++ code uses `std::`-qualified names. Java methods sit inside `class Solution` with `import java.util.*;`. Rust functions are free functions.*
 
 ### Python
 ```python
-def hamming_weight(n):
-    count = 0
-    while n:
-        n &= n - 1
-        count += 1
-    return count
+def hamming_weight(value):
+    ones = 0
+    while value:
+        value &= value - 1
+        ones += 1
+    return ones
 ```
 
 ### JavaScript
 ```javascript
-function hammingWeight(n) {
-  let count = 0;
-  while (n !== 0) {
-    n &= n - 1;
-    count++;
+function hammingWeight(value) {
+  let ones = 0;
+  while (value !== 0) {
+    value &= value - 1;
+    ones++;
   }
-  return count;
+  return ones;
+}
+```
+
+### TypeScript
+```typescript
+function hammingWeight(value: number): number {
+  let ones = 0;
+  while (value !== 0) {
+    value &= value - 1;
+    ones++;
+  }
+  return ones;
 }
 ```
 
 ### Java
 ```java
-public int hammingWeight(long n) {
-    int count = 0;
-    while (n != 0) {
-        n &= n - 1;
-        count++;
+public int hammingWeight(long value) {
+    int ones = 0;
+    while (value != 0) {
+        value &= value - 1;
+        ones++;
     }
-    return count;
+    return ones;
 }
 ```
 
 ### C++
 ```cpp
-int hammingWeight(uint32_t n) {
-    int count = 0;
-    while (n) {
-        n &= n - 1;
-        count++;
+int hammingWeight(uint32_t value) {
+    int ones = 0;
+    while (value) {
+        value &= value - 1;
+        ones++;
     }
-    return count;
+    return ones;
 }
 ```
 
 ### C
 ```c
-int hammingWeight(uint32_t n) {
-    int count = 0;
-    while (n) {
-        n &= n - 1;
-        count++;
+int hammingWeight(unsigned int value) {
+    int ones = 0;
+    while (value) {
+        value &= value - 1;
+        ones++;
     }
-    return count;
+    return ones;
 }
 ```
 
 ### Rust
 ```rust
-pub fn hamming_weight(n: u32) -> i32 {
-    n.count_ones() as i32   // or the n &= n-1 loop
+pub fn hamming_weight(value: i64) -> i64 {
+    let mut v = value;
+    let mut ones = 0;
+    while v != 0 {
+        v &= v - 1;
+        ones += 1;
+    }
+    ones
 }
+```
+
+### Go
+```go
+func hammingWeight(value uint32) int {
+	ones := 0
+	for value != 0 {
+		value &= value - 1
+		ones++
+	}
+	return ones
+}
+```
+
+### C#
+```csharp
+public static int HammingWeight(uint value)
+{
+    int ones = 0;
+    while (value != 0)
+    {
+        value &= value - 1;
+        ones++;
+    }
+    return ones;
+}
+```
+
+### Ruby
+```ruby
+def hamming_weight(value)
+  ones = 0
+  while value != 0
+    value &= value - 1
+    ones += 1
+  end
+  ones
+end
 ```

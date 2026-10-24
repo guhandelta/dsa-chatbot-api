@@ -66,4 +66,4 @@ async def test_dsa_tips_use_unique_passing_problems_in_selected_language(client,
     tips = await guidance(db, uid, 'javascript')
     assert tips['strengths'][0]['title'] == 'Build on DSA: arrays'
     assert '3 distinct' in tips['strengths'][0]['evidence']
-    assert any(t['title'].startswith('Revisit Best Time') for t in tips['focus'])
+    assert any(t['title'].startswith('Revisit Largest Gain from One Trade') for t in tips['focus'])

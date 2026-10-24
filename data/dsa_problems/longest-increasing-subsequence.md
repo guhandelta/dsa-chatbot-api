@@ -1,127 +1,220 @@
 ---
 track: dsa
 difficulty: Medium
-source: leetcode
+source: authored
 io_mode: function
 algorithms: binary-search, dynamic-programming
 fn_python: length_of_lis
 fn_javascript: lengthOfLIS
-test_cases: [{"args": [[10, 9, 2, 5, 3, 7, 101, 18]], "expected": 4}, {"args": [[0, 1, 0, 3, 2, 3]], "expected": 4}, {"args": [[7, 7, 7, 7, 7]], "expected": 1}, {"args": [[1]], "expected": 1}, {"args": [[3, 2, 1]], "expected": 1}, {"args": [[1, 2, 3]], "expected": 3}]
+fn_typescript: lengthOfLIS
+fn_java: lengthOfLIS
+fn_cpp: lengthOfLIS
+fn_c: lengthOfLIS
+fn_rust: length_of_lis
+fn_go: lengthOfLIS
+fn_csharp: LengthOfLIS
+fn_ruby: length_of_lis
+test_cases: [{"args": [[4]], "expected": 1}, {"args": [[2, 2, 2, 3, 3, 3]], "expected": 2}, {"args": [[6, 1, 8, 2, 9, 3, 10]], "expected": 4}, {"args": [[-1, 0, -2, 5, -3, 6, 7]], "expected": 5}, {"args": [[1000000000, -1000000000, 0, 1, 999999999]], "expected": 4}, {"args": [[0, 0, 0, 0, 0]], "expected": 1}, {"args": [[1, 2, 3, 4, 5, 6, 7, 8]], "expected": 8}, {"args": [[8, 6, 4, 2, 9, 1, 7, 3, 5]], "expected": 3}]
 ---
-# Longest Increasing Subsequence (LC 300) — Medium — DP, Binary Search
+# Longest Strictly Rising Subsequence — Medium — DP, Binary Search
 
 ## Problem
-Return the length of the longest strictly increasing subsequence of `nums` (elements need not be contiguous).
+You are given a non-empty list `values` of integers. Choose any set of positions and read the chosen values from left to right. The picks form a strictly rising run when each value is greater than the one before it.
+
+Return the largest number of picks that can form a strictly rising run. The picked positions need not be adjacent, and two equal values can never both be picked.
 
 ## Example
-[10,9,2,5,3,7,101,18] → 4 ([2,3,7,101])
+values = [3, 10, 2, 1, 20] → 3 (for example 3, 10, 20)
 
 ## Approach
-Patience sorting: keep `tails`, where tails[k] is the smallest possible tail of an increasing subsequence of length k+1. For each x, binary-search the first tail >= x and replace it (or append). Length of tails is the answer. Time O(n log n), space O(n). (Classic O(n^2) DP also acceptable.)
+Keep a list `ends`, where `ends[k]` is the smallest possible last value of a strictly rising run of length `k + 1` found so far. The list stays sorted. For each new value, binary-search for the first entry that is not smaller than it. Overwrite that entry with the new value, or append the value if no such entry exists. The final length of `ends` is the answer. Time O(n log n), space O(n).
 
 ## Hints
-- tails stays sorted, enabling binary search.
-- Replacing keeps lengths intact while improving future extensibility.
+- Replacing an entry with a smaller value never shortens any run already found, and it leaves room for longer runs later.
+- Search for the first entry that is greater than or equal to the value, because equal values must not extend a run.
 
 ## Solutions
-*Conventions: C++ assumes `<bits/stdc++.h>` + `using namespace std;`. Java code sits in `class Solution` with `import java.util.*;`. Rust functions go inside `impl Solution` on LeetCode.*
+*Conventions: C++ code uses `std::` names and includes the headers it needs. Java code sits in `class Solution` with `import java.util.*;`. Rust functions go inside `impl Solution`.*
 
 ### Python
 ```python
 import bisect
 
 def length_of_lis(nums):
-    tails = []
-    for x in nums:
-        i = bisect.bisect_left(tails, x)
-        if i == len(tails):
-            tails.append(x)
+    ends = []
+    for value in nums:
+        pos = bisect.bisect_left(ends, value)
+        if pos == len(ends):
+            ends.append(value)
         else:
-            tails[i] = x
-    return len(tails)
+            ends[pos] = value
+    return len(ends)
 ```
 
 ### JavaScript
 ```javascript
 function lengthOfLIS(nums) {
-  const tails = [];
-  for (const x of nums) {
-    let lo = 0, hi = tails.length;
-    while (lo < hi) {                 // lower_bound
+  const ends = [];
+  for (const value of nums) {
+    let lo = 0, hi = ends.length;
+    while (lo < hi) {
       const mid = (lo + hi) >> 1;
-      if (tails[mid] < x) lo = mid + 1;
+      if (ends[mid] < value) lo = mid + 1;
       else hi = mid;
     }
-    tails[lo] = x;                    // appends when lo === length
+    ends[lo] = value;
   }
-  return tails.length;
+  return ends.length;
+}
+```
+
+### TypeScript
+```typescript
+function lengthOfLIS(nums: number[]): number {
+  const ends: number[] = [];
+  for (const value of nums) {
+    let lo = 0, hi = ends.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (ends[mid] < value) lo = mid + 1;
+      else hi = mid;
+    }
+    ends[lo] = value;
+  }
+  return ends.length;
 }
 ```
 
 ### Java
 ```java
 public int lengthOfLIS(int[] nums) {
-    int[] tails = new int[nums.length];
-    int size = 0;
-    for (int x : nums) {
-        int lo = 0, hi = size;
+    int[] ends = new int[nums.length];
+    int len = 0;
+    for (int value : nums) {
+        int lo = 0, hi = len;
         while (lo < hi) {
-            int mid = (lo + hi) >>> 1;
-            if (tails[mid] < x) lo = mid + 1;
+            int mid = (lo + hi) / 2;
+            if (ends[mid] < value) lo = mid + 1;
             else hi = mid;
         }
-        tails[lo] = x;
-        if (lo == size) size++;
+        ends[lo] = value;
+        if (lo == len) len++;
     }
-    return size;
+    return len;
 }
 ```
 
 ### C++
 ```cpp
-int lengthOfLIS(vector<int>& nums) {
-    vector<int> tails;
-    for (int x : nums) {
-        auto it = lower_bound(tails.begin(), tails.end(), x);
-        if (it == tails.end()) tails.push_back(x);
-        else *it = x;
+int lengthOfLIS(std::vector<int>& nums) {
+    std::vector<int> ends;
+    for (int value : nums) {
+        auto pos = std::lower_bound(ends.begin(), ends.end(), value);
+        if (pos == ends.end()) ends.push_back(value);
+        else *pos = value;
     }
-    return tails.size();
+    return (int)ends.size();
 }
 ```
 
 ### C
 ```c
-int lengthOfLIS(int* nums, int numsSize) {
-    int* tails = malloc(numsSize * sizeof(int));
-    int size = 0;
+long long lengthOfLIS(long long* nums, int numsSize) {
+    long long* ends = malloc((numsSize > 0 ? numsSize : 1) * sizeof(long long));
+    long long len = 0;
     for (int i = 0; i < numsSize; i++) {
-        int x = nums[i], lo = 0, hi = size;
+        long long lo = 0, hi = len;
         while (lo < hi) {
-            int mid = (lo + hi) / 2;
-            if (tails[mid] < x) lo = mid + 1;
+            long long mid = lo + (hi - lo) / 2;
+            if (ends[mid] < nums[i]) lo = mid + 1;
             else hi = mid;
         }
-        tails[lo] = x;
-        if (lo == size) size++;
+        ends[lo] = nums[i];
+        if (lo == len) len++;
     }
-    free(tails);
-    return size;
+    free(ends);
+    return len;
 }
 ```
 
 ### Rust
 ```rust
 pub fn length_of_lis(nums: Vec<i32>) -> i32 {
-    let mut tails: Vec<i32> = Vec::new();
-    for x in nums {
-        let i = tails.partition_point(|&t| t < x);
-        if i == tails.len() {
-            tails.push(x);
+    let mut ends: Vec<i32> = Vec::new();
+    for value in nums {
+        let pos = ends.partition_point(|&e| e < value);
+        if pos == ends.len() {
+            ends.push(value);
         } else {
-            tails[i] = x;
+            ends[pos] = value;
         }
     }
-    tails.len() as i32
+    ends.len() as i32
 }
+```
+
+### Go
+```go
+func lengthOfLIS(nums []int) int {
+	ends := []int{}
+	for _, value := range nums {
+		lo, hi := 0, len(ends)
+		for lo < hi {
+			mid := (lo + hi) / 2
+			if ends[mid] < value {
+				lo = mid + 1
+			} else {
+				hi = mid
+			}
+		}
+		if lo == len(ends) {
+			ends = append(ends, value)
+		} else {
+			ends[lo] = value
+		}
+	}
+	return len(ends)
+}
+```
+
+### C#
+```csharp
+public static int LengthOfLIS(int[] nums) {
+    List<int> ends = new List<int>();
+    foreach (int value in nums) {
+        int lo = 0, hi = ends.Count;
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (ends[mid] < value) lo = mid + 1;
+            else hi = mid;
+        }
+        if (lo == ends.Count) ends.Add(value);
+        else ends[lo] = value;
+    }
+    return ends.Count;
+}
+```
+
+### Ruby
+```ruby
+def length_of_lis(nums)
+  ends = []
+  nums.each do |value|
+    lo, hi = 0, ends.length
+    while lo < hi
+      mid = (lo + hi) / 2
+      if ends[mid] < value
+        lo = mid + 1
+      else
+        hi = mid
+      end
+    end
+    if lo == ends.length
+      ends << value
+    else
+      ends[lo] = value
+    end
+  end
+  ends.length
+end
 ```
