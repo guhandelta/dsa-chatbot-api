@@ -262,6 +262,18 @@ def _quiz_count(language: str, node: dict) -> int:
     return quiz.pool_size(language, node)
 
 
+def _assessment_profile(language: str, node: dict) -> dict:
+    """Expose assessment diversity without exposing answer keys or tests."""
+    from app.services import quiz
+    items = quiz.pool(language, node["id"])
+    return {
+        "formats": sorted({item["type"] for item in items}),
+        "roles": sorted({item.get("role", "") for item in items if item.get("role")}),
+        "runtime_checks": sum(bool(item.get("runtime_required")) for item in items),
+        "hidden_test_checks": sum(bool(item.get("hidden_test_required")) for item in items),
+    }
+
+
 def nodes(language: str) -> list[dict]:
     """Every node of the language's path, in learning order."""
     from app.services.content_catalog import find_path
@@ -287,6 +299,7 @@ def nodes(language: str) -> list[dict]:
         })
     for node in out:
         node["checks_available"] = _quiz_count(language, node)
+        node["assessment_profile"] = _assessment_profile(language, node)
         # Shared fundamentals supplement, but do not replace, stage lessons.
         missing = []
         if node["kind"] == "stage":
