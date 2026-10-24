@@ -88,7 +88,7 @@ DISPLAY_NAMES = {
     "csharp": "C# (.NET Core & LINQ)",
     "embedded-c": "Embedded C (Bare Metal, MCU Peripherals & Registers)",
     "embedded-python": "Embedded Python (MicroPython, CircuitPython & Hardware)",
-    "dsa": "Data Structures & LeetCode/HackerRank Problems",
+    "dsa": "Data Structures & Practice Problems",
     "algorithm": "Algorithmic Paradigms & Asymptotic Complexity",
     "design-patterns": "Software Design Patterns (GoF & Idiomatic)",
 }

@@ -28,7 +28,7 @@ async def overview(session, user_id, language):
          'in_progress': sum(n['status'] == 'in-progress' for n in path['nodes']),
          'status': 'available' if path['coverage_ready'] else 'content-incomplete',
          'detail': path['mastery_rule']},
-        {'id': 'dsa', 'title': 'LeetCode DSA Practice', 'metric': 'Problems solved',
+        {'id': 'dsa', 'title': 'DSA Practice', 'metric': 'Problems solved',
          'completed': len(solved), 'total': len(problems), 'in_progress': len(started),
          'status': 'available' if problems else 'coming-soon',
          'detail': 'Unique problems with recorded passing evaluations in this language. Repeat solves count once.'},

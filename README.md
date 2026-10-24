@@ -236,7 +236,7 @@ Every track has a **Learn** side (RAG chat scoped to that track) and a
 | Track | Learn | Practice |
 |---|---|---|
 | `language` | Syntax, built-in data structures, idioms for the chosen language | Exercises in that language |
-| `dsa` | Walkthroughs of LeetCode/HackerRank problems | Solve in the editor, get structured feedback |
+| `dsa` | Walkthroughs of original practice problems | Solve in the editor, get structured feedback |
 | `algorithm` | The technique, its invariant, and when to reach for it | Tagged problems at Easy → Medium → Hard |
 
 Retrieval is **scoped by track**, so a Python-syntax question never surfaces
@@ -253,7 +253,7 @@ track: algorithm
 difficulty: Medium
 language: python        # only for track=language
 algorithms: binary-search, two-pointers
-source: leetcode        # leetcode | hackerrank | authored
+source: authored        # authored | hackerrank | legacy-leetcode (retired label)
 io_mode: function       # function | stdio (HackerRank reads stdin)
 ---
 ```

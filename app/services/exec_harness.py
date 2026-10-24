@@ -534,7 +534,7 @@ def _rust_value(v, t: str, width: str) -> str:
 def render_rust(solution: str, fn: str, cases: list, sig: TypeSig,
                 width: str, call: str) -> str:
     """`call` is "bare" for `fn(...)` or "assoc" for `Solution::fn(...)` —
-    the LeetCode Rust convention puts solutions in `impl Solution`."""
+    the common Rust convention puts solutions in `impl Solution`."""
     invoke = fn if call == "bare" else f"Solution::{fn}"
     signature = re.search(r"\b" + re.escape(fn) + r"\s*\(([^)]*)\)", solution)
     parameters = signature.group(1).split(',') if signature else []
@@ -550,7 +550,7 @@ def render_rust(solution: str, fn: str, cases: list, sig: TypeSig,
         body.append("    {\n" + "\n".join(lines) + "\n    }")
     shim = ""
     if "impl Solution" in solution and not re.search(r"\bstruct\s+Solution\b", solution):
-        # The LeetCode Rust form writes `impl Solution` and assumes the struct
+        # The common Rust form writes `impl Solution` and assumes the struct
         # is declared for you.
         shim = "struct Solution;\n"
     return (_RUST_PRELUDE + "\n" + shim + solution
@@ -559,7 +559,7 @@ def render_rust(solution: str, fn: str, cases: list, sig: TypeSig,
 
 # -------------------------------------------------------------------- C
 
-# C cannot return a sized array, so the LeetCode convention threads sizes
+# C cannot return a sized array, so the usual convention threads sizes
 # through parameters:
 #
 #   int*  twoSum(int* nums, int numsSize, int target, int* returnSize)
@@ -568,7 +568,7 @@ def render_rust(solution: str, fn: str, cases: list, sig: TypeSig,
 # Array arguments expand to (ptr, size); matrices to (ptr, rows, colSizes);
 # an array return adds a trailing `int* returnSize`. Return shapes outside
 # scalars / strings / 1-D numeric arrays are refused rather than guessed at.
-_C_RETURNABLE = ("int", "double", "bool", "string", "int[]", "double[]")
+_C_RETURNABLE = ("int", "double", "bool", "string", "int[]", "double[]", "int[][]")
 
 _C_PRELUDE = r'''
 #include <stdio.h>
@@ -649,7 +649,26 @@ def render_c(solution: str, fn: str, cases: list, sig: TypeSig, width: str) -> s
                 names.append(f"a{i}")
 
         ret = sig.ret
-        if ret in VECTORS:
+        if ret == "int[][]":
+            # Nested result: the function returns int** rows, fills returnSize with the
+            # row count and returnColumnSizes with each row's length (the usual LeetCode
+            # convention). The harness prints [[...], [...]] from those three outputs.
+            et = _c_elem_type("int", width)
+            lines.append("    int _rn = 0;")
+            lines.append("    int* _rc = NULL;")
+            lines.append(f"    {et}** _r = {fn}({', '.join(names + ['&_rn', '&_rc'])});")
+            lines.append(f'    fputs("{RESULT_MARKER}", stdout); putchar(\'[\');')
+            lines.append("    for (int _k = 0; _k < _rn; ++_k) {")
+            lines.append("      if (_k) putchar(',');")
+            lines.append("      putchar('[');")
+            lines.append("      for (int _j = 0; _j < _rc[_k]; ++_j) {")
+            lines.append("        if (_j) putchar(',');")
+            lines.append('        printf("%lld", (long long)_r[_k][_j]);')
+            lines.append("      }")
+            lines.append("      putchar(']');")
+            lines.append("    }")
+            lines.append("    putchar(']'); putchar('\\n');")
+        elif ret in VECTORS:
             rt = _c_elem_type(ret, width)
             lines.append("    int _rn = 0;")
             lines.append(f"    {rt}* _r = {fn}({', '.join(names + ['&_rn'])});")

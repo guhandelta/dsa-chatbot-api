@@ -423,7 +423,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
     solutions: {"python": "<code>", "c": "<code>", ...}
     fn_names:  {"python": "two_sum", "javascript": "twoSum", ...}
     cases:     [[arg1, arg2], ...]   expected: [value, ...]
-    io_mode:   "function" (LeetCode style: call fn, compare return value) or
+    io_mode:   "function" (function style: call fn, compare return value) or
                "stdio" (HackerRank style: feed stdin, compare printed output)
 
     Returns a report dict with per-language results, cross-language
@@ -433,10 +433,10 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
     equal = lambda a, b: compare(a, b, comparison)
     results: list[LangResult] = []
     if io_mode == "linked_list":
-        from app.services.list_adapter import adapt
+        from app.services.list_adapter import adapt, SUPPORTED
         adapted, names = {}, dict(fn_names)
         for lang, code in solutions.items():
-            if lang not in ("python", "javascript", "java"):
+            if lang not in SUPPORTED:
                 results.append(LangResult(language=lang, tier=2, status="unverified",
                                           detail="Linked-list adapter unavailable for this language"))
                 continue

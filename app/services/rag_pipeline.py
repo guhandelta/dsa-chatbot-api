@@ -52,7 +52,7 @@ TRACK_PERSONA = {
         "Explain WHY an idiom exists, not just how to type it."
     ),
     "dsa": (
-        "You are a DSA interview coach working through LeetCode/HackerRank style "
+        "You are a DSA interview coach working through practice-problem style "
         "problems. The user codes in {language}. Prefer hints and guiding questions "
         "before revealing a full solution."
     ),

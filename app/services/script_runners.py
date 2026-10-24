@@ -252,7 +252,8 @@ def _run_typescript(solution, fn, cases, expected, equal, result):
 def _run_typed(language, solution, fn, cases, expected, equal, result):
     from app.services.code_runner import _run
     sig = exec_harness.infer_types(cases, expected)
-    if sig is None or any(t.endswith("[][]") for t in [*sig.args, sig.ret]):
+    # Nested results (int[][]) are supported; nested arguments are not.
+    if sig is None or any(t.endswith("[][]") for t in sig.args):
         return _unverified(language, len(cases), "test-case shapes are not expressible as a typed "
                            "signature — execution skipped, nothing claimed")
     render, candidates = (render_go, _GO_CANDIDATES) if language == "go" else (render_csharp, _CS_CANDIDATES)

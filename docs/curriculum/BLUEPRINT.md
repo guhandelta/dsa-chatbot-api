@@ -99,9 +99,9 @@ overwhelming course map.
 ## 4. Keep DSA teaching and DSA practice connected
 
 Adding DSA problems is appropriate when each teaches or checks something specific.
-The product already has a LeetCode DSA practice area, so distinguish the experience:
+The product already has a DSA practice area, so distinguish the experience:
 
-| Explain: DSA foundations | LeetCode DSA Practice |
+| Explain: DSA foundations | DSA Practice |
 |---|---|
 | Small curated sets arranged by the concept being taught | A broader independent practice bank |
 | Traces, brute force, invariants and worked reasoning | Transfer to unfamiliar statements and mixed techniques |

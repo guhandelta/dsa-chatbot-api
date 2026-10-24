@@ -9,7 +9,7 @@ The target is the [HTML Living Standard](https://html.spec.whatwg.org/dev/) and
 explicit [CSS modules](https://www.w3.org/TR/css-2025/), with browser assumptions
 and observation dates. HTML is a markup language and CSS a stylesheet language;
 their practice needs browser/DOM/layout/accessibility evidence, not a function-only
-LeetCode harness. Accessibility requirements draw on [WCAG 2.2](https://www.w3.org/TR/WCAG22/)
+practice-problem harness. Accessibility requirements draw on [WCAG 2.2](https://www.w3.org/TR/WCAG22/)
 and [WAI tutorials](https://www.w3.org/WAI/tutorials/). Browser assertion design can
 use [Playwright's documented assertions](https://playwright.dev/docs/test-assertions).
 This pack requests standards-based original material rather than copied documents.

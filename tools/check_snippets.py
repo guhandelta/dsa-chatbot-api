@@ -10,7 +10,7 @@ from pathlib import Path
 
 PROBLEMS = Path(__file__).resolve().parents[1] / "data" / "dsa_problems"
 
-# Preludes wrap a bare LeetCode-style snippet into a compilable unit.
+# Preludes wrap a bare function-style snippet into a compilable unit.
 C_PRELUDE = """#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>

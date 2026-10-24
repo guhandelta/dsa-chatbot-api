@@ -4,7 +4,7 @@ TRACKS
 ------
   language   — language fundamentals & data structures specific to ONE language
                (Python dicts, Java Collections, Rust ownership, C pointers...)
-  dsa        — LeetCode / HackerRank problems (language-agnostic statement,
+  dsa        — practice problems (language-agnostic statement,
                solutions in all six languages)
   algorithm  — algorithms as a concept, then practised on problems of
                increasing difficulty
@@ -21,7 +21,7 @@ Files may declare metadata in a front-matter block:
     difficulty: Medium
     language: python          # only for track=language
     algorithms: binary-search, two-pointers
-    source: leetcode          # leetcode | hackerrank | authored
+    source: authored            # authored | hackerrank | legacy-leetcode (retired label)
     io_mode: function         # function | stdio  (stdio = HackerRank style)
     ---
     # Title — Difficulty — Category
@@ -73,7 +73,7 @@ class ContentMeta(BaseModel):
     category: str = ""
     language: str | None = None          # set when track == "language"
     algorithms: list[str] = []           # tags linking problems to algorithms
-    source: str = "authored"             # leetcode | hackerrank | authored
+    source: str = "authored"             # authored | hackerrank | legacy-leetcode (retired label)
     io_mode: str = "function"            # function | stdio
     # Progression level for Language Fundamentals. None means the item is not
     # level-scoped — DSA problems are ordered by `difficulty` instead, which is
@@ -301,7 +301,7 @@ def track_summary(language: str | None = None) -> list[dict]:
     }
     blurbs = {
         "language": "Syntax, data structures, and idioms for your chosen language.",
-        "dsa": "LeetCode and HackerRank problems, plus the techniques behind them.",
+        "dsa": "Original practice problems, plus the techniques behind them.",
         "design-patterns": "Choosing the right pattern, the trade-offs, and when not to use one.",
     }
     out = []
