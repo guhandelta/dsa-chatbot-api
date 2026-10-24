@@ -257,8 +257,7 @@ def _run_typed(language, solution, fn, cases, expected, equal, result):
         return _unverified(language, len(cases), "test-case shapes are not expressible as a typed "
                            "signature — execution skipped, nothing claimed")
     render, candidates = (render_go, _GO_CANDIDATES) if language == "go" else (render_csharp, _CS_CANDIDATES)
-    if language == "go" and any(t.endswith("[]") for t in [*sig.args, sig.ret]):
-        candidates = ("int",)  # []int64 never matches a solution written against []int
+    # Both integer widths are tried for every signature; the first that compiles wins.
     errors: list[str] = []
     for width in candidates:
         with tempfile.TemporaryDirectory() as td:
