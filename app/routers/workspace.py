@@ -202,6 +202,8 @@ async def save_workspace(problem_id: str, body: SaveBody, user: User = Depends(g
     files = _files(body)
     if body.template not in {t["id"] for t in workspace.templates(body.language)}:
         raise HTTPException(422, "That project template is not available for this language.")
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     draft = await _draft(session, user.id, problem_id, body.language)
     current = draft.revision if draft else None
     if not body.force and body.revision != current:
@@ -220,6 +222,8 @@ async def reset_workspace(problem_id: str, body: ResetBody, user: User = Depends
     await _scope(session, user, problem_id, body.language)
     files = workspace.starter_files(body.language, body.template, _starter(problem_id))
     entry = workspace.ENTRY[body.language]
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     draft = await _draft(session, user.id, problem_id, body.language)
     if draft is not None:
         await add_checkpoint(session, user.id, problem_id, body.language, json.loads(draft.files_json),
@@ -235,6 +239,8 @@ async def create_checkpoint(problem_id: str, body: CheckpointBody, user: User = 
     await _scope(session, user, problem_id, body.language)
     files = _files(body)
     label = body.label.strip() or "Checkpoint"
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     await add_checkpoint(session, user.id, problem_id, body.language, files, body.entry, "manual", label)
     await session.commit()
     latest = await session.scalar(select(WorkspaceCheckpoint).where(
@@ -260,6 +266,8 @@ async def read_checkpoint(problem_id: str, cid: str, user: User = Depends(get_cu
 @router.post("/{problem_id}/checkpoints/{cid}/restore")
 async def restore_checkpoint(problem_id: str, cid: str, user: User = Depends(get_current_user),
                              session: AsyncSession = Depends(get_session)):
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     item = await _owned_checkpoint(session, user, problem_id, cid)
     files, entry = json.loads(item.files_json), item.entry
     draft = await _draft(session, user.id, problem_id, item.language)
@@ -275,6 +283,8 @@ async def restore_checkpoint(problem_id: str, cid: str, user: User = Depends(get
 @router.delete("/{problem_id}/checkpoints/{cid}")
 async def delete_checkpoint(problem_id: str, cid: str, user: User = Depends(get_current_user),
                             session: AsyncSession = Depends(get_session)):
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     item = await _owned_checkpoint(session, user, problem_id, cid)
     await session.delete(item)
     await session.commit()
@@ -340,10 +350,12 @@ async def run_tests(problem_id: str, body: FilesBody, user: User = Depends(get_c
     if not code.strip():
         raise HTTPException(422, "Write some code before running the tests.")
     await screen_submission(session, user, code, body.language, context="workspace_run")
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     if settings.workspace_runs_per_hour > 0:
         since = datetime.now(timezone.utc) - timedelta(hours=1)
         used = await session.scalar(select(func.count()).select_from(WorkspaceRun).where(
-            WorkspaceRun.user_id == user.id, WorkspaceRun.kind == "run", WorkspaceRun.created_at >= since))
+            WorkspaceRun.user_id == user.id, WorkspaceRun.kind.in_(("run", "transpile")), WorkspaceRun.created_at >= since))
         if used >= settings.workspace_runs_per_hour:
             raise HTTPException(429, f"You've run the tests {used} times in the past hour, which is the "
                                      f"limit ({settings.workspace_runs_per_hour}). Try again shortly.")

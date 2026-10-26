@@ -53,14 +53,21 @@ formula does not use it until that rule is framed.
 
 - What happens at the strike cap, how extra practice counts toward mastery,
   and how the monthly cap is split across sections.
-- **Retention.** Drafts, checkpoints, run history and strikes are included in
-  the profile export. Erasing the learning profile keeps them, like practice
-  sessions; `app.services.workspace.delete_for_user` is ready once a retention
-  rule is chosen.
+- **Retention.** Profile erasure removes workspace drafts (including playground
+  projects), checkpoints, run history, learning strikes, clearing sets and their
+  answers. Minimal billing records remain to preserve hint pricing.
+- In `lock` cap mode, clearing questions require a completed mentor hint on
+  that topic after reaching the cap. The default remains `mentor_step_back`.
 
-## Release check
+## Verification and concurrency
 
-Run `tools/release_check.sh` before a release. It runs the backend suite
-against the pinned sandbox image, so the Go and C# checks run for real instead
-of skipping on hosts without those toolchains. It needs Docker running and
-`EXEC_CONTAINER_IMAGE` in `.env`. It takes about 13 minutes.
+Database transactions serialize per-learner changes to draft revisions,
+checkpoint operations, clearing answers, strike caps and practice allowances.
+The same hourly allowance counts test runs and TypeScript compiles. SQLite
+serializes writers across the database; PostgreSQL uses the learner's row.
+
+`.github/workflows/verify.yml` runs the full backend suite and checks migrations
+on a fresh disposable database. The UI repository's workflow runs typecheck,
+unit tests, the production build and Cypress browser smoke tests. CI does not
+call paid model providers. Local regression tests use separate database
+connections to check simultaneous saves, answers and allowance requests.

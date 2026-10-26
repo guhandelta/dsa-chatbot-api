@@ -340,7 +340,7 @@ async def _workspace_export(session: AsyncSession, user_id: str) -> dict:
 
 
 async def delete_profile(session: AsyncSession, user_id: str) -> int:
-    """Erase learning events and quiz answers. Returns the learning-event count."""
+    """Erase the profile, workspace files and challenges; preserve billing facts."""
     from sqlalchemy import update
     from app.db.models import User
     from app.services.hint_billing import preserve_legacy
@@ -349,7 +349,7 @@ async def delete_profile(session: AsyncSession, user_id: str) -> int:
     result = await session.execute(delete(LearningEvent).where(LearningEvent.user_id == user_id))
     from app.services.quiz import delete_for_user
     await delete_for_user(session, user_id)
-    # Practice workspaces (code drafts, checkpoints, run history) are kept, like
-    # practice sessions: how long learner work is retained is an open product
-    # decision. workspace.delete_for_user is ready when that is settled.
+    from app.services import workspace, learning_strikes
+    await workspace.delete_for_user(session, user_id)
+    await learning_strikes.delete_for_user(session, user_id)
     return result.rowcount

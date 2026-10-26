@@ -46,6 +46,8 @@ def validate_problem(problem_id,language):
 
 
 async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_out=None,strikes_out=None):
+    from app.services.user_lock import lock_user
+    await lock_user(session, user_id)
     from app.graphs.practice import classify_outcome
     algorithms=next((c.algorithms for c in filter_content() if c.id==problem_id),[])
     outcome,category,detail=classify_outcome(evidence)
@@ -80,6 +82,8 @@ async def analyze(request:AnalyzeRequest,current_user:User=Depends(get_current_u
     from app.services.language_access import require_content
     await require_content(session, current_user, request.problem_id, request.language)
     async def prepare():
+        from app.services.learning_strikes import require_no_blocking
+        await require_no_blocking(session, current_user.id, request.language, request.problem_id)
         await require_verified_reference(request.problem_id,request.language)
         await check_submission(session,current_user,request.user_code,request.language)
     async def work(balance):

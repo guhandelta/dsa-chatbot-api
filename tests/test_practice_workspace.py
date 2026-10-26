@@ -262,20 +262,14 @@ async def test_session_summary_counts_this_session_only(client, db):
     assert (await client.get(f"/practice/sessions/{item.id}/summary", headers=other)).status_code == 404
 
 
-async def test_profile_export_includes_workspaces_and_erase_keeps_saved_work(client, db):
+async def test_profile_export_includes_workspaces_and_erase_removes_saved_work(client, db):
     uid, headers = await _learner(client, db)
     await client.put(f"/workspace/{PID}", headers=headers, json=_body([("solution.py", RIGHT)]))
     await client.post(f"/workspace/{PID}/checkpoints", headers=headers, json=_body([("solution.py", RIGHT)]))
     exported = (await client.get("/mentor/profile/export", headers=headers)).json()
     assert exported["workspace"]["drafts"][0]["files"][0]["content"] == RIGHT
     assert len(exported["workspace"]["checkpoints"]) == 1
-    # Erasing the behavioural profile keeps saved work, as the profile page says;
-    # retention of learner work is an open product decision.
     assert (await client.delete("/mentor/profile", headers=headers)).status_code == 200
-    assert await db.scalar(select(func.count()).select_from(WorkspaceDraft).where(WorkspaceDraft.user_id == uid)) == 1
-    from app.services.workspace import delete_for_user
-    await delete_for_user(db, uid)
-    await db.commit()
     for model in (WorkspaceDraft, WorkspaceCheckpoint, WorkspaceRun):
         assert await db.scalar(select(func.count()).select_from(model).where(model.user_id == uid)) == 0
 

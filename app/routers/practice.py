@@ -138,6 +138,8 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
         elif request.action!='quit' and awaiting!='learner':
             raise HTTPException(409,'This session is not awaiting that action.')
         if request.action=='submit':
+            from app.services.learning_strikes import require_no_blocking
+            await require_no_blocking(session, uid, lang, pid)
             await require_verified_reference(pid,lang)
             if not request.code.strip():raise HTTPException(422,'Submit nonempty code.')
             await check_submission(session,user,request.code,lang)

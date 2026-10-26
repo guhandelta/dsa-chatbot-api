@@ -222,3 +222,55 @@ async def test_a_snowballed_strike_avoids_questions_waiting_in_other_sets(client
     pool = learning_strikes.candidates("python", NODE, PID)
     if len(pool) - len(waiting) >= len(fresh):
         assert not fresh & waiting
+
+
+async def test_gating_blocks_direct_analysis_and_preopened_session_without_debit(client, db, reviewer):
+    from app.db.models import User
+    uid, headers = await _learner(client, db)
+    other_pid = 'python-path-02-conditions'
+    opened = await client.post('/practice/sessions', headers=headers,
+                               json={'problem_id': other_pid, 'language': 'python'})
+    assert opened.status_code == 200
+    await _fail_evaluation(client, headers)
+    before = await db.scalar(select(User.peppercorns).where(User.id == uid))
+    direct = await client.post('/analyze/', headers=headers, json={
+        'problem_id': other_pid, 'language': 'python', 'provider': 'openai', 'user_code': WRONG})
+    old = await client.post(f"/practice/sessions/{opened.json()['session_id']}/actions", headers=headers,
+                            json={'action': 'submit', 'code': WRONG})
+    assert direct.status_code == old.status_code == 409
+    assert await db.scalar(select(User.peppercorns).where(User.id == uid)) == before
+
+
+async def test_lock_cap_requires_completed_topic_hint(client, db, reviewer, monkeypatch):
+    from app.db.models import LearningEvent
+    monkeypatch.setattr(settings, 'learning_strike_cap', 1)
+    monkeypatch.setattr(settings, 'learning_strike_cap_action', 'lock')
+    uid, headers = await _learner(client, db)
+    strike = (await _fail_evaluation(client, headers))['strike']
+    question = strike['set']['questions'][0]
+    url = f"/strikes/sets/{strike['set']['id']}/answers"
+    body = {'item_id': question['id'], 'response': _right(quiz.items('python')[question['id']])}
+    blocked = await client.post(url, headers=headers, json=body)
+    assert blocked.status_code == 409 and 'mentor' in blocked.json()['detail']
+    # A hint on another topic does not release the cap.
+    db.add(LearningEvent(user_id=uid, problem_id='python-path-02-conditions', language='python', kind='hint'))
+    await db.commit()
+    assert (await client.post(url, headers=headers, json=body)).status_code == 409
+    db.add(LearningEvent(user_id=uid, problem_id=PID, language='python', kind='hint'))
+    await db.commit()
+    assert (await client.post(url, headers=headers, json=body)).status_code == 200
+
+
+async def test_erasure_removes_challenges_and_strikes_only_for_owner(client, db, reviewer):
+    from app.db.models import ChallengeAnswer
+    uid, headers = await _learner(client, db)
+    strike = (await _fail_evaluation(client, headers))['strike']
+    question = strike['set']['questions'][0]
+    await client.post(f"/strikes/sets/{strike['set']['id']}/answers", headers=headers,
+                      json={'item_id': question['id'], 'response': _right(quiz.items('python')[question['id']])})
+    other_uid, other = await _learner(client, db, 'keep-strikes@example.com')
+    await _fail_evaluation(client, other)
+    assert (await client.delete('/mentor/profile', headers=headers)).status_code == 200
+    for model in (LearningStrike, ChallengeAnswer, ChallengeSet):
+        assert await db.scalar(select(func.count()).select_from(model).where(model.user_id == uid)) == 0
+    assert await db.scalar(select(func.count()).select_from(LearningStrike).where(LearningStrike.user_id == other_uid)) == 1

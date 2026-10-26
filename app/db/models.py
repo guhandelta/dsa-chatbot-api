@@ -2,7 +2,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
@@ -267,6 +267,7 @@ class LearningEvent(Base):
     """
 
     __tablename__ = "learning_events"
+    __table_args__ = (Index("ix_learning_events_user_created", "user_id", "created_at"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
@@ -297,6 +298,7 @@ class TraceRecord(Base):
     """
 
     __tablename__ = "trace_records"
+    __table_args__ = (Index("ix_trace_records_created", "created_at"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     trace_id: Mapped[str] = mapped_column(String(32), index=True, nullable=False)

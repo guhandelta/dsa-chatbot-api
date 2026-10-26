@@ -143,6 +143,9 @@ async def open_count(session: AsyncSession, user_id: str, language: str, node_id
 
 async def add_strike(session, user_id, language, problem_id, node_id, source, where) -> LearningStrike | None:
     """A new strike with its own clearing set, unless the topic is at the cap."""
+    from app.services.user_lock import lock_user
+    await lock_user(session, user_id)
+    # Recheck under the lock: evaluation requests can finish simultaneously.
     if await open_count(session, user_id, language, node_id, problem_id) >= settings.learning_strike_cap:
         return None
     pool = candidates(language, node_id, problem_id)
@@ -315,7 +318,14 @@ def _step_back(language: str, node_id: str) -> dict:
 
 async def answer(session: AsyncSession, user: User, set_id: str, item_id: str, response) -> dict:
     from app.services import quiz
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     item_set = await owned_set(session, user, set_id)
+    await session.refresh(item_set)
+    if item_set.kind == "strike":
+        await require_cap_unlocked(session, user.id, item_set)
+    if await session.scalar(select(ChallengeAnswer.id).where(ChallengeAnswer.set_id == set_id, ChallengeAnswer.item_id == item_id)):
+        raise HTTPException(409, "You already answered this question.")
     if item_set.completed_at is not None:
         raise HTTPException(409, "This challenge is already complete.")
     if item_id not in json.loads(item_set.items_json):
@@ -403,6 +413,8 @@ async def _answered(session: AsyncSession, set_id: str) -> set[str]:
 
 async def start_extra(session: AsyncSession, user: User, language: str, problem_id: str = "",
                       node_id: str = "", count: int = 3) -> dict:
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     if await extra_remaining(session, user.id) <= 0:
         raise HTTPException(429, f"You've used this month's {settings.extra_practice_sets_per_month} extra "
                                  "practice sets. They reset on the 1st.")
@@ -426,3 +438,27 @@ async def export_for_user(session: AsyncSession, user_id: str) -> dict:
             "challenge_answers": [{"item_id": a.item_id, "type": a.item_type, "concept": a.concept,
                                    "response": a.response, "correct": a.correct,
                                    "created_at": a.created_at.isoformat()} for a in answers]}
+
+
+async def require_cap_unlocked(session, user_id, item_set):
+    """In lock mode, a completed mentor hint after reaching the cap is required."""
+    if settings.learning_strike_cap_action != "lock":
+        return
+    if await open_count(session, user_id, item_set.language, item_set.node_id, item_set.problem_id) < settings.learning_strike_cap:
+        return
+    latest = await session.scalar(select(func.max(LearningStrike.created_at)).where(
+        LearningStrike.user_id == user_id, LearningStrike.language == item_set.language,
+        LearningStrike.status == "open",
+        LearningStrike.node_id == item_set.node_id if item_set.node_id else LearningStrike.problem_id == item_set.problem_id))
+    from app.db.models import LearningEvent
+    hints = (await session.scalars(select(LearningEvent).where(
+        LearningEvent.user_id == user_id, LearningEvent.language == item_set.language,
+        LearningEvent.kind == "hint", LearningEvent.created_at > latest))).all()
+    if not any(h.problem_id == item_set.problem_id or (item_set.node_id and topic_node(item_set.language, h.problem_id) == item_set.node_id) for h in hints):
+        raise HTTPException(409, "Strike limit reached. Ask the mentor for a hint on this topic before answering more clearing questions.")
+
+
+async def delete_for_user(session, user_id):
+    from sqlalchemy import delete
+    for model in (LearningStrike, ChallengeAnswer, ChallengeSet):
+        await session.execute(delete(model).where(model.user_id == user_id))

@@ -1,0 +1,43 @@
+name: Verify backend
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      APP_ENV: test
+      EXEC_BACKEND: subprocess
+      JWT_SECRET: ci-secret-for-offline-tests-at-least-32-bytes
+      OPENAI_API_KEY: test-key
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: sudo apt-get update && sudo apt-get install -y ruby rustc g++
+      - run: npm install -g typescript@5.4.5
+      - run: python -m pip install -r requirements.txt -r requirements-dev.txt
+      - name: Verify migrations on a fresh database
+        env:
+          DATABASE_URL: sqlite+aiosqlite:////tmp/release-migration.db
+        run: |
+          alembic upgrade head
+          alembic check
+      - name: Full backend suite
+        run: python -m pytest -q -p no:cacheprovider

@@ -202,6 +202,8 @@ async def save_project(slug: str, body: SaveBody, user: User = Depends(get_curre
     if body.template not in TEMPLATES:
         raise HTTPException(422, "Unknown template.")
     files = validate([f.model_dump() for f in body.files])
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     draft = await _draft(session, user.id, slug)
     current = draft.revision if draft else None
     if not body.force and body.revision != current:
@@ -281,6 +283,8 @@ async def transpile_project(body: FilesBody, user: User = Depends(get_current_us
     if sum(len(f["content"]) for f in files) > MAX_TOTAL_CHARS:
         raise HTTPException(422, f"A web project holds at most {MAX_TOTAL_CHARS:,} characters.")
     # TypeScript compiles count against the same hourly budget as test runs.
+    from app.services.user_lock import lock_user
+    await lock_user(session, user.id)
     if settings.workspace_runs_per_hour > 0:
         since = datetime.now(timezone.utc) - timedelta(hours=1)
         used = await session.scalar(select(func.count()).select_from(WorkspaceRun).where(

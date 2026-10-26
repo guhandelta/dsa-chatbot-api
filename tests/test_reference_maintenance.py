@@ -50,3 +50,11 @@ async def test_context_preserves_local_and_excludes_unselected_framework(monkeyp
     await rag_pipeline.run_rag_chat('Explain','openai',[],'java',track='language')
     assert 'CURRENT REFERENCE' in captured[0].content
     assert 'FRAMEWORK SECRET' not in captured[0].content
+
+
+def test_framework_sources_are_available_in_a_clean_checkout(tmp_path, monkeypatch):
+    from tools import repair_reference_sections as repair
+    expected, _ = repair.framework_rows()
+    monkeypatch.setattr(repair, 'ROOT', tmp_path)
+    actual, _ = repair.framework_rows()
+    assert actual == expected

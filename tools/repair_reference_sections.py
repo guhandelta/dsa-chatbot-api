@@ -51,7 +51,12 @@ def framework_rows():
     ]
     rows, excluded = [], []
     for source, mapping in configs:
-        raw = (ROOT/source).read_text()
+        # Clean checkouts use the versioned snapshot when operator sources
+        # outside the repository are unavailable.
+        source_path = ROOT/source
+        if not source_path.exists():
+            source_path = API/'data/reference_sources'/Path(source).name
+        raw = source_path.read_text()
         digest = hashlib.sha256(raw.encode()).hexdigest()
         for section in headings(raw,2):
             match = re.match(r'## (\d+) (.+)', section)
