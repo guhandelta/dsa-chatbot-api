@@ -57,3 +57,10 @@ formula does not use it until that rule is framed.
   the profile export. Erasing the learning profile keeps them, like practice
   sessions; `app.services.workspace.delete_for_user` is ready once a retention
   rule is chosen.
+
+## Release check
+
+Run `tools/release_check.sh` before a release. It runs the backend suite
+against the pinned sandbox image, so the Go and C# checks run for real instead
+of skipping on hosts without those toolchains. It needs Docker running and
+`EXEC_CONTAINER_IMAGE` in `.env`. It takes about 13 minutes.
