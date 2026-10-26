@@ -294,12 +294,15 @@ def case_report(report: dict | None, language: str, problem_id: str, source_map:
     mode = comparison_mode(problem_id)
     ran = result.get("tier") == 1 and result.get("status") in ("passed", "failed")
     cases = []
-    if ran and outputs:
+    flags = result.get("case_results")
+    if ran and flags:
+        cases = [{"index": i + 1, "passed": bool(ok)} for i, ok in enumerate(flags)]
+    elif ran and outputs:
         for i, want in enumerate(expected):
             cases.append({"index": i + 1, "passed": i < len(outputs) and compare(outputs[i], want, mode)})
     evidence = result.get("evidence") or {}
     diagnostic = None
-    if result.get("status") in ("failed", "error") and not result.get("passed_cases") and not outputs:
+    if result.get("status") in ("failed", "error") and not result.get("passed_cases") and not outputs and not flags:
         if evidence:
             message, located = evidence.get("message") or "", workspace.locate(source_map, evidence.get("line"))
         else:

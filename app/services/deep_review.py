@@ -202,6 +202,10 @@ async def deep_review(problem_id: str, user_code: str, language: str,
     """Full precision pipeline. Returns (final_analysis, evidence)."""
     async with span("gather_evidence", problem_id=problem_id, language=language):
         evidence = await gather_evidence(problem_id, user_code, language)
+    # Everything downstream (prompts, stored session state, API responses)
+    # sees evidence without hidden test values.
+    from app.services.evidence_safety import learner_safe
+    evidence = learner_safe(evidence, problem_id)
     summary = summarize_evidence(evidence)
 
     async with span("llm_review", provider=provider) as sp:

@@ -15,6 +15,7 @@ from app.routers.analyze import check_submission,save_evaluation,validate_proble
 from app.routers.mentor import _current_tier,_algorithms_for
 from app.services import entitlements,learning_profile
 from app.services.content_verification import require_verified_reference
+from app.services.evidence_safety import learner_safe
 from app.services.operations import perform,recover_expired_scope
 from app.services.practice_checkpoints import TransactionalSaver
 from app.services.strikes import assert_active,AccountSuspendedError
@@ -63,7 +64,8 @@ def render(sid,state,balance=None):
     return {'session_id':sid,'awaiting':interrupt.get('awaiting') if interrupt else None,
         'outcome':state.get('outcome',''),'reply':state.get('reply',''),
         'current_code':state.get('user_code',''),'recalled_moment':state.get('recalled_moment'),
-        'analysis':state.get('analysis'),'evidence':state.get('evidence'),
+        # Sessions stored before evidence was redacted are cleaned on the way out.
+        'analysis':state.get('analysis'),'evidence':learner_safe(state.get('evidence'),state.get('problem_id','')),
         'tier_label':state.get('tier_label',''),'hint_tier':state.get('hint_tier',0),
         'step_back':state.get('step_back'),'attempts':state.get('attempts',0),
         'peppercorns_remaining':balance}
