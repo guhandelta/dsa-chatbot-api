@@ -10,14 +10,15 @@ from app.routers.training import training_status
 from app.services.language_access import allowed_languages
 
 
-def test_capabilities_are_explicit_and_do_not_claim_visual_previews():
+def test_capabilities_are_explicit_and_claim_only_browser_previews_for_js_and_ts():
     profiles = catalog({"python": True, "kotlin": False})
     assert set(ADAPTERS) >= {"python", "javascript", "typescript", "java", "c", "cpp",
                              "rust", "ruby", "go", "csharp", "php", "dart", "kotlin",
                              "swift", "scala", "haskell"}
     assert profiles["python"]["function_execution"] is True
     assert profiles["kotlin"]["stdio_execution"] is False
-    assert all(not p["browser_preview"] and not p["server_preview"] for p in profiles.values())
+    assert {n for n, p in profiles.items() if p["browser_preview"]} == {"javascript", "typescript"}
+    assert not any(p["server_preview"] for p in profiles.values())
     assert profiles["csharp"]["stdio_tests"] is False
 
 

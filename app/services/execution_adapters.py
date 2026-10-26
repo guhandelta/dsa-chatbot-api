@@ -32,8 +32,10 @@ class Adapter:
 
 ADAPTERS: dict[str, Adapter] = {a.language: a for a in (
     Adapter("python", "python3", "main.py", True, True, False, complexity_analysis=True),
-    Adapter("javascript", "node", "main.js", True, True, False, browser_preview=False, complexity_analysis=True),
-    Adapter("typescript", "tsc", "main.ts", True, True, True),
+    # Browser preview runs client-side in a sandboxed iframe (/playground);
+    # TypeScript is compiled in the execution sandbox first.
+    Adapter("javascript", "node", "main.js", True, True, False, browser_preview=True, complexity_analysis=True),
+    Adapter("typescript", "tsc", "main.ts", True, True, True, browser_preview=True),
     Adapter("java", "javac", "Main.java", True, True, True, complexity_analysis=True),
     Adapter("c", "gcc", "main.c", True, True, True),
     Adapter("cpp", "g++", "main.cpp", True, True, True),

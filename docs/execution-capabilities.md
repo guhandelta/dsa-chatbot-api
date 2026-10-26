@@ -13,8 +13,11 @@ except C#, plus PHP, Dart, Kotlin, Swift, Scala and Haskell. A missing toolchain
 or unsupported test mode reports `unverified` and blocks publication. The
 bundled Dockerfile does not yet provide all six additional toolchains; their
 stdin/stdout adapters become usable only in an operator-provided image with
-those runtimes installed and a pinned image digest. Browser, server, mobile and
-circuit previews are not claimed by this registry.
+those runtimes installed and a pinned image digest. Browser previews are
+claimed for JavaScript and TypeScript only: the web playground renders HTML,
+CSS and scripts in a sandboxed iframe in the learner's browser, and compiles
+TypeScript in the execution sandbox. Server, mobile and circuit previews are
+not claimed.
 
 All learner execution uses `code_runner._run`. Production requires the Docker
 backend. It runs with a pinned image, no network, a read-only root, dropped
