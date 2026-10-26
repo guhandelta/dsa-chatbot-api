@@ -31,11 +31,17 @@ ENTRY = {
     "python": "solution.py", "javascript": "solution.js", "typescript": "solution.ts",
     "java": "Solution.java", "c": "solution.c", "cpp": "solution.cpp", "rust": "solution.rs",
     "ruby": "solution.rb", "go": "solution.go", "csharp": "Solution.cs",
+    # Stdin/stdout languages with an execution adapter (execution_adapters.py).
+    # A workspace can be created for them; running it needs the toolchain.
+    "php": "solution.php", "dart": "solution.dart", "kotlin": "Solution.kt",
+    "swift": "solution.swift", "scala": "Solution.scala", "haskell": "Solution.hs",
 }
 CODE_EXTENSIONS = {
     "python": (".py",), "javascript": (".js",), "typescript": (".ts",), "java": (".java",),
     "c": (".c", ".h"), "cpp": (".cpp", ".hpp", ".h"), "rust": (".rs",), "ruby": (".rb",),
     "go": (".go",), "csharp": (".cs",),
+    "php": (".php",), "dart": (".dart",), "kotlin": (".kt",), "swift": (".swift",),
+    "scala": (".scala",), "haskell": (".hs",),
 }
 HELPER = {
     "python": "helpers.py", "javascript": "helpers.js", "typescript": "helpers.ts",
@@ -69,6 +75,8 @@ def templates(language: str) -> list[dict]:
 
 
 def _comment(language: str, text: str) -> str:
+    if language == "haskell":
+        return f"-- {text}\n"
     return f"# {text}\n" if language in ("python", "ruby") else f"// {text}\n"
 
 
@@ -88,6 +96,8 @@ def starter_files(language: str, template: str, starter_code: str) -> list[dict]
     if template not in {t["id"] for t in templates(language)}:
         raise HTTPException(422, "That project template is not available for this language.")
     entry = starter_code or _comment(language, "Write your solution here.")
+    if language == "php" and not starter_code:
+        entry = "<?php\n" + entry
     files = [{"name": ENTRY[language], "content": entry}]
     if template == "helpers":
         files.insert(0, {"name": HELPER[language], "content": _helper_stub(language)})

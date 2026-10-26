@@ -400,3 +400,23 @@ def test_compile_errors_in_other_compiled_languages_point_at_the_learners_line(l
     assert view["status"] == "failed", view
     assert view["diagnostic"]["line"] == 2, view["diagnostic"]
     assert "missing" in view["diagnostic"]["message"] and "solution:" not in view["diagnostic"]["message"]
+
+
+@pytest.mark.parametrize("language,entry,ext", [
+    ("php", "solution.php", ".php"), ("dart", "solution.dart", ".dart"), ("kotlin", "Solution.kt", ".kt"),
+    ("swift", "solution.swift", ".swift"), ("scala", "Solution.scala", ".scala"), ("haskell", "Solution.hs", ".hs"),
+])
+def test_adapter_languages_get_workspace_entries(language, entry, ext):
+    from app.services.execution_adapters import ADAPTERS
+    assert workspace.ENTRY[language] == entry and workspace.CODE_EXTENSIONS[language] == (ext,)
+    assert ADAPTERS[language].stdio_tests
+    files = workspace.starter_files(language, "single", "")
+    assert workspace.validate(language, files, entry) == files
+    with pytest.raises(HTTPException):
+        workspace.validate(language, [{"name": entry, "content": ""}, {"name": "x.txt", "content": ""}], "x.txt")
+    assert {t["id"] for t in workspace.templates(language)} == {"single", "notes"}
+
+
+def test_starters_follow_each_language_syntax():
+    assert workspace.starter_files("php", "single", "")[0]["content"].startswith("<?php\n")
+    assert workspace.starter_files("haskell", "single", "")[0]["content"].startswith("-- ")
