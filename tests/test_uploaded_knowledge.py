@@ -24,6 +24,22 @@ def test_code_and_structured_payloads_are_withheld():
     assert uk.infer_language('unscoped.pdf') is None
 
 
+def test_unclassified_uploads_use_explicit_all_language_scope():
+    docs = uk.project('neutral', 'matrix-and-grid.md', 'A matrix is a rectangular grid of values.', 'custom')
+    assert docs and all(d.metadata['language'] == uk.ALL_LANGUAGES for d in docs)
+
+
+async def test_language_neutral_upload_is_available_to_multiple_languages(db):
+    user = User(email='neutral-owner@x.com', hashed_password='unused')
+    db.add(user)
+    await db.flush()
+    db.add(KnowledgeDocument(owner_id=user.id, filename='matrix-and-grid.md', track='custom',
+                             status='published', text='A matrix is a rectangular grid of values.'))
+    await db.commit()
+    assert await uk.search(db, 'matrix grid', 'dsa', 'java')
+    assert await uk.search(db, 'matrix grid', 'dsa', 'javascript')
+
+
 async def test_approved_live_projection_scopes_and_preserves_review(client, admin, store, db):
     result = await _upload_text(client, admin, filename='Java arrays.pdf', track='language',
         text='Java arrays have fixed capacity.\n## Answers\nSECRET')

@@ -15,6 +15,7 @@ from sqlalchemy import or_, select
 from app.db.models import KnowledgeDocument
 
 PROJECTION_VERSION = "upload-reference-v2"
+ALL_LANGUAGES = "all_languages"
 _LANGUAGES = (("javascript", r"javascript|\bjs\b"), ("typescript", r"typescript|\bts\b"),
               ("java", r"\bjava\b"), ("python", r"python"), ("rust", r"\brust\b"),
               ("cpp", r"c\+\+|\bcpp\b"), ("go", r"\bgolang\b|\bgo\b"),
@@ -69,7 +70,7 @@ def project(doc_id: str, filename: str, text: str, track: str, explicit_language
         return ()
     # Undetermined uploads stay indexable for instructor management; learner
     # retrieval requires an exact language match, so "und" never reaches chat.
-    language = explicit_language or infer_language(filename) or "und"
+    language = explicit_language or infer_language(filename) or ALL_LANGUAGES
     safe = reference_text(text)
     if not safe:
         return ()  # ambiguous language requires instructor clarification
@@ -89,7 +90,7 @@ async def search(session, query: str, track: str, language: str, focus_id=None, 
     if max_documents is not None:
         if not 1 <= max_documents <= 100:
             raise ValueError("Invalid upload search limit")
-        stmt=stmt.where(or_(KnowledgeDocument.language==language,KnowledgeDocument.language==""))
+        stmt=stmt.where(or_(KnowledgeDocument.language==language, KnowledgeDocument.language==ALL_LANGUAGES, KnowledgeDocument.language==""))
         stmt=stmt.order_by(KnowledgeDocument.created_at.desc()).limit(max_documents)
     rows=(await session.scalars(stmt)).all()
     snapshots=[(r.id,r.filename,r.text,r.track,r.language) for r in rows]
@@ -98,7 +99,7 @@ async def search(session, query: str, track: str, language: str, focus_id=None, 
 
 def _rank(rows, query, language):
     docs = [chunk for row in rows for chunk in project(*row)
-            if chunk.metadata["language"] == language]
+            if chunk.metadata["language"] in (language, ALL_LANGUAGES)]
     if not docs:
         return []
     # Lexical retrieval avoids paid re-embedding of legacy material and applies

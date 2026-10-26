@@ -345,5 +345,68 @@
       "report": "reports/knowledge-base-training-2026-10-18/PENDING_TASKS_RECHECK.md",
       "new_embedding_calls_for_integrity_reconciliation": 0
     }
+  },
+  {
+    "id": "tr-evt-4df38767c98d",
+    "timestamp": "2026-10-24T23:11:30.033603+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/Users/guhaprasaanth/Projects/dsa-chatbot/current/private-corpora",
+    "record_count": 440,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "bootstrap": 110,
+        "css": 105,
+        "html": 107,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2,
+        "tailwind": 106
+      },
+      "retrievable_count": 440
+    }
+  },
+  {
+    "id": "tr-evt-3d9bda0c4081",
+    "timestamp": "2026-10-24T23:11:57.022109+00:00",
+    "action": "import_reference_library",
+    "technology": "reference-library",
+    "category": "multi_technology",
+    "source": "/Users/guhaprasaanth/Projects/dsa-chatbot/current/Training Data",
+    "record_count": 14315,
+    "vectors_count": 0,
+    "status": "completed",
+    "details": {
+      "by_subject": {
+        "bootstrap": 110,
+        "c": 1368,
+        "cpp": 320,
+        "css": 105,
+        "embedded-c": 2978,
+        "embedded-python": 1232,
+        "html": 355,
+        "python": 484,
+        "python-django": 314,
+        "python-fastapi": 314,
+        "python-flask": 314,
+        "ruby": 1316,
+        "rust": 3105,
+        "spring-boot": 3,
+        "spring-core": 1,
+        "spring-data": 2,
+        "spring-mvc": 3,
+        "spring-security": 1,
+        "spring-testing": 2,
+        "tailwind": 106,
+        "typescript": 1882
+      },
+      "retrievable_count": 9087
+    }
   }
 ]

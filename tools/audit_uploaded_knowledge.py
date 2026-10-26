@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from sqlalchemy import select
 from app.db.database import SessionLocal
 from app.db.models import KnowledgeDocument
-from app.services.uploaded_knowledge import project, infer_language, search, PROJECTION_VERSION
+from app.services.uploaded_knowledge import ALL_LANGUAGES, project, infer_language, search, PROJECTION_VERSION
 from app.services.knowledge_hygiene import source_is_plan
 
 
@@ -35,14 +35,14 @@ async def audit():
                     report['failures'].append(row.id)
                 continue
             docs = project(row.id, row.filename, row.text, row.track, row.language)
-            language = row.language or infer_language(row.filename)
+            language = row.language or infer_language(row.filename) or ALL_LANGUAGES
             # Expected source is known independently from the ranking result.
             question = benchmarks.get(row.filename, {}).get('question') or 'Explain ' + row.filename.rsplit('.',1)[0].replace(' — Curriculum Blueprint','')
             retrieved = await search(session, question, row.track, language)
             wrong = await search(session, question, row.track, 'javascript' if language=='java' else 'java')
             found = any(d.metadata['document_id']==row.id for d in retrieved)
-            no_cross_language = all(d.metadata['document_id']!=row.id for d in wrong)
-            safe_meta = all(d.metadata['contains_answer'] is False and d.metadata['language']==language and d.metadata['verified'] is False for d in docs)
+            no_cross_language = language == ALL_LANGUAGES or all(d.metadata['document_id']!=row.id for d in wrong)
+            safe_meta = all(d.metadata['contains_answer'] is False and d.metadata['language'] in (language, ALL_LANGUAGES) and d.metadata['verified'] is False for d in docs)
             item = {'document_id':row.id, 'filename':row.filename, 'track':row.track,
                 'language':language, 'original_characters':len(row.text), 'original_sha256':hashlib.sha256(row.text.encode()).hexdigest(),
                 'reference_chunks':len(docs), 'reference_characters':sum(len(d.page_content) for d in docs),

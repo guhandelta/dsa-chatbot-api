@@ -30,6 +30,29 @@ def embed_with_retry(embed, texts, attempts=6):
             time.sleep(wait)
 
 
+def metadata_for(batch):
+    # Chroma metadata values must be scalars.
+    return [{k:v for k,v in {**r['metadata'],'problem_id':r['id']}.items()
+             if isinstance(v,(str,int,float,bool))} for r in batch]
+
+
+def reusable_vectors(client, rows):
+    # Vectors from the published index are reused only where the record id and its
+    # exact document text are unchanged; any edited record is embedded again.
+    if not MANIFEST.exists():
+        return {}
+    previous=json.loads(MANIFEST.read_text())
+    if previous.get('model')!=MODEL:
+        return {}
+    try:
+        source=client.get_collection(previous['collection'])
+    except Exception:
+        return {}
+    current={r['id']:r['document'] for r in rows}
+    found=source.get(include=['documents','embeddings'])
+    return {i:list(e) for i,d,e in zip(found['ids'],found['documents'],found['embeddings']) if current.get(i)==d}
+
+
 def main():
     if settings.vector_store != 'chroma':raise SystemExit('This maintenance command requires the local Chroma backend')
     rows=[r for r in records() if eligible(r)]
@@ -44,16 +67,20 @@ def main():
     collection=client.get_or_create_collection(name,metadata={'embedding_model':MODEL,'source_sha256':identity,'hnsw:space':'cosine'})
     if collection.metadata.get('embedding_model')!=MODEL:raise RuntimeError('Embedding identity mismatch')
     existing=set(collection.get(include=[])['ids'])
-    pending=[r for r in rows if r['id'] not in existing]
+    reused=reusable_vectors(client,rows) if len(existing)<len(rows) else {}
+    reusable=[r for r in rows if r['id'] not in existing and r['id'] in reused]
+    for start in range(0,len(reusable),BATCH):
+        batch=reusable[start:start+BATCH]
+        collection.add(ids=[r['id'] for r in batch],documents=[r['document'] for r in batch],
+                       embeddings=[reused[r['id']] for r in batch],metadatas=metadata_for(batch))
+    print(f'Reused {len(reusable)} unchanged vectors from the published index',flush=True)
+    pending=[r for r in rows if r['id'] not in existing and r['id'] not in reused]
     embed=embeddings()
     for start in range(0,len(pending),BATCH):
         batch=pending[start:start+BATCH]
         vectors=embed_with_retry(embed,[r['document'] for r in batch])
-        # Chroma metadata values must be scalars.
-        metadatas=[{k:v for k,v in {**r['metadata'],'problem_id':r['id']}.items()
-                    if isinstance(v,(str,int,float,bool))} for r in batch]
         collection.add(ids=[r['id'] for r in batch],documents=[r['document'] for r in batch],embeddings=vectors,
-                       metadatas=metadatas)
+                       metadatas=metadata_for(batch))
         print(f'Indexed {min(start+BATCH,len(pending))}/{len(pending)} pending references',flush=True)
     assert collection.count()==len(rows)
     report={'collection':name,'provider':'google','model':MODEL,'source_sha256':identity,
