@@ -20,7 +20,6 @@ fi
 
 echo "Backend suite on the pinned sandbox image (${image:0:19}...)"
 EXEC_BACKEND=docker EXEC_CONTAINER_IMAGE="$image" \
-  .venv/bin/python -m pytest -q -rs -p no:cacheprovider \
-  --deselect tests/test_reference_maintenance.py::test_framework_sections_are_stable_and_exclude_labs
+  .venv/bin/python -m pytest -q -rs -p no:cacheprovider
 
 echo "Release check passed."

@@ -71,3 +71,10 @@ on a fresh disposable database. The UI repository's workflow runs typecheck,
 unit tests, the production build and Cypress browser smoke tests. CI does not
 call paid model providers. Local regression tests use separate database
 connections to check simultaneous saves, answers and allowance requests.
+
+## Release check
+
+Run `tools/release_check.sh` before a release. It runs the backend suite
+against the pinned sandbox image, so the Go and C# checks run for real instead
+of skipping on hosts without those toolchains. It needs Docker running and
+`EXEC_CONTAINER_IMAGE` in `.env`. It takes about 13 minutes.
