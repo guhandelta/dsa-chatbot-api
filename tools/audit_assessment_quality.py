@@ -34,6 +34,12 @@ def audit() -> dict:
             code_items += 1
             tests = item.get("tests", [])
             values = _values(item)
+            applicable = {
+                "empty": any(isinstance(v, (list, str, dict)) for v in values),
+                "zero": any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in values),
+                "negative": any(isinstance(v, (int, float)) and not isinstance(v, bool) for v in values),
+                "duplicate": any(isinstance(v, list) for v in values),
+            }
             categories = {
                 "empty": any(isinstance(v, (list, str, dict)) and len(v) == 0 for v in values),
                 "zero": any(v == 0 for v in values if isinstance(v, (int, float)) and not isinstance(v, bool)),
@@ -42,7 +48,9 @@ def audit() -> dict:
             }
             if len(tests) < 6:
                 findings.append({"id": item["id"], "kind": "too_few_tests", "count": len(tests)})
-            missing = [name for name, present in categories.items() if not present]
+            exemptions = item.get("edge_case_exemptions", {})
+            missing = [name for name, present in categories.items()
+                       if applicable[name] and not present and name not in exemptions]
             if missing:
                 findings.append({"id": item["id"], "kind": "missing_edge_categories", "categories": missing})
     return {"status": "pass" if not findings else "findings", "code_items": code_items,

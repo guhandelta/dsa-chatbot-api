@@ -1671,6 +1671,13 @@
       0
      ],
      "expected": 180
+    },
+    {
+     "args": [
+      -1,
+      30
+     ],
+     "expected": -30
     }
    ],
    "explanation": "Each hour has 60 minutes, so the total is hours * 60 + minutes."
@@ -1830,6 +1837,12 @@
       10
      ],
      "expected": 55
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "The loop must include i equal to n, so its condition is i <= n. With i < n the last term is skipped."
@@ -1879,6 +1892,12 @@
       10
      ],
      "expected": 3628800
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "Start the running product at 1 and multiply by each integer from 2 up to n. An empty loop for n of 0 or 1 leaves the product at 1."
@@ -2170,7 +2189,10 @@
      "expected": 8
     }
    ],
-   "explanation": "The running best must start from a real element, values[0]. Starting from 0 wrongly claims 0 is present in an all-negative array."
+   "explanation": "The running best must start from a real element, values[0]. Starting from 0 wrongly claims 0 is present in an all-negative array.",
+   "edge_case_exemptions": {
+    "empty": "The function contract requires at least one value; empty input would dereference the first element."
+   }
   },
   {
    "id": "cs-s06-write",
@@ -2861,6 +2883,12 @@
       10
      ],
      "expected": 55
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "The base case must cover n = 0 with answer 0. Lumping 0 into the n = 1 case makes every result one too large at the bottom of the recursion."
@@ -2910,6 +2938,12 @@
       123456
      ],
      "expected": 6
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "A number below 10 has one digit. Otherwise drop the last digit with n / 10 and add 1 for the digit removed."
@@ -2983,6 +3017,24 @@
       9
      ],
      "expected": true
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      0
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      -6
+     ],
+     "expected": false
     }
    ],
    "explanation": "Check for the complement first and only then add the current value. Adding first lets the same element match itself, as in [3] with target 6."
@@ -3052,6 +3104,1486 @@
     }
    ],
    "explanation": "HashSet.Add returns false when the value is already present, which is a duplicate. This runs in O(n) average time, against O(n^2) for comparing every pair."
+  },
+  {
+   "id": "cs-release-stage_01-8",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_02-8",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_03-8",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_04-8",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_05-8",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_06-8",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_07-8",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_08-8",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_09-8",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_10-8",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_11-8",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-stage_12-8",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_value_reference-7",
+   "node": "module-value-reference",
+   "type": "write_snippet",
+   "concept": "module_value_reference-threshold-accumulation",
+   "prompt": "For the Value vs reference topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_value_reference-8",
+   "node": "module-value-reference",
+   "type": "write_snippet",
+   "concept": "module_value_reference-threshold-accumulation",
+   "prompt": "For the Value vs reference topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_generics-7",
+   "node": "module-generics",
+   "type": "write_snippet",
+   "concept": "module_generics-threshold-accumulation",
+   "prompt": "For the Generics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_generics-8",
+   "node": "module-generics",
+   "type": "write_snippet",
+   "concept": "module_generics-threshold-accumulation",
+   "prompt": "For the Generics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_linq-7",
+   "node": "module-linq",
+   "type": "write_snippet",
+   "concept": "module_linq-threshold-accumulation",
+   "prompt": "For the LINQ deferred execution topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_linq-8",
+   "node": "module-linq",
+   "type": "write_snippet",
+   "concept": "module_linq-threshold-accumulation",
+   "prompt": "For the LINQ deferred execution topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_records_patterns-8",
+   "node": "module-records-patterns",
+   "type": "write_snippet",
+   "concept": "module_records_patterns-threshold-accumulation",
+   "prompt": "For the Records and pattern matching topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cs-release-module_async_cancellation-8",
+   "node": "module-async-cancellation",
+   "type": "write_snippet",
+   "concept": "module_async_cancellation-threshold-accumulation",
+   "prompt": "For the Async and cancellation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "public static int SumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+   "fn": "SumAtLeast",
+   "solution": "public static int SumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    foreach (int value in values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
   }
  ]
 }

@@ -22,3 +22,7 @@ data/reference_library/
 data/debug/knowledge-base.json
 data/curriculum/*.jsonl
 data/curriculum/manifest.json
+
+# Training Data: generated training material, kept out of the repository
+Training Data/
+reports/

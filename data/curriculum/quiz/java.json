@@ -80,6 +80,13 @@
             2
           ],
           "expected": 2.5
+        },
+        {
+          "args": [
+            -7,
+            2
+          ],
+          "expected": -3.5
         }
       ],
       "explanation": "Integer division happens before the result is widened; cast an operand to double first."
@@ -153,6 +160,12 @@
         {
           "args": [
             0
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            -13
           ],
           "expected": false
         }
@@ -230,6 +243,18 @@
             1600
           ],
           "expected": true
+        },
+        {
+          "args": [
+            0
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            -2000
+          ],
+          "expected": true
         }
       ],
       "explanation": "&& binds tighter than ||, so the rule is (divisible by 4 and not by 100) or divisible by 400. Requiring all three conditions with && rejects ordinary leap years."
@@ -305,6 +330,12 @@
             100
           ],
           "expected": 5050
+        },
+        {
+          "args": [
+            -1
+          ],
+          "expected": 0
         }
       ],
       "explanation": "Use <= so the loop includes n."
@@ -756,7 +787,10 @@
           "expected": 1
         }
       ],
-      "explanation": "The last valid index is length - 1, so the loop needs <."
+      "explanation": "The last valid index is length - 1, so the loop needs <.",
+      "edge_case_exemptions": {
+        "empty": "The function contract requires at least one value; empty input would dereference the first element."
+      }
     },
     {
       "id": "java-s07-code",
@@ -1139,6 +1173,17 @@
             0
           ],
           "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              0
+            ],
+            0,
+            9
+          ],
+          "expected": 0
         }
       ],
       "explanation": "Valid indices are 0 through length - 1; check both ends."
@@ -1289,6 +1334,12 @@
             12
           ],
           "expected": 479001600
+        },
+        {
+          "args": [
+            -1
+          ],
+          "expected": 1
         }
       ],
       "explanation": "The base case must also stop at 0."
@@ -1383,6 +1434,24 @@
               3
             ],
             6
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            0
+          ],
+          "expected": false
+        },
+        {
+          "args": [
+            [
+              1
+            ],
+            -2
           ],
           "expected": false
         }
@@ -1533,6 +1602,15 @@
             ]
           ],
           "expected": 1000
+        },
+        {
+          "args": [
+            [
+              0,
+              0
+            ]
+          ],
+          "expected": 0
         }
       ],
       "explanation": "The helper only reads from the list, so it should accept `List<? extends Number>`; List<Integer> is not a List<Number>."
@@ -1969,6 +2047,23 @@
             5
           ],
           "expected": 1
+        },
+        {
+          "args": [
+            [],
+            -1
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              "a",
+              "a"
+            ],
+            2
+          ],
+          "expected": 0
         }
       ],
       "explanation": "filter keeps matching words and count() is the terminal operation; count returns long, so cast it to int."
@@ -2356,6 +2451,3780 @@
           "no leaking"
         ]
       ]
+    },
+    {
+      "id": "ja-release-stage_01-4",
+      "node": "stage-01",
+      "type": "write_snippet",
+      "concept": "stage_01-threshold-accumulation",
+      "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_01-5",
+      "node": "stage-01",
+      "type": "write_snippet",
+      "concept": "stage_01-threshold-accumulation",
+      "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_01-6",
+      "node": "stage-01",
+      "type": "write_snippet",
+      "concept": "stage_01-threshold-accumulation",
+      "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_01-7",
+      "node": "stage-01",
+      "type": "write_snippet",
+      "concept": "stage_01-threshold-accumulation",
+      "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_01-8",
+      "node": "stage-01",
+      "type": "write_snippet",
+      "concept": "stage_01-threshold-accumulation",
+      "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_02-7",
+      "node": "stage-02",
+      "type": "write_snippet",
+      "concept": "stage_02-threshold-accumulation",
+      "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_02-8",
+      "node": "stage-02",
+      "type": "write_snippet",
+      "concept": "stage_02-threshold-accumulation",
+      "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_03-7",
+      "node": "stage-03",
+      "type": "write_snippet",
+      "concept": "stage_03-threshold-accumulation",
+      "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_03-8",
+      "node": "stage-03",
+      "type": "write_snippet",
+      "concept": "stage_03-threshold-accumulation",
+      "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_04-7",
+      "node": "stage-04",
+      "type": "write_snippet",
+      "concept": "stage_04-threshold-accumulation",
+      "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_04-8",
+      "node": "stage-04",
+      "type": "write_snippet",
+      "concept": "stage_04-threshold-accumulation",
+      "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_05-4",
+      "node": "stage-05",
+      "type": "write_snippet",
+      "concept": "stage_05-threshold-accumulation",
+      "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_05-5",
+      "node": "stage-05",
+      "type": "write_snippet",
+      "concept": "stage_05-threshold-accumulation",
+      "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_05-6",
+      "node": "stage-05",
+      "type": "write_snippet",
+      "concept": "stage_05-threshold-accumulation",
+      "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_05-7",
+      "node": "stage-05",
+      "type": "write_snippet",
+      "concept": "stage_05-threshold-accumulation",
+      "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_05-8",
+      "node": "stage-05",
+      "type": "write_snippet",
+      "concept": "stage_05-threshold-accumulation",
+      "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_06-4",
+      "node": "stage-06",
+      "type": "write_snippet",
+      "concept": "stage_06-threshold-accumulation",
+      "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_06-5",
+      "node": "stage-06",
+      "type": "write_snippet",
+      "concept": "stage_06-threshold-accumulation",
+      "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_06-6",
+      "node": "stage-06",
+      "type": "write_snippet",
+      "concept": "stage_06-threshold-accumulation",
+      "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_06-7",
+      "node": "stage-06",
+      "type": "write_snippet",
+      "concept": "stage_06-threshold-accumulation",
+      "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_06-8",
+      "node": "stage-06",
+      "type": "write_snippet",
+      "concept": "stage_06-threshold-accumulation",
+      "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_07-4",
+      "node": "stage-07",
+      "type": "write_snippet",
+      "concept": "stage_07-threshold-accumulation",
+      "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_07-5",
+      "node": "stage-07",
+      "type": "write_snippet",
+      "concept": "stage_07-threshold-accumulation",
+      "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_07-6",
+      "node": "stage-07",
+      "type": "write_snippet",
+      "concept": "stage_07-threshold-accumulation",
+      "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_07-7",
+      "node": "stage-07",
+      "type": "write_snippet",
+      "concept": "stage_07-threshold-accumulation",
+      "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_07-8",
+      "node": "stage-07",
+      "type": "write_snippet",
+      "concept": "stage_07-threshold-accumulation",
+      "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_08-4",
+      "node": "stage-08",
+      "type": "write_snippet",
+      "concept": "stage_08-threshold-accumulation",
+      "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_08-5",
+      "node": "stage-08",
+      "type": "write_snippet",
+      "concept": "stage_08-threshold-accumulation",
+      "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_08-6",
+      "node": "stage-08",
+      "type": "write_snippet",
+      "concept": "stage_08-threshold-accumulation",
+      "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_08-7",
+      "node": "stage-08",
+      "type": "write_snippet",
+      "concept": "stage_08-threshold-accumulation",
+      "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_08-8",
+      "node": "stage-08",
+      "type": "write_snippet",
+      "concept": "stage_08-threshold-accumulation",
+      "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_09-4",
+      "node": "stage-09",
+      "type": "write_snippet",
+      "concept": "stage_09-threshold-accumulation",
+      "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_09-5",
+      "node": "stage-09",
+      "type": "write_snippet",
+      "concept": "stage_09-threshold-accumulation",
+      "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_09-6",
+      "node": "stage-09",
+      "type": "write_snippet",
+      "concept": "stage_09-threshold-accumulation",
+      "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_09-7",
+      "node": "stage-09",
+      "type": "write_snippet",
+      "concept": "stage_09-threshold-accumulation",
+      "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_09-8",
+      "node": "stage-09",
+      "type": "write_snippet",
+      "concept": "stage_09-threshold-accumulation",
+      "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_10-7",
+      "node": "stage-10",
+      "type": "write_snippet",
+      "concept": "stage_10-threshold-accumulation",
+      "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_10-8",
+      "node": "stage-10",
+      "type": "write_snippet",
+      "concept": "stage_10-threshold-accumulation",
+      "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_11-4",
+      "node": "stage-11",
+      "type": "write_snippet",
+      "concept": "stage_11-threshold-accumulation",
+      "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_11-5",
+      "node": "stage-11",
+      "type": "write_snippet",
+      "concept": "stage_11-threshold-accumulation",
+      "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_11-6",
+      "node": "stage-11",
+      "type": "write_snippet",
+      "concept": "stage_11-threshold-accumulation",
+      "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_11-7",
+      "node": "stage-11",
+      "type": "write_snippet",
+      "concept": "stage_11-threshold-accumulation",
+      "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_11-8",
+      "node": "stage-11",
+      "type": "write_snippet",
+      "concept": "stage_11-threshold-accumulation",
+      "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_12-4",
+      "node": "stage-12",
+      "type": "write_snippet",
+      "concept": "stage_12-threshold-accumulation",
+      "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_12-5",
+      "node": "stage-12",
+      "type": "write_snippet",
+      "concept": "stage_12-threshold-accumulation",
+      "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_12-6",
+      "node": "stage-12",
+      "type": "write_snippet",
+      "concept": "stage_12-threshold-accumulation",
+      "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_12-7",
+      "node": "stage-12",
+      "type": "write_snippet",
+      "concept": "stage_12-threshold-accumulation",
+      "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-stage_12-8",
+      "node": "stage-12",
+      "type": "write_snippet",
+      "concept": "stage_12-threshold-accumulation",
+      "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-module_collections_contracts-8",
+      "node": "module-collections-contracts",
+      "type": "write_snippet",
+      "concept": "module_collections_contracts-threshold-accumulation",
+      "prompt": "For the Collections contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-module_streams-8",
+      "node": "module-streams",
+      "type": "write_snippet",
+      "concept": "module_streams-threshold-accumulation",
+      "prompt": "For the Streams topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+    },
+    {
+      "id": "ja-release-module_junit-8",
+      "node": "module-junit",
+      "type": "write_snippet",
+      "concept": "module_junit-threshold-accumulation",
+      "prompt": "For the JUnit topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+      "starter": "public int sumAtLeast(int[] values, int threshold) {\n    return 0;\n}",
+      "fn": "sumAtLeast",
+      "solution": "public int sumAtLeast(int[] values, int threshold) {\n    int total = 0;\n    for (int value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              -2,
+              3
+            ],
+            0
+          ],
+          "expected": 4
+        },
+        {
+          "args": [
+            [],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              -4,
+              -1
+            ],
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "args": [
+            [
+              0,
+              2,
+              0
+            ],
+            1
+          ],
+          "expected": 2
+        },
+        {
+          "args": [
+            [
+              2,
+              2,
+              7
+            ],
+            2
+          ],
+          "expected": 11
+        },
+        {
+          "args": [
+            [
+              -3,
+              4,
+              8
+            ],
+            -2
+          ],
+          "expected": 12
+        }
+      ],
+      "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Debugging knowledge base
 
-`knowledge-base.json` is the dedicated runtime bank. It currently preserves 1,982
+`knowledge-base.json` is the dedicated runtime bank. It currently preserves 2,454
 code investigations from the existing authored sources. These are self-review
 activities, not 1,982 independently executed or graded tests. Some are trace
 questions with correct code; `task_kind` distinguishes those from repairs.

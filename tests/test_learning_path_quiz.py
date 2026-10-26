@@ -150,7 +150,7 @@ def test_public_view_never_contains_answer_keys_or_tests():
         view = quiz.public(entry)
         assert not {'answer', 'solution', 'tests', 'keywords', 'accept', 'explanation'} & view.keys()
     fix = quiz.public(item('python', 'py-s01-fix'))
-    assert fix['function'] == 'average_minutes' and fix['test_count'] == 6 and fix['language'] == 'python'
+    assert fix['function'] == 'average_minutes' and fix['test_count'] >= 6 and fix['language'] == 'python'
 
 
 def test_lesson_code_extracts_both_snippets_and_skips_rows_without_them():
@@ -264,7 +264,7 @@ def test_judge_provider_prefers_a_configured_provider(monkeypatch):
 async def test_code_items_are_graded_by_running_hidden_tests():
     fix = item('python', 'py-s01-fix')
     fixed = await quiz.grade(fix, fix['solution'])
-    assert fixed['correct'] and fixed['tests']['passed'] == 6 and fixed['tests']['first_failure'] is None
+    assert fixed['correct'] and fixed['tests']['passed'] == fixed['tests']['total'] >= 6 and fixed['tests']['first_failure'] is None
     buggy = await quiz.grade(fix, fix['code'])
     assert not buggy['correct'] and buggy['tests']['first_failure']['case'] == 2  # 30.0 == 30 passes
     assert buggy['expected'] == fix['solution']

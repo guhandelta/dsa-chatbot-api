@@ -80,6 +80,13 @@
       "5"
      ],
      "expected": 0
+    },
+    {
+     "args": [
+      "",
+      "4"
+     ],
+     "expected": 4
     }
    ],
    "explanation": "+ concatenates strings; convert with Number() first."
@@ -230,6 +237,12 @@
       100
      ],
      "expected": 5050
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "Use <= so the loop includes n."
@@ -882,6 +895,17 @@
       0
      ],
      "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      0,
+      9
+     ],
+     "expected": 0
     }
    ],
    "explanation": "Check both ends of the valid range before reading."
@@ -957,6 +981,12 @@
       1000000
      ],
      "expected": 1
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -1
     }
    ],
    "explanation": "JavaScript / is floating point; floor it to drop the last digit."
@@ -1051,6 +1081,20 @@
        3
       ],
       6
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [],
+      -2
      ],
      "expected": false
     }
@@ -1242,6 +1286,12 @@
       9,
       16
      ]
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": []
     }
    ],
    "explanation": "`var i` is one shared variable, so each closure sees its final value. `let` gives each iteration its own binding."
@@ -1421,6 +1471,18 @@
       []
      ],
      "expected": []
+    },
+    {
+     "args": [
+      [
+       10,
+       10
+      ]
+     ],
+     "expected": [
+      10,
+      10
+     ]
     }
    ],
    "explanation": "The default sort compares as strings; a numeric comparator fixes the order."
@@ -1493,6 +1555,17 @@
       ],
       0,
       5
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      0,
+      9
      ],
      "expected": 0
     }
@@ -2297,6 +2370,3706 @@
    "prompt": "Type exactly what this prints.",
    "answer": "TypeError 8",
    "explanation": "The entry check rejects 'x' before any work happens, so the caught error's name is TypeError. The valid call then returns 8."
+  },
+  {
+   "id": "ja-release-stage_01-7",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_01-8",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_02-7",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_02-8",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_03-7",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_03-8",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_04-7",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_04-8",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_05-7",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_05-8",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_06-4",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_06-5",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_06-6",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_06-7",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_06-8",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_07-4",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_07-5",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_07-6",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_07-7",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_07-8",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_08-4",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_08-5",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_08-6",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_08-7",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_08-8",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_09-4",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_09-5",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_09-6",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_09-7",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_09-8",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_10-7",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_10-8",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_11-4",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_11-5",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_11-6",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_11-7",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_11-8",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_12-4",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_12-5",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_12-6",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_12-7",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-stage_12-8",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_closures_this_prototypes-8",
+   "node": "module-closures-this-prototypes",
+   "type": "write_snippet",
+   "concept": "module_closures_this_prototypes-threshold-accumulation",
+   "prompt": "For the Closures, this and prototypes topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_coercion-8",
+   "node": "module-coercion",
+   "type": "write_snippet",
+   "concept": "module_coercion-threshold-accumulation",
+   "prompt": "For the Coercion topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_event_loop-7",
+   "node": "module-event-loop",
+   "type": "write_snippet",
+   "concept": "module_event_loop-threshold-accumulation",
+   "prompt": "For the The event loop topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_event_loop-8",
+   "node": "module-event-loop",
+   "type": "write_snippet",
+   "concept": "module_event_loop-threshold-accumulation",
+   "prompt": "For the The event loop topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_promises_async-7",
+   "node": "module-promises-async",
+   "type": "write_snippet",
+   "concept": "module_promises_async-threshold-accumulation",
+   "prompt": "For the Promises and async topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_promises_async-8",
+   "node": "module-promises-async",
+   "type": "write_snippet",
+   "concept": "module_promises_async-threshold-accumulation",
+   "prompt": "For the Promises and async topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_abort_controller-8",
+   "node": "module-abort-controller",
+   "type": "write_snippet",
+   "concept": "module_abort_controller-threshold-accumulation",
+   "prompt": "For the AbortController topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ja-release-module_modules-8",
+   "node": "module-modules",
+   "type": "write_snippet",
+   "concept": "module_modules-threshold-accumulation",
+   "prompt": "For the Modules topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "function sumAtLeast(values, threshold) {\n  return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "function sumAtLeast(values, threshold) {\n  let total = 0;\n  for (const value of values) {\n    if (value >= threshold) total += value;\n  }\n  return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
   }
  ]
 }

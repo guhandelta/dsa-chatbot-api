@@ -1254,6 +1254,13 @@
       8
      ],
      "expected": 37.5
+    },
+    {
+     "args": [
+      -1,
+      8
+     ],
+     "expected": -12.5
     }
    ],
    "explanation": "Integer division in Ruby drops the fraction before the multiplication, so 1 / 4 is 0 and the result is 0. Converting part with to_f makes the division a float division."
@@ -1303,6 +1310,12 @@
       123456
      ],
      "expected": 21
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "n % 10 gives the last digit and n / 10 removes it, so the loop adds each digit until n reaches 0. Zero never enters the loop and correctly gives 0."
@@ -1364,6 +1377,14 @@
       5
      ],
      "expected": true
+    },
+    {
+     "args": [
+      -5,
+      1,
+      10
+     ],
+     "expected": false
     }
    ],
    "explanation": "> and < leave out the endpoints. >= and <= include lo and hi, which is what an inclusive range check needs."
@@ -1462,6 +1483,12 @@
       100
      ],
      "expected": 5050
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "1...n excludes n, so the last term is never added. 1..n includes both ends, so every term from 1 through n is added."
@@ -1537,6 +1564,12 @@
       2,
       1
      ]
+    },
+    {
+     "args": [
+      -3
+     ],
+     "expected": []
     }
    ],
    "explanation": "Integer#downto(1) yields n, n-1 and so on down to 1, and yields nothing when n is 0. Appending each value to result keeps the order the block sees them in."
@@ -2263,6 +2296,12 @@
       3
      ],
      "expected": 3
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "Inside a method, count += 1 assigns a new local variable, which starts as nil, so the call raises and the stored count never changes. @count += 1 updates the instance variable that count reads, so each bump adds one."
@@ -2485,6 +2524,12 @@
       10
      ],
      "expected": 3628800
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "A base case must cover every input the recursion can reach. With only n == 1, n = 0 keeps subtracting 1 and never stops. The base case n <= 1 returns 1 for both 0 and 1."
@@ -2639,6 +2684,30 @@
       3
      ],
      "expected": 1
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [],
+      -5
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      5
+     ],
+     "expected": -1
     }
    ],
    "explanation": "With lo < hi the loop ends when one candidate remains, and that candidate is never compared. lo <= hi keeps the last candidate in range, so every index is checked and the search is correct."
@@ -2721,6 +2790,3188 @@
     }
    ],
    "explanation": "A hash lookup checks whether a value was seen before in roughly constant time, so one pass over the array is enough. return inside the block leaves the method at the first repeat."
+  },
+  {
+   "id": "ru-release-stage_01-8",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_02-8",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_05-7",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_05-8",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_06-7",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_06-8",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_07-6",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_07-7",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_07-8",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-3",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-4",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-5",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-6",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-7",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-8",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-3",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-4",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-5",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-6",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-7",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-8",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-3",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-4",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-5",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-6",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-7",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-8",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-3",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-4",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-5",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-6",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-7",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-8",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-3",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-4",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-5",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-6",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-7",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-8",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_blocks_procs_lambdas-8",
+   "node": "module-blocks-procs-lambdas",
+   "type": "write_snippet",
+   "concept": "module_blocks_procs_lambdas-threshold-accumulation",
+   "prompt": "For the Blocks, procs and lambdas topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_enumerable_lazy-8",
+   "node": "module-enumerable-lazy",
+   "type": "write_snippet",
+   "concept": "module_enumerable_lazy-threshold-accumulation",
+   "prompt": "For the Enumerable and lazy topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_bundler-8",
+   "node": "module-bundler",
+   "type": "write_snippet",
+   "concept": "module_bundler-threshold-accumulation",
+   "prompt": "For the Bundler topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_rspec-8",
+   "node": "module-rspec",
+   "type": "write_snippet",
+   "concept": "module_rspec-threshold-accumulation",
+   "prompt": "For the RSpec topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "def sum_at_least(values, threshold)\n  0\nend",
+   "fn": "sum_at_least",
+   "solution": "def sum_at_least(values, threshold)\n  values.select { |value| value >= threshold }.sum\nend",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
   }
  ]
 }

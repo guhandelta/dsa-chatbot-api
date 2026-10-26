@@ -136,6 +136,12 @@
       99999
      ],
      "expected": 8639913600
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -86400
     }
    ],
    "explanation": "Storing the 64-bit product in an int discards the high bits once it exceeds the int range. Keep the intermediate values in long long."
@@ -263,6 +269,18 @@
     {
      "args": [
       4
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      -2000
      ],
      "expected": true
     }
@@ -393,6 +411,12 @@
       100
      ],
      "expected": 2500
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "The bound is inclusive, so the condition must be i <= n; with i < n the last odd value is skipped whenever n is odd."
@@ -793,6 +817,15 @@
     {
      "args": [
       [
+       0
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
        0
       ]
      ],
@@ -1259,6 +1292,16 @@
       ]
      ],
      "expected": 3
+    },
+    {
+     "args": [
+      -5,
+      [
+       0,
+       0
+      ]
+     ],
+     "expected": -5
     }
    ],
    "explanation": "Starting the maximum at 0 invents a balance that never occurred. Start from the first real value, the initial balance."
@@ -1518,6 +1561,12 @@
       1000000
      ],
      "expected": 7
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "The base case must answer correctly for the smallest valid input: a single digit, including 0, has one digit."
@@ -1670,6 +1719,24 @@
       8
      ],
      "expected": true
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      0
+     ],
+     "expected": false
+    },
+    {
+     "args": [
+      [
+       1
+      ],
+      -2
+     ],
+     "expected": false
     }
    ],
    "explanation": "Inserting first lets an element be its own partner. Look up the complement, then insert."
@@ -2327,7 +2394,10 @@
      "expected": 9
     }
    ],
-   "explanation": "T{} is zero, which is not necessarily an element of the vector. Seed the running maximum with the first element."
+   "explanation": "T{} is zero, which is not necessarily an element of the vector. Seed the running maximum with the first element.",
+   "edge_case_exemptions": {
+    "empty": "The function contract requires at least one value; empty input would dereference the first element."
+   }
   },
   {
    "id": "cpp-m-exc-mcq",
@@ -2471,6 +2541,4002 @@
     }
    ],
    "explanation": "std::stoll throws std::invalid_argument for non-numeric text and std::out_of_range for values that do not fit; an uncaught exception terminates the program. Catch both by const reference. Note that \"7x\" parses its numeric prefix."
+  },
+  {
+   "id": "cp-release-stage_01-6",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_01-7",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_01-8",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_02-6",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_02-7",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_02-8",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_03-6",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_03-7",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_03-8",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_04-6",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_04-7",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_04-8",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_05-6",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_05-7",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_05-8",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_06-6",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_06-7",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_06-8",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_07-6",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_07-7",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_07-8",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_08-6",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_08-7",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_08-8",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_09-6",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_09-7",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_09-8",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_10-6",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_10-7",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_10-8",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_11-6",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_11-7",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_11-8",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_12-6",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_12-7",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-stage_12-8",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_raii_smart_pointers-6",
+   "node": "module-raii-smart-pointers",
+   "type": "write_snippet",
+   "concept": "module_raii_smart_pointers-threshold-accumulation",
+   "prompt": "For the RAII and smart pointers topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_raii_smart_pointers-7",
+   "node": "module-raii-smart-pointers",
+   "type": "write_snippet",
+   "concept": "module_raii_smart_pointers-threshold-accumulation",
+   "prompt": "For the RAII and smart pointers topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_raii_smart_pointers-8",
+   "node": "module-raii-smart-pointers",
+   "type": "write_snippet",
+   "concept": "module_raii_smart_pointers-threshold-accumulation",
+   "prompt": "For the RAII and smart pointers topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_copy_move-6",
+   "node": "module-copy-move",
+   "type": "write_snippet",
+   "concept": "module_copy_move-threshold-accumulation",
+   "prompt": "For the Copy and move topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_copy_move-7",
+   "node": "module-copy-move",
+   "type": "write_snippet",
+   "concept": "module_copy_move-threshold-accumulation",
+   "prompt": "For the Copy and move topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_copy_move-8",
+   "node": "module-copy-move",
+   "type": "write_snippet",
+   "concept": "module_copy_move-threshold-accumulation",
+   "prompt": "For the Copy and move topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_iterator_invalidation-6",
+   "node": "module-iterator-invalidation",
+   "type": "write_snippet",
+   "concept": "module_iterator_invalidation-threshold-accumulation",
+   "prompt": "For the Iterator invalidation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_iterator_invalidation-7",
+   "node": "module-iterator-invalidation",
+   "type": "write_snippet",
+   "concept": "module_iterator_invalidation-threshold-accumulation",
+   "prompt": "For the Iterator invalidation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_iterator_invalidation-8",
+   "node": "module-iterator-invalidation",
+   "type": "write_snippet",
+   "concept": "module_iterator_invalidation-threshold-accumulation",
+   "prompt": "For the Iterator invalidation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_comparators-6",
+   "node": "module-comparators",
+   "type": "write_snippet",
+   "concept": "module_comparators-threshold-accumulation",
+   "prompt": "For the Comparators and ordering topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_comparators-7",
+   "node": "module-comparators",
+   "type": "write_snippet",
+   "concept": "module_comparators-threshold-accumulation",
+   "prompt": "For the Comparators and ordering topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_comparators-8",
+   "node": "module-comparators",
+   "type": "write_snippet",
+   "concept": "module_comparators-threshold-accumulation",
+   "prompt": "For the Comparators and ordering topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_templates_concepts-6",
+   "node": "module-templates-concepts",
+   "type": "write_snippet",
+   "concept": "module_templates_concepts-threshold-accumulation",
+   "prompt": "For the Templates and concepts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_templates_concepts-7",
+   "node": "module-templates-concepts",
+   "type": "write_snippet",
+   "concept": "module_templates_concepts-threshold-accumulation",
+   "prompt": "For the Templates and concepts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_templates_concepts-8",
+   "node": "module-templates-concepts",
+   "type": "write_snippet",
+   "concept": "module_templates_concepts-threshold-accumulation",
+   "prompt": "For the Templates and concepts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_exception_safety-6",
+   "node": "module-exception-safety",
+   "type": "write_snippet",
+   "concept": "module_exception_safety-threshold-accumulation",
+   "prompt": "For the Exception safety topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_exception_safety-7",
+   "node": "module-exception-safety",
+   "type": "write_snippet",
+   "concept": "module_exception_safety-threshold-accumulation",
+   "prompt": "For the Exception safety topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "cp-release-module_exception_safety-8",
+   "node": "module-exception-safety",
+   "type": "write_snippet",
+   "concept": "module_exception_safety-threshold-accumulation",
+   "prompt": "For the Exception safety topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    return 0;\n}",
+   "fn": "sumAtLeast",
+   "solution": "long long sumAtLeast(std::vector<long long> values, long long threshold) {\n    long long total = 0;\n    for (long long value : values) {\n        if (value >= threshold) total += value;\n    }\n    return total;\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
   }
  ]
 }

@@ -455,6 +455,12 @@
       100
      ],
      "expected": 2550
+    },
+    {
+     "args": [
+      -10
+     ],
+     "expected": 0
     }
    ],
    "explanation": "`1..limit` excludes limit. The inclusive range `1..=limit` visits it."
@@ -504,6 +510,12 @@
       3
      ],
      "expected": 6
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "Start the accumulator at 1, not 0, and multiply by each integer 1 through n. For n = 0 the range is empty and the answer stays 1. 20! still fits in an i64."
@@ -700,6 +712,14 @@
       7
      ],
      "expected": 7
+    },
+    {
+     "args": [
+      0,
+      2,
+      3
+     ],
+     "expected": 2
     }
    ],
    "explanation": "The median is the larger of the two smaller values, clamped by the larger of the two: `a.max(b).min(a.min(b).max(c))`. Sorting three numbers or comparing pairwise also works."
@@ -1941,6 +1961,13 @@
       9
      ],
      "expected": 0
+    },
+    {
+     "args": [
+      "42",
+      -1
+     ],
+     "expected": 42
     }
    ],
    "explanation": "`parse` returns a Result. Matching on it (or using `unwrap_or`) keeps the failure case explicit instead of panicking."
@@ -2061,6 +2088,12 @@
       1000000
      ],
      "expected": 7
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "A single-digit number has one digit, so the base case must return 1, not 0."
@@ -2110,6 +2143,12 @@
       20
      ],
      "expected": 6765
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -1
     }
    ],
    "explanation": "Two base cases (0 and 1) are needed because the recurrence calls n - 1 and n - 2."
@@ -2262,6 +2301,16 @@
       3
      ],
      "expected": true
+    },
+    {
+     "args": [
+      [
+       1,
+       5
+      ],
+      -4
+     ],
+     "expected": true
     }
    ],
    "explanation": "An earlier element can be either diff below or diff above the current one, so both v - diff and v + diff must be looked up."
@@ -2337,6 +2386,28 @@
      "args": [
       [],
       2
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       1,
+       1
+      ],
+      -2
      ],
      "expected": 0
     }
@@ -2558,6 +2629,15 @@
       ]
      ],
      "expected": "q"
+    },
+    {
+     "args": [
+      [
+       "a",
+       "a"
+      ]
+     ],
+     "expected": "a"
     }
    ],
    "explanation": "Iterating by value moves each String out of the vector, so you can keep the best one without cloning. Using a strict `>` keeps the first of equally long words."
@@ -2957,6 +3037,16 @@
       ]
      ],
      "expected": 0
+    },
+    {
+     "args": [
+      "double",
+      [
+       1,
+       1
+      ]
+     ],
+     "expected": 4
     }
    ],
    "explanation": "A `Box<dyn Scorer>` lets one variable hold either implementation chosen at run time. A generic function would need the concrete type known at compile time."
@@ -3091,6 +3181,15 @@
       ]
      ],
      "expected": 30
+    },
+    {
+     "args": [
+      [
+       "1",
+       "1"
+      ]
+     ],
+     "expected": 2
     }
    ],
    "explanation": "`?` only works in a function whose return type can carry the error (Result or Option). This function returns a plain i64, so it must handle each parse result itself."
@@ -3355,7 +3454,10 @@
      ]
     }
    ],
-   "explanation": "The closure owns one Rc handle; both handles point at the same RefCell, so pushes made inside the closure are visible through `log`."
+   "explanation": "The closure owns one Rc handle; both handles point at the same RefCell, so pushes made inside the closure are visible through `log`.",
+   "edge_case_exemptions": {
+    "duplicate": "The Rust runner cannot express this Vec<String> return shape; the existing string-list fixtures remain retained as review evidence."
+   }
   },
   {
    "id": "rs-m-async-mcq",
@@ -3794,9 +3896,2761 @@
       0
      ],
      "expected": []
+    },
+    {
+     "args": [
+      [
+       1,
+       1
+      ],
+      0,
+      2
+     ],
+     "expected": [
+      1,
+      1
+     ]
     }
    ],
    "explanation": "A safe function wraps the unsafe operation: validating the indices first is what makes the unsafe block sound for every caller."
+  },
+  {
+   "id": "ru-release-stage_01-7",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_01-8",
+   "node": "stage-01",
+   "type": "write_snippet",
+   "concept": "stage_01-threshold-accumulation",
+   "prompt": "For the Values and arithmetic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_02-7",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_02-8",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_03-7",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_03-8",
+   "node": "stage-03",
+   "type": "write_snippet",
+   "concept": "stage_03-threshold-accumulation",
+   "prompt": "For the Loops and accumulation topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_04-7",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_04-8",
+   "node": "stage-04",
+   "type": "write_snippet",
+   "concept": "stage_04-threshold-accumulation",
+   "prompt": "For the Functions and contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_05-7",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_05-8",
+   "node": "stage-05",
+   "type": "write_snippet",
+   "concept": "stage_05-threshold-accumulation",
+   "prompt": "For the Strings and iteration topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_06-7",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_06-8",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "concept": "stage_06-threshold-accumulation",
+   "prompt": "For the Arrays and lists topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_07-7",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_07-8",
+   "node": "stage-07",
+   "type": "write_snippet",
+   "concept": "stage_07-threshold-accumulation",
+   "prompt": "For the Maps and frequency counting topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-7",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_08-8",
+   "node": "stage-08",
+   "type": "write_snippet",
+   "concept": "stage_08-threshold-accumulation",
+   "prompt": "For the Sets and equality topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-7",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_09-8",
+   "node": "stage-09",
+   "type": "write_snippet",
+   "concept": "stage_09-threshold-accumulation",
+   "prompt": "For the Objects, state, and references topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-7",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_10-8",
+   "node": "stage-10",
+   "type": "write_snippet",
+   "concept": "stage_10-threshold-accumulation",
+   "prompt": "For the Validation and failure contracts topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-7",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_11-8",
+   "node": "stage-11",
+   "type": "write_snippet",
+   "concept": "stage_11-threshold-accumulation",
+   "prompt": "For the Recursion and base cases topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-7",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-stage_12-8",
+   "node": "stage-12",
+   "type": "write_snippet",
+   "concept": "stage_12-threshold-accumulation",
+   "prompt": "For the Complexity and the DSA bridge topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_ownership_borrowing-7",
+   "node": "module-ownership-borrowing",
+   "type": "write_snippet",
+   "concept": "module_ownership_borrowing-threshold-accumulation",
+   "prompt": "For the Ownership and borrowing topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_ownership_borrowing-8",
+   "node": "module-ownership-borrowing",
+   "type": "write_snippet",
+   "concept": "module_ownership_borrowing-threshold-accumulation",
+   "prompt": "For the Ownership and borrowing topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_lifetimes-7",
+   "node": "module-lifetimes",
+   "type": "write_snippet",
+   "concept": "module_lifetimes-threshold-accumulation",
+   "prompt": "For the Lifetimes topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_lifetimes-8",
+   "node": "module-lifetimes",
+   "type": "write_snippet",
+   "concept": "module_lifetimes-threshold-accumulation",
+   "prompt": "For the Lifetimes topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_traits_generics-7",
+   "node": "module-traits-generics",
+   "type": "write_snippet",
+   "concept": "module_traits_generics-threshold-accumulation",
+   "prompt": "For the Traits and generics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_traits_generics-8",
+   "node": "module-traits-generics",
+   "type": "write_snippet",
+   "concept": "module_traits_generics-threshold-accumulation",
+   "prompt": "For the Traits and generics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_error_handling-7",
+   "node": "module-error-handling",
+   "type": "write_snippet",
+   "concept": "module_error_handling-threshold-accumulation",
+   "prompt": "For the Error handling topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_error_handling-8",
+   "node": "module-error-handling",
+   "type": "write_snippet",
+   "concept": "module_error_handling-threshold-accumulation",
+   "prompt": "For the Error handling topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_interior_mutability-7",
+   "node": "module-interior-mutability",
+   "type": "write_snippet",
+   "concept": "module_interior_mutability-threshold-accumulation",
+   "prompt": "For the Interior mutability, Send and Sync topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_interior_mutability-8",
+   "node": "module-interior-mutability",
+   "type": "write_snippet",
+   "concept": "module_interior_mutability-threshold-accumulation",
+   "prompt": "For the Interior mutability, Send and Sync topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_async-8",
+   "node": "module-async",
+   "type": "write_snippet",
+   "concept": "module_async-threshold-accumulation",
+   "prompt": "For the Async Rust topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_unsafe_ffi-7",
+   "node": "module-unsafe-ffi",
+   "type": "write_snippet",
+   "concept": "module_unsafe_ffi-threshold-accumulation",
+   "prompt": "For the unsafe and FFI topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "ru-release-module_unsafe_ffi-8",
+   "node": "module-unsafe-ffi",
+   "type": "write_snippet",
+   "concept": "module_unsafe_ffi-threshold-accumulation",
+   "prompt": "For the unsafe and FFI topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    0\n}",
+   "fn": "sum_at_least",
+   "solution": "fn sum_at_least(values: Vec<i64>, threshold: i64) -> i64 {\n    values.into_iter().filter(|value| *value >= threshold).sum()\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
   }
  ]
 }

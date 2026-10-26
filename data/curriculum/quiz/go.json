@@ -1734,6 +1734,13 @@
       1
      ],
      "expected": 1
+    },
+    {
+     "args": [
+      -1,
+      5
+     ],
+     "expected": 0
     }
    ],
    "explanation": "Adding b to a before dividing adds one whole unit too many whenever a is an exact multiple of b, and a is 0 gives 1 instead of 0. Adding b - 1 instead pushes any remainder past the next whole number without changing an exact quotient."
@@ -1864,6 +1871,18 @@
       1
      ],
      "expected": false
+    },
+    {
+     "args": [
+      0
+     ],
+     "expected": true
+    },
+    {
+     "args": [
+      -2000
+     ],
+     "expected": true
     }
    ],
    "explanation": "Go's && binds tighter than ||, so the broken version lets any year divisible by 4 through, including century years such as 1900. The fix groups the 4-divisible test with the century exclusion, and keeps the 400 rule as the only way for a century to qualify."
@@ -1996,6 +2015,12 @@
       10
      ],
      "expected": 55
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 0
     }
    ],
    "explanation": "The condition i < n excludes n itself, so the sum is short by n. Changing it to i <= n includes the final term; the loop then runs n times and gives the triangular number."
@@ -2057,6 +2082,12 @@
       10
      ],
      "expected": 3628800
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": 1
     }
    ],
    "explanation": "The product starts at 1 so that the empty product for 0 and 1 is correct. Each step multiplies by the next integer up to n, which yields n!."
@@ -3228,6 +3259,12 @@
       7
      ],
      "expected": 13
+    },
+    {
+     "args": [
+      -1
+     ],
+     "expected": -1
     }
    ],
    "explanation": "The recurrence must add the terms n-1 and n-2. Using n-1 twice doubles the previous value, so fibonacci(2) gives 2 instead of 1, and the error grows at each level."
@@ -3395,6 +3432,30 @@
       9
      ],
      "expected": -1
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [],
+      -3
+     ],
+     "expected": -1
+    },
+    {
+     "args": [
+      [
+       0,
+       0
+      ],
+      3
+     ],
+     "expected": -1
     }
    ],
    "explanation": "With lo < hi the loop exits while lo == hi, so the single remaining candidate is never compared; a one-element slice always returns -1. The condition lo <= hi keeps that last candidate in the search."
@@ -3490,9 +3551,980 @@
       10
      ],
      "expected": false
+    },
+    {
+     "args": [
+      [
+       3
+      ],
+      -6
+     ],
+     "expected": false
     }
    ],
    "explanation": "Each value is checked against the complement target - v before it is added to the set, so a single element cannot pair with itself. Each lookup is constant time on average, which makes the whole pass linear."
+  },
+  {
+   "id": "go-release-stage_02-8",
+   "node": "stage-02",
+   "type": "write_snippet",
+   "concept": "stage_02-threshold-accumulation",
+   "prompt": "For the Conditions and boolean logic topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_slices_maps-7",
+   "node": "module-slices-maps",
+   "type": "write_snippet",
+   "concept": "module_slices_maps-threshold-accumulation",
+   "prompt": "For the Slices and maps semantics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_slices_maps-8",
+   "node": "module-slices-maps",
+   "type": "write_snippet",
+   "concept": "module_slices_maps-threshold-accumulation",
+   "prompt": "For the Slices and maps semantics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_interfaces_method_sets-7",
+   "node": "module-interfaces-method-sets",
+   "type": "write_snippet",
+   "concept": "module_interfaces_method_sets-threshold-accumulation",
+   "prompt": "For the Interfaces and method sets topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_interfaces_method_sets-8",
+   "node": "module-interfaces-method-sets",
+   "type": "write_snippet",
+   "concept": "module_interfaces_method_sets-threshold-accumulation",
+   "prompt": "For the Interfaces and method sets topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_errors-7",
+   "node": "module-errors",
+   "type": "write_snippet",
+   "concept": "module_errors-threshold-accumulation",
+   "prompt": "For the Errors topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_errors-8",
+   "node": "module-errors",
+   "type": "write_snippet",
+   "concept": "module_errors-threshold-accumulation",
+   "prompt": "For the Errors topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_goroutines_channels-7",
+   "node": "module-goroutines-channels",
+   "type": "write_snippet",
+   "concept": "module_goroutines_channels-threshold-accumulation",
+   "prompt": "For the Goroutines and channels topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_goroutines_channels-8",
+   "node": "module-goroutines-channels",
+   "type": "write_snippet",
+   "concept": "module_goroutines_channels-threshold-accumulation",
+   "prompt": "For the Goroutines and channels topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_context-7",
+   "node": "module-context",
+   "type": "write_snippet",
+   "concept": "module_context-threshold-accumulation",
+   "prompt": "For the context topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_context-8",
+   "node": "module-context",
+   "type": "write_snippet",
+   "concept": "module_context-threshold-accumulation",
+   "prompt": "For the context topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_generics-7",
+   "node": "module-generics",
+   "type": "write_snippet",
+   "concept": "module_generics-threshold-accumulation",
+   "prompt": "For the Generics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
+  },
+  {
+   "id": "go-release-module_generics-8",
+   "node": "module-generics",
+   "type": "write_snippet",
+   "concept": "module_generics-threshold-accumulation",
+   "prompt": "For the Generics topic, write sumAtLeast(values, threshold). Return the sum of values greater than or equal to threshold. An empty input returns zero; do not mutate the input.",
+   "starter": "func sumAtLeast(values []int, threshold int) int {\n    return 0\n}",
+   "fn": "sumAtLeast",
+   "solution": "func sumAtLeast(values []int, threshold int) int {\n    total := 0\n    for _, value := range values {\n        if value >= threshold { total += value }\n    }\n    return total\n}",
+   "tests": [
+    {
+     "args": [
+      [
+       1,
+       -2,
+       3
+      ],
+      0
+     ],
+     "expected": 4
+    },
+    {
+     "args": [
+      [],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -4,
+       -1
+      ],
+      0
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       0,
+       2,
+       0
+      ],
+      1
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       7
+      ],
+      2
+     ],
+     "expected": 11
+    },
+    {
+     "args": [
+      [
+       -3,
+       4,
+       8
+      ],
+      -2
+     ],
+     "expected": 12
+    }
+   ],
+   "explanation": "The loop preserves the input, applies the inclusive boundary, and starts from the identity value zero."
   }
  ]
 }
