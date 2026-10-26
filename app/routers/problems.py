@@ -9,7 +9,7 @@ from app.services.problem_catalog import ProblemMeta, list_problems
 from app.services.content_catalog import content_exists
 from app.services.language_access import resolve_language, require_content
 from app.services.content_verification import require_verified_reference
-from app.services.content_access import can_reveal, learner_document, solution_document
+from app.services.content_access import can_reveal, learner_document, reveal_policy, solution_document
 
 router = APIRouter(prefix="/problems", tags=["problems"])
 
@@ -47,7 +47,7 @@ async def reveal_solution(problem_id: str, language: str,
     if not content_exists(problem_id):
         raise HTTPException(status_code=404, detail="Problem not found")
     if not await can_reveal(session, user.id, problem_id, language):
-        raise HTTPException(status_code=403, detail="Submit code and complete evaluation in this language before revealing the solution.")
+        raise HTTPException(status_code=403, detail=reveal_policy()["requirement"])
     markdown = solution_document(problem_id, language)
     if not markdown:
         raise HTTPException(status_code=404, detail="No solution is available in this language.")

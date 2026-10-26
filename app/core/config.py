@@ -102,6 +102,16 @@ class Settings(BaseSettings):
     # Sized so one sitting can finish the largest path (see tests/test_learning_path_walkthrough.py).
     quiz_answers_per_hour: int = 300
     quiz_code_runs_per_hour: int = 100
+    # Practice workspace: free test runs (no review, no LLM) and stored snapshots.
+    workspace_runs_per_hour: int = Field(default=120, ge=0)
+    workspace_max_checkpoints: int = Field(default=30, ge=1)
+    # When a reference solution may be revealed. UNRESOLVED PRODUCT DECISION:
+    # the default keeps the behaviour that shipped (any completed evaluation).
+    #   after_evaluation - after `solution_reveal_min_evaluations` completed evaluations
+    #   after_pass       - only after a passing evaluation
+    #   disabled         - never reveal reference solutions
+    solution_reveal_policy: Literal["after_evaluation", "after_pass", "disabled"] = "after_evaluation"
+    solution_reveal_min_evaluations: int = Field(default=1, ge=1)
 
     # Stripe — checkout is hosted by Stripe; no card data reaches this server
     stripe_webhook_secret: str = ""

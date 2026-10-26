@@ -27,6 +27,7 @@ The application should hide unavailable run controls using the capability API.
 
 The adapter source filename is the expected entry point. Java and Scala use a
 `Main` class, Kotlin uses a runnable `main`, Go uses `package main`, and the
-other languages use their normal executable entry point. Framework projects,
-dependencies, browser previews and multi-file sessions need separate adapters
-in a later phase.
+other languages use their normal executable entry point. Practice workspaces
+bundle multiple files into one program where that is sound (see
+practice-workspace.md). Framework projects, dependencies and browser previews
+need separate adapters in a later phase.

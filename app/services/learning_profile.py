@@ -322,7 +322,14 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
             for a in (await session.scalars(select(QuizAnswer).where(
                 QuizAnswer.user_id == user_id).order_by(QuizAnswer.created_at.desc()))).all()
         ],
+        # Practice workspace files, snapshots and test-run history.
+        "workspace": await _workspace_export(session, user_id),
     }
+
+
+async def _workspace_export(session: AsyncSession, user_id: str) -> dict:
+    from app.services import workspace
+    return await workspace.export_for_user(session, user_id)
 
 
 async def delete_profile(session: AsyncSession, user_id: str) -> int:
@@ -335,4 +342,7 @@ async def delete_profile(session: AsyncSession, user_id: str) -> int:
     result = await session.execute(delete(LearningEvent).where(LearningEvent.user_id == user_id))
     from app.services.quiz import delete_for_user
     await delete_for_user(session, user_id)
+    # Practice workspaces (code drafts, checkpoints, run history) are kept, like
+    # practice sessions: how long learner work is retained is an open product
+    # decision. workspace.delete_for_user is ready when that is settled.
     return result.rowcount

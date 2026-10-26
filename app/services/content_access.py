@@ -80,11 +80,33 @@ def evaluation_completed(evidence: dict, language: str) -> bool:
                and r.get("total_cases", 0) > 0 for r in results)
 
 
+def reveal_policy() -> dict:
+    """The configured reveal rule, phrased for the learner. Which rule to use
+    is an open product decision, so it lives in settings, not in code."""
+    from app.core.config import settings
+    policy, minimum = settings.solution_reveal_policy, settings.solution_reveal_min_evaluations
+    requirement = {
+        "after_evaluation": ("Complete an evaluation to unlock the reference solution." if minimum == 1 else
+                             f"Complete {minimum} evaluations to unlock the reference solution."),
+        "after_pass": "Pass every test in an evaluation to unlock the reference solution.",
+        "disabled": "Reference solutions are not available in this course.",
+    }[policy]
+    return {"policy": policy, "min_evaluations": minimum, "requirement": requirement}
+
+
 async def can_reveal(session: AsyncSession, user_id: str, content_id: str, language: str) -> bool:
-    event = await session.scalar(select(LearningEvent.id).where(
-        LearningEvent.user_id == user_id,
-        LearningEvent.problem_id == content_id,
-        LearningEvent.language == language,
-        LearningEvent.kind == "evaluated",
-    ).limit(1))
-    return event is not None
+    """Evaluation always comes first: test runs and reviews never unlock a
+    solution on their own. The remaining rule comes from reveal_policy()."""
+    from sqlalchemy import func
+    from app.core.config import settings
+    policy = settings.solution_reveal_policy
+    if policy == "disabled":
+        return False
+    scope = (LearningEvent.user_id == user_id, LearningEvent.problem_id == content_id,
+             LearningEvent.language == language)
+    evaluated = await session.scalar(select(func.count()).select_from(LearningEvent).where(
+        *scope, LearningEvent.kind == "evaluated"))
+    if policy == "after_pass":
+        solved = await session.scalar(select(LearningEvent.id).where(*scope, LearningEvent.kind == "solved").limit(1))
+        return bool(evaluated) and solved is not None
+    return evaluated >= settings.solution_reveal_min_evaluations

@@ -44,18 +44,39 @@ def _scale_cases(problem_id: str) -> list[list]:
     return scale_cases(problem_id)
 
 
+def curated_tests_supported(language: str) -> bool:
+    """Every language with a test adapter; run_suite itself reports a
+    missing toolchain or unsupported test mode as unverified, never passed."""
+    from app.services.execution_adapters import ADAPTERS
+    adapter = ADAPTERS.get(language)
+    return bool(adapter and (adapter.function_tests or adapter.stdio_tests))
+
+
+def run_curated(problem_id: str, user_code: str, language: str) -> dict | None:
+    """The problem's curated cases against the learner's code. Blocking."""
+    cases, expected, fns, io_mode = load_test_cases(problem_id)
+    if not cases or not curated_tests_supported(language):
+        return None
+    if io_mode != "stdio" and not fns.get(language):
+        # Without a declared entry point the harness cannot call anything; a
+        # failure here would be the content's fault, not the learner's.
+        return {"results": [{"language": language, "tier": 2, "status": "unverified",
+                             "detail": f"This problem declares no {language} entry point to test.",
+                             "passed_cases": 0, "total_cases": len(cases), "outputs": [], "evidence": {}}],
+                "agreement": True, "can_publish": False}
+    return run_suite({language: user_code}, fns, cases, expected, io_mode,
+                     comparison=comparison_mode(problem_id))
+
+
 async def gather_evidence(problem_id: str, user_code: str, language: str) -> dict:
     """Runs every deterministic verification stage. No LLM calls."""
     evidence: dict = {"curated": None, "fuzz": None, "complexity": None}
 
     cases, expected, fns, io_mode = load_test_cases(problem_id)
-    if cases and language in ("python", "javascript", "java", "cpp", "c", "rust"):
+    if cases and curated_tests_supported(language):
         async with span("curated_tests", problem_id=problem_id, case_count=len(cases)) as sp:
             try:
-                evidence["curated"] = await asyncio.to_thread(
-                    run_suite, {language: user_code}, fns, cases, expected, io_mode,
-                    comparison=comparison_mode(problem_id)
-                )
+                evidence["curated"] = await asyncio.to_thread(run_curated, problem_id, user_code, language)
                 for r in (evidence["curated"] or {}).get("results", []):
                     if r.get("tier") == 1:
                         sp.set(passed=r["passed_cases"], total=r["total_cases"])

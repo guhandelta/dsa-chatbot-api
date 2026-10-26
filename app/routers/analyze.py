@@ -20,13 +20,17 @@ from app.services.tracing import trace
 router=APIRouter(prefix='/analyze',tags=['analyze'])
 
 
-async def check_submission(session,user,code,language):
+async def screen_submission(session,user,code,language,context='analyze'):
     verdict=screen(code,language)
     if not verdict.allowed:
-        outcome=await record_event(session,user,verdict,code,context='analyze')
+        outcome=await record_event(session,user,verdict,code,context=context)
         await session.commit()
         raise HTTPException(403 if outcome.get('suspended') else 400,
                             explain(verdict)+' '+outcome.get('message',''))
+
+
+async def check_submission(session,user,code,language):
+    await screen_submission(session,user,code,language)
     try:
         await enforce_rate_limit(session,user.id,'attempt')
     except RateLimitExceeded as exc:
@@ -83,9 +87,11 @@ async def analyze(request:AnalyzeRequest,current_user:User=Depends(get_current_u
         await trace_store.save(session,t)
         earned=[]
         completed=await save_evaluation(session,current_user.id,request.problem_id,request.language,evidence,earned)
+        from app.services.content_access import can_reveal
+        available=completed and await can_reveal(session,current_user.id,request.problem_id,request.language)
         if earned:
             balance=earned[-1]['balance']
         return AnalyzeResponse(analysis=analysis,peppercorns_remaining=balance,rewards=earned,
-            execution=evidence.get('curated'),evidence=evidence,solution_available=completed)
+            execution=evidence.get('curated'),evidence=evidence,solution_available=available)
     return await perform(session,current_user.id,'analyze',idempotency_key,request.model_dump(),
                          settings.analyze_cost,'analyze',work,prepare=prepare)

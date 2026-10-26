@@ -29,6 +29,7 @@ from app.routers import (
     subscriptions,
     tracks,
     training,
+    workspace,
 )
 
 
@@ -72,6 +73,7 @@ app.include_router(chat.router)
 app.include_router(analyze.router)
 app.include_router(problems.router)
 app.include_router(practice.router)
+app.include_router(workspace.router)
 app.include_router(tracks.router)
 app.include_router(mentor.router)
 app.include_router(study.router)

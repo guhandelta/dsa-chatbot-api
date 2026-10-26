@@ -417,3 +417,58 @@ class DebugChallengeAttempt(Base):
     diagnosis: Mapped[str] = mapped_column(Text, nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class WorkspaceDraft(Base):
+    """The learner's autosaved practice files for one problem in one language.
+    `revision` increases on every save so a stale tab cannot silently
+    overwrite newer work."""
+
+    __tablename__ = "workspace_drafts"
+    __table_args__ = (UniqueConstraint("user_id", "problem_id", "language", name="uq_workspace_draft"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    problem_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    language: Mapped[str] = mapped_column(String(20), nullable=False)
+    template: Mapped[str] = mapped_column(String(40), nullable=False, default="single")
+    entry: Mapped[str] = mapped_column(String(64), nullable=False)
+    files_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    revision: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
+class WorkspaceCheckpoint(Base):
+    """A named snapshot of the workspace files the learner can restore."""
+
+    __tablename__ = "workspace_checkpoints"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    problem_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    language: Mapped[str] = mapped_column(String(20), nullable=False)
+    # "manual" | "evaluation" | "before_reset" | "before_restore"
+    kind: Mapped[str] = mapped_column(String(20), nullable=False, default="manual")
+    label: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    entry: Mapped[str] = mapped_column(String(64), nullable=False)
+    files_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
+class WorkspaceRun(Base):
+    """One execution of the learner's workspace against the problem's tests:
+    a free practice run, or the test stage of a paid evaluation."""
+
+    __tablename__ = "workspace_runs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    problem_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    language: Mapped[str] = mapped_column(String(20), nullable=False)
+    # "run" | "evaluation"
+    kind: Mapped[str] = mapped_column(String(20), nullable=False, default="run")
+    # "pending" | "passed" | "failed" | "unverified" | "error"
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+    passed_cases: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    total_cases: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)

@@ -28,9 +28,16 @@ class StartRequest(BaseModel):
     language:str
     provider:Provider='gemini'
 
+class WorkspaceFile(BaseModel):
+    name:str=Field(min_length=1,max_length=64)
+    content:str=Field(default='',max_length=20000)
+
 class ActionRequest(BaseModel):
     action:Literal['submit','hint','reflect','quit']
     code:str=Field(default='',max_length=20000)
+    # A multi-file workspace; bundled server-side into `code` for submit and hint.
+    files:list[WorkspaceFile]|None=Field(default=None,max_length=8)
+    entry:str|None=Field(default=None,max_length=64)
     reasoning:str=Field(default='',max_length=4000)
     max_hint_cost:int|None=Field(default=None,ge=0)
 
@@ -91,6 +98,12 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
     active(user);item=await owned(session,user,sid)
     pid,lang,provider=item.problem_id,item.language,item.provider
     uid=user.id
+    files=source_map=None
+    if request.files is not None and request.action in ('submit','hint'):
+        from app.services import workspace
+        files=workspace.validate(lang,[f.model_dump() for f in request.files],request.entry or workspace.ENTRY.get(lang,''))
+        bundled,source_map=workspace.bundle(lang,files,request.entry or workspace.ENTRY[lang])
+        request=request.model_copy(update={'code':bundled})
     acquired=False
     finished=False
     import uuid
@@ -147,8 +160,21 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
         state=await graph(session).ainvoke(Command(resume=payload),config,durability='sync')
         earned=[]
         if request.action=='submit':
-            available=await save_evaluation(session,user.id,pid,lang,state.get('evidence') or {},earned)
+            from app.services.content_access import can_reveal,solution_document
+            from app.routers.workspace import add_checkpoint,case_report
+            from app.db.models import WorkspaceRun
+            evidence=state.get('evidence') or {}
+            completed=await save_evaluation(session,user.id,pid,lang,evidence,earned)
+            available=completed and bool(solution_document(pid,lang)) and await can_reveal(session,user.id,pid,lang)
             if earned:balance=earned[-1]['balance']
+            from app.services.workspace import ENTRY
+            entry=(request.entry or ENTRY[lang]) if files else ENTRY.get(lang,'solution.txt')
+            snapshot=files or [{'name':entry,'content':request.code}]
+            tests=case_report(evidence.get('curated'),lang,pid,source_map or [])
+            session.add(WorkspaceRun(user_id=uid,problem_id=pid,language=lang,kind='evaluation',
+                status=tests['status'],passed_cases=tests['passed'],total_cases=tests['total']))
+            await add_checkpoint(session,uid,pid,lang,snapshot,entry,'evaluation',
+                f"Evaluation: {tests['passed']}/{tests['total']} tests" if tests['total'] else 'Evaluation')
         else:available=False
         if request.action=='hint':
             await learning_profile.record_event(session,user.id,pid,kind='hint',language=lang,
@@ -158,6 +184,7 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             await learning_profile.record_event(session,user.id,pid,kind='reflection',language=lang,algorithms=_algorithms_for(pid),reasoning=request.reasoning)
         await session.execute(update(PracticeSession).where(PracticeSession.id==sid,PracticeSession.busy_token==lock_token).values(busy=False,busy_token='',status='active' if pending_interrupt(state) else 'completed'))
         result=render(sid,state,balance);result['solution_available']=available;result['rewards']=earned
+        if request.action=='submit':result['tests']=tests;result['source_map']=source_map
         if request.action=='hint':
             from app.services.mentor import MAX_TIER,hint_cost
             from app.services.operations import current_balance
@@ -173,3 +200,32 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
         if acquired and not finished:
             await session.execute(update(PracticeSession).where(PracticeSession.id==sid,PracticeSession.busy_token==lock_token).values(busy=False,busy_token=""))
             await session.commit()
+
+
+@router.get('/sessions/{sid}/summary')
+async def summary(sid:str,user:User=Depends(get_current_user),session:AsyncSession=Depends(get_session)):
+    """What happened in one practice session, from recorded events only."""
+    from datetime import timezone
+    from app.db.models import WorkspaceRun
+    active(user);item=await owned(session,user,sid)
+    started=item.created_at if item.created_at.tzinfo else item.created_at.replace(tzinfo=timezone.utc)
+    scope=(LearningEvent.user_id==user.id,LearningEvent.problem_id==item.problem_id,
+           LearningEvent.language==item.language,LearningEvent.created_at>=started)
+    events=list((await session.scalars(select(LearningEvent).where(*scope).order_by(LearningEvent.created_at))).all())
+    runs=list((await session.scalars(select(WorkspaceRun).where(WorkspaceRun.user_id==user.id,
+        WorkspaceRun.problem_id==item.problem_id,WorkspaceRun.language==item.language,
+        WorkspaceRun.created_at>=started).order_by(WorkspaceRun.created_at))).all())
+    stamps=[e.created_at for e in events]+[r.created_at for r in runs]
+    aware=[s if s.tzinfo else s.replace(tzinfo=timezone.utc) for s in stamps]
+    evaluations=[r for r in runs if r.kind=='evaluation']
+    categories=sorted({e.error_category for e in events if e.error_category})
+    return {'session_id':sid,'problem_id':item.problem_id,'language':item.language,'status':item.status,
+        'started_at':started.isoformat(),'last_activity':max(aware).isoformat() if aware else None,
+        'elapsed_minutes':round((max(aware)-started).total_seconds()/60,1) if aware else 0,
+        'test_runs':sum(r.kind=='run' for r in runs),
+        'evaluations':[{'status':r.status,'passed':r.passed_cases,'total':r.total_cases,
+                        'at':r.created_at.isoformat()} for r in evaluations],
+        'solved':any(e.kind=='solved' for e in events),
+        'hint_tiers':[e.hint_tier for e in events if e.kind=='hint'],
+        'reflection':next((e.reasoning for e in reversed(events) if e.kind=='reflection'),None),
+        'error_categories':categories}
