@@ -39,6 +39,7 @@ def command(cmd: list[str], cwd: Path, name: str) -> list[str]:
             "--pids-limit", str(settings.exec_max_processes),
             "--memory", f"{settings.exec_memory_mb}m", "--memory-swap", f"{settings.exec_memory_mb}m",
             "--cpus=1", "--ulimit", "nofile=128:128", "--ulimit", "fsize=16777216:16777216",
+            "--ulimit", "core=0:0",
             "--user", f"{os.getuid()}:{os.getgid()}",
             "--mount", f"type=bind,src={root},dst=/work", "--workdir=/work",
             "--tmpfs", "/tmp:rw,noexec,nosuid,size=64m", "--env", "HOME=/work", "--env", "LANG=C.UTF-8",

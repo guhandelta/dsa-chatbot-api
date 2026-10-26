@@ -26,6 +26,8 @@ from functools import lru_cache
 
 from app.core.config import settings
 from app.services import exec_harness
+from app.services.execution_adapters import (ADAPTERS, NO_ADDRESS_SPACE_LIMIT, SUPPORT_FILES,
+                                             diagnostic_evidence, stdio_commands)
 
 # Interpreted languages: run directly, test cases handed over as JSON on stdin.
 TIER1 = ("python", "javascript")
@@ -46,18 +48,7 @@ SCRIPTED = ("ruby", "typescript", "go", "csharp")
 TIER2 = COMPILED
 
 # Which executable proves a toolchain is installed
-_TOOLCHAIN = {
-    "python": "python3",
-    "javascript": "node",
-    "c": "gcc",
-    "cpp": "g++",
-    "java": "javac",
-    "rust": "rustc",
-    "ruby": "ruby",
-    "typescript": "tsc",
-    "go": "go",
-    "csharp": "dotnet",
-}
+_TOOLCHAIN = {name: adapter.toolchain for name, adapter in ADAPTERS.items()}
 
 
 def available_languages() -> dict[str, bool]:
@@ -66,6 +57,14 @@ def available_languages() -> dict[str, bool]:
         return _container_languages(settings.exec_container_image)
     tools = {lang: shutil.which(exe) is not None for lang, exe in _TOOLCHAIN.items()}
     tools["java"] = _working_javac(exec_harness.java_tool("javac"))
+    tools["typescript"] = tools["typescript"] and tools["javascript"]
+    tools["kotlin"] = tools["kotlin"] and tools["java"]
+    tools["scala"] = tools["scala"] and tools["java"] and shutil.which("scala") is not None
+    # macOS exposes command shims even when the developer toolchain is absent.
+    for language in ("swift", "dart", "kotlin", "scala", "haskell", "php"):
+        if tools[language]:
+            from app.services.script_runners import PROBE_ARGS
+            tools[language] = _working_tool(_TOOLCHAIN[language], tuple(PROBE_ARGS.get(language, ["--version"])))
     return tools
 
 
@@ -74,12 +73,26 @@ def _container_languages(image: str) -> dict[str, bool]:
     tools = {}
     with tempfile.TemporaryDirectory(prefix="dsa-probe-") as scratch:
         for language, executable in _TOOLCHAIN.items():
+            from app.services.script_runners import PROBE_ARGS
+            args = PROBE_ARGS.get(language, ["--version"])
+            tools[language] = False
+            for _ in range(2):
+                try:
+                    tools[language] = _run([executable, *args], Path(scratch))[0] == 0
+                    break
+                except RuntimeError:
+                    # A transient daemon/image-start error should not turn a
+                    # runnable language off for the lifetime of this cache.
+                    continue
+        if tools["scala"]:
+            # scalac alone cannot run the program; the `scala` runner must exist too.
             try:
-                from app.services.script_runners import PROBE_ARGS
-                args = PROBE_ARGS.get(language, ["--version"])
-                tools[language] = _run([executable, *args], Path(scratch))[0] == 0
+                tools["scala"] = _run(["scala", "-version"], Path(scratch))[0] == 0
             except RuntimeError:
-                tools[language] = False
+                tools["scala"] = False
+    tools["typescript"] = tools["typescript"] and tools["javascript"]
+    tools["kotlin"] = tools["kotlin"] and tools["java"]
+    tools["scala"] = tools["scala"] and tools["java"]
     return tools
 
 
@@ -88,6 +101,15 @@ def _working_javac(executable: str) -> bool:
     # macOS ships a javac shim even when no JDK is installed.
     try:
         result = subprocess.run([executable, "-version"], capture_output=True, timeout=5)
+        return result.returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+
+@lru_cache(maxsize=32)
+def _working_tool(executable: str, args: tuple[str, ...] = ("--version",)) -> bool:
+    try:
+        result = subprocess.run([executable, *args], capture_output=True, timeout=5)
         return result.returncode == 0
     except (OSError, subprocess.TimeoutExpired):
         return False
@@ -102,6 +124,7 @@ class LangResult:
     passed_cases: int = 0
     total_cases: int = 0
     outputs: list = field(default_factory=list)   # actual outputs, for cross-language agreement
+    evidence: dict = field(default_factory=dict)  # observed diagnostics for mentor context
 
 
 def _limits(apply_address_space: bool = True):
@@ -153,7 +176,8 @@ def _run(cmd: list[str], cwd: Path, stdin: str = "",
 def _run_host(cmd: list[str], cwd: Path, stdin: str = "",
          apply_address_space: bool = True) -> tuple[int, str, str]:
     """Run a command with a stripped env, scratch cwd, and hard timeout."""
-    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(cwd), "LANG": "C.UTF-8"}
+    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(cwd),
+           "TMPDIR": str(cwd), "TMP": str(cwd), "TEMP": str(cwd), "LANG": "C.UTF-8"}
     # A few variables only tell a toolchain where it lives. Without them the
     # toolchain cannot start at all: `rustc` from a rustup install is a shim
     # that resolves the real compiler through RUSTUP_HOME, and with HOME
@@ -227,25 +251,48 @@ def _run_stdio(language: str, solution: str, cases: list, expected: list) -> Lan
     answer. Each case is run as a separate process; output is compared as
     whitespace-normalised text."""
     res = LangResult(language=language, tier=1, status="error", total_cases=len(cases))
+    if len(cases) > 64:
+        res.status = "unverified"
+        res.detail = "stdin/stdout execution accepts at most 64 cases per submission"
+        return res
+    if len(solution.encode("utf-8")) > 100_000:
+        res.status = "unverified"
+        res.detail = "source exceeds the 100 KB execution limit"
+        return res
+    if not available_languages().get(language, False):
+        res.status = "unverified"
+        res.detail = f"{_TOOLCHAIN[language]} is unavailable in the execution environment"
+        return res
     actual: list = []
     with tempfile.TemporaryDirectory() as td:
         cwd = Path(td)
-        if language == "python":
-            (cwd / "s.py").write_text(solution)
-            cmd = ["python3", "s.py"]
-        else:
-            (cwd / "s.js").write_text(solution)
-            cmd = ["node", f"--max-old-space-size={settings.exec_memory_mb}", "s.js"]
+        adapter = ADAPTERS[language]
+        (cwd / adapter.source).write_text(solution, encoding="utf-8")
+        for name, text in SUPPORT_FILES.get(language, {}).items():
+            (cwd / name).write_text(text, encoding="utf-8")
+        build, cmd = stdio_commands(language, cwd, max(64, settings.exec_memory_mb // 2))
+        if build:
+            code, out, err = _run(build, cwd, apply_address_space=False)
+            if code != 0:
+                res.status = "failed"
+                res.evidence = diagnostic_evidence(language, "compile", err or out or "compilation failed")
+                res.detail = res.evidence["message"]
+                return res
 
         for case in cases:
             stdin_text = case if isinstance(case, str) else "\n".join(str(a) for a in case)
+            if len(stdin_text.encode("utf-8")) > 65_536:
+                res.status = "unverified"
+                res.detail = "a test input exceeds the 64 KB stdin limit"
+                return res
             code, out, err = _run(
                 cmd, cwd, stdin=stdin_text,
-                apply_address_space=(language != "javascript"),
+                apply_address_space=language not in NO_ADDRESS_SPACE_LIMIT,
             )
             if code != 0:
                 res.status = "failed"
-                res.detail = (err or out or "non-zero exit").strip()[:600]
+                res.evidence = diagnostic_evidence(language, "run", err or out or "non-zero exit")
+                res.detail = res.evidence["message"]
                 return res
             actual.append(out.strip())
 
@@ -461,9 +508,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
                 detail=f"{_TOOLCHAIN[lang]} not installed — cannot verify this language",
             ))
         elif io_mode == "stdio":
-            # stdin-driven problems have no typed signature to generate a
-            # driver from; the compile check is all that applies.
-            results.append(_run_tier2(lang, solutions[lang]))
+            results.append(_run_stdio(lang, solutions[lang], cases, expected))
         else:
             results.append(_run_compiled(
                 lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
@@ -477,11 +522,23 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
                 detail=f"{_TOOLCHAIN[lang]} not installed — cannot verify this language",
             ))
         elif io_mode == "stdio":
-            results.append(LangResult(language=lang, tier=2, status="unverified",
-                                      detail="stdin/stdout problems are not supported for this language"))
+            if ADAPTERS[lang].stdio_tests:
+                results.append(_run_stdio(lang, solutions[lang], cases, expected))
+            else:
+                results.append(LangResult(language=lang, tier=2, status="unverified",
+                                          detail="stdin/stdout problems are not supported for this language"))
         else:
             from app.services import script_runners
             results.append(script_runners.run(lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
+
+    for lang in (name for name in ADAPTERS if name not in TIER1 + COMPILED + SCRIPTED):
+        if lang not in solutions:
+            continue
+        if io_mode == "stdio":
+            results.append(_run_stdio(lang, solutions[lang], cases, expected))
+        else:
+            results.append(LangResult(language=lang, tier=2, status="unverified",
+                                      detail="function-style test adapter is unavailable for this language"))
 
     # Cross-language agreement across Tier-1 languages that actually ran
     ran = [r for r in results if r.tier == 1 and r.status in ("passed", "failed") and r.outputs]

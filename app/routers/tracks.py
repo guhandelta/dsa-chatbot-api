@@ -22,6 +22,16 @@ from app.services.content_catalog import (
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
 
+@router.get("/capabilities")
+async def execution_capabilities(current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+    """Show the execution features available to this learner in this environment."""
+    from app.services.code_runner import available_languages as installed_languages
+    from app.services.execution_adapters import catalog, unsupported
+    permitted = await allowed_languages(session, current_user)
+    declared = catalog(installed_languages())
+    return {"languages": {name: declared.get(name) or unsupported(name) for name in permitted}}
+
+
 @router.get("/")
 async def list_tracks(current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     """The section-choice screen: three sections, their counts, and the

@@ -48,14 +48,18 @@ async def training_status(user: User = Depends(require_instructor)):
     """What this environment can actually verify — the UI shows this so an
     instructor knows up front which languages will be executed."""
     tools = available_languages()
+    from app.services.execution_adapters import catalog
+    capabilities = catalog(tools)
     return {
         "role": user.role,
         "toolchains": tools,
-        "executed_languages": [l for l in ("python", "javascript") if tools.get(l)],
-        "compiled_languages": [l for l in ("c", "cpp", "java", "rust") if tools.get(l)],
+        "execution_capabilities": capabilities,
+        "executed_languages": [l for l, c in capabilities.items() if c["function_execution"]],
+        "stdio_languages": [l for l, c in capabilities.items() if c["stdio_execution"]],
+        "compiled_languages": [l for l, c in capabilities.items() if c["installed"] and c["compiled"]],
         "unavailable": [l for l, ok in tools.items() if not ok],
-        "note": "Languages without a toolchain are reported as 'unverified' and "
-                "never counted as passing. Install javac/rustc to verify Java and Rust.",
+        "note": "Only executed test cases verify correctness. Missing toolchains and "
+                "unsupported test modes are reported as unverified.",
     }
 
 

@@ -16,6 +16,7 @@ def test_container_has_no_host_secrets_or_network(configured, tmp_path):
     assert '--network=none' in args and '--read-only' in args
     assert '--cap-drop=ALL' in args and '--security-opt=no-new-privileges' in args
     assert '--pull=never' in args and '--pids-limit' in args and '--memory-swap' in args
+    assert 'core=0:0' in args
     assert args[-4:] == ['java', '-cp', '/work', 'Main']
     assert 'local/dsa@sha256:'+'a'*64 in args
     assert args[args.index('--entrypoint')+1] == 'timeout'

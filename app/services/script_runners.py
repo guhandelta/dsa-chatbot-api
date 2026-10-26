@@ -35,7 +35,7 @@ SCRIPTED = ("ruby", "typescript", "go", "csharp")
 
 # How to ask each toolchain whether it exists; `go --version` is not a command
 # and `dotnet --version` initialises the SDK, which needs a writable home.
-PROBE_ARGS = {"go": ["version"], "csharp": ["--list-runtimes"]}
+PROBE_ARGS = {"go": ["version"], "csharp": ["--list-runtimes"], "kotlin": ["-version"], "scala": ["-version"]}
 
 _RUBY_HARNESS = '''{solution}
 
