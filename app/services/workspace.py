@@ -269,6 +269,10 @@ _ABSOLUTE = re.compile(r"(?<![\w:.])(?:/[\w.@+-]+)+/(?=[\w.-]+\b)")
 def clean_diagnostic(language: str, message: str, source_map: list[dict]) -> tuple[str, dict | None]:
     """Strip sandbox paths from a runner message and locate the learner's line."""
     text = _ABSOLUTE.sub("", message or "")
+    # Compiler output already rewritten to the learner's code (code_runner.solution_relative).
+    relative = re.search(r"solution:(\d+)", text)
+    if relative:
+        return re.sub(r"solution:(\d+)", r"line \1", text), locate(source_map, int(relative.group(1)))
     harness, offset = HARNESS_OFFSET.get(language, (None, 0))
     if not harness:
         return text, None

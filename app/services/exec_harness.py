@@ -40,6 +40,18 @@ import json
 import re
 from dataclasses import dataclass
 
+def solution_relative(message: str, filename: str, written: str, solution: str) -> str:
+    """Rewrite `filename:N` compiler locations as `solution:M`, where M counts
+    lines from the learner's code. Lines the harness added before the code
+    keep their original numbers, so they are never mistaken for the learner's."""
+    start = written.find(solution)
+    if start < 0:
+        return message
+    offset = written[:start].count("\n")
+    return re.sub(rf"\b{re.escape(filename)}:(\d+)",
+                  lambda m: f"solution:{int(m[1]) - offset}" if int(m[1]) > offset else m[0], message)
+
+
 def java_tool(name: str) -> str:
     from pathlib import Path
     from app.core.config import settings
@@ -815,7 +827,10 @@ def compile_and_run(language: str, solution: str, fn: str, cases: list,
 
             code, out, err = run(build, cwd, "", no_as)
             if code != 0:
-                errors.append(f"[{tag}] {(err or out).strip()[:160]}")
+                message = (err or out).strip()
+                for name, text in files.items():
+                    message = solution_relative(message, name, text, solution)
+                errors.append(f"[{tag}] {message[:160]}")
                 continue
 
             code, out, err = run(exec_cmd, cwd, "", no_as)

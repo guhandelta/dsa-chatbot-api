@@ -281,6 +281,9 @@ async def delete_checkpoint(problem_id: str, cid: str, user: User = Depends(get_
     return {"deleted": cid}
 
 
+COMPILED_LANGUAGES = frozenset({"c", "cpp", "java", "rust", "csharp", "go", "kotlin", "swift", "scala", "haskell", "dart"})
+
+
 def case_report(report: dict | None, language: str, problem_id: str, source_map: list[dict]) -> dict:
     """Learner-safe run output: per-case pass/fail and diagnostics only."""
     if not report:
@@ -308,7 +311,10 @@ def case_report(report: dict | None, language: str, problem_id: str, source_map:
         else:
             message, located = workspace.clean_diagnostic(language, result.get("detail") or "", source_map)
         timed_out = "timed out" in (result.get("detail") or "").lower()
-        diagnostic = {"phase": evidence.get("phase") or ("timeout" if timed_out else "run"),
+        # Compile-only checks (tier 2) report compiler output and nothing else.
+        compile_only = result.get("tier") == 2 and language in COMPILED_LANGUAGES
+        phase = evidence.get("phase") or ("timeout" if timed_out else "compile" if compile_only else "run")
+        diagnostic = {"phase": phase,
                       "message": message,
                       "file": located["file"] if located else None,
                       "line": located["line"] if located else None}

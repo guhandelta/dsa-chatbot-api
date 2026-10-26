@@ -355,3 +355,48 @@ async def test_multi_file_evaluation_runs_the_bundle_and_records_a_checkpoint(cl
     bad = await client.post(path, headers={**headers, "Idempotency-Key": "ws-bad"},
                             json={"action": "submit", "files": [{"name": "../x.py", "content": "x"}], "entry": "../x.py"})
     assert bad.status_code == 422
+
+
+def test_compiled_function_tests_point_at_the_learners_line():
+    from app.services.code_runner import available_languages
+    from app.services.deep_review import run_curated
+    if not available_languages().get("c"):
+        pytest.skip("C compiler unavailable")
+    from app.routers.workspace import case_report
+    source = "int total_cost(int price, int quantity) {\n    return price * missing;\n}\n"
+    report = run_curated("c-path-01-values", source, "c")
+    view = case_report(report, "c", "c-path-01-values", [{"file": "solution.c", "start": 1, "end": 3}])
+    assert view["status"] == "failed" and view["diagnostic"]["phase"] == "compile"
+    assert view["diagnostic"]["line"] == 2 and view["diagnostic"]["file"] == "solution.c"
+    assert "missing" in view["diagnostic"]["message"] and "solution:" not in view["diagnostic"]["message"]
+
+
+def test_compiled_function_tests_map_lines_across_helper_files():
+    from app.services.code_runner import available_languages
+    from app.services.deep_review import run_curated
+    if not available_languages().get("c"):
+        pytest.skip("C compiler unavailable")
+    from app.routers.workspace import case_report
+    files = [{"name": "helpers.h", "content": "static int twice(int x) {\n    return x * unknown_name;\n}\n"},
+             {"name": "solution.c", "content": '#include "helpers.h"\nint total_cost(int price, int quantity) {\n    return twice(price) * quantity;\n}\n'}]
+    code, source_map = workspace.bundle("c", files, "solution.c")
+    report = run_curated("c-path-01-values", code, "c")
+    view = case_report(report, "c", "c-path-01-values", source_map)
+    assert view["diagnostic"]["file"] == "helpers.h" and view["diagnostic"]["line"] == 2
+
+
+@pytest.mark.parametrize("language,problem,source", [
+    ("rust", "rust-path-01-values", "fn total_cost(price: i32, quantity: i32) -> i32 {\n    price * missing\n}\n"),
+    ("java", "java-path-01-values", "public int totalCost(int price, int quantity) {\n    return price * missing;\n}\n"),
+])
+def test_compile_errors_in_other_compiled_languages_point_at_the_learners_line(language, problem, source):
+    from app.services.code_runner import available_languages
+    from app.services.deep_review import run_curated
+    from app.routers.workspace import case_report
+    if not available_languages().get(language):
+        pytest.skip(f"{language} toolchain unavailable")
+    report = run_curated(problem, source, language)
+    view = case_report(report, language, problem, [{"file": "solution", "start": 1, "end": 3}])
+    assert view["status"] == "failed", view
+    assert view["diagnostic"]["line"] == 2, view["diagnostic"]
+    assert "missing" in view["diagnostic"]["message"] and "solution:" not in view["diagnostic"]["message"]

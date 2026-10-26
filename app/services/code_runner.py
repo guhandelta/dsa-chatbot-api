@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import resource
 import shutil
 import signal
@@ -386,22 +387,27 @@ def _run_tier2(language: str, solution: str) -> LangResult:
 
     with tempfile.TemporaryDirectory() as td:
         cwd = Path(td)
+        written, name = "", ""
         if language == "c":
-            (cwd / "s.c").write_text(_C_PRELUDE + solution)
+            written, name = _C_PRELUDE + solution, "s.c"
+            (cwd / name).write_text(written)
             cmd = ["gcc", "-fsyntax-only",
                    "-Werror=implicit-function-declaration",
                    "-Werror=implicit-int",
                    "-Werror=return-type", "s.c"]
         elif language == "cpp":
-            (cwd / "s.cpp").write_text(_CPP_PRELUDE + solution)
+            written, name = _CPP_PRELUDE + solution, "s.cpp"
+            (cwd / name).write_text(written)
             cmd = ["g++", "-std=c++17", "-fsyntax-only", "-Werror=return-type", "s.cpp"]
         elif language == "java":
             body = solution if "class " in solution else f"class Solution {{\n{solution}\n}}"
-            (cwd / "Solution.java").write_text("import java.util.*;\n" + body)
+            written, name = "import java.util.*;\n" + body, "Solution.java"
+            (cwd / name).write_text(written)
             cmd = [exec_harness.java_tool("javac"), "-nowarn", "-d", ".", "Solution.java"]
         else:  # rust
             body = solution if "struct Solution" in solution else f"struct Solution;\nimpl Solution {{\n{solution}\n}}\nfn main() {{}}"
-            (cwd / "s.rs").write_text(body)
+            written, name = body, "s.rs"
+            (cwd / name).write_text(written)
             cmd = ["rustc", "--edition", "2021", "--crate-type", "bin", "-A", "warnings", "-o", "out", "s.rs"]
 
         code, out, err = _run(cmd, cwd)
@@ -411,7 +417,7 @@ def _run_tier2(language: str, solution: str) -> LangResult:
         res.detail = "compiles cleanly"
     else:
         res.status = "failed"
-        res.detail = (err or out).strip()[:600]
+        res.detail = exec_harness.solution_relative((err or out).strip(), name, written, solution)[:600]
     return res
 
 
@@ -442,6 +448,10 @@ def _run_compiled(language: str, solution: str, fn: str,
     if outcome.status == "unverified":
         # Execution was refused, so keep the signal we can still get.
         res = _run_tier2(language, solution)
+        if res.status == "failed":
+            # The learner's own code failed to compile. Its standalone compile
+            # output is the useful diagnostic, with lines counted from their code.
+            return res
         res.detail = f"not executed: {outcome.detail}"
         if res.status == "passed":
             # Compiling is not verifying. Say so plainly rather than letting
