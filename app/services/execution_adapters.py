@@ -66,7 +66,7 @@ NO_ADDRESS_SPACE_LIMIT = frozenset({"javascript", "typescript", "java", "kotlin"
                                     "go", "haskell", "dart", "ruby", "swift"})
 
 
-def stdio_commands(language: str, cwd: Path, memory_mb: int) -> tuple[list[str] | None, list[str]]:
+def stdio_commands(language: str, cwd: Path, memory_mb: int, helpers: list[str] | None = None) -> tuple[list[str] | None, list[str]]:
     """Return a build command and run command, with no shell interpolation."""
     from app.services.exec_harness import java_tool
     if language not in ADAPTERS or not ADAPTERS[language].stdio_tests:
@@ -91,7 +91,15 @@ def stdio_commands(language: str, cwd: Path, memory_mb: int) -> tuple[list[str] 
         "scala": (["scalac", "Main.scala"], ["scala", "-cp", ".", "Main"]),
         "haskell": (["ghc", "-v0", "-o", "program", "Main.hs"], ["./program"]),
     }
-    return plans[language]
+    build, run = plans[language]
+    extra = helper_sources(language, helpers or [])
+    if build and extra:
+        if language in ("c", "cpp"):
+            at = build.index("-o")
+            build = build[:at] + extra + build[at:]
+        else:
+            build = build + extra
+    return build, run
 
 
 def catalog(installed: dict[str, bool]) -> dict[str, dict]:
@@ -103,16 +111,49 @@ def unsupported(language: str) -> dict:
     return {**Adapter(language, "", "", False, False, False).view(False), "toolchain": None, "source": None}
 
 
+SOURCE_FILE = re.compile(r"([\w.-]+\.(?:py|js|ts|java|c|cpp|h|hpp|rs|rb|go|cs|php|dart|kt|swift|scala|hs))[:(](\d+)")
+PY_FRAME = re.compile(r'File "([^"]+)", line (\d+)')
+
+
 def diagnostic_evidence(language: str, phase: str, message: str) -> dict:
-    """Keep observed compiler/runtime evidence concise for mentor prompts."""
+    """Keep observed compiler/runtime evidence concise for mentor prompts.
+
+    `file` is the source file the location names, so a multi-file run can point
+    at the helper that failed; `line` is that file's line."""
     if phase not in {"compile", "run"}:
         raise ValueError("Unknown execution phase")
     clean = re.sub(r"\x1b\[[0-9;]*m", "", message).strip()[:600]
     # Prefer a location in the learner's own file over one inside a runtime
     # or standard-library frame (a Go panic names runtime/panic.go first).
     source = ADAPTERS[language].source if language in ADAPTERS else None
-    line = source and (re.search(rf"\b{re.escape(source)}[:(](\d+)", clean)
-                       or re.search(rf"\b{re.escape(source)}\", line (\d+)", clean))
-    line = line or re.search(r"(?:\bline\s+|\.(?:py|js|ts|java|c|cpp|rs|rb|go|cs|php|dart|kt|swift|scala|hs):)(\d+)\b", clean, re.I)
+    frame = PY_FRAME.findall(clean)
+    if source and frame and language == "python":
+        file, line = frame[-1]
+        return {"language": language, "phase": phase, "message": clean or "non-zero exit",
+                "file": file.rsplit("/", 1)[-1], "line": int(line)}
+    # The entry file first: a Go panic names runtime/panic.go before main.go.
+    own = source and (re.search(rf"\b{re.escape(source)}[:(](\d+)", clean)
+                      or re.search(rf"\b{re.escape(source)}\", line (\d+)", clean))
+    if own:
+        return {"language": language, "phase": phase, "message": clean or "non-zero exit",
+                "file": source, "line": int(own.group(1))}
+    located = SOURCE_FILE.search(clean)
+    if located:
+        return {"language": language, "phase": phase, "message": clean or "non-zero exit",
+                "file": located.group(1).rsplit("/", 1)[-1], "line": int(located.group(2))}
+    line = re.search(r"(?:\bline\s+|\.(?:py|js|ts|java|c|cpp|rs|rb|go|cs|php|dart|kt|swift|scala|hs):)(\d+)\b", clean, re.I)
     return {"language": language, "phase": phase, "message": clean or "non-zero exit",
-            "line": int(line.group(1)) if line else None}
+            "file": source if line else None, "line": int(line.group(1)) if line else None}
+
+
+# Languages whose stdin/stdout runs can build several files natively: the build
+# or the runtime finds helper files by their real names.
+NATIVE_MULTIFILE = frozenset({"python", "javascript", "typescript", "c", "cpp", "rust", "ruby", "java"})
+_HELPER_SOURCE = {"c": ".c", "cpp": ".cpp", "java": ".java", "typescript": ".ts"}
+
+
+def helper_sources(language: str, helpers: list[str]) -> list[str]:
+    """Helper source files that the language's build must compile explicitly.
+    Languages that import or include helpers at run time need none."""
+    ext = _HELPER_SOURCE.get(language)
+    return [h for h in helpers if ext and h.endswith(ext)]

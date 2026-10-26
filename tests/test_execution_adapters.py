@@ -90,7 +90,7 @@ def test_stdin_stdout_work_limit_fails_closed():
 
 def test_diagnostic_evidence_preserves_observed_line_without_terminal_codes():
     evidence = diagnostic_evidence("java", "compile", "\x1b[31mMain.java:7: error: missing token\x1b[0m")
-    assert evidence == {"language": "java", "phase": "compile",
+    assert evidence == {"language": "java", "phase": "compile", "file": "Main.java",
                         "message": "Main.java:7: error: missing token", "line": 7}
 
 

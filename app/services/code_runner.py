@@ -247,7 +247,7 @@ def _extract_result(stdout: str):
     raise ValueError("no result marker in output")
 
 
-def _run_stdio(language: str, solution: str, cases: list, expected: list) -> LangResult:
+def _run_stdio(language: str, solution: str, cases: list, expected: list, files: dict | None = None) -> LangResult:
     """HackerRank-style: the program reads a test case from stdin and prints the
     answer. Each case is run as a separate process; output is compared as
     whitespace-normalised text."""
@@ -264,14 +264,24 @@ def _run_stdio(language: str, solution: str, cases: list, expected: list) -> Lan
         res.status = "unverified"
         res.detail = f"{_TOOLCHAIN[language]} is unavailable in the execution environment"
         return res
+    from app.services.execution_adapters import NATIVE_MULTIFILE
+    helpers = {n: t for n, t in (files or {}).items() if n != ADAPTERS[language].source}
+    if helpers and language not in NATIVE_MULTIFILE:
+        res.status = "unverified"
+        res.detail = f"{language} runs a single source file; put helpers in the solution or use notes"
+        return res
     actual: list = []
     with tempfile.TemporaryDirectory() as td:
         cwd = Path(td)
         adapter = ADAPTERS[language]
-        (cwd / adapter.source).write_text(solution, encoding="utf-8")
+        # Helper files sit beside the entry file under their own names, so the
+        # native build or runtime finds them; the entry file is `adapter.source`.
+        (cwd / adapter.source).write_text(solution if not files else files.get(adapter.source, solution), encoding="utf-8")
+        for name, text in helpers.items():
+            (cwd / name).write_text(text, encoding="utf-8")
         for name, text in SUPPORT_FILES.get(language, {}).items():
             (cwd / name).write_text(text, encoding="utf-8")
-        build, cmd = stdio_commands(language, cwd, max(64, settings.exec_memory_mb // 2))
+        build, cmd = stdio_commands(language, cwd, max(64, settings.exec_memory_mb // 2), list(helpers))
         if build:
             code, out, err = _run(build, cwd, apply_address_space=False)
             if code != 0:
@@ -474,7 +484,7 @@ def _run_compiled(language: str, solution: str, fn: str,
 
 def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
               cases: list, expected: list, io_mode: str = "function",
-              comparison: str = "exact") -> dict:
+              comparison: str = "exact", files: dict | None = None) -> dict:
     """Validate every provided solution.
 
     solutions: {"python": "<code>", "c": "<code>", ...}
@@ -503,7 +513,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
     for lang in TIER1:
         if lang in solutions:
             if io_mode == "stdio":
-                results.append(_run_stdio(lang, solutions[lang], cases, expected))
+                results.append(_run_stdio(lang, solutions[lang], cases, expected, files))
             else:
                 results.append(
                     _run_tier1(lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal)
@@ -518,7 +528,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
                 detail=f"{_TOOLCHAIN[lang]} not installed — cannot verify this language",
             ))
         elif io_mode == "stdio":
-            results.append(_run_stdio(lang, solutions[lang], cases, expected))
+            results.append(_run_stdio(lang, solutions[lang], cases, expected, files))
         else:
             results.append(_run_compiled(
                 lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
@@ -533,7 +543,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
             ))
         elif io_mode == "stdio":
             if ADAPTERS[lang].stdio_tests:
-                results.append(_run_stdio(lang, solutions[lang], cases, expected))
+                results.append(_run_stdio(lang, solutions[lang], cases, expected, files))
             else:
                 results.append(LangResult(language=lang, tier=2, status="unverified",
                                           detail="stdin/stdout problems are not supported for this language"))
@@ -545,7 +555,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
         if lang not in solutions:
             continue
         if io_mode == "stdio":
-            results.append(_run_stdio(lang, solutions[lang], cases, expected))
+            results.append(_run_stdio(lang, solutions[lang], cases, expected, files))
         else:
             results.append(LangResult(language=lang, tier=2, status="unverified",
                                       detail="function-style test adapter is unavailable for this language"))

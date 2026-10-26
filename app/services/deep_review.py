@@ -52,8 +52,11 @@ def curated_tests_supported(language: str) -> bool:
     return bool(adapter and (adapter.function_tests or adapter.stdio_tests))
 
 
-def run_curated(problem_id: str, user_code: str, language: str) -> dict | None:
-    """The problem's curated cases against the learner's code. Blocking."""
+def run_curated(problem_id: str, user_code: str, language: str, files: dict | None = None) -> dict | None:
+    """The problem's curated cases against the learner's code. Blocking.
+
+    `files` is a native multi-file project (entry file under its adapter name)
+    for stdin/stdout problems; function-style problems use `user_code`."""
     cases, expected, fns, io_mode = load_test_cases(problem_id)
     if not cases or not curated_tests_supported(language):
         return None
@@ -65,7 +68,7 @@ def run_curated(problem_id: str, user_code: str, language: str) -> dict | None:
                              "passed_cases": 0, "total_cases": len(cases), "outputs": [], "evidence": {}}],
                 "agreement": True, "can_publish": False}
     return run_suite({language: user_code}, fns, cases, expected, io_mode,
-                     comparison=comparison_mode(problem_id))
+                     comparison=comparison_mode(problem_id), files=files)
 
 
 async def gather_evidence(problem_id: str, user_code: str, language: str) -> dict:

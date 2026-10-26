@@ -420,3 +420,54 @@ def test_adapter_languages_get_workspace_entries(language, entry, ext):
 def test_starters_follow_each_language_syntax():
     assert workspace.starter_files("php", "single", "")[0]["content"].startswith("<?php\n")
     assert workspace.starter_files("haskell", "single", "")[0]["content"].startswith("-- ")
+
+
+_NATIVE = [
+    ("python", "main.py", "from helpers import mul\na, b = map(int, input().split())\nprint(mul(a, b))\n",
+     "helpers.py", "def mul(a, b):\n    return a * b\n"),
+    ("javascript", "main.js", "const { mul } = require('./helpers');\nconst [a, b] = require('fs').readFileSync(0, 'utf8').trim().split(/\\s+/).map(Number);\nconsole.log(mul(a, b));\n",
+     "helpers.js", "module.exports = { mul: (a, b) => a * b };\n"),
+    ("ruby", "main.rb", "require_relative 'helpers'\na, b = gets.split.map(&:to_i)\nputs mul(a, b)\n",
+     "helpers.rb", "def mul(a, b)\n  a * b\nend\n"),
+    ("c", "main.c", '#include <stdio.h>\n#include "helpers.h"\nint main(void) { int a, b; scanf("%d %d", &a, &b); printf("%d\\n", mul(a, b)); return 0; }\n',
+     "helpers.h", "static int mul(int a, int b) { return a * b; }\n"),
+    ("rust", "main.rs", "mod helpers;\nuse std::io::{self, Read};\nfn main() { let mut s = String::new(); io::stdin().read_to_string(&mut s).unwrap(); let v: Vec<i64> = s.split_whitespace().map(|x| x.parse().unwrap()).collect(); println!(\"{}\", helpers::mul(v[0], v[1])); }\n",
+     "helpers.rs", "pub fn mul(a: i64, b: i64) -> i64 { a * b }\n"),
+    ("java", "Main.java", "public class Main {\n  public static void main(String[] args) {\n    java.util.Scanner in = new java.util.Scanner(System.in);\n    System.out.println(Helper.mul(in.nextInt(), in.nextInt()));\n  }\n}\n",
+     "Helper.java", "class Helper {\n  static int mul(int a, int b) { return a * b; }\n}\n"),
+]
+
+
+@pytest.mark.parametrize("language,entry,program,helper_name,helper_source", _NATIVE)
+def test_stdio_multifile_runs_build_natively_with_real_helper_files(language, entry, program, helper_name, helper_source):
+    from app.services.code_runner import available_languages, run_suite
+    if not available_languages().get(language):
+        pytest.skip(f"{language} toolchain unavailable")
+    # The entry file is named as the adapter names it (main.c, Main.java, ...),
+    # which is how the workspace hands it to the runner.
+    report = run_suite({language: program}, {}, ["2 3"], ["6"], io_mode="stdio",
+                       files={entry: program, helper_name: helper_source})
+    result = report["results"][0]
+    assert result["status"] == "passed", result
+    assert result["outputs"] == ["6"] and "unverified" not in result["detail"]
+
+
+def test_stdio_helper_file_failure_is_reported_against_the_helper():
+    from app.services.code_runner import available_languages, run_suite
+    if not available_languages().get("python"):
+        pytest.skip("python unavailable")
+    report = run_suite({"python": "from helpers import mul\nprint(mul(2, 3))\n"}, {}, ["x"], ["6"], io_mode="stdio",
+                       files={"main.py": "from helpers import mul\nprint(mul(2, 3))\n",
+                              "helpers.py": "def mul(a, b):\n    return a * oops\n"})
+    result = report["results"][0]
+    assert result["status"] == "failed" and result["evidence"]["file"] == "helpers.py"
+    assert result["evidence"]["line"] == 2
+
+
+def test_native_helper_errors_name_the_real_file():
+    from app.services.execution_adapters import diagnostic_evidence
+    frame = 'Traceback (most recent call last):\n  File "/tmp/x/main.py", line 9, in <module>\n  File "/tmp/x/helpers.py", line 2, in mul\nNameError: name \'oops\' is not defined'
+    evidence = diagnostic_evidence("python", "run", frame)
+    assert evidence["file"] == "helpers.py" and evidence["line"] == 2
+    compile_error = diagnostic_evidence("c", "compile", "helpers.h:4:12: error: expected ';'")
+    assert compile_error["file"] == "helpers.h" and compile_error["line"] == 4

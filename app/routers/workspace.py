@@ -284,7 +284,8 @@ async def delete_checkpoint(problem_id: str, cid: str, user: User = Depends(get_
 COMPILED_LANGUAGES = frozenset({"c", "cpp", "java", "rust", "csharp", "go", "kotlin", "swift", "scala", "haskell", "dart"})
 
 
-def case_report(report: dict | None, language: str, problem_id: str, source_map: list[dict]) -> dict:
+def case_report(report: dict | None, language: str, problem_id: str, source_map: list[dict],
+                entry_alias: dict | None = None) -> dict:
     """Learner-safe run output: per-case pass/fail and diagnostics only."""
     if not report:
         return {"status": "unverified", "passed": 0, "total": 0, "cases": [],
@@ -306,7 +307,11 @@ def case_report(report: dict | None, language: str, problem_id: str, source_map:
     evidence = result.get("evidence") or {}
     diagnostic = None
     if result.get("status") in ("failed", "error") and not result.get("passed_cases") and not outputs and not flags:
-        if evidence:
+        if evidence and evidence.get("file") and evidence.get("line"):
+            # A native multi-file run names its real files (helpers included).
+            name = (entry_alias or {}).get(evidence["file"], evidence["file"])
+            message, located = evidence.get("message") or "", {"file": name, "line": evidence["line"]}
+        elif evidence:
             message, located = evidence.get("message") or "", workspace.locate(source_map, evidence.get("line"))
         else:
             message, located = workspace.clean_diagnostic(language, result.get("detail") or "", source_map)
@@ -347,13 +352,23 @@ async def run_tests(problem_id: str, body: FilesBody, user: User = Depends(get_c
     session.add(run)
     await session.commit()
     from app.services.deep_review import run_curated
+    from app.services.execution_adapters import ADAPTERS, NATIVE_MULTIFILE
+    # Stdin/stdout problems build the learner's files natively (helpers by their
+    # real names); function-style problems keep the bundle.
+    native, alias = None, None
+    code_files = [f for f in files if not f["name"].endswith(workspace.NOTE_EXTENSIONS)]
+    if body.language in NATIVE_MULTIFILE and len(code_files) > 1:
+        entry_name = ADAPTERS[body.language].source
+        native = {entry_name: next(f["content"] for f in code_files if f["name"] == body.entry)}
+        native.update({f["name"]: f["content"] for f in code_files if f["name"] != body.entry})
+        alias = {entry_name: body.entry}
     try:
-        report = await asyncio.to_thread(run_curated, problem_id, code, body.language)
+        report = await asyncio.to_thread(run_curated, problem_id, code, body.language, native)
     except RuntimeError:
         run.status = "error"
         await session.commit()
         raise HTTPException(503, "The code runner is unavailable right now. Test runs never cost peppercorns.")
-    view = case_report(report, body.language, problem_id, source_map)
+    view = case_report(report, body.language, problem_id, source_map, alias)
     run.status, run.passed_cases, run.total_cases = view["status"], view["passed"], view["total"]
     await session.commit()
     return {**view, "source_map": source_map}
