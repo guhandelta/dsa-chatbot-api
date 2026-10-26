@@ -49,8 +49,10 @@ async def test_fail_hint_resume_pass_reveal_reflect_with_real_execution(client,d
     assert failed.json()['outcome']=='failed' and failed.json()['awaiting']=='learner'
     result=failed.json()['evidence']['curated']['results'][0]
     assert result['total_cases']>=6 and result['passed_cases']<result['total_cases']
-    assert failed.json()['solution_available'] is True
-    assert 'markdown' not in failed.json()  # available only via explicit reveal endpoint
+    # Reference solutions stay hidden; a failed evaluation earns a learning strike instead.
+    assert failed.json()['solution_available'] is False
+    assert 'markdown' not in failed.json()
+    assert failed.json()['strike']['where']['phase']=='wrong_answer' and failed.json()['strike']['status']=='open'
     assert (await client.post(path,headers=headers,json={'action':'reflect','reasoning':'Claimed success'})).status_code==409
     hinted=await client.post(path,headers={**headers,'Idempotency-Key':'hint'},json={'action':'hint','reasoning':'I added price and quantity, but the totals differ.'})
     assert hinted.status_code==200 and hinted.json()['hint_tier']==1,hinted.text
@@ -66,7 +68,7 @@ async def test_fail_hint_resume_pass_reveal_reflect_with_real_execution(client,d
     assert passed.json()['peppercorns_remaining']==settings.signup_bonus-2*settings.analyze_cost+settings.reward_independent_solve
     retry=await client.post(path,headers={**headers,'Idempotency-Key':'right'},json=submission)
     assert retry.json()==passed.json()
-    assert (await client.get(f'/problems/{pid}/solution',headers=headers,params={'language':language})).status_code==200
+    assert (await client.get(f'/problems/{pid}/solution',headers=headers,params={'language':language})).status_code==403
     reflection=await client.post(path,headers={**headers,'Idempotency-Key':'reflection'},json={'action':'reflect','reasoning':'Equal amounts repeat, so I multiply price and quantity.'})
     assert reflection.status_code==200 and reflection.json()['awaiting'] is None,reflection.text
     profile=(await client.get('/mentor/profile',headers=headers)).json()

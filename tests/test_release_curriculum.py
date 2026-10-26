@@ -62,6 +62,9 @@ async def test_statements_never_expose_references_or_hidden_cases(client,subscri
 
 @pytest.mark.parametrize('status,tier,total,unlocks', [('passed',1,6,True),('failed',1,6,True),('error',1,6,False),('unverified',2,0,False),('passed',2,0,False)])
 async def test_reveal_requires_own_completed_evaluation(client,monkeypatch,session_factory,status,tier,total,unlocks,subscribe_user):
+    # Exercises the configurable reveal policy; the default hides solutions.
+    from app.core.config import settings
+    monkeypatch.setattr(settings,'solution_reveal_policy','after_evaluation')
     headers, uid = await register(client,'learner@example.com',subscribe_user=subscribe_user)
     other, _ = await register(client,'other@example.com',subscribe_user=subscribe_user)
     async def review(**kwargs):

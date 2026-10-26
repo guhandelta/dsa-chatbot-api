@@ -324,7 +324,14 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
         ],
         # Practice workspace files, snapshots and test-run history.
         "workspace": await _workspace_export(session, user_id),
+        # Learning strikes and the answers given to clear them.
+        "strikes": await _strikes_export(session, user_id),
     }
+
+
+async def _strikes_export(session: AsyncSession, user_id: str) -> dict:
+    from app.services.learning_strikes import export_for_user
+    return await export_for_user(session, user_id)
 
 
 async def _workspace_export(session: AsyncSession, user_id: str) -> dict:

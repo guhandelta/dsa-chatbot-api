@@ -368,8 +368,11 @@ async def passed_exercises(session: AsyncSession, user_id: str, language: str) -
 async def progress(session: AsyncSession, user_id: str, language: str) -> dict:
     """The learner's position: per-node mastery and the current node."""
     from app.services import quiz
+    from app.services.learning_strikes import blocked_nodes
     passed = await passed_exercises(session, user_id, language)
     checks = await quiz.best_scores(session, user_id, language)
+    # Open learning strikes on a node keep it from counting as mastered.
+    struck = await blocked_nodes(session, user_id, language)
     path = []
     for node in nodes(language):
         has_exercise = bool(node["exercise_id"])
@@ -379,8 +382,9 @@ async def progress(session: AsyncSession, user_id: str, language: str) -> dict:
         checks_passed = score is not None and score >= MASTERY_RATIO
         available = has_exercise or has_checks
         assessment_passed = available and (exercise_passed or not has_exercise) and (checks_passed or not has_checks)
-        complete = node["coverage_ready"] and assessment_passed
+        complete = node["coverage_ready"] and assessment_passed and node["id"] not in struck
         path.append({**node, "available": available, "exercise_passed": exercise_passed,
+                     "open_strikes": node["id"] in struck,
                      "check_score": score, "checks_passed": checks_passed,
                      "assessment_passed": assessment_passed, "complete": complete, "mastered": complete,
                      "status": "complete" if complete else "in-progress"

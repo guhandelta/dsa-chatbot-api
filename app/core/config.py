@@ -105,13 +105,26 @@ class Settings(BaseSettings):
     # Practice workspace: free test runs (no review, no LLM) and stored snapshots.
     workspace_runs_per_hour: int = Field(default=120, ge=0)
     workspace_max_checkpoints: int = Field(default=30, ge=1)
-    # When a reference solution may be revealed. UNRESOLVED PRODUCT DECISION:
-    # the default keeps the behaviour that shipped (any completed evaluation).
+    # When a reference solution may be revealed. Product decision (2026-10-26):
+    # solutions stay hidden; learners clear strikes instead. The other values
+    # remain for courses that choose differently.
     #   after_evaluation - after `solution_reveal_min_evaluations` completed evaluations
     #   after_pass       - only after a passing evaluation
     #   disabled         - never reveal reference solutions
-    solution_reveal_policy: Literal["after_evaluation", "after_pass", "disabled"] = "after_evaluation"
+    solution_reveal_policy: Literal["after_evaluation", "after_pass", "disabled"] = "disabled"
     solution_reveal_min_evaluations: int = Field(default=1, ge=1)
+    # Learning strikes: a failed paid evaluation earns one; a wrong answer to a
+    # clearing question earns another ("snowball"), up to the cap.
+    learning_strike_cap: int = Field(default=4, ge=1)
+    # What happens when a wrong answer would pass the cap. UNDECIDED PRODUCT
+    # RULE, so it is a hook: "mentor_step_back" offers an easier prerequisite
+    # and a mentor hint; "lock" stops new questions until a mentor session.
+    learning_strike_cap_action: Literal["mentor_step_back", "lock"] = "mentor_step_back"
+    # Open strikes in a language block starting a different problem in it.
+    learning_strikes_gate_progress: bool = True
+    # Extra practice the learner asks for: sets per calendar month (UTC),
+    # not yet split by section.
+    extra_practice_sets_per_month: int = Field(default=40, ge=0)
 
     # Stripe — checkout is hosted by Stripe; no card data reaches this server
     stripe_webhook_secret: str = ""

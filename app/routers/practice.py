@@ -75,6 +75,8 @@ def render(sid,state,balance=None):
 async def start(request:StartRequest,user:User=Depends(get_current_user),session:AsyncSession=Depends(get_session),idempotency_key:str|None=Header(default=None)):
     active(user);validate_problem(request.problem_id,request.language)
     await require_content(session, user, request.problem_id, request.language)
+    from app.services.learning_strikes import require_no_blocking
+    await require_no_blocking(session, user.id, request.language, request.problem_id)
     async def work(_):
         await require_verified_reference(request.problem_id,request.language)
         item=PracticeSession(user_id=user.id,problem_id=request.problem_id,language=request.language,provider=request.provider)
@@ -166,7 +168,8 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             from app.routers.workspace import add_checkpoint,case_report
             from app.db.models import WorkspaceRun
             evidence=state.get('evidence') or {}
-            completed=await save_evaluation(session,user.id,pid,lang,evidence,earned)
+            struck=[]
+            completed=await save_evaluation(session,user.id,pid,lang,evidence,earned,struck)
             available=completed and bool(solution_document(pid,lang)) and await can_reveal(session,user.id,pid,lang)
             if earned:balance=earned[-1]['balance']
             from app.services.workspace import ENTRY
@@ -186,7 +189,7 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             await learning_profile.record_event(session,user.id,pid,kind='reflection',language=lang,algorithms=_algorithms_for(pid),reasoning=request.reasoning)
         await session.execute(update(PracticeSession).where(PracticeSession.id==sid,PracticeSession.busy_token==lock_token).values(busy=False,busy_token='',status='active' if pending_interrupt(state) else 'completed'))
         result=render(sid,state,balance);result['solution_available']=available;result['rewards']=earned
-        if request.action=='submit':result['tests']=tests;result['source_map']=source_map
+        if request.action=='submit':result['tests']=tests;result['source_map']=source_map;result['strike']=struck[0] if struck else None
         if request.action=='hint':
             from app.services.mentor import MAX_TIER,hint_cost
             from app.services.operations import current_balance

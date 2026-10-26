@@ -27,13 +27,33 @@ line back to its file. Bundling is offered where concatenation is sound
 source file plus notes. Notes files (`.md`, `.txt`) are never executed. A
 workspace holds at most 8 files and 20,000 characters.
 
+## Learning strikes
+
+Reference solutions are hidden (`SOLUTION_REVEAL_POLICY=disabled`, the
+default). Instead, a failed paid evaluation earns a learning strike
+(`app/services/learning_strikes.py`, routes under `/strikes`). Free test runs
+never do. Each strike records where the mistake happened and has its own set
+of 2 or 3 quiz-bank questions on the same path stage (multiple choice, coding
+or debugging, mixed). The set has 3 questions when the learner is struggling
+on the topic. Solving the original problem does not clear a strike. A wrong
+answer to a clearing question adds another strike, up to
+`LEARNING_STRIKE_CAP` (4), and the missed question is replaced. What happens
+at the cap is still undecided; `LEARNING_STRIKE_CAP_ACTION` is the hook, and
+the default offers an earlier lesson and the mentor. Open strikes block
+starting a different problem in that language (`LEARNING_STRIKES_GATE_PROGRESS`)
+and keep the path node from counting as mastered. Retrying the original
+problem is always allowed.
+
+Learners can ask for extra practice on a topic at any time
+(`POST /strikes/practice`), within `EXTRA_PRACTICE_SETS_PER_MONTH`. It is not
+split by section yet. Extra practice is recorded and shown, but the mastery
+formula does not use it until that rule is framed.
+
 ## Open product decisions
 
-- **Solution reveal.** `SOLUTION_REVEAL_POLICY` is `after_evaluation`
-  (default, the behaviour that shipped), `after_pass` or `disabled`;
-  `SOLUTION_REVEAL_MIN_EVALUATIONS` applies to `after_evaluation`. Test runs
-  never count.
-- **Retention.** Drafts, checkpoints and run history are included in the
-  profile export. Erasing the learning profile keeps them, like practice
+- What happens at the strike cap, how extra practice counts toward mastery,
+  and how the monthly cap is split across sections.
+- **Retention.** Drafts, checkpoints, run history and strikes are included in
+  the profile export. Erasing the learning profile keeps them, like practice
   sessions; `app.services.workspace.delete_for_user` is ready once a retention
   rule is chosen.

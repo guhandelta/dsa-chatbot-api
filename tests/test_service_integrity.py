@@ -115,7 +115,8 @@ async def test_langgraph_session_survives_new_requests_and_replays_actions(clien
     action={'action':'submit','code':'public int totalCost(int a, int b){return a*b;}'}
     first=await client.post(f'/practice/sessions/{sid}/actions',headers=headers,json=action)
     assert first.status_code==200,first.text
-    assert first.json()['awaiting']=='reflection' and first.json()['solution_available']
+    # Reference solutions stay hidden by default, even after a pass.
+    assert first.json()['awaiting']=='reflection' and first.json()['solution_available'] is False
     again=await client.post(f'/practice/sessions/{sid}/actions',headers=headers,json=action)
     assert first.json()==again.json() and len(calls)==1
     fresh=await client.get('/practice/sessions/'+sid,headers=headers)

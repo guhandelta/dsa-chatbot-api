@@ -30,6 +30,7 @@ from app.routers import (
     tracks,
     training,
     workspace,
+    strikes,
 )
 
 
@@ -74,6 +75,7 @@ app.include_router(analyze.router)
 app.include_router(problems.router)
 app.include_router(practice.router)
 app.include_router(workspace.router)
+app.include_router(strikes.router)
 app.include_router(tracks.router)
 app.include_router(mentor.router)
 app.include_router(study.router)

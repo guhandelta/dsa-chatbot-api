@@ -472,3 +472,64 @@ class WorkspaceRun(Base):
     passed_cases: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     total_cases: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
+class ChallengeSet(Base):
+    """Questions a learner answers to clear a learning strike, or extra
+    practice they asked for. Items are quiz-bank ids; answers stay server-side."""
+
+    __tablename__ = "challenge_sets"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    # Path node the questions come from, and the problem that led here.
+    node_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    problem_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    # "strike" | "extra"
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    items_json: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    required: Mapped[int] = mapped_column(Integer, nullable=False, default=2)
+    correct: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    answered: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class ChallengeAnswer(Base):
+    __tablename__ = "challenge_answers"
+    __table_args__ = (UniqueConstraint("set_id", "item_id", name="uq_challenge_answer_item"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    set_id: Mapped[str] = mapped_column(ForeignKey("challenge_sets.id"), index=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    item_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    item_type: Mapped[str] = mapped_column(String(20), nullable=False)
+    concept: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    response: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    correct: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
+class LearningStrike(Base):
+    """A mistake in a paid evaluation or a strike-clearing question. Not the
+    abuse strikes in `strikes`: these are a learning device, cleared by
+    answering related questions. They snowball up to a configured cap."""
+
+    __tablename__ = "learning_strikes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    problem_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    node_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    # "evaluation" | "challenge"
+    source: Mapped[str] = mapped_column(String(20), nullable=False)
+    # Where the mistake happened: phase, failure category, tests passed, file/line, concept.
+    where_json: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
+    set_id: Mapped[str | None] = mapped_column(ForeignKey("challenge_sets.id"), nullable=True)
+    # "open" | "cleared"
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="open")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+    cleared_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

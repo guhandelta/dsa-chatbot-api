@@ -225,6 +225,9 @@ async def _events(db, uid, *kinds):
 async def test_reveal_policy_is_configurable(client, db, monkeypatch):
     uid, _ = await _learner(client, db)
     await _events(db, uid, "evaluated", "attempt")
+    # Solutions are hidden by default; the other policies remain configurable.
+    assert not await can_reveal(db, uid, PID, "python")
+    monkeypatch.setattr(settings, "solution_reveal_policy", "after_evaluation")
     assert await can_reveal(db, uid, PID, "python")
     monkeypatch.setattr(settings, "solution_reveal_min_evaluations", 2)
     assert not await can_reveal(db, uid, PID, "python")

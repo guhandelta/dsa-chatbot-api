@@ -45,7 +45,7 @@ def validate_problem(problem_id,language):
         raise HTTPException(400,'Choose the exercise language before submitting.')
 
 
-async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_out=None):
+async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_out=None,strikes_out=None):
     from app.graphs.practice import classify_outcome
     algorithms=next((c.algorithms for c in filter_content() if c.id==problem_id),[])
     outcome,category,detail=classify_outcome(evidence)
@@ -59,6 +59,12 @@ async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_o
         kind='solved' if solved else 'attempt',language=language,
         algorithms=algorithms,error_category=category,detail=detail)
     earned=await rewards.after_solve(session,user_id,problem_id,language,first_solve=first_solve) if solved else []
+    if completed and not solved:
+        # Only a completed paid evaluation earns a learning strike.
+        from app.services.learning_strikes import record_failed_evaluation,strike_view
+        strike=await record_failed_evaluation(session,user_id,problem_id,language,evidence,category)
+        if strike is not None and strikes_out is not None:
+            strikes_out.append(await strike_view(session,strike))
     if rewards_out is not None:
         rewards_out.extend(earned)
     return completed
