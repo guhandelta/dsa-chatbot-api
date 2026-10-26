@@ -26,7 +26,8 @@ LANGUAGE = "web"
 PREFIX = "playground:"
 SLUG = re.compile(r"[a-z0-9][a-z0-9-]{0,39}")
 NAME = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}")
-EXTENSIONS = (".html", ".css", ".js", ".ts", ".md", ".txt")
+EXTENSIONS = (".html", ".css", ".js", ".ts", ".jsx", ".tsx", ".md", ".txt")
+COMPILED = (".ts", ".tsx", ".jsx")
 MAX_FILES = 12
 MAX_TOTAL_CHARS = 60_000
 MAX_PROJECTS = 30
@@ -55,6 +56,49 @@ _TS = ("const button = document.getElementById('count') as HTMLButtonElement;\nl
        "button.addEventListener('click', () => {\n  clicks += 1;\n  button.textContent = `Clicked ${clicks} times`;\n"
        "  console.log('clicks', clicks);\n});\n")
 
+_REACT_HTML = """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>React playground</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="root"></div>
+  <script src="app.tsx"></script>
+</body>
+</html>
+"""
+_REACT_APP = """function Counter({ start }: { start: number }) {
+  const [count, setCount] = React.useState(start);
+  return (
+    <button type="button" onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  );
+}
+
+function App() {
+  return (
+    <main>
+      <h1>Hello, React</h1>
+      <Counter start={0} />
+    </main>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
+"""
+# React and ReactDOM are globals in the preview (the UI inlines them); these
+# declarations let the compiler accept them without @types/react.
+REACT_GLOBALS = """declare const React: any;
+declare const ReactDOM: any;
+declare namespace JSX {
+  interface IntrinsicElements { [name: string]: any }
+  interface Element {}
+}
+"""
+
 TEMPLATES = {
     "html-css-js": {"title": "HTML, CSS and JavaScript", "entry": "index.html",
                     "files": [("index.html", _HTML.format(title="Playground", script="script.js")),
@@ -62,6 +106,8 @@ TEMPLATES = {
     "html-css-ts": {"title": "HTML, CSS and TypeScript", "entry": "index.html",
                     "files": [("index.html", _HTML.format(title="Playground", script="script.ts")),
                               ("styles.css", _CSS), ("script.ts", _TS)]},
+    "react-tsx": {"title": "React with TypeScript", "entry": "index.html",
+                  "files": [("index.html", _REACT_HTML), ("styles.css", _CSS), ("app.tsx", _REACT_APP)]},
     "html-css": {"title": "HTML and CSS only", "entry": "index.html",
                  "files": [("index.html", _HTML.format(title="Playground", script="").replace(
                      '  <script src=""></script>\n', "")), ("styles.css", _CSS)]},
@@ -104,7 +150,7 @@ def validate(files: list[dict]) -> list[dict]:
         raise HTTPException(422, "A web project needs an index.html.")
     for name in names:
         if not NAME.fullmatch(name) or ".." in name or not name.endswith(EXTENSIONS):
-            raise HTTPException(422, f"{name}: use .html, .css, .js, .ts, .md or .txt files.")
+            raise HTTPException(422, f"{name}: use .html, .css, .js, .ts, .jsx, .tsx, .md or .txt files.")
     if sum(len(f["content"]) for f in files) > MAX_TOTAL_CHARS:
         raise HTTPException(422, f"A web project holds at most {MAX_TOTAL_CHARS:,} characters.")
     return [{"name": f["name"], "content": f["content"]} for f in files]
@@ -175,7 +221,7 @@ async def save_project(slug: str, body: SaveBody, user: User = Depends(get_curre
     return {"revision": draft.revision, "updated_at": draft.updated_at.isoformat()}
 
 
-_TSC_LINE = re.compile(r"^(?P<file>[\w.-]+\.ts)\((?P<line>\d+),(?P<col>\d+)\): (?P<kind>error|warning) (?P<code>TS\d+): (?P<message>.*)$")
+_TSC_LINE = re.compile(r"^(?P<file>[\w.-]+\.(?:ts|tsx|jsx))\((?P<line>\d+),(?P<col>\d+)\): (?P<kind>error|warning) (?P<code>TS\d+): (?P<message>.*)$")
 
 
 def parse_tsc(output: str) -> list[dict]:
@@ -191,22 +237,29 @@ def parse_tsc(output: str) -> list[dict]:
 
 
 def transpile(files: list[dict]) -> dict:
-    """Compile every .ts file to browser JavaScript in the sandbox. Type errors
-    are reported but do not stop the output, so the preview still runs."""
+    """Compile .ts, .tsx and .jsx files to browser JavaScript in the sandbox.
+    JSX becomes React.createElement calls. Type errors are reported but do not
+    stop the output, so the preview still runs."""
     from app.services.code_runner import _run
-    sources = [f for f in files if f["name"].endswith(".ts")]
+    sources = [f for f in files if f["name"].endswith(COMPILED)]
     if not sources:
         return {"outputs": {}, "diagnostics": []}
+    react = any(f["name"].endswith((".tsx", ".jsx")) for f in sources)
     with tempfile.TemporaryDirectory(prefix="dsa-ts-") as scratch:
         cwd = Path(scratch)
         for f in sources:
             (cwd / f["name"]).write_text(f["content"], encoding="utf-8")
-        code, out, err = _run(["tsc", "--target", "es2020", "--lib", "es2020,dom", "--module", "es2020",
-                               "--strict", "--skipLibCheck", "--pretty", "false", "--outDir", "out",
-                               *[f["name"] for f in sources]], cwd, apply_address_space=False)
+        names = [f["name"] for f in sources]
+        flags = ["--target", "es2020", "--lib", "es2020,dom", "--module", "es2020", "--strict",
+                 "--skipLibCheck", "--pretty", "false", "--outDir", "out"]
+        if react:
+            (cwd / "react-globals.d.ts").write_text(REACT_GLOBALS, encoding="utf-8")
+            flags += ["--jsx", "react", "--allowJs"]
+            names.append("react-globals.d.ts")
+        code, out, err = _run(["tsc", *flags, *names], cwd, apply_address_space=False)
         outputs = {}
         for f in sources:
-            emitted = cwd / "out" / (f["name"][:-3] + ".js")
+            emitted = cwd / "out" / (f["name"].rsplit(".", 1)[0] + ".js")
             if emitted.exists():
                 outputs[f["name"]] = emitted.read_text(encoding="utf-8")
     diagnostics = parse_tsc(out or err)

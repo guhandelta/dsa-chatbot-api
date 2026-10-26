@@ -18,7 +18,7 @@ def _files(*pairs):
 async def test_projects_start_from_templates_and_autosave_with_revisions(client):
     headers = await _learner(client)
     listing = (await client.get("/playground", headers=headers)).json()
-    assert {t["id"] for t in listing["templates"]} == {"html-css-js", "html-css-ts", "html-css"}
+    assert {t["id"] for t in listing["templates"]} == {"html-css-js", "html-css-ts", "react-tsx", "html-css"}
     fresh = (await client.get("/playground/first", params={"template": "html-css-ts"}, headers=headers)).json()
     assert fresh["revision"] is None and {f["name"] for f in fresh["files"]} == {"index.html", "styles.css", "script.ts"}
     saved = await client.put("/playground/first", headers=headers,
@@ -67,3 +67,17 @@ async def test_transpile_endpoint_is_rate_limited(client, monkeypatch):
     body = {"files": _files(("script.ts", "let n: number = 1;\n"))}
     assert (await client.post("/playground/transpile", headers=headers, json=body)).status_code == 200
     assert (await client.post("/playground/transpile", headers=headers, json=body)).status_code == 429
+
+
+def test_react_tsx_and_jsx_compile_to_create_element_calls():
+    if not available_languages().get("typescript"):
+        pytest.skip("TypeScript unavailable")
+    from app.routers.playground import TEMPLATES
+    react = TEMPLATES["react-tsx"]["files"]
+    result = transpile([{"name": n, "content": c} for n, c in react])
+    assert result["diagnostics"] == [], result["diagnostics"]
+    assert "React.createElement(Counter" in result["outputs"]["app.tsx"]
+    jsx = transpile(_files(("widget.jsx", "const el = <p className=\"x\">hi</p>;\nReactDOM.createRoot(document.body).render(el);\n")))
+    assert 'React.createElement("p"' in jsx["outputs"]["widget.jsx"]
+    broken = transpile(_files(("app.tsx", "const n: number = <div />;\n")))
+    assert broken["diagnostics"] and broken["diagnostics"][0]["file"] == "app.tsx"
