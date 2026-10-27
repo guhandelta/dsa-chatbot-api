@@ -102,11 +102,13 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
     active(user);item=await owned(session,user,sid)
     pid,lang,provider=item.problem_id,item.language,item.provider
     uid=user.id
-    files=source_map=None
+    files=source_map=project_files=native_alias=None
     if request.files is not None and request.action in ('submit','hint'):
         from app.services import workspace
-        files=workspace.validate(lang,[f.model_dump() for f in request.files],request.entry or workspace.ENTRY.get(lang,''))
-        bundled,source_map=workspace.bundle(lang,files,request.entry or workspace.ENTRY[lang])
+        entry_name=request.entry or workspace.ENTRY.get(lang,'')
+        files=workspace.validate(lang,[f.model_dump() for f in request.files],entry_name)
+        bundled,source_map=workspace.bundle(lang,files,entry_name)
+        project_files,native_alias=workspace.native_project(lang,files,entry_name)
         request=request.model_copy(update={'code':bundled})
     acquired=False
     finished=False
@@ -151,6 +153,8 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             except RateLimitExceeded as exc:raise HTTPException(429,str(exc))
     async def work(balance):
         payload={'action':request.action,'code':request.code,'reasoning':request.reasoning}
+        if project_files:
+            payload['files'] = project_files
         if request.action=='submit':
             payload['recalled_moment'] = await learning_profile.recall_similar_moment(session,user.id,_algorithms_for(pid),pid,lang)
         if request.action=='hint':
@@ -171,14 +175,15 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
             from app.db.models import WorkspaceRun
             evidence=state.get('evidence') or {}
             struck=[]
-            completed=await save_evaluation(session,user.id,pid,lang,evidence,earned,struck)
+            completed=await save_evaluation(session,user.id,pid,lang,evidence,earned,struck,
+                                            practice_session_id=sid)
             available=completed and bool(solution_document(pid,lang)) and await can_reveal(session,user.id,pid,lang)
             if earned:balance=earned[-1]['balance']
             from app.services.workspace import ENTRY
             entry=(request.entry or ENTRY[lang]) if files else ENTRY.get(lang,'solution.txt')
             snapshot=files or [{'name':entry,'content':request.code}]
-            tests=case_report(evidence.get('curated'),lang,pid,source_map or [])
-            session.add(WorkspaceRun(user_id=uid,problem_id=pid,language=lang,kind='evaluation',
+            tests=case_report(evidence.get('curated'),lang,pid,source_map or [],native_alias)
+            session.add(WorkspaceRun(user_id=uid,problem_id=pid,language=lang,practice_session_id=sid,kind='evaluation',
                 status=tests['status'],passed_cases=tests['passed'],total_cases=tests['total']))
             await add_checkpoint(session,uid,pid,lang,snapshot,entry,'evaluation',
                 f"Evaluation: {tests['passed']}/{tests['total']} tests" if tests['total'] else 'Evaluation')
@@ -186,9 +191,11 @@ async def action(sid:str,request:ActionRequest,user:User=Depends(get_current_use
         if request.action=='hint':
             await learning_profile.record_event(session,user.id,pid,kind='hint',language=lang,
                 algorithms=_algorithms_for(pid),hint_tier=payload['hint_tier'],reasoning=request.reasoning,
-                billing_operation_id=lock_token,expected_generation=profile_generation)
+                billing_operation_id=lock_token,expected_generation=profile_generation,
+                practice_session_id=sid)
         if request.action=='reflect':
-            await learning_profile.record_event(session,user.id,pid,kind='reflection',language=lang,algorithms=_algorithms_for(pid),reasoning=request.reasoning)
+            await learning_profile.record_event(session,user.id,pid,kind='reflection',language=lang,
+                algorithms=_algorithms_for(pid),reasoning=request.reasoning,practice_session_id=sid)
         await session.execute(update(PracticeSession).where(PracticeSession.id==sid,PracticeSession.busy_token==lock_token).values(busy=False,busy_token='',status='active' if pending_interrupt(state) else 'completed'))
         result=render(sid,state,balance);result['solution_available']=available;result['rewards']=earned
         if request.action=='submit':result['tests']=tests;result['source_map']=source_map;result['strike']=struck[0] if struck else None
@@ -216,12 +223,12 @@ async def summary(sid:str,user:User=Depends(get_current_user),session:AsyncSessi
     from app.db.models import WorkspaceRun
     active(user);item=await owned(session,user,sid)
     started=item.created_at if item.created_at.tzinfo else item.created_at.replace(tzinfo=timezone.utc)
-    scope=(LearningEvent.user_id==user.id,LearningEvent.problem_id==item.problem_id,
-           LearningEvent.language==item.language,LearningEvent.created_at>=started)
+    scope=(LearningEvent.user_id==user.id,LearningEvent.practice_session_id==sid)
     events=list((await session.scalars(select(LearningEvent).where(*scope).order_by(LearningEvent.created_at))).all())
-    runs=list((await session.scalars(select(WorkspaceRun).where(WorkspaceRun.user_id==user.id,
-        WorkspaceRun.problem_id==item.problem_id,WorkspaceRun.language==item.language,
-        WorkspaceRun.created_at>=started).order_by(WorkspaceRun.created_at))).all())
+    runs=list((await session.scalars(select(WorkspaceRun).where(
+        WorkspaceRun.user_id==user.id,WorkspaceRun.practice_session_id==sid,
+        WorkspaceRun.problem_id==item.problem_id,WorkspaceRun.language==item.language
+    ).order_by(WorkspaceRun.created_at))).all())
     stamps=[e.created_at for e in events]+[r.created_at for r in runs]
     aware=[s if s.tzinfo else s.replace(tzinfo=timezone.utc) for s in stamps]
     evaluations=[r for r in runs if r.kind=='evaluation']

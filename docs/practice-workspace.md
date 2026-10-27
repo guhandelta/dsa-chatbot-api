@@ -15,17 +15,30 @@ the problem itself.
 | `GET /practice/sessions/{sid}/summary` | Recap of one practice session from recorded events. |
 
 `POST /practice/sessions/{sid}/actions` accepts `files` and `entry` for
-`submit` and `hint`; the server bundles them into one program.
+`submit` and `hint`; the server prepares a bundled review view and sends
+supported native projects to the runner with their separate files. If `entry`
+is omitted, the workspace's default entry filename is used.
+
+Practice events and evaluation runs are bound to their graph session. Session
+summaries therefore cannot absorb activity from a concurrent attempt on the
+same problem. Historical events and free workspace runs remain unbound and are
+reported through all-time progress, not assigned retroactively to a session.
 
 ## Multiple files
 
 Runners execute one program, so a workspace is bundled: helper files first,
 the entry file last, and imports of the learner's own files blanked in place
 so every line keeps its number. The response's `source_map` maps a diagnostic
-line back to its file. Bundling is offered where concatenation is sound
-(Python, JavaScript, TypeScript, C, C++, Rust, Ruby). Java, Go and C# keep one
-source file plus notes. Notes files (`.md`, `.txt`) are never executed. A
+line back to its file. Java function exercises compile helper classes beside
+the generated test harness; their paid review uses curated execution evidence,
+with fuzzing and timing deferred until they support native projects. Native
+stdin/stdout projects use their real helper files where supported. Go and C#
+keep one source file plus notes. Notes files
+(`.md`, `.txt`) are never executed. A
 workspace holds at most 8 files and 20,000 characters.
+For native multi-file runs, a helper cannot use the runner's reserved entry
+filename (for example, `Main.java` in a Java workspace). The API rejects that
+project before consuming a test run.
 
 ## Learning strikes
 

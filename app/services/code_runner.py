@@ -435,7 +435,8 @@ def _run_tier2(language: str, solution: str) -> LangResult:
 
 
 def _run_compiled(language: str, solution: str, fn: str,
-                  cases: list, expected: list, equal=None) -> LangResult:
+                  cases: list, expected: list, equal=None,
+                  files: dict | None = None) -> LangResult:
     """Execute a compiled language against the test cases.
 
     Falls back to the compile-only check when `exec_harness` declines to
@@ -453,9 +454,15 @@ def _run_compiled(language: str, solution: str, fn: str,
         language, solution, fn, cases, expected,
         workdir=_workdir, run=_run,
         memory_mb=settings.exec_memory_mb, equal=equal or _equal,
+        project_files=files,
     )
 
     if outcome.status == "unverified":
+        if language == "java" and files:
+            # A standalone compile omits the helper classes and can turn an
+            # unsupported test shape into a misleading missing-symbol error.
+            return LangResult(language=language, tier=2, status="unverified",
+                              detail=outcome.detail, total_cases=len(cases))
         # Execution was refused, so keep the signal we can still get.
         res = _run_tier2(language, solution)
         if res.status == "failed":
@@ -470,12 +477,16 @@ def _run_compiled(language: str, solution: str, fn: str,
             res.detail += " (compiles cleanly, but correctness was not checked)"
         return res
 
+    compile_failure = outcome.candidate == "compile"
+    evidence = (diagnostic_evidence(language, "compile", outcome.detail)
+                if compile_failure else {})
     return LangResult(
-        language=language, tier=1, status=outcome.status,
+        language=language, tier=2 if compile_failure else 1, status=outcome.status,
         detail=outcome.detail,
         passed_cases=len(cases) if outcome.status == "passed" else 0,
         total_cases=len(cases),
         outputs=outcome.outputs or [],
+        evidence=evidence,
     )
 
 
@@ -531,7 +542,7 @@ def run_suite(solutions: dict[str, str], fn_names: dict[str, str],
             results.append(_run_stdio(lang, solutions[lang], cases, expected, files))
         else:
             results.append(_run_compiled(
-                lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal))
+                lang, solutions[lang], fn_names.get(lang, ""), cases, expected, equal, files))
 
     for lang in SCRIPTED:
         if lang not in solutions:

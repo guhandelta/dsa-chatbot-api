@@ -179,6 +179,7 @@ async def record_event(
     error_category: str = "", detail: str = "", hint_tier: int = 0,
     reasoning: str = "", billing_operation_id: str | None = None,
     expected_generation: int | None = None,
+    practice_session_id: str | None = None,
 ) -> None:
     if expected_generation is not None:
         from sqlalchemy import update
@@ -191,6 +192,7 @@ async def record_event(
             return
     event = LearningEvent(
         user_id=user_id, problem_id=problem_id, kind=kind, language=language,
+        practice_session_id=practice_session_id,
         algorithms=",".join(algorithms or []), error_category=error_category,
         detail=detail[:1000], hint_tier=hint_tier, reasoning=reasoning[:2000],
     )

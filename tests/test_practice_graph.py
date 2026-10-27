@@ -55,6 +55,13 @@ def test_hint_tier_is_clamped():
         {"action": "hint", "reasoning": "x", "hint_tier": 99})["hint_tier"] == MAX_TIER
 
 
+def test_next_submission_clears_earlier_project_files():
+    project = parse_learner_payload({"action": "submit", "code": "method",
+                                     "files": {"Main.java": "method", "Helper.java": "class Helper {}"}})
+    assert project["project_files"]["Helper.java"] == "class Helper {}"
+    assert parse_learner_payload({"action": "submit", "code": "new method"})["project_files"] is None
+
+
 # ---------------- graph with fake deps ----------------
 
 class Fakes:
@@ -122,6 +129,25 @@ async def test_fail_hint_resubmit_pass_reflect():
     assert r["reflection"] == "hash map of complements"
     assert r["attempts"] == 2
     assert fakes.calls["review"] == ["v1", "v2"]
+
+
+async def test_graph_passes_native_project_then_clears_it_on_plain_resubmit():
+    fakes = Fakes([])
+    received = []
+
+    async def review(problem_id, code, language, provider, *, recalled_moment=None, files=None):
+        received.append(files)
+        return {"summary": "review"}, FAIL_EVIDENCE if len(received) == 1 else PASS_EVIDENCE
+
+    deps = fakes.deps()
+    deps.review_with_recall = review
+    graph = build_practice_graph(InMemorySaver(), deps)
+    cfg = thread_config("u1", "two-sum", "native-project")
+    await graph.ainvoke(START, cfg)
+    project = {"Main.java": "method", "Helper.java": "class Helper {}"}
+    await graph.ainvoke(Command(resume={"action": "submit", "code": "method", "files": project}), cfg)
+    await graph.ainvoke(Command(resume={"action": "submit", "code": "new method"}), cfg)
+    assert received == [project, None]
 
 
 async def test_resume_does_not_rerun_earlier_nodes():

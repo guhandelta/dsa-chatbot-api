@@ -788,7 +788,7 @@ def _parse_cases(stdout: str, n: int) -> list | None:
 
 def compile_and_run(language: str, solution: str, fn: str, cases: list,
                     expected: list, *, workdir, run, memory_mb: int,
-                    equal) -> RunOutcome:
+                    equal, project_files: dict[str, str] | None = None) -> RunOutcome:
     """Execute a compiled-language solution against the test cases.
 
     `run(cmd, cwd, stdin, apply_address_space) -> (code, stdout, stderr)` is
@@ -822,6 +822,11 @@ def compile_and_run(language: str, solution: str, fn: str, cases: list,
                                                sig, width, call, memory_mb)
             except _Unexpressible as exc:
                 return RunOutcome("unverified", str(exc))
+            if language == "java" and project_files:
+                helpers = {name: text for name, text in project_files.items()
+                           if name != "Main.java" and name != "Solution.java"}
+                files.update(helpers)
+                build.extend(helpers)
             for name, text in files.items():
                 (cwd / name).write_text(text)
 
@@ -829,8 +834,15 @@ def compile_and_run(language: str, solution: str, fn: str, cases: list,
             if code != 0:
                 message = (err or out).strip()
                 for name, text in files.items():
-                    message = solution_relative(message, name, text, solution)
-                errors.append(f"[{tag}] {message[:160]}")
+                    if language == "java" and project_files:
+                        if name == "Solution.java":
+                            message = solution_relative(message, name, text, solution).replace(
+                                "solution:", "Solution.java:"
+                            )
+                        # Helper.java already names the learner's real file and line.
+                    else:
+                        message = solution_relative(message, name, text, solution)
+                errors.append(f"[{tag}] {message[:500 if project_files else 160]}")
                 continue
 
             code, out, err = run(exec_cmd, cwd, "", no_as)
@@ -854,6 +866,10 @@ def compile_and_run(language: str, solution: str, fn: str, cases: list,
             return RunOutcome("passed", f"executed {len(cases)} cases ({tag})",
                               got, tag)
 
+    if language == "java" and project_files and errors:
+        # The actual project failed to compile. A standalone fallback would
+        # omit its helpers and blame the entry method for a missing symbol.
+        return RunOutcome("failed", errors[0], candidate="compile")
     return RunOutcome("unverified",
                       "no candidate signature compiled; the solution's "
                       "signature does not match a known convention: "

@@ -271,6 +271,9 @@ class LearningEvent(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    # Nullable for historical events and non-practice learning activity.
+    # New practice events carry the graph session that produced them.
+    practice_session_id: Mapped[str | None] = mapped_column(String(36), index=True, nullable=True)
     problem_id: Mapped[str] = mapped_column(String(120), index=True, nullable=False)
     # "attempt" | "solved" | "hint" | "stepped_back" | "abandoned"
     kind: Mapped[str] = mapped_column(String(30), nullable=False)
@@ -465,6 +468,9 @@ class WorkspaceRun(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    # Free workspace runs may be outside a graph session; evaluations created
+    # by /practice are bound to the session that produced them.
+    practice_session_id: Mapped[str | None] = mapped_column(String(36), index=True, nullable=True)
     problem_id: Mapped[str] = mapped_column(String(120), nullable=False)
     language: Mapped[str] = mapped_column(String(20), nullable=False)
     # "run" | "evaluation"

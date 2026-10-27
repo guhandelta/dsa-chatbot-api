@@ -32,6 +32,34 @@ def _body(files, entry="solution.py", **extra):
             "files": [{"name": n, "content": c} for n, c in files], **extra}
 
 
+def test_native_project_uses_default_entry_and_rejects_runner_name_collision():
+    files = [{"name": "Solution.java", "content": "public int f() { return Helper.value(); }"},
+             {"name": "Helper.java", "content": "class Helper { static int value() { return 1; } }"}]
+    project, alias = workspace.native_project("java", files)
+    assert project == {"Main.java": files[0]["content"], "Helper.java": files[1]["content"]}
+    assert alias == {"Main.java": "Solution.java"}
+
+    with pytest.raises(HTTPException) as exc:
+        workspace.native_project("java", [files[0], {"name": "Main.java", "content": "class Main {}"}])
+    assert exc.value.status_code == 422
+    with pytest.raises(HTTPException) as exc:
+        workspace.native_project("java", [{"name": "Task.java", "content": files[0]["content"]}, files[0]],
+                                 "Task.java")
+    assert exc.value.status_code == 422
+
+
+async def test_reserved_native_helper_does_not_consume_a_test_run(client, db):
+    uid, headers = await _learner(client, db, "reserved-java@example.com", "java")
+    response = await client.post("/workspace/java-path-01-values/run", headers=headers, json={
+        "language": "java", "entry": "Solution.java",
+        "files": [{"name": "Solution.java", "content": "public int totalCost(int p, int q) { return p * q; }"},
+                  {"name": "Main.java", "content": "class Main {}"}],
+    })
+    assert response.status_code == 422
+    assert "reserved" in response.text
+    assert await db.scalar(select(func.count()).select_from(WorkspaceRun).where(WorkspaceRun.user_id == uid)) == 0
+
+
 # ------------------------------------------------------------- bundling
 
 def test_python_helpers_bundle_keeps_line_numbers_and_maps_back():
@@ -90,17 +118,17 @@ def test_validation_rejects_unsafe_or_unsupported_workspaces():
     ]:
         with pytest.raises(HTTPException):
             workspace.validate("python", files, entry)
-    with pytest.raises(HTTPException) as err:
-        workspace.validate("java", [{"name": "Solution.java", "content": ""},
-                                    {"name": "Helper.java", "content": ""}], "Solution.java")
-    assert "single source file" in err.value.detail
+    assert workspace.validate("java", [{"name": "Solution.java", "content": ""},
+                                        {"name": "Helper.java", "content": ""}], "Solution.java")
     assert workspace.validate("java", [{"name": "Solution.java", "content": ""},
                                        {"name": "NOTES.md", "content": ""}], "Solution.java")
 
 
 def test_templates_only_offer_helpers_where_bundling_is_sound():
     assert {t["id"] for t in workspace.templates("python")} == {"single", "notes", "helpers"}
-    assert {t["id"] for t in workspace.templates("java")} == {"single", "notes"}
+    assert {t["id"] for t in workspace.templates("java")} == {"single", "notes", "helpers"}
+    java = workspace.starter_files("java", "helpers", "public class Solution {}")
+    assert [f["name"] for f in java] == ["Helper.java", "Solution.java"]
     files = workspace.starter_files("python", "helpers", "def f(): pass")
     assert [f["name"] for f in files] == ["helpers.py", "solution.py"]
 
@@ -208,6 +236,32 @@ async def test_test_runs_are_rate_limited(client, db, monkeypatch):
     assert limited.status_code == 429
 
 
+async def test_runner_failure_records_error_without_spending_run_allowance(client, db, monkeypatch):
+    from app.services import deep_review
+
+    monkeypatch.setattr(settings, "workspace_runs_per_hour", 1)
+    uid, headers = await _learner(client, db, "run-failure@example.com")
+    original = deep_review.run_curated
+
+    def fail(*args, **kwargs):
+        raise ValueError("sandbox preparation failed")
+
+    monkeypatch.setattr(deep_review, "run_curated", fail)
+    unavailable = await client.post(f"/workspace/{PID}/run", headers=headers,
+                                    json=_body([("solution.py", RIGHT)]))
+    assert unavailable.status_code == 503
+    assert "sandbox preparation failed" not in unavailable.text
+    failed_run = await db.scalar(select(WorkspaceRun).where(WorkspaceRun.user_id == uid))
+    assert failed_run.status == "error"
+
+    monkeypatch.setattr(deep_review, "run_curated", original)
+    retry = await client.post(f"/workspace/{PID}/run", headers=headers,
+                              json=_body([("solution.py", RIGHT)]))
+    assert retry.status_code == 200 and retry.json()["status"] == "passed"
+    rows = (await db.scalars(select(WorkspaceRun).where(WorkspaceRun.user_id == uid))).all()
+    assert sorted(row.status for row in rows) == ["error", "passed"]
+
+
 async def test_workspace_requires_language_access(client, db):
     _, headers = await _learner(client, db, language="java")
     assert (await client.get(f"/workspace/{PID}", params={"language": "python"}, headers=headers)).status_code in (403, 404)
@@ -216,9 +270,10 @@ async def test_workspace_requires_language_access(client, db):
 
 # ------------------------------------------------------------- reveal policy
 
-async def _events(db, uid, *kinds):
+async def _events(db, uid, *kinds, practice_session_id=None):
     for kind in kinds:
-        db.add(LearningEvent(user_id=uid, problem_id=PID, kind=kind, language="python"))
+        db.add(LearningEvent(user_id=uid, problem_id=PID, kind=kind, language="python",
+                             practice_session_id=practice_session_id))
     await db.commit()
 
 
@@ -249,10 +304,19 @@ async def test_session_summary_counts_this_session_only(client, db):
                            created_at=datetime.now(timezone.utc) - timedelta(minutes=5))
     db.add(item)
     await db.commit()
-    await _events(db, uid, "hint", "evaluated", "solved", "reflection")
-    db.add(WorkspaceRun(user_id=uid, problem_id=PID, language="python", kind="evaluation",
+    await _events(db, uid, "hint", "evaluated", "solved", "reflection", practice_session_id=item.id)
+    db.add(WorkspaceRun(user_id=uid, problem_id=PID, language="python", practice_session_id=item.id, kind="evaluation",
                         status="passed", passed_cases=6, total_cases=6))
-    db.add(WorkspaceRun(user_id=uid, problem_id=PID, language="python", kind="run", status="failed"))
+    db.add(WorkspaceRun(user_id=uid, problem_id=PID, language="python", practice_session_id=item.id,
+                        kind="run", status="failed"))
+    other_session = PracticeSession(user_id=uid, problem_id=PID, language="python", provider="gemini")
+    db.add(other_session)
+    await db.flush()
+    db.add(LearningEvent(user_id=uid, problem_id=PID, kind="hint", language="python",
+                         practice_session_id=other_session.id, hint_tier=4))
+    db.add(WorkspaceRun(user_id=uid, problem_id=PID, language="python",
+                        practice_session_id=other_session.id, kind="run", status="passed",
+                        passed_cases=6, total_cases=6))
     await db.commit()
     summary = (await client.get(f"/practice/sessions/{item.id}/summary", headers=headers)).json()
     assert summary["solved"] is True and summary["test_runs"] == 1

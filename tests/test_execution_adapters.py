@@ -82,6 +82,99 @@ def test_unsupported_function_style_language_is_unverified():
     assert report["results"][0]["status"] == "unverified"
 
 
+def test_java_function_workspace_compiles_helper_alongside_generated_harness(monkeypatch):
+    from app.services import code_runner
+    from app.services.deep_review import run_curated
+
+    entry = "public int totalCost(int price, int quantity) { return Helper.multiply(price, quantity); }"
+    helper = "class Helper { static int multiply(int a, int b) { return a * b; } }"
+    saw_build = False
+
+    def fake_run(command, cwd, stdin="", apply_address_space=True):
+        nonlocal saw_build
+        if any("javac" in part for part in command):
+            saw_build = True
+            assert "Helper.java" in command
+            assert (cwd / "Helper.java").read_text() == helper
+            source = (cwd / "Solution.java").read_text()
+            assert entry in source and "class Solution" in source
+            return 0, "", ""
+        assert saw_build and command[-1] == "Main"
+        return 0, "\n".join(f"__CASE__{value}" for value in (12, 0, 0, 1, 1000000, 42)), ""
+
+    monkeypatch.setattr(code_runner, "available_languages", lambda: {"java": True})
+    monkeypatch.setattr(code_runner, "_run", fake_run)
+    report = run_curated("java-path-01-values", "// rendered workspace source", "java",
+                         {"Main.java": entry, "Helper.java": helper})
+    assert saw_build and report["results"][0]["status"] == "passed"
+    assert report["results"][0]["passed_cases"] == 6
+
+
+def test_java_function_workspace_runs_in_pinned_sandbox():
+    from app.services.deep_review import run_curated
+
+    if not available_languages().get("java"):
+        pytest.skip("Java compiler unavailable")
+    entry = "public int totalCost(int price, int quantity) { return Helper.multiply(price, quantity); }"
+    helper = "class Helper { static int multiply(int a, int b) { return a * b; } }"
+    report = run_curated("java-path-01-values", entry, "java",
+                         {"Main.java": entry, "Helper.java": helper})
+    result = report["results"][0]
+    assert result["status"] == "passed", result
+    assert result["passed_cases"] == 6
+
+
+def test_java_helper_compile_error_reports_native_file_in_pinned_sandbox():
+    from app.services.deep_review import run_curated
+
+    if not available_languages().get("java"):
+        pytest.skip("Java compiler unavailable")
+    entry = "public int totalCost(int price, int quantity) { return Helper.multiply(price, quantity); }"
+    helper = "class Helper {\n  static int multiply(int a, int b) { return a * b }\n}"
+    report = run_curated("java-path-01-values", entry, "java",
+                         {"Main.java": entry, "Helper.java": helper})
+    result = report["results"][0]
+    assert result["status"] == "failed", result
+    assert result["evidence"]["file"] == "Helper.java"
+    assert result["evidence"]["line"] == 2
+
+
+def test_java_helper_compile_error_names_helper_file(monkeypatch):
+    from app.services import code_runner
+    from app.services.deep_review import run_curated
+
+    entry = "public int totalCost(int price, int quantity) { return Helper.multiply(price, quantity); }"
+
+    def fake_run(command, cwd, stdin="", apply_address_space=True):
+        assert "Helper.java" in command
+        return 1, "", "Helper.java:2: error: ';' expected"
+
+    monkeypatch.setattr(code_runner, "available_languages", lambda: {"java": True})
+    monkeypatch.setattr(code_runner, "_run", fake_run)
+    report = run_curated("java-path-01-values", entry, "java",
+                         {"Main.java": entry, "Helper.java": "class Helper { broken }"})
+    result = report["results"][0]
+    assert result["status"] == "failed" and result["tier"] == 2
+    assert result["evidence"]["file"] == "Helper.java"
+    assert result["evidence"]["line"] == 2
+    from app.routers.workspace import case_report
+    view = case_report(report, "java", "java-path-01-values",
+                       [{"file": "Helper.java", "start": 1, "end": 2}])
+    assert view["diagnostic"]["file"] == "Helper.java"
+    assert view["diagnostic"]["line"] == 2
+
+
+def test_java_project_with_unsupported_case_shape_stays_unverified(monkeypatch):
+    from app.services import code_runner
+
+    monkeypatch.setattr(code_runner, "available_languages", lambda: {"java": True})
+    monkeypatch.setattr(code_runner, "_run_tier2", lambda *args: pytest.fail("standalone compile omits helpers"))
+    entry = "public int f(Object input) { return Helper.value(input); }"
+    report = run_suite({"java": entry}, {"java": "f"}, [[{"node": 1}]], [{"node": 1}],
+                       files={"Main.java": entry, "Helper.java": "class Helper {}"})
+    assert report["results"][0]["status"] == "unverified"
+
+
 def test_stdin_stdout_work_limit_fails_closed():
     report = run_suite({"python": "print(input())"}, {}, ["x"] * 65, ["x"] * 65, io_mode="stdio")
     assert report["can_publish"] is False
