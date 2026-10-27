@@ -43,6 +43,23 @@ async def test_project_names_and_files_are_validated(client):
         assert response.status_code == 422, files
 
 
+async def test_project_capacity_covers_ui_challenge_battery_and_enforces_limit(client, monkeypatch):
+    from app.routers import playground
+
+    headers = await _learner(client)
+    assert playground.MAX_PROJECTS >= 38
+    assert (await client.get("/playground", headers=headers)).json()["limits"]["max_projects"] == 100
+
+    monkeypatch.setattr(playground, "MAX_PROJECTS", 1)
+    files = _files(("index.html", "<main>work</main>"))
+    assert (await client.put("/playground/first", headers=headers,
+                             json={"files": files, "revision": None})).status_code == 200
+    limited = await client.put("/playground/second", headers=headers,
+                               json={"files": files, "revision": None})
+    assert limited.status_code == 409
+    assert "up to 1 playground projects" in limited.json()["detail"]
+
+
 def test_tsc_diagnostics_are_parsed_with_locations():
     out = "script.ts(3,7): error TS2322: Type 'string' is not assignable to type 'number'.\n  continued detail"
     assert parse_tsc(out) == [{"file": "script.ts", "line": 3, "column": 7, "code": "TS2322",

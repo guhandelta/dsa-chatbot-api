@@ -30,7 +30,9 @@ EXTENSIONS = (".html", ".css", ".js", ".ts", ".jsx", ".tsx", ".md", ".txt")
 COMPILED = (".ts", ".tsx", ".jsx")
 MAX_FILES = 12
 MAX_TOTAL_CHARS = 60_000
-MAX_PROJECTS = 30
+# A learner can save the full UI fundamentals challenge battery (currently
+# 38 independent projects) and still keep personal playground projects.
+MAX_PROJECTS = 100
 
 _HTML = """<!doctype html>
 <html lang="en">
