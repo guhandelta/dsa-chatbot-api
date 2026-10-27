@@ -60,6 +60,7 @@ class PracticeState(TypedDict, total=False):
     # --- latest learner input (from resume payloads) ---
     action: str                 # submit | hint | quit | invalid
     user_code: str
+    project_files: dict[str, str]
     reasoning: str
     hint_tier: int
     recalled_moment: str | None
@@ -139,12 +140,14 @@ def default_deps() -> PracticeDeps:
         return result.allowed, explain(result)
 
     async def review(problem_id: str, code: str, language: str,
-                     provider: str, recalled_moment: str | None = None) -> tuple[dict, dict]:
+                     provider: str, recalled_moment: str | None = None,
+                     files: dict[str, str] | None = None) -> tuple[dict, dict]:
         from app.services.deep_review import deep_review
 
         analysis, evidence = await deep_review(
             problem_id=problem_id, user_code=code,
             language=language, provider=provider,
+            files=files,
             **({"recalled_moment": recalled_moment} if recalled_moment else {}),
         )
         # Checkpointed state must be plain data.
@@ -210,7 +213,10 @@ def parse_learner_payload(payload: Any) -> dict:
         code = payload.get("code")
         if not isinstance(code, str) or not code.strip():
             return {**reset, "action": "invalid", "reply": "Submit needs non-empty code."}
-        return {**reset, "action": "submit", "user_code": code, "recalled_moment": payload.get("recalled_moment")}
+        update = {**reset, "action": "submit", "user_code": code,
+                  "recalled_moment": payload.get("recalled_moment")}
+        update["project_files"] = payload.get("files") if isinstance(payload.get("files"), dict) else None
+        return update
 
     if action == "hint":
         reasoning = payload.get("reasoning")
@@ -227,6 +233,8 @@ def parse_learner_payload(payload: Any) -> dict:
                   "profile_summary": payload.get("profile_summary") or ""}
         if isinstance(payload.get("code"), str):
             update["user_code"] = payload["code"]
+        if isinstance(payload.get("files"), dict):
+            update["project_files"] = payload["files"]
         return update
 
     return {**reset, "action": "quit"}
@@ -275,6 +283,8 @@ def build_practice_graph(checkpointer: Any, deps: PracticeDeps | None = None):
     async def evaluate(state: PracticeState) -> dict:
         reviewer = d.review_with_recall or d.review
         options = {"recalled_moment": state.get("recalled_moment")} if d.review_with_recall else {}
+        if state.get("project_files"):
+            options["files"] = state["project_files"]
         analysis, evidence = await reviewer(
             state["problem_id"], state["user_code"],
             state["language"], state["provider"], **options,

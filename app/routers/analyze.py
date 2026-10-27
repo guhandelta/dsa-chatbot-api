@@ -45,7 +45,8 @@ def validate_problem(problem_id,language):
         raise HTTPException(400,'Choose the exercise language before submitting.')
 
 
-async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_out=None,strikes_out=None):
+async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_out=None,strikes_out=None,
+                          practice_session_id=None):
     from app.services.user_lock import lock_user
     await lock_user(session, user_id)
     from app.graphs.practice import classify_outcome
@@ -56,10 +57,12 @@ async def save_evaluation(session,user_id,problem_id,language,evidence,rewards_o
     solved=completed and outcome=='passed'
     first_solve=solved and not await rewards.has_solved(session,user_id,problem_id,language)
     if completed:
-        await learning_profile.record_event(session,user_id,problem_id,kind='evaluated',language=language,algorithms=algorithms)
+        await learning_profile.record_event(session,user_id,problem_id,kind='evaluated',language=language,algorithms=algorithms,
+                                            practice_session_id=practice_session_id)
     await learning_profile.record_event(session,user_id,problem_id,
         kind='solved' if solved else 'attempt',language=language,
-        algorithms=algorithms,error_category=category,detail=detail)
+        algorithms=algorithms,error_category=category,detail=detail,
+        practice_session_id=practice_session_id)
     earned=await rewards.after_solve(session,user_id,problem_id,language,first_solve=first_solve) if solved else []
     if completed and not solved:
         # Only a completed paid evaluation earns a learning strike.

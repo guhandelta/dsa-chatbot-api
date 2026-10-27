@@ -10,6 +10,7 @@ never the inputs or expected outputs.
 """
 import asyncio
 import json
+import logging
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -20,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.security import get_current_user
 from app.db.database import get_session
-from app.db.models import LearningEvent, User, WorkspaceCheckpoint, WorkspaceDraft, WorkspaceRun
+from app.db.models import LearningEvent, PracticeSession, User, WorkspaceCheckpoint, WorkspaceDraft, WorkspaceRun
 from app.routers.analyze import screen_submission, validate_problem
 from app.services import workspace
 from app.services.content_access import can_reveal, reveal_policy, solution_document
@@ -29,6 +30,7 @@ from app.services.language_access import require_content
 from app.services.strikes import AccountSuspendedError, assert_active
 
 router = APIRouter(prefix="/workspace", tags=["workspace"])
+logger = logging.getLogger(__name__)
 
 
 class WorkspaceFile(BaseModel):
@@ -40,6 +42,9 @@ class FilesBody(BaseModel):
     language: str = Field(min_length=1, max_length=20)
     files: list[WorkspaceFile] = Field(min_length=1, max_length=workspace.MAX_FILES)
     entry: str = Field(min_length=1, max_length=64)
+    # Optional when the learner is running tests inside an active practice
+    # graph. Free runs outside a graph remain valid and unbound.
+    practice_session_id: str | None = Field(default=None, max_length=36)
 
 
 class SaveBody(FilesBody):
@@ -345,8 +350,14 @@ def case_report(report: dict | None, language: str, problem_id: str, source_map:
 async def run_tests(problem_id: str, body: FilesBody, user: User = Depends(get_current_user),
                     session: AsyncSession = Depends(get_session)):
     await _scope(session, user, problem_id, body.language)
+    if body.practice_session_id:
+        practice = await session.get(PracticeSession, body.practice_session_id)
+        if (practice is None or practice.user_id != user.id or practice.problem_id != problem_id
+                or practice.language != body.language):
+            raise HTTPException(404, "Practice session not found")
     files = _files(body)
     code, source_map = workspace.bundle(body.language, files, body.entry)
+    native, alias = workspace.native_project(body.language, files, body.entry)
     if not code.strip():
         raise HTTPException(422, "Write some code before running the tests.")
     await screen_submission(session, user, code, body.language, context="workspace_run")
@@ -355,32 +366,27 @@ async def run_tests(problem_id: str, body: FilesBody, user: User = Depends(get_c
     if settings.workspace_runs_per_hour > 0:
         since = datetime.now(timezone.utc) - timedelta(hours=1)
         used = await session.scalar(select(func.count()).select_from(WorkspaceRun).where(
-            WorkspaceRun.user_id == user.id, WorkspaceRun.kind.in_(("run", "transpile")), WorkspaceRun.created_at >= since))
+            WorkspaceRun.user_id == user.id, WorkspaceRun.kind.in_(("run", "transpile")),
+            WorkspaceRun.status != "error", WorkspaceRun.created_at >= since))
         if used >= settings.workspace_runs_per_hour:
             raise HTTPException(429, f"You've run the tests {used} times in the past hour, which is the "
                                      f"limit ({settings.workspace_runs_per_hour}). Try again shortly.")
     # Commit the run row before executing so parallel requests count it.
-    run = WorkspaceRun(user_id=user.id, problem_id=problem_id, language=body.language, kind="run")
+    run = WorkspaceRun(user_id=user.id, problem_id=problem_id, language=body.language,
+                      practice_session_id=body.practice_session_id, kind="run")
     session.add(run)
     await session.commit()
     from app.services.deep_review import run_curated
-    from app.services.execution_adapters import ADAPTERS, NATIVE_MULTIFILE
     # Stdin/stdout problems build the learner's files natively (helpers by their
     # real names); function-style problems keep the bundle.
-    native, alias = None, None
-    code_files = [f for f in files if not f["name"].endswith(workspace.NOTE_EXTENSIONS)]
-    if body.language in NATIVE_MULTIFILE and len(code_files) > 1:
-        entry_name = ADAPTERS[body.language].source
-        native = {entry_name: next(f["content"] for f in code_files if f["name"] == body.entry)}
-        native.update({f["name"]: f["content"] for f in code_files if f["name"] != body.entry})
-        alias = {entry_name: body.entry}
     try:
         report = await asyncio.to_thread(run_curated, problem_id, code, body.language, native)
-    except RuntimeError:
+        view = case_report(report, body.language, problem_id, source_map, alias)
+    except Exception:
+        logger.exception("Workspace test run failed for %s (%s)", problem_id, body.language)
         run.status = "error"
         await session.commit()
         raise HTTPException(503, "The code runner is unavailable right now. Test runs never cost peppercorns.")
-    view = case_report(report, body.language, problem_id, source_map, alias)
     run.status, run.passed_cases, run.total_cases = view["status"], view["passed"], view["total"]
     await session.commit()
     return {**view, "source_map": source_map}

@@ -67,11 +67,15 @@ def run_curated(problem_id: str, user_code: str, language: str, files: dict | No
                              "detail": f"This problem declares no {language} entry point to test.",
                              "passed_cases": 0, "total_cases": len(cases), "outputs": [], "evidence": {}}],
                 "agreement": True, "can_publish": False}
-    return run_suite({language: user_code}, fns, cases, expected, io_mode,
+    # The Java function harness wraps the learner's entry method in Solution;
+    # helper classes are compiled as separate files by exec_harness.
+    execution_code = files.get("Main.java", user_code) if files and language == "java" else user_code
+    return run_suite({language: execution_code}, fns, cases, expected, io_mode,
                      comparison=comparison_mode(problem_id), files=files)
 
 
-async def gather_evidence(problem_id: str, user_code: str, language: str) -> dict:
+async def gather_evidence(problem_id: str, user_code: str, language: str,
+                          files: dict[str, str] | None = None) -> dict:
     """Runs every deterministic verification stage. No LLM calls."""
     evidence: dict = {"curated": None, "fuzz": None, "complexity": None}
 
@@ -79,7 +83,9 @@ async def gather_evidence(problem_id: str, user_code: str, language: str) -> dic
     if cases and curated_tests_supported(language):
         async with span("curated_tests", problem_id=problem_id, case_count=len(cases)) as sp:
             try:
-                evidence["curated"] = await asyncio.to_thread(run_curated, problem_id, user_code, language)
+                evidence["curated"] = await asyncio.to_thread(
+                    run_curated, problem_id, user_code, language, files
+                )
                 for r in (evidence["curated"] or {}).get("results", []):
                     if r.get("tier") == 1:
                         sp.set(passed=r["passed_cases"], total=r["total_cases"])
@@ -89,7 +95,7 @@ async def gather_evidence(problem_id: str, user_code: str, language: str) -> dic
 
     student_fn = extract_fn_name(user_code, language)
     ref = reference_solution(problem_id, language)
-    if ref and student_fn and supports_fuzzing(problem_id):
+    if not (files and language == "java") and ref and student_fn and supports_fuzzing(problem_id):
         ref_code, ref_fn = ref
         async with span("differential_fuzz", problem_id=problem_id,
                         iterations=FUZZ_ITERATIONS) as sp:
@@ -105,7 +111,7 @@ async def gather_evidence(problem_id: str, user_code: str, language: str) -> dic
                 logger.exception("fuzz stage failed")
                 raise
 
-    if language in ("python", "javascript", "java") and student_fn:
+    if not (files and language == "java") and language in ("python", "javascript", "java") and student_fn:
         scale = _scale_cases(problem_id)
         if scale:
             async with span("complexity", problem_id=problem_id) as sp:
@@ -201,10 +207,11 @@ Return the corrected feedback in the same structure."""
 
 
 async def deep_review(problem_id: str, user_code: str, language: str,
-                      provider: str, recalled_moment: str | None = None) -> tuple[AnalysisResult, dict]:
+                      provider: str, recalled_moment: str | None = None,
+                      files: dict[str, str] | None = None) -> tuple[AnalysisResult, dict]:
     """Full precision pipeline. Returns (final_analysis, evidence)."""
     async with span("gather_evidence", problem_id=problem_id, language=language):
-        evidence = await gather_evidence(problem_id, user_code, language)
+        evidence = await gather_evidence(problem_id, user_code, language, files)
     # Everything downstream (prompts, stored session state, API responses)
     # sees evidence without hidden test values.
     from app.services.evidence_safety import learner_safe

@@ -1,16 +1,9 @@
-"""Practice workspace files: templates, validation and single-program bundling.
+"""Practice workspace files, templates, validation and diagnostic source maps.
 
-The runners execute one program per submission. A multi-file workspace is
-therefore bundled into one source text before it runs: helper files first,
-the entry file last, and imports of the learner's own files blanked out
-(replaced by empty lines, so every line keeps its number). The returned
-source map lets the UI point a compiler or runtime line back at the file the
-learner wrote it in.
-
-Bundling is only offered where plain concatenation is sound. Java, Go and C#
-need package/class restructuring to combine files, so those workspaces stay
-single-file (plus notes) and say so through `multi_file` in the capability
-profile rather than failing at run time.
+The graph receives a bundled text for screening and review. Function-style
+Python/JavaScript and other supported languages can execute this bundle.
+Java's function harness and stdin/stdout runners execute native helper files
+under their own names. Go and C# remain single-source workspaces plus notes.
 """
 from __future__ import annotations
 
@@ -46,6 +39,7 @@ CODE_EXTENSIONS = {
 HELPER = {
     "python": "helpers.py", "javascript": "helpers.js", "typescript": "helpers.ts",
     "c": "helpers.h", "cpp": "helpers.hpp", "rust": "helpers.rs", "ruby": "helpers.rb",
+    "java": "Helper.java",
 }
 MULTI_FILE = frozenset(HELPER)
 
@@ -64,8 +58,7 @@ TEMPLATES = (
     Template("single", "Single file", "One solution file.", False),
     Template("notes", "Solution and notes", "A solution file plus a notes file that is never executed.", False),
     Template("helpers", "Solution and helpers",
-             "Split helper functions into their own file. They are combined with the "
-             "solution before it runs.", True),
+             "Split helpers into their own source file beside the solution.", True),
 )
 
 
@@ -89,6 +82,7 @@ def _helper_stub(language: str) -> str:
         "cpp": "// Helper functions. Include them in solution.cpp with:\n//   #include \"helpers.hpp\"\n",
         "rust": "// Helper functions. Use them in solution.rs with:\n//   mod helpers;\n//   use helpers::name;\n",
         "ruby": "# Helper methods. Load them in solution.rb with:\n#   require_relative 'helpers'\n",
+        "java": "// Helper class. Use it in Solution.java with:\n//   Helper.name(...)\n",
     }[language]
 
 
@@ -135,6 +129,26 @@ def validate(language: str, files: list[dict], entry: str) -> list[dict]:
         raise HTTPException(422, f"{language} workspaces run a single source file. "
                                  "Keep extra material in a .md or .txt notes file.")
     return [{"name": f["name"], "content": f["content"]} for f in files]
+
+
+def native_project(language: str, files: list[dict], entry: str | None = None) -> tuple[dict | None, dict | None]:
+    """Name the entry as the execution adapter expects while retaining helpers."""
+    from app.services.execution_adapters import ADAPTERS, NATIVE_MULTIFILE
+
+    entry = entry or ENTRY[language]
+    code_files = [f for f in files if not f["name"].endswith(NOTE_EXTENSIONS)]
+    if language not in NATIVE_MULTIFILE or len(code_files) < 2:
+        return None, None
+    adapter_entry = ADAPTERS[language].source
+    if any(f["name"] == adapter_entry and f["name"] != entry for f in code_files):
+        raise HTTPException(422, f"{adapter_entry} is reserved by the runner; use another helper file name.")
+    if language == "java" and entry != "Solution.java" and any(
+        f["name"] == "Solution.java" for f in code_files
+    ):
+        raise HTTPException(422, "Solution.java is reserved by the Java function runner; use another helper file name.")
+    project = {adapter_entry: next(f["content"] for f in code_files if f["name"] == entry)}
+    project.update({f["name"]: f["content"] for f in code_files if f["name"] != entry})
+    return project, {adapter_entry: entry}
 
 
 def _stems(names: list[str]) -> set[str]:
