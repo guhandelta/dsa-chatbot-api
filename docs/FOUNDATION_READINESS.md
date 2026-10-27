@@ -47,24 +47,32 @@ catalog presence only; their execution evidence is recorded in separate audits.
 
 ## Concrete readiness gaps
 
-- The current code runner has adapters for Python, JavaScript, Java, C, C++ and
-  Rust. Ruby and TypeScript references are present, but those execution adapters
-  are absent. A reference library is not equivalent to a working practice engine.
-- The shared catalog reference extractor handles only Python/JavaScript/Java.
-  There are 23 authored DSA solution sections per language for all six of the
-  runner languages, including C/C++/Rust; those extra sections are not certified
-  merely because the runner exists or a six-case runtime smoke test passed.
-- The learner reference-admission gate is currently enforced only for JavaScript
-  and Java. Equivalent admission protection and execution evidence are needed
-  before claiming equal readiness for the other languages.
-- Authored, fixture-bearing language foundation lessons exist only for JavaScript
-  and Java (12 each). Other languages have reference/candidate exercise material,
-  but no corresponding authored foundation exercises in that catalog.
+- The runner declares function-test adapters for Python, JavaScript, TypeScript,
+  Java, C, C++, Rust, Ruby, Go, and C#, plus stdin/stdout-only adapters for
+  additional languages. A declared adapter still depends on the selected runtime
+  being installed and on a reference that the harness can execute.
+- The shared reference extractor now recognizes the function-test language
+  headings. Before this fix, TypeScript's 12 fixture-bearing foundation exercises
+  were all blocked because their references could not be loaded; C++ headings
+  were also missed because `C++` was interpreted as a regular-expression pattern.
+  Both parser gaps now have regression tests.
+- Failed reference admission now blocks function-based practice for every
+  function-test adapter, rather than only JavaScript and Java. Runtime presence,
+  the reference implementation, fixtures, and observed execution must all pass.
+- Fixture-bearing 12-stage foundation paths are authored for ten languages.
+  The October 27 audit passed all 49 current DSA/algorithm and foundation
+  references in Python, JavaScript, TypeScript, Java, C, C++, Rust, and Ruby
+  (3,192 fixture checks total). Go and C# each have 49 blocked references solely
+  because their runtimes are unavailable in the local toolchain. See the
+  [current executable coverage matrix](EXECUTABLE_COVERAGE.md) and full
+  [machine-readable audit](exercise-audit.json). This is finite exercise
+  evidence, not complete language proficiency or proof for every possible input.
 - The six Spring subjects contain only 12 seed records and no structured candidate
   exercises. They cannot support a claim of complete Spring proficiency.
 - Framework-specific dependency/version compatibility, project builds, tests,
   persistence, request behavior and security behavior need their own validation.
-  A passing language-level function does not validate a framework application.
+  A passing language-level function does not validate a framework application;
+  Spring currently has only a small seed corpus and no verified project workouts.
 
 ## Readiness standard to apply to every subject
 

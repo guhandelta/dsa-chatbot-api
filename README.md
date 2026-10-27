@@ -3,6 +3,8 @@
 See [confirmed integrity fixes and current practice workflow](docs/CONFIRMED_FIXES.md).
 See [content admission, six-week hint cycles, and retained credits](docs/CONTENT_VERIFICATION.md)
 and the [latest executable reference audit](docs/exercise-audit.json).
+See the [language and framework execution coverage matrix](docs/EXECUTABLE_COVERAGE.md)
+for verified languages and the next coverage gaps.
 Pricing and subscription packaging remain undecided. Recall sources have provisional
 approval; cross-language recall remains open. See [product decisions](docs/PRODUCT_DECISIONS.md).
 

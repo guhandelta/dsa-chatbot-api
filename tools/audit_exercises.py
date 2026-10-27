@@ -1,6 +1,7 @@
-"""Execute all current JS/Java exercise references; report teaching-only material.
+"""Execute function-based curriculum references for supported languages.
 
 Usage: .venv/bin/python -m tools.audit_exercises --output docs/exercise-audit.json
+       .venv/bin/python -m tools.audit_exercises --language typescript --output /tmp/ts-audit.json
 Exit 1 means at least one exercise is blocked. Does not call an LLM or spend credits.
 """
 import argparse
@@ -10,33 +11,53 @@ from pathlib import Path
 
 from app.services.content_catalog import list_content
 from app.services.content_verification import verify_reference
+from app.services.execution_adapters import ADAPTERS
+
+FUNCTION_LANGUAGES = tuple(
+    language for language, adapter in ADAPTERS.items() if adapter.function_tests
+)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--language', choices=FUNCTION_LANGUAGES,
+                        help='Audit one language instead of every function-test language.')
     args = parser.parse_args()
     exercises, reference_only = [], []
+    languages = (args.language,) if args.language else FUNCTION_LANGUAGES
     for item in list_content():
         if item.track not in ('dsa', 'language', 'algorithm'):
             continue
-        if item.language and item.language not in ('java', 'javascript'):
+        if item.language and item.language not in languages:
             continue
         if not item.has_tests and item.track != 'dsa':
-            reference_only.append(item.id)
+            scoped = (item.language,) if item.language else languages
+            reference_only.extend(f'{item.id}:{language}' for language in scoped)
             continue
-        languages = [item.language] if item.language else ['javascript', 'java']
-        for language in languages:
+        item_languages = (item.language,) if item.language else languages
+        for language in item_languages:
             result = verify_reference(item.id, language)
             exercises.append({'id': item.id, 'language': language, **result})
     blocked = [r for r in exercises if not r['verified']]
     from app.services.curriculum import records
     corpus_exercises = [r['id'] for r in records() if r['metadata']['kind'] == 'exercise']
+    summary = {}
+    for language in languages:
+        rows = [row for row in exercises if row['language'] == language]
+        summary[language] = {
+            'verified': sum(bool(row['verified']) for row in rows),
+            'blocked': sum(not row['verified'] for row in rows),
+            'fixture_case_checks': sum(row.get('case_count', 0) for row in rows),
+            'reference_only': sum(row.endswith(f':{language}') for row in reference_only),
+        }
     report = {'checked_at': datetime.now(timezone.utc).isoformat(),
-              'scope': 'Current JavaScript/Java executable curriculum and DSA references',
+              'scope': 'Function-test curriculum and DSA references by language',
+              'languages': list(languages),
+              'language_summary': summary,
               'limitations': ['Fixture execution does not prove correctness for all inputs.',
-                             'Reference-only material and language-switching pathways are not certified by this audit.',
-                             'Other language implementations require their own runtime audit.'],
+                             'Reference-only material and framework pathways are not certified by this audit.',
+                             'Framework behavior requires separate dependency-aware project tests.'],
               'verified_count': len(exercises) - len(blocked), 'blocked_count': len(blocked),
               'reference_only_count': len(reference_only),
               'non_executable_corpus_exercise_count': len(corpus_exercises),

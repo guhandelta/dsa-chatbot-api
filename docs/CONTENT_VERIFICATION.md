@@ -6,8 +6,10 @@ that every possible input is correct.
 
 ## Implemented admission rules
 
-- JavaScript/Java practice starts, submissions, and solution reveals require a
-  passing reference execution before they can proceed. A failing reference,
+- Function-based practice starts, submissions, and solution reveals require a
+  passing reference execution for every configured function-test language
+  (Python, JavaScript, TypeScript, Java, C, C++, Rust, Ruby, Go, and C#) before
+  they can proceed. A failing reference,
   missing runtime, absent solution, malformed fixtures, or fewer than six
   distinct fixture inputs blocks admission. Preflight failures do not charge
   usage credits or create learner progress.
@@ -44,22 +46,26 @@ From the API directory:
 .venv/bin/python -m tools.validate_curriculum
 ```
 
-The first command executes current DSA and language exercises in JavaScript and
-Java. Exit status 1 means at least one reference is blocked. Its JSON report
-records source hashes, per-language execution, case counts, and limitations.
-The second checks the packaged JSONL corpus structure and internal links; it
-does **not** execute or establish correctness of its educational answers.
+The first command executes current DSA and language exercises across the
+function-test languages. Use `--language typescript` (or another supported
+language) for a single batch. Exit status 1 means at least one reference is
+blocked; inspect the per-language summary to distinguish a missing reference,
+fixture, or runtime. Its JSON report records source hashes, per-language
+execution, case counts, and limitations. The second checks the packaged JSONL
+corpus structure and internal links; it does **not** execute or establish
+correctness of its educational answers.
 
 ## Remaining curriculum work
 
-The current executable scope is 23 DSA problems in each of JavaScript and Java,
-plus 12 foundation lessons per language: 70 language-specific reference checks.
-Reference-only concept pages and the packaged corpus exercises are not promoted
-to verified workouts by this audit. Full switching pathways, advanced workouts,
-TypeScript, broader editorial validation,
-and live mentor-quality evaluation remain incomplete. The current 23 DSA fixture
-sets now also pass independent small-input mathematical/exhaustive oracles. Other language versions
-need their own execution audit and adapters before claiming equal coverage.
+The October 27 audit executed 37 DSA/algorithm references and 12 foundation
+exercises in each of Python, JavaScript, TypeScript, Java, C, C++, Rust, and
+Ruby: 392 references and 3,192 fixture checks passed. Go and C# each have the
+same 49 reference candidates, blocked locally only because their runtimes are
+unavailable. Six additional languages have stdin/stdout adapters but no
+function-test practice contract. Reference-only concepts remain unverified;
+frameworks require their own dependency-aware project suites. The JS/Java DSA
+fixtures also pass independent small-input mathematical/exhaustive oracles;
+equivalent oracle coverage for other languages remains future work.
 
 ## Hint cycles and retained credits
 
