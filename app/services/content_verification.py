@@ -9,6 +9,16 @@ from functools import lru_cache
 
 from app.services import content_catalog as catalog
 from app.services.code_runner import available_languages, run_suite
+from app.services.execution_adapters import ADAPTERS
+
+
+# Function-shaped curriculum exercises can be admitted only when the configured
+# executor can run a real reference against their fixtures. Stdio-only adapters
+# remain unavailable to function-based practice until they gain an equivalent
+# grader and reference harness.
+FUNCTION_TEST_LANGUAGES = frozenset(
+    language for language, adapter in ADAPTERS.items() if adapter.function_tests
+)
 
 
 def fixture_errors(cases: list, expected: list) -> list[str]:
@@ -68,8 +78,8 @@ async def require_verified_reference(content_id: str, language: str) -> None:
     """Fail before charging or recording learner progress on invalid fixtures."""
     import asyncio
     from fastapi import HTTPException
-    if language not in ('java', 'javascript'):
-        return  # Existing additional-language reviews are not certified by this gate.
+    if language not in FUNCTION_TEST_LANGUAGES:
+        return  # Stdio-only languages need their own exercise contract and grader.
     result = await asyncio.to_thread(verify_reference, content_id, language)
     if not result['verified']:
         raise HTTPException(422, 'This exercise is awaiting verified tests and a passing '

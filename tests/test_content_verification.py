@@ -6,6 +6,14 @@ from app.services.code_runner import run_suite
 from app.services.content_verification import fixture_errors, verify_reference
 
 
+def test_reference_admission_covers_every_function_test_adapter():
+    from app.services.content_verification import FUNCTION_TEST_LANGUAGES
+    assert FUNCTION_TEST_LANGUAGES == {
+        'python', 'javascript', 'typescript', 'java', 'c', 'cpp', 'rust',
+        'ruby', 'go', 'csharp',
+    }
+
+
 @pytest.mark.parametrize('pid,lang', [('reverse-linked-list','javascript'),('reverse-linked-list','java'),
                                     ('word-break','java'),('reverse-bits','java'),('number-of-1-bits','java')])
 def test_previously_incomplete_references_execute(pid, lang):
@@ -32,6 +40,31 @@ def test_python_list_reference_executes():
     assert run_suite({'python':reference[0]}, names, cases, expected, mode)['can_publish']
 
 
+def test_typescript_foundation_references_and_fixtures_are_complete():
+    from app.services.content_catalog import list_content
+    items = [item for item in list_content()
+             if item.track == 'language' and item.language == 'typescript'
+             and item.id.startswith('typescript-path-')]
+    assert len(items) == 12
+    for item in items:
+        reference = content_catalog.reference_solution(item.id, 'typescript')
+        assert reference, item.id
+        cases, expected, names, mode = content_catalog.load_test_cases(item.id)
+        assert len(cases) == len(expected) >= 6, item.id
+        assert names['typescript'] == reference[1], item.id
+
+
+def test_reference_extractor_handles_cpp_heading_punctuation():
+    reference = content_catalog.reference_solution('cpp-path-01-values', 'cpp')
+    assert reference is not None
+    assert reference[1] == 'total_cost'
+    assert reference[0].strip() == (
+        'long long total_cost(long long price, long long quantity) {\n'
+        '    return price * quantity;\n'
+        '}'
+    )
+
+
 def test_repeated_fixtures_are_not_sufficient_coverage():
     assert fixture_errors([[1]]*6, [2]*6)
     assert fixture_errors([[float('nan')]], [0])
@@ -54,20 +87,30 @@ def test_missing_and_duplicate_publication_languages_are_rejected():
         assert not report['can_publish'] and report['validation_errors']
 
 
-async def test_failed_reference_preflight_does_not_charge_or_call_provider(client, monkeypatch, subscribe_user):
-    r = await client.post('/auth/register',json={'email':'blocked-reference@example.com','password':'password123'})
-    await subscribe_user(r.json()['user']['id'], 'java')
+@pytest.mark.parametrize('language,problem_id', [
+    ('java', 'two-sum'),
+    ('typescript', 'typescript-path-01-values'),
+])
+async def test_failed_reference_preflight_does_not_charge_or_call_provider(
+        client, monkeypatch, subscribe_user, language, problem_id):
+    r = await client.post('/auth/register',json={'email':f'blocked-{language}@example.com','password':'password123'})
+    await subscribe_user(r.json()['user']['id'], language)
     headers = {'Authorization':'Bearer '+r.json()['access_token']}
     before = r.json()['user']['peppercorns']
     monkeypatch.setattr('app.services.content_verification.verify_reference',
                         lambda *args: {'verified':False,'issues':['Reference failed']})
     async def forbidden(**kwargs): raise AssertionError('Provider must not be called')
     monkeypatch.setattr('app.routers.analyze.deep_review',forbidden)
-    response = await client.post('/analyze/',headers=headers,json={'problem_id':'two-sum',
-                            'language':'java','user_code':'public int[] twoSum(int[] n,int t){return n;}'})
+    code = (
+        'function totalCost(price: number, quantity: number): number { return 0; }'
+        if language == 'typescript'
+        else 'public int[] twoSum(int[] n,int t){return n;}'
+    )
+    response = await client.post('/analyze/',headers=headers,json={'problem_id':problem_id,
+                            'language':language,'user_code':code})
     assert response.status_code == 422
     assert (await client.get('/auth/me',headers=headers)).json()['peppercorns'] == before
-    response = await client.post('/practice/sessions',headers=headers,json={'problem_id':'two-sum','language':'java'})
+    response = await client.post('/practice/sessions',headers=headers,json={'problem_id':problem_id,'language':language})
     assert response.status_code == 422
 
 

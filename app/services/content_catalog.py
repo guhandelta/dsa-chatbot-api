@@ -373,19 +373,36 @@ def reference_solution(content_id: str, language: str = "python", *, text: str |
         return None
     source = text if text is not None else path.read_text()
     _, body = _parse_front_matter(source)
-    label = {"python": "Python", "javascript": "JavaScript", "java": "Java"}.get(language)
+    labels = {
+        "python": "Python", "javascript": "JavaScript", "java": "Java",
+        "typescript": "TypeScript", "c": "C", "cpp": "C++", "rust": "Rust",
+        "ruby": "Ruby", "go": "Go", "csharp": "C#",
+    }
+    label = labels.get(language)
     if not label:
         return None
-    m = _re.search(rf"### {label}\n```[a-z]*\n(.*?)```", body, _re.DOTALL)
+    m = _re.search(rf"### {_re.escape(label)}\n```[a-z]*\n(.*?)```", body, _re.DOTALL)
     if not m:
         return None
     code = m.group(1)
     front, _ = _parse_front_matter(source)
     fn = front.get(f"fn_{language}")
     if not fn:
-        pattern = (r"^\s*def\s+(\w+)" if language == "python" else
-                   r"(?:public\s+)?(?:static\s+)?[\w<>\[\]]+\s+(\w+)\s*\(" if language == "java" else
-                   r"^\s*function\s+(\w+)")
+        patterns = {
+            "python": r"^\s*def\s+(\w+)",
+            "javascript": r"^\s*function\s+(\w+)",
+            "typescript": r"^\s*(?:export\s+)?(?:async\s+)?function\s+(\w+)",
+            "ruby": r"^\s*def\s+(\w+)",
+            "go": r"^\s*func\s+(?:\([^)]*\)\s*)?(\w+)\s*\(",
+            "java": r"(?:public\s+)?(?:static\s+)?[\w<>\[\].?]+\s+(\w+)\s*\(",
+            "csharp": r"(?:public\s+)?(?:static\s+)?[\w<>\[\].?]+\s+(\w+)\s*\(",
+            "c": r"^[\w\s*]+?\b(\w+)\s*\(",
+            "cpp": r"^[\w:\s*&<>]+?\b(\w+)\s*\(",
+            "rust": r"^\s*(?:pub\s+)?(?:fn)\s+(\w+)\s*\(",
+        }
+        pattern = patterns.get(language)
+        if not pattern:
+            return None
         fm = _re.search(pattern, code, _re.MULTILINE)
         fn = fm.group(1) if fm else None
     return (code, fn) if fn else None
