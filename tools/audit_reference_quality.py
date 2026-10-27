@@ -8,10 +8,13 @@ from collections import Counter, defaultdict
 import json
 import re
 from pathlib import Path
+import sys
+
+API = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(API))
 
 from app.services.knowledge_hygiene import (_near_duplicate_key, _payload_metadata, WATCH_OUT_DOCS)
 
-API = Path(__file__).resolve().parents[1]
 LEGACY_PREFIX = 'Imported reference; not locally executed.'
 RUBRIC = re.compile(r'RAG grader|grader should|\bred flag\b|good explanation|\brubric\b', re.I)
 DATASET = re.compile(r'Training Data for the DSA Mentor|\bJSONL\b|chunk schema|\bRAG\b', re.I)

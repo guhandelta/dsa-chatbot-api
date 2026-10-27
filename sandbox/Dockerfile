@@ -14,9 +14,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0@sha256:738f72aff955d5c5690e06b6fc8ecd1b90e
 
 FROM debian:bookworm-slim@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587
 RUN apt-get update \
- && apt-get install -y --no-install-recommends python3 nodejs openjdk-17-jdk-headless gcc g++ rustc coreutils \
+ && apt-get install -y --no-install-recommends python3 nodejs openjdk-17-jdk-headless gcc g++ rustc coreutils php-cli \
       ruby libicu72 libssl3 zlib1g libstdc++6 \
  && rm -rf /var/lib/apt/lists/*
+# Fail image builds if the PHP runtime cannot execute a function-style smoke test.
+RUN php -r 'function dsa_smoke($a, $b) { return $a * $b; } if (dsa_smoke(3, 4) !== 12) { exit(1); }'
 COPY --from=go /usr/local/go /usr/local/go
 COPY --from=dotnet /usr/share/dotnet /usr/share/dotnet
 COPY --from=typescript /usr/local/lib/node_modules/typescript /usr/local/lib/typescript

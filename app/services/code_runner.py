@@ -41,9 +41,9 @@ TIER1 = ("python", "javascript")
 # falls back to the compile-only check below — never to a silent pass.
 COMPILED = ("c", "cpp", "java", "rust")
 
-# Scripted languages that execute through app.services.script_runners: Ruby and
-# TypeScript take the cases as data, Go and C# are compiled with typed literals.
-SCRIPTED = ("ruby", "typescript", "go", "csharp")
+# Scripted languages that execute through app.services.script_runners: Ruby,
+# PHP, and TypeScript take cases as data; Go and C# use typed literals.
+SCRIPTED = ("ruby", "typescript", "go", "csharp", "php")
 
 # The compile-only fallback, used when execution was refused.
 TIER2 = COMPILED
@@ -209,8 +209,11 @@ def _run_host(cmd: list[str], cwd: Path, stdin: str = "",
         raise RuntimeError("Execution infrastructure could not start or complete the process") from exc
     finally:
         if proc is not None:
-            try: os.killpg(proc.pid,signal.SIGKILL)
-            except ProcessLookupError: pass
+                try: os.killpg(proc.pid, signal.SIGKILL)
+                except (ProcessLookupError, PermissionError):
+                    # Timeout handling may already have reaped the process, or
+                    # a restricted host may deny signalling its process group.
+                    pass
 
 
 

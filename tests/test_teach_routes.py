@@ -1,4 +1,5 @@
 """Canonical teaching routes retain role boundaries and shared review state."""
+import hashlib
 import pytest
 from sqlalchemy import select
 
@@ -27,7 +28,7 @@ async def test_status_documents_and_upload_require_active_staff(client, db, stor
         await db.commit()
     permitted = role != 'student' and not suspended
     for prefix in ('/teach', '/learn'):
-        for path in ('/status', '/documents'):
+        for path in ('/status', '/documents', '/inventory'):
             response = await client.get(prefix + path, headers=headers)
             assert response.status_code == (200 if permitted else 403), response.text
         if not permitted:
@@ -37,6 +38,24 @@ async def test_status_documents_and_upload_require_active_staff(client, db, stor
     if not permitted:
         assert (await db.scalars(select(KnowledgeDocument))).all() == []
         assert store.docs == {}
+
+
+async def test_inventory_distinguishes_source_presence_from_quality_evidence(client, instructor):
+    response = await client.get('/teach/inventory', headers=instructor)
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body['semantics']['published'].startswith('Retrieval availability only')
+    sources = {source['source_id']: source for source in body['sources']}
+    assert 'authored:content-catalog' in sources
+    assert sources['authored:content-catalog']['quality_status'] == 'not_certified'
+    assert sources['reference_library:records.jsonl']['record_count'] > 0
+    assert sources['reference_library:records.jsonl']['executable_examples'] == 'not_recorded'
+    assert sources['reference_library:records.jsonl']['provenance'].startswith('Curated supplemental')
+    assert sources['reference_library:records.jsonl']['provenance_coverage']['records_with_provenance'] > 0
+    quizzes = [source for source in sources.values() if source['source_id'].startswith('curriculum:quiz:')]
+    assert quizzes and all(source['record_count'] > 0 for source in quizzes)
+    assert sources['curriculum:debug-challenges.json']['record_count'] > 0
+    assert sources['debug:knowledge-base.json']['record_count'] > 0
 
 
 async def test_canonical_upload_and_legacy_review_share_pending_lifecycle(client, instructor, admin, store):
@@ -65,6 +84,14 @@ async def test_canonical_upload_and_legacy_review_share_pending_lifecycle(client
     detail = await client.get(f'/teach/documents/{doc_id}', headers=instructor)
     assert detail.json()['status'] == 'published'
     assert 'Trees have nodes.' in detail.json()['preview']
+    inventory = detail.json()
+    assert inventory['reference_language'] == 'all_languages'
+    assert inventory['topic_scope'] is None
+    assert inventory['retrieval_status'] == 'available'
+    assert inventory['publication_review'] == 'approved'
+    assert inventory['content_sha256'] == hashlib.sha256(b'# Trees\nTrees have nodes.').hexdigest()
+    assert inventory['executable_verification'] == 'not_recorded'
+    assert inventory['pedagogical_review'] == 'not_recorded'
     assert (await client.post(f'/teach/documents/{doc_id}/approve', headers=admin)).status_code == 409
 
 

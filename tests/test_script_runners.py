@@ -1,4 +1,4 @@
-"""Ruby, TypeScript, Go and C# execution: harness rendering and, where the toolchain
+"""Scripted-language execution: harness rendering and, where the toolchain
 exists, real runs (correct, wrong, uncompilable, endless)."""
 import pytest
 
@@ -14,24 +14,28 @@ SOLUTIONS = {
     'typescript': ('function totalCost(price: number, quantity: number): number {\n  return price * quantity;\n}\n', 'totalCost'),
     'go': ('func totalCost(price, quantity int) int {\n\treturn price * quantity\n}\n', 'totalCost'),
     'csharp': ('public static class Solution {\n    public static long TotalCost(long price, long quantity) => price * quantity;\n}\n', 'TotalCost'),
+    'php': ('<?php\nfunction totalCost($price, $quantity) { return $price * $quantity; }\n', 'totalCost'),
 }
 WRONG = {
     'ruby': 'def total_cost(price, quantity)\n  price + quantity\nend\n',
     'typescript': 'function totalCost(price: number, quantity: number): number {\n  return price + quantity;\n}\n',
     'go': 'func totalCost(price, quantity int) int {\n\treturn price + quantity\n}\n',
     'csharp': 'public static class Solution {\n    public static long TotalCost(long price, long quantity) => price + quantity;\n}\n',
+    'php': '<?php function totalCost($price, $quantity) { return $price + $quantity; }',
 }
 BROKEN = {
     'ruby': 'def total_cost(price, quantity\n  price * quantity\nend\n',
     'typescript': 'function totalCost(price: number, quantity: number): number {\n  return price * "x";\n}\n',
     'go': 'func totalCost(price, quantity int) int {\n\treturn price * missing\n}\n',
     'csharp': 'public static class Solution {\n    public static long TotalCost(long price, long quantity) => price * undefined;\n}\n',
+    'php': '<?php function totalCost($price, $quantity) { return $price * ; }',
 }
 ENDLESS = {
     'ruby': 'def total_cost(price, quantity)\n  loop { }\nend\n',
     'typescript': 'function totalCost(price: number, quantity: number): number {\n  while (true) {}\n}\n',
     'go': 'func totalCost(price, quantity int) int {\n\tfor {\n\t}\n}\n',
     'csharp': 'public static class Solution {\n    public static long TotalCost(long price, long quantity) { while (true) {} }\n}\n',
+    'php': '<?php function totalCost($price, $quantity) { while (true) {} }',
 }
 
 
@@ -61,6 +65,26 @@ def test_go_keeps_astral_characters_in_string_cases():
 def test_entry_point_must_be_an_identifier():
     result = script_runners.run('ruby', 'x', 'f(*a) } ; exit 0 #', [[1]], [1], lambda a, b: a == b)
     assert result.status == 'failed' and 'identifier' in result.detail
+
+
+def test_php_function_harness_uses_json_fixtures_and_separate_result_file(monkeypatch):
+    from app.services import code_runner
+
+    def fake_run(command, cwd, stdin="", apply_address_space=True):
+        assert command == ["php", "main.php"]
+        source = (cwd / "main.php").read_text()
+        assert 'json_decode(file_get_contents("cases.json")' in source
+        assert "totalCost(...$__args)" in source
+        assert "JSON_THROW_ON_ERROR" in source
+        (cwd / "cases.json").write_text('[ [3, 4], [0, 5], [-2, 6] ]')
+        result = __import__("re").search(r'file_put_contents\("(r[0-9a-f]+\.json)"', source).group(1)
+        (cwd / result).write_text('[12,0,-12]')
+        return 0, "", ""
+
+    monkeypatch.setattr(code_runner, "_run", fake_run)
+    result = script_runners.run("php", "<?php function totalCost($a, $b) { return $a * $b; }", "totalCost",
+                                CASES, EXPECTED, lambda a, b: a == b)
+    assert result.status == "passed" and result.passed_cases == len(CASES)
 
 
 def test_unexpressible_shapes_are_unverified_not_passed():

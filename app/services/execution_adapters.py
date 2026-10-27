@@ -43,7 +43,7 @@ ADAPTERS: dict[str, Adapter] = {a.language: a for a in (
     Adapter("ruby", "ruby", "main.rb", True, True, False),
     Adapter("go", "go", "main.go", True, True, True),
     Adapter("csharp", "dotnet", "Main.cs", True, False, True),
-    Adapter("php", "php", "main.php", False, True, False),
+    Adapter("php", "php", "main.php", True, True, False),
     Adapter("dart", "dart", "main.dart", False, True, False),
     Adapter("kotlin", "kotlinc", "Main.kt", False, True, True),
     Adapter("swift", "swiftc", "main.swift", False, True, True),

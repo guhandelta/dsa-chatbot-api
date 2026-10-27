@@ -11,6 +11,7 @@ def test_reference_admission_covers_every_function_test_adapter():
     assert FUNCTION_TEST_LANGUAGES == {
         'python', 'javascript', 'typescript', 'java', 'c', 'cpp', 'rust',
         'ruby', 'go', 'csharp',
+        'php',
     }
 
 

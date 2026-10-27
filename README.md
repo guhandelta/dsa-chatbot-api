@@ -199,6 +199,7 @@ Uploaded text is retrieved for *every* learner's chat, so it is reviewed:
 |---|---|---|
 | `POST /learn/train` | instructor, admin | multipart `file` + `track`, or JSON `{text, filename, track}` |
 | `GET /learn/documents?status=` | instructor (own), admin (all) | list uploads |
+| `GET /teach/inventory` | instructor, admin | packaged source counts, language/subject scope, hashes, provenance/version coverage, and recorded evidence status |
 | `GET /learn/documents/{id}` | owner, admin | metadata + text preview |
 | `DELETE /learn/documents/{id}` | owner, admin | remove record and vectors |
 | `POST /learn/documents/{id}/approve` | admin | index and publish |
@@ -209,17 +210,27 @@ Uploaded text is retrieved for *every* learner's chat, so it is reviewed:
 `problem_id = "upload:<document id>"`, so an upload can never replace a
 curated problem. Run `alembic upgrade head` after pulling this feature.
 
+**Published means available for retrieval only.** The inventory labels executable
+and pedagogical evidence as `not_recorded` unless a separate review record exists;
+fixture presence, indexing, and successful retrieval do not certify that an
+example is correct or that a lesson is complete. The inventory is read-only and
+does not execute source files.
+
 ### Language coverage
 
-`GET /training/status` reports what this machine can verify. Java and Rust
-need their toolchains installed:
+`GET /training/status` and the execution-capability endpoint report what the
+configured sandbox can actually run. The Dockerfile provides function-style
+grading for Python, JavaScript, TypeScript, Java, C, C++, Rust, Ruby, Go, and
+C#; PHP function grading is available in the rebuilt image. Dart, Kotlin,
+Swift, Scala, and Haskell still have no function-style grader, and their
+toolchains are not present in the current sandbox. Toolchain presence is not
+the same as a verified exercise: each exercise still needs version-bound
+fixtures and a passing reference run. Missing runtimes or unsupported fixture
+shapes are reported as **unverified**, never as passing.
 
-```bash
-brew install openjdk rust     # macOS
-```
-
-Without them, those languages are reported as **unverified** — reviewed by the
-LLM but not executed. They are never counted as passing.
+After changing `sandbox/Dockerfile`, rebuild the image and update the local
+`EXEC_CONTAINER_IMAGE` setting to the resulting image digest before using its
+new runtime. Do not replace the digest with a floating tag for normal runs.
 
 ### Security note on code execution
 

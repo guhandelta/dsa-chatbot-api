@@ -1,11 +1,9 @@
-"""Execution of Ruby, TypeScript, Go and C# solutions against test cases.
+"""Execution of Ruby, PHP, TypeScript, Go and C# solutions against test cases.
 
-Ruby and TypeScript are handed the cases as data (Ruby reads cases.json,
-TypeScript has them embedded as a literal because the sandbox image carries no
-Node type declarations). Go and C# are statically typed, so, like the other
-compiled languages, the cases are emitted as native literals from the types
-inferred from the test data (`exec_harness.infer_types`) and only the answers
-are recorded. Anything the type inference cannot express is reported as
+Ruby and PHP read cases as JSON; TypeScript has them embedded as a literal
+because the sandbox image carries no Node type declarations. Go and C# are
+statically typed, so the cases are emitted as native literals from inferred
+test-data types. Anything the type inference cannot express is reported as
 "unverified", never as a pass.
 
 Results never travel on stdout, where a solution could print a forged line or
@@ -31,7 +29,7 @@ from pathlib import Path
 from app.services import exec_harness
 from app.services.exec_harness import TypeSig
 
-SCRIPTED = ("ruby", "typescript", "go", "csharp")
+SCRIPTED = ("ruby", "typescript", "go", "csharp", "php")
 
 # How to ask each toolchain whether it exists; `go --version` is not a command
 # and `dotnet --version` initialises the SDK, which needs a writable home.
@@ -50,6 +48,16 @@ _TS_HARNESS = '''{solution}
 declare const require: (id: string) => {{ writeFileSync(path: string, data: string): void }};
 const __cases: unknown[][] = {cases};
 require("fs").writeFileSync("{result}", JSON.stringify(__cases.map((a) => ({fn} as (...x: any[]) => unknown)(...a))));
+'''
+
+_PHP_HARNESS = '''<?php
+{solution}
+$__cases = json_decode(file_get_contents("cases.json"), true, 512, JSON_THROW_ON_ERROR);
+$__results = [];
+foreach ($__cases as $__args) {{
+    $__results[] = {fn}(...$__args);
+}}
+file_put_contents("{result}", json_encode($__results, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE));
 '''
 
 _GO_MAIN = '''package main
@@ -249,6 +257,24 @@ def _run_typescript(solution, fn, cases, expected, equal, result):
     return _score("typescript", actual, expected, equal) if actual is not None else _no_results("typescript", len(cases))
 
 
+def _run_php(solution, fn, cases, expected, equal, result):
+    from app.services.code_runner import _run
+    # Function-style PHP submissions are embedded in a controlled harness.
+    # Remove only an optional PHP opening/closing tag so learner code can use
+    # the normal standalone-file form without creating a second PHP block.
+    body = re.sub(r"^\s*<\?php\s*", "", solution, count=1, flags=re.I)
+    body = re.sub(r"\?>\s*$", "", body)
+    with tempfile.TemporaryDirectory() as td:
+        cwd = Path(td)
+        (cwd / "cases.json").write_text(json.dumps(cases, allow_nan=False), encoding="utf-8")
+        (cwd / "main.php").write_text(_PHP_HARNESS.format(solution=body, fn=fn, result=result), encoding="utf-8")
+        code, out, err = _run(["php", "main.php"], cwd, apply_address_space=False)
+        actual = _read_results(cwd, result, len(cases)) if code == 0 else None
+    if code != 0:
+        return _fail("php", len(cases), err or out)
+    return _score("php", actual, expected, equal) if actual is not None else _no_results("php", len(cases))
+
+
 def _run_typed(language, solution, fn, cases, expected, equal, result):
     from app.services.code_runner import _run
     sig = exec_harness.infer_types(cases, expected)
@@ -294,4 +320,6 @@ def run(language: str, solution: str, fn: str, cases: list, expected: list, equa
         return _run_ruby(solution, fn, cases, expected, equal, result)
     if language == "typescript":
         return _run_typescript(solution, fn, cases, expected, equal, result)
+    if language == "php":
+        return _run_php(solution, fn, cases, expected, equal, result)
     return _run_typed(language, solution, fn, cases, expected, equal, result)

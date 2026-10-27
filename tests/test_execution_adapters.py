@@ -76,10 +76,12 @@ def test_compiled_stdin_stdout_executes_cases(language, source):
     assert report["results"][0]["outputs"] == ["4", "6"]
 
 
-def test_unsupported_function_style_language_is_unverified():
+def test_php_function_style_language_runs_when_runtime_is_installed():
     report = run_suite({"php": "<?php function f($x) { return $x; }"}, {"php": "f"}, [[1]], [1])
     assert report["can_publish"] is False
-    assert report["results"][0]["status"] == "unverified"
+    assert report["results"][0]["status"] in {"unverified", "passed"}
+    if available_languages().get("php"):
+        assert report["results"][0]["status"] == "passed"
 
 
 def test_java_function_workspace_compiles_helper_alongside_generated_harness(monkeypatch):

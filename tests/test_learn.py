@@ -2,6 +2,7 @@
 # The vector store is replaced by an in-memory fake — these check role
 # gating, validation, the pending → published/rejected lifecycle, and that
 # vectors are written and removed exactly when they should be.
+import hashlib
 import json
 
 import pytest
@@ -113,6 +114,14 @@ async def test_instructor_upload_is_pending_and_not_indexed(client, instructor, 
     body = r.json()
     assert body["review_status"] == "pending"
     assert body["chunks_trained"] == 0
+    # A pending upload is neither retrieval-available nor evidence of content
+    # quality. The fingerprint binds any later audit to this exact text.
+    inventory = (await client.get(f"/learn/documents/{body['document_id']}", headers=instructor)).json()
+    assert inventory["publication_review"] == "pending"
+    assert inventory["retrieval_status"] == "awaiting_approval"
+    assert inventory["content_sha256"] == hashlib.sha256(b"## Heaps\nA heap is a tree.").hexdigest()
+    assert inventory["executable_verification"] == "not_recorded"
+    assert inventory["pedagogical_review"] == "not_recorded"
     assert body["track"] == "dsa"
     assert store.docs == {}  # nothing reaches learners before review
 

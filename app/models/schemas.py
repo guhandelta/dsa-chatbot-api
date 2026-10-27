@@ -76,8 +76,15 @@ class KnowledgeDocumentOut(BaseModel):
 
     retrieval_status: str = "awaiting_approval"
     reference_language: str | None = None
+    topic_scope: str | None = None
     reference_chunks: int = 0
     projection_version: str = ""
+    # A content fingerprint identifies the exact extracted source version; it
+    # is not a quality or correctness claim.
+    content_sha256: str = ""
+    publication_review: str = "not_reviewed"
+    executable_verification: str = "not_recorded"
+    pedagogical_review: str = "not_recorded"
 
 
 class KnowledgeDocumentDetail(KnowledgeDocumentOut):

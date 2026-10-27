@@ -9,6 +9,7 @@
 #                              └─reject───▶ rejected  (never indexed)
 #   admin uploads   ──────────────────────▶ published
 import asyncio
+import hashlib
 import json
 import logging
 from datetime import datetime, timezone
@@ -67,9 +68,11 @@ def _chunk_ids(doc: KnowledgeDocument) -> list[str]:
 
 
 def _out(doc: KnowledgeDocument, owner_email: str = "") -> KnowledgeDocumentOut:
-    from app.services.uploaded_knowledge import project, infer_language, PROJECTION_VERSION
+    from app.services.uploaded_knowledge import project, infer_language, PROJECTION_VERSION, ALL_LANGUAGES
     projected = project(doc.id, doc.filename, doc.text, doc.track, doc.language)
-    language = doc.language or infer_language(doc.filename)
+    # Match the actual projection scope. Untagged references are deliberately
+    # language-neutral in retrieval, not missing a classification.
+    language = doc.language or infer_language(doc.filename) or ALL_LANGUAGES
     retrieval_status = ("awaiting_approval" if doc.status != "published" else
                         "language_review_required" if not language else
                         "no_reference_text" if not projected else "available")
@@ -88,8 +91,20 @@ def _out(doc: KnowledgeDocument, owner_email: str = "") -> KnowledgeDocumentOut:
         reviewed_at=doc.reviewed_at,
         retrieval_status=retrieval_status,
         reference_language=language,
+        # Uploads currently record a broad track but have no structured topic
+        # field; keep that gap visible rather than guessing from prose.
+        topic_scope=None,
         reference_chunks=len(projected),
         projection_version=PROJECTION_VERSION,
+        content_sha256=hashlib.sha256(doc.text.encode("utf-8")).hexdigest(),
+        publication_review=("approved" if doc.status == "published" and doc.reviewed_at else
+                            "rejected" if doc.status == "rejected" and doc.reviewed_at else
+                            "pending" if doc.status == "pending" else "not_recorded"),
+        # Publication is a retrieval decision. These remain explicitly
+        # unknown until an independent, version-bound verification workflow
+        # records evidence for the exact source digest.
+        executable_verification="not_recorded",
+        pedagogical_review="not_recorded",
     )
 
 
@@ -227,6 +242,17 @@ async def learn_status(current_user: User = Depends(require_instructor)):
         "embedding_provider": settings.embedding_provider or "auto",
         "requires_review": current_user.role != "admin",
     }
+
+
+@router.get("/inventory")
+async def knowledge_inventory(current_user: User = Depends(require_instructor)):
+    """Summarize packaged sources and their recorded quality evidence.
+
+    Publication means retrievable; execution and pedagogical validation need
+    separate evidence.
+    """
+    from app.services.knowledge_inventory import build_inventory
+    return build_inventory()
 
 
 @router.post("/train", response_model=LearnTrainResponse, status_code=status.HTTP_200_OK)
