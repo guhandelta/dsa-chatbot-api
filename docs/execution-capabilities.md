@@ -7,13 +7,15 @@ inspect the same registry locally. `installed` means the configured execution
 backend passed its toolchain probe. It does not certify a particular student
 program; only executed test cases can do that.
 
-Function-style test adapters currently cover Python, JavaScript, TypeScript,
-Java, C, C++, Rust, Ruby, Go and C#. Stdin/stdout adapters cover those languages
-except C#, plus PHP, Dart, Kotlin, Swift, Scala and Haskell. A missing toolchain
-or unsupported test mode reports `unverified` and blocks publication. The
-bundled Dockerfile does not yet provide all six additional toolchains; their
-stdin/stdout adapters become usable only in an operator-provided image with
-those runtimes installed and a pinned image digest. Browser previews are
+Function-style test adapters cover Python, JavaScript, TypeScript, Java, C,
+C++, Rust, Ruby, Go, C#, PHP, Dart, Kotlin, Swift, Scala and Haskell. Stdin/stdout
+adapters cover those languages except C#. Dart, Kotlin, Swift, Scala and Haskell
+use generated typed literals and execute each fixture in the configured
+sandbox. Their function harnesses currently accept scalar and one-dimensional
+array arguments, and scalar, one-dimensional, or supported two-dimensional
+return values. Unsupported shapes such as trees and nested arguments report
+`unverified` and block publication; presence of the adapter does not certify
+each curriculum reference. Browser previews are
 claimed for JavaScript and TypeScript only: the web playground renders HTML,
 CSS and scripts in a sandboxed iframe in the learner's browser, and compiles
 TypeScript in the execution sandbox. Server, mobile and circuit previews are

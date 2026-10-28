@@ -41,9 +41,10 @@ TIER1 = ("python", "javascript")
 # falls back to the compile-only check below — never to a silent pass.
 COMPILED = ("c", "cpp", "java", "rust")
 
-# Scripted languages that execute through app.services.script_runners: Ruby,
-# PHP, and TypeScript take cases as data; Go and C# use typed literals.
-SCRIPTED = ("ruby", "typescript", "go", "csharp", "php")
+# Languages dispatched to the language-specific generated function harnesses.
+# JSON-native runtimes take cases as data; typed runtimes get safe literals.
+SCRIPTED = ("ruby", "typescript", "go", "csharp", "php", "dart", "kotlin",
+            "swift", "scala", "haskell")
 
 # The compile-only fallback, used when execution was refused.
 TIER2 = COMPILED

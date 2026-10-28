@@ -16,6 +16,8 @@ def test_capabilities_are_explicit_and_claim_only_browser_previews_for_js_and_ts
                              "rust", "ruby", "go", "csharp", "php", "dart", "kotlin",
                              "swift", "scala", "haskell"}
     assert profiles["python"]["function_execution"] is True
+    assert all(ADAPTERS[name].function_tests for name in
+               ("dart", "kotlin", "swift", "scala", "haskell"))
     assert profiles["kotlin"]["stdio_execution"] is False
     assert {n for n, p in profiles.items() if p["browser_preview"]} == {"javascript", "typescript"}
     assert not any(p["server_preview"] for p in profiles.values())
@@ -76,11 +78,26 @@ def test_compiled_stdin_stdout_executes_cases(language, source):
     assert report["results"][0]["outputs"] == ["4", "6"]
 
 
+@pytest.mark.parametrize("language,source", [
+    ("dart", "import 'dart:io'; void main() { final n = int.parse(stdin.readLineSync()!); print(n * 2); }"),
+    ("kotlin", "fun main() { val n = readLine()!!.toInt(); println(n * 2) }"),
+    ("swift", "if let line = readLine(), let n = Int(line) { print(n * 2) }"),
+    ("scala", "object Main { def main(args: Array[String]): Unit = { println(scala.io.StdIn.readInt() * 2) } }"),
+    ("haskell", "main = interact (show . (* 2) . read)"),
+])
+def test_newly_added_language_runtimes_compile_and_execute_stdin_cases(language, source):
+    if not available_languages().get(language):
+        pytest.skip(f"{language} toolchain unavailable")
+    report = run_suite({language: source}, {}, ["2", "3"], ["4", "6"], io_mode="stdio")
+    assert report["can_publish"] is True, report["results"]
+    assert report["results"][0]["outputs"] == ["4", "6"]
+
+
 def test_php_function_style_language_runs_when_runtime_is_installed():
     report = run_suite({"php": "<?php function f($x) { return $x; }"}, {"php": "f"}, [[1]], [1])
-    assert report["can_publish"] is False
     assert report["results"][0]["status"] in {"unverified", "passed"}
-    if available_languages().get("php"):
+    assert report["can_publish"] is available_languages().get("php", False)
+    if report["can_publish"]:
         assert report["results"][0]["status"] == "passed"
 
 

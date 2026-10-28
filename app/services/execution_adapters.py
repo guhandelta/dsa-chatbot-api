@@ -44,11 +44,11 @@ ADAPTERS: dict[str, Adapter] = {a.language: a for a in (
     Adapter("go", "go", "main.go", True, True, True),
     Adapter("csharp", "dotnet", "Main.cs", True, False, True),
     Adapter("php", "php", "main.php", True, True, False),
-    Adapter("dart", "dart", "main.dart", False, True, False),
-    Adapter("kotlin", "kotlinc", "Main.kt", False, True, True),
-    Adapter("swift", "swiftc", "main.swift", False, True, True),
-    Adapter("scala", "scalac", "Main.scala", False, True, True),
-    Adapter("haskell", "ghc", "Main.hs", False, True, True),
+    Adapter("dart", "dart", "main.dart", True, True, False),
+    Adapter("kotlin", "kotlinc", "Main.kt", True, True, True),
+    Adapter("swift", "swiftc", "main.swift", True, True, True),
+    Adapter("scala", "scalac", "Main.scala", True, True, True),
+    Adapter("haskell", "ghc", "Main.hs", True, True, True),
 )}
 
 

@@ -144,6 +144,65 @@ def test_flooding_stdout_does_not_hide_the_results(language):
         'typescript': 'declare const process: { stdout: { write(s: string): void } };\nfunction totalCost(a: number, b: number): number {\n  process.stdout.write("x".repeat(100000));\n  return a * b;\n}\n',
         'go': 'import "fmt"\n\nfunc totalCost(a, b int) int {\n\tfor i := 0; i < 3000; i++ {\n\t\tfmt.Println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")\n\t}\n\treturn a * b\n}\n',
         'csharp': 'public static class Solution {\n    public static long TotalCost(long a, long b) {\n        for (int i = 0; i < 3000; i++) Console.WriteLine(new string(\'x\', 40));\n        return a * b;\n    }\n}\n',
+        'php': '<?php function totalCost($a, $b) { for ($i = 0; $i < 3000; $i++) echo str_repeat("x", 40), "\\n"; return $a * $b; }',
     }[language]
     result = run_suite({language: noise}, {language: SOLUTIONS[language][1]}, CASES, EXPECTED)['results'][0]
     assert result['status'] == 'passed' and result['passed_cases'] == 3
+
+
+POLYGLOT = {
+    'dart': ('int totalCost(int a, int b) => a * b;', 'class Solution { int total(List<int> xs) => xs.fold(0, (a, b) => a + b); }'),
+    'kotlin': ('fun totalCost(a: Int, b: Int): Int = a * b', 'class Solution { fun total(xs: IntArray): Int = xs.sum() }'),
+    'swift': ('func totalCost(_ a: Int, _ b: Int) -> Int { a * b }', 'class Solution { func total(_ xs: [Int]) -> Int { xs.reduce(0, +) } }'),
+    'scala': ('object Solution { def totalCost(a: Int, b: Int): Int = a * b }', 'object Solution { def total(xs: Array[Int]): Int = xs.sum }'),
+    'haskell': ('totalCost :: Int -> Int -> Int\ntotalCost a b = a * b', 'total :: [Int] -> Int\ntotal = sum'),
+}
+
+POLYGLOT_MATRIX_RESULTS = {
+    'dart': 'List<List<int>> grid(int n) => [[1], [2]];',
+    'kotlin': 'fun grid(n: Int): Array<IntArray> = arrayOf(intArrayOf(1), intArrayOf(2))',
+    'swift': 'func grid(_ n: Int) -> [[Int]] { [[1], [2]] }',
+    'scala': 'object Solution { def grid(n: Int): Array[Array[Int]] = Array(Array(1), Array(2)) }',
+    'haskell': 'grid :: Int -> [[Int]]\ngrid _ = [[1], [2]]',
+}
+
+
+@pytest.mark.parametrize('language', sorted(POLYGLOT))
+def test_polyglot_function_grader_executes_scalar_and_vector_fixtures(language):
+    if not available_languages().get(language):
+        pytest.skip(f'{language} toolchain unavailable')
+    scalar, vector = POLYGLOT[language]
+    scalar_result = run_suite({language: scalar}, {language: 'totalCost'},
+                              CASES, EXPECTED)['results'][0]
+    assert scalar_result['tier'] == 1 and scalar_result['status'] == 'passed'
+    wrong = scalar.replace(' * ', ' + ')
+    wrong_result = run_suite({language: wrong}, {language: 'totalCost'},
+                             CASES, EXPECTED)['results'][0]
+    assert wrong_result['tier'] == 1 and wrong_result['status'] == 'failed'
+    vector_cases = [[[1, 2]], [[]], [[-2, 4, 0]]]
+    vector_result = run_suite({language: vector}, {language: 'total'},
+                              vector_cases, [3, 0, 2])['results'][0]
+    assert vector_result['tier'] == 1 and vector_result['status'] == 'passed'
+    matrix_expected = [[[1], [2]], [[1], [2]]]
+    matrix_result = run_suite({language: POLYGLOT_MATRIX_RESULTS[language]},
+                              {language: 'grid'}, [[0], [1]], matrix_expected)['results'][0]
+    assert matrix_result['tier'] == 1 and matrix_result['status'] == 'passed'
+
+
+@pytest.mark.parametrize('language', sorted(POLYGLOT))
+def test_polyglot_function_grader_refuses_nested_arguments(language):
+    from app.services import polyglot_runners
+    source = POLYGLOT[language][0]
+    result = polyglot_runners.run(language, source, 'totalCost', [[[[[1], [2]]]]],
+                                  [1], lambda actual, expected: actual == expected)
+    assert result.status == 'unverified'
+
+
+def test_polyglot_function_grader_enforces_fixture_and_source_limits():
+    from app.services import polyglot_runners
+    over_cases = polyglot_runners.run('dart', 'int f(int x) => x;', 'f',
+                                     [[1]] * 65, [1] * 65, lambda a, b: a == b)
+    over_source = polyglot_runners.run('dart', ' ' * 100_001, 'f',
+                                       [[1]], [1], lambda a, b: a == b)
+    assert over_cases.status == 'unverified' and 'fixtures' in over_cases.detail
+    assert over_source.status == 'unverified' and '100 KB' in over_source.detail

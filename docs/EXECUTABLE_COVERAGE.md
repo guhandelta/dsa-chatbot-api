@@ -1,8 +1,9 @@
 # Executable language and framework coverage
 
-Updated October 27, 2026 from `tools.audit_exercises` using locally installed
-trusted runtimes in subprocess mode. This is execution evidence for the
-repository's authored fixtures, not a claim of universal correctness or full
+Updated October 27, 2026 from `tools.audit_exercises` using trusted local
+runtimes and the pinned Docker sandbox. Go and C# were rerun in Docker after
+their runtimes were restored. This is execution evidence for the repository's
+authored fixtures, not a claim of universal correctness or full
 language/framework proficiency.
 
 ## Function-based curriculum audit
@@ -22,14 +23,13 @@ the full report records source hashes, case counts, outcomes, and blockers in
 | C++ | 49 | 0 | 399 | Verified |
 | Rust | 49 | 0 | 399 | Verified |
 | Ruby | 49 | 0 | 399 | Verified |
-| Go | 0 | 49 | 0 | Blocked: Go runtime unavailable locally |
-| C# | 0 | 49 | 0 | Blocked: .NET runtime unavailable locally |
+| Go | 49 | 0 | 399 | Verified in Docker |
+| C# | 49 | 0 | 399 | Verified in Docker |
 
-The eight verified languages total 392 references and 3,192 fixture checks. Go
-and C# already have authored exercises and runner adapters; they need a working
-runtime in the selected executor and a successful rerun before they can be
-certified. A source file, adapter declaration, compile-only result, or old audit
-does not count as a pass.
+The ten verified languages total 490 references and 3,990 fixture checks. A
+source file, adapter declaration, compile-only result, or old audit does not
+count as a pass. The Go and C# rows in [`exercise-audit.json`](exercise-audit.json)
+record the Docker image digest used for their rerun.
 
 The learner preflight now enforces a passing executable reference for every
 function-test language. Missing runtimes, references, or valid fixtures block
@@ -38,13 +38,13 @@ stdin/stdout adapters are not treated as function-tested by this gate.
 
 ## Remaining language work
 
-PHP, Dart, Kotlin, Swift, Scala, and Haskell have stdin/stdout execution
-adapters but not function-test adapters for the current function-shaped exercise
-catalog. Their learning material and compiler/runtime presence do not establish
-verified DSA coverage. They need explicit exercise contracts, suitable harnesses,
-curated fixtures, and independent edge-case/oracle checks before they join the
-same admission tier. The Go and C# path should be rerun inside the pinned
-container image after runtime probes succeed.
+PHP, Dart, Kotlin, Swift, Scala, and Haskell now have function-test adapters.
+The five newly covered runtimes use generated typed harnesses and have Docker
+integration tests for scalar and one-dimensional array arguments, wrong-answer
+detection, and explicit refusal of unsupported nested argument shapes. This
+does not yet mean their authored curriculum is verified: each exercise still
+needs a curated reference implementation, fixtures, and a passing audit run.
+The current 49-exercise audit remains limited to the ten languages listed above.
 
 Fixture verification is finite evidence. Broaden coverage with independent
 small-input oracles, property tests and seeded fuzzing where the value types and
@@ -74,6 +74,5 @@ EXEC_BACKEND=subprocess PYTHONPATH=. .venv/bin/python -m tools.audit_exercises \
 Use `--language go` or `--language csharp` in the configured Docker environment
 to verify those runtimes. Run without `--language` for the complete matrix; a
 nonzero exit means one or more references remain blocked. Subprocess mode is
-appropriate here only because the audit executes trusted repository reference
-solutions. The API must continue using its configured isolation policy for
-learner-submitted code.
+appropriate only when auditing trusted repository reference solutions. The API
+must continue using its configured isolation policy for learner-submitted code.

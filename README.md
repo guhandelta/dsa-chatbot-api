@@ -220,13 +220,14 @@ does not execute source files.
 
 `GET /training/status` and the execution-capability endpoint report what the
 configured sandbox can actually run. The Dockerfile provides function-style
-grading for Python, JavaScript, TypeScript, Java, C, C++, Rust, Ruby, Go, and
-C#; PHP function grading is available in the rebuilt image. Dart, Kotlin,
-Swift, Scala, and Haskell still have no function-style grader, and their
-toolchains are not present in the current sandbox. Toolchain presence is not
-the same as a verified exercise: each exercise still needs version-bound
-fixtures and a passing reference run. Missing runtimes or unsupported fixture
-shapes are reported as **unverified**, never as passing.
+grading for Python, JavaScript, TypeScript, Java, C, C++, Rust, Ruby, Go, C#,
+and PHP. Its pinned image includes working runtimes for Dart, Kotlin, Swift,
+Scala, and Haskell, which now have function-style graders and stdin/stdout
+execution. Their typed harnesses are covered by sandboxed scalar/array
+pass-and-fail tests. Toolchain and grader presence are not the same as a
+verified exercise: each exercise still needs version-bound fixtures and a
+passing reference run. Missing runtimes or unsupported fixture shapes are
+reported as **unverified**, never as passing.
 
 After changing `sandbox/Dockerfile`, rebuild the image and update the local
 `EXEC_CONTAINER_IMAGE` setting to the resulting image digest before using its
