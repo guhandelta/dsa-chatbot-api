@@ -29,6 +29,15 @@ def test_unclassified_uploads_use_explicit_all_language_scope():
     assert docs and all(d.metadata['language'] == uk.ALL_LANGUAGES for d in docs)
 
 
+def test_frontmatter_subject_is_preserved_without_exposing_frontmatter():
+    text = ('---\nsubject: spring-boot\nframework: spring\nverified: false\n---\n'
+            'Spring Boot configuration binds external properties to typed settings.')
+    docs = uk.project('boot', 'spring-boot.md', text, 'custom', 'java')
+    assert docs and all(d.metadata['subject'] == 'spring-boot' for d in docs)
+    assert all(d.metadata['framework'] == 'spring' for d in docs)
+    assert all('verified: false' not in d.page_content for d in docs)
+
+
 async def test_language_neutral_upload_is_available_to_multiple_languages(db):
     user = User(email='neutral-owner@x.com', hashed_password='unused')
     db.add(user)
@@ -38,6 +47,27 @@ async def test_language_neutral_upload_is_available_to_multiple_languages(db):
     await db.commit()
     assert await uk.search(db, 'matrix grid', 'dsa', 'java')
     assert await uk.search(db, 'matrix grid', 'dsa', 'javascript')
+
+
+async def test_subject_scoped_uploads_require_exact_frontmatter_scope(db):
+    user = User(email='subject-owner@x.com', hashed_password='unused')
+    db.add(user)
+    await db.flush()
+    db.add_all([
+        KnowledgeDocument(owner_id=user.id, filename='boot.md', track='custom', status='published',
+            language='java', text='---\nsubject: spring-boot\n---\nSpring Boot configuration properties bind to typed settings.'),
+        KnowledgeDocument(owner_id=user.id, filename='security.md', track='custom', status='published',
+            language='java', text='---\nsubject: spring-security\n---\nSpring Security filter chains define request authorization.'),
+        KnowledgeDocument(owner_id=user.id, filename='plain-java.md', track='custom', status='published',
+            language='java', text='Java collections preserve equality and hash contracts.'),
+    ])
+    await db.commit()
+
+    boot = await uk.search(db, 'configuration properties', 'language', 'java', subject='spring-boot')
+    security = await uk.search(db, 'filter chains authorization', 'language', 'java', subject='spring-security')
+    assert len(boot) == 1 and boot[0].metadata['subject'] == 'spring-boot'
+    assert len(security) == 1 and security[0].metadata['subject'] == 'spring-security'
+    assert not await uk.search(db, 'collections equality', 'language', 'java', subject='spring-boot')
 
 
 async def test_approved_live_projection_scopes_and_preserves_review(client, admin, store, db):

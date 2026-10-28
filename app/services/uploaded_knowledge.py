@@ -62,6 +62,32 @@ def reference_text(text: str) -> str:
     return "\n".join(lines).strip()
 
 
+def _frontmatter_scope(text: str) -> dict[str, str]:
+    """Read only the scalar subject/framework labels from Markdown front matter.
+
+    Upload scope is not inferred from body prose: a framework name mentioned in
+    an otherwise unrelated document must not make that document visible in a
+    framework-specific conversation.
+    """
+    if not text.startswith("---\n") and not text.startswith("---\r\n"):
+        return {}
+    match = re.match(r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|\Z)", text, re.S)
+    if not match:
+        return {}
+    scope: dict[str, str] = {}
+    for line in match.group(1).splitlines():
+        key, sep, raw = line.partition(":")
+        key, value = key.strip().lower(), raw.strip()
+        if not sep or key not in {"subject", "framework"}:
+            continue
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        value = value.strip().lower()
+        if re.fullmatch(r"[a-z][a-z0-9_-]*", value):
+            scope[key] = value
+    return scope
+
+
 @lru_cache(maxsize=256)
 def project(doc_id: str, filename: str, text: str, track: str, explicit_language: str = "") -> tuple[Document, ...]:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -71,6 +97,7 @@ def project(doc_id: str, filename: str, text: str, track: str, explicit_language
     # Undetermined uploads stay indexable for instructor management; learner
     # retrieval requires an exact language match, so "und" never reaches chat.
     language = explicit_language or infer_language(filename) or ALL_LANGUAGES
+    scope = _frontmatter_scope(text)
     safe = reference_text(text)
     if not safe:
         return ()  # ambiguous language requires instructor clarification
@@ -79,11 +106,12 @@ def project(doc_id: str, filename: str, text: str, track: str, explicit_language
             "source": filename, "track": track, "language": language,
             "contains_answer": False, "kind": "reference", "revision": revision,
             "projection_version": PROJECTION_VERSION, "verified": False}
+    meta.update(scope)
     return tuple(RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=120).create_documents([safe], metadatas=[meta]))
 
 
 async def search(session, query: str, track: str, language: str, focus_id=None, subject=None, *, max_documents=None) -> list[Document]:
-    if focus_id or subject:
+    if focus_id:
         return []
     tracks = ["dsa", "algorithm", "custom"] if track == "dsa" else [track, "custom"]
     stmt=select(KnowledgeDocument).where(KnowledgeDocument.status=="published",KnowledgeDocument.track.in_(tracks))
@@ -94,12 +122,13 @@ async def search(session, query: str, track: str, language: str, focus_id=None, 
         stmt=stmt.order_by(KnowledgeDocument.created_at.desc()).limit(max_documents)
     rows=(await session.scalars(stmt)).all()
     snapshots=[(r.id,r.filename,r.text,r.track,r.language) for r in rows]
-    return await asyncio.to_thread(_rank, snapshots, query, language)
+    return await asyncio.to_thread(_rank, snapshots, query, language, subject)
 
 
-def _rank(rows, query, language):
+def _rank(rows, query, language, subject=None):
     docs = [chunk for row in rows for chunk in project(*row)
-            if chunk.metadata["language"] in (language, ALL_LANGUAGES)]
+            if chunk.metadata["language"] in (language, ALL_LANGUAGES)
+            and (subject is None or chunk.metadata.get("subject") == subject)]
     if not docs:
         return []
     # Lexical retrieval avoids paid re-embedding of legacy material and applies
