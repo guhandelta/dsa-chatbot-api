@@ -38,7 +38,8 @@ def test_bank_is_deduplicated_and_answers_never_reach_public_views():
         seen.add(fingerprint)
         view = dc.public(item)
         assert 'solution' not in view and 'private_solution' not in view
-        assert not view['automatically_graded'] and view['assessment'] == 'self-review'
+        assert not view['automatically_graded'] and view['assessment'] == 'understanding-check'
+        assert view['code_executed'] is False
     assert dc._fingerprint('java', 'java', 'a + b') == dc._fingerprint('java', 'java', 'a+b')
 
 

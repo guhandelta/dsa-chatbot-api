@@ -47,6 +47,8 @@ class QuizStart(BaseModel):
 class QuizReply(BaseModel):
     item_id: str = Field(min_length=1, max_length=200)
     response: str | int = Field(...)
+    reasoning: str | None = Field(default=None, max_length=4000)
+    transfer: str | None = Field(default=None, max_length=4000)
 
 
 def active(user: User) -> None:
@@ -287,7 +289,8 @@ async def answer_quiz(quiz_id: str, request: QuizReply, user: User = Depends(get
     row = await quiz.owned(session, user, quiz_id)
     await require_language(session, user, row.language)
     provider = quiz.judge_provider()
-    return await quiz.answer(session, user, quiz_id, request.item_id, request.response, provider)
+    return await quiz.answer(session, user, quiz_id, request.item_id, request.response, provider,
+                             reasoning=request.reasoning, transfer=request.transfer)
 
 
 @router.get("/quiz/{quiz_id}")
@@ -308,6 +311,21 @@ class DebugChallengeSelection(BaseModel):
 
 class DebugChallengeReview(BaseModel):
     diagnosis: str = Field(min_length=10, max_length=4000)
+
+
+class DebugUnderstanding(DebugChallengeReview):
+    reasoning: str = Field(min_length=1, max_length=4000)
+    transfer: str = Field(min_length=1, max_length=4000)
+
+
+@router.post('/debug/challenges/{attempt_id}/assess')
+async def assess_debug_challenge(attempt_id: str, request: DebugUnderstanding,
+                                user: User = Depends(get_current_user),
+                                session: AsyncSession = Depends(get_session)):
+    active(user)
+    from app.services.debug_challenges import assess_diagnosis
+    return await assess_diagnosis(session, user, attempt_id, request.diagnosis,
+                                 request.reasoning, request.transfer)
 
 
 async def _debug_topic(session, user, language, focus_id):

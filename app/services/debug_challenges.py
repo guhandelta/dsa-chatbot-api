@@ -53,10 +53,70 @@ PUBLIC_FIELDS = ('id', 'language', 'subject', 'difficulty', 'title', 'code', 'fa
 
 
 def public(item, attempt=None):
+    from app.services.understanding import prompts
+    assessment = json.loads(attempt.understanding_json)['assessment'] if attempt and attempt.understanding_json else None
     return {**{k: item[k] for k in PUBLIC_FIELDS},
             'attempt_id': attempt.id if attempt else None,
             'status': attempt.status if attempt else None,
-            'assessment': 'self-review', 'automatically_graded': False}
+            'assessment': 'rubric-model' if assessment else 'understanding-check',
+            'automatically_graded': bool(assessment), 'code_executed': False,
+            'understanding': prompts('debug'),
+            'understanding_result': assessment}
+
+
+async def assess_diagnosis(session, user, attempt_id, diagnosis, reasoning, transfer):
+    from app.services import quiz, understanding
+    row = await session.get(DebugChallengeAttempt, attempt_id)
+    if row is None or row.user_id != user.id:
+        raise HTTPException(404, 'Debugging challenge not found.')
+    from app.services.language_access import require_language
+    await require_language(session, user, row.language)
+    if row.status != 'assigned':
+        raise HTTPException(409, 'Choose an active debugging challenge before submitting.')
+    understanding.validate(reasoning, transfer)
+    if not diagnosis.strip() or len(diagnosis) > 4000:
+        raise HTTPException(422, 'Include a diagnosis up to 4000 characters.')
+    if row.reviewed_at:
+        last = row.reviewed_at.replace(tzinfo=timezone.utc) if row.reviewed_at.tzinfo is None else row.reviewed_at
+        if (datetime.now(timezone.utc) - last).total_seconds() < 60:
+            raise HTTPException(429, 'Take a moment to revise your reasoning before checking again.')
+    item = bank().get(row.challenge_id)
+    if not item:
+        raise HTTPException(410, 'This debugging challenge was retired. Choose a new one.')
+    await quiz.enforce_budget(session, user.id, 'explain')
+    provider = quiz.judge_provider()
+    if not provider:
+        raise HTTPException(503, 'The understanding grader is unavailable. Keep your diagnosis and retry later.')
+    # Reserve the attempt before contacting the model: parallel clicks cannot
+    # buy multiple evaluations, and stale replies cannot review a skipped case.
+    reserved_at = datetime.now(timezone.utc)
+    reserved = await session.execute(update(DebugChallengeAttempt).where(
+        DebugChallengeAttempt.id == row.id, DebugChallengeAttempt.status == 'assigned',
+        DebugChallengeAttempt.reviewed_at == row.reviewed_at,
+    ).values(reviewed_at=reserved_at).execution_options(synchronize_session=False))
+    if reserved.rowcount != 1:
+        raise HTTPException(409, 'This diagnosis is already being checked. Reload before retrying.')
+    await understanding.reserve_usage(session, user.id)
+    await session.commit()
+    result = await understanding.assess(language=row.language,
+        question='\n'.join([item['title'], item['code'], item['failure'], item['goal']]),
+        reference=item['solution'], response=diagnosis, reasoning=reasoning, transfer=transfer,
+        kind='debug', provider=provider)
+    # Diagnosis correctness is part of the reasoning rubric, not inferred from style.
+    status = 'reviewed' if result['passed'] else 'assigned'
+    saved = await session.execute(update(DebugChallengeAttempt).where(
+        DebugChallengeAttempt.id == row.id, DebugChallengeAttempt.status == 'assigned',
+        DebugChallengeAttempt.reviewed_at == reserved_at,
+    ).values(diagnosis=diagnosis.strip(),
+        understanding_json=json.dumps(dict(reasoning=reasoning, transfer=transfer, assessment=result)),
+        reviewed_at=datetime.now(timezone.utc), status=status).execution_options(synchronize_session=False))
+    if saved.rowcount != 1:
+        await session.rollback()
+        raise HTTPException(409, 'The active challenge changed while checking. Reload to continue.')
+    await session.commit()
+    await session.refresh(row)
+    return {'attempt_id': row.id, 'status': status, 'understanding': result,
+            'assessment': 'rubric-model', 'code_executed': False}
 
 
 def _mapped_nodes(language, topic, meta, payload):
@@ -179,6 +239,8 @@ async def review(session, user, attempt_id, diagnosis):
         raise HTTPException(404, 'Debugging challenge not found.')
     from app.services.language_access import require_language
     await require_language(session, user, row.language)
+    if row.understanding_json:
+        raise HTTPException(409, 'Use the understanding check to revise this assessed diagnosis.')
     row.status = 'reviewed'
     row.diagnosis = diagnosis
     row.reviewed_at = datetime.now(timezone.utc)

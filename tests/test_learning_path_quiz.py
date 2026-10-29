@@ -35,6 +35,23 @@ def item(language, item_id):
     return quiz.items(language)[item_id]
 
 
+@pytest.fixture
+def understanding_grader(monkeypatch):
+    async def assess(**kwargs):
+        return dict(score=1.0, reasoning_score=1.0, transfer_score=1.0, passed=True,
+                    feedback='Your trace is clear. Try another boundary case.', grading='rubric-model')
+    monkeypatch.setattr('app.services.understanding.assess', assess)
+    async def no_model(*args, **kwargs):
+        return None
+    monkeypatch.setattr(quiz, 'model_grade', no_model)
+
+
+async def typed_answer(*args, **kwargs):
+    kwargs.setdefault('provider', 'test')
+    return await quiz.answer(*args, reasoning='A specific trace of this answer.',
+                             transfer='A changed input and its expected output.', **kwargs)
+
+
 # ---------------------------------------------------------------- learning path
 
 def test_shared_spine_has_twelve_stages_on_the_l1_l2_l3_ladder():
@@ -286,7 +303,7 @@ def test_normalize():
 
 # ---------------------------------------------------------------- sessions
 
-async def test_quiz_session_lifecycle_records_answers_and_pays_stage_reward(db):
+async def test_quiz_session_lifecycle_records_answers_and_pays_stage_reward(db, understanding_grader):
     user = await make_user(db, 'lifecycle@example.com')
     db.add(LearningEvent(user_id=user.id, problem_id='python-path-01-values', kind='solved', language='python'))
     await db.flush()
@@ -299,7 +316,7 @@ async def test_quiz_session_lifecycle_records_answers_and_pays_stage_reward(db):
         response = {'mcq': full.get('answer'), 'mcq_code': full.get('answer'), 'short_answer': full.get('answer'),
                     'fix_bug': full.get('solution'), 'write_snippet': full.get('solution'),
                     'explain': full.get('answer')}[full['type']]
-        result = await quiz.answer(db, user, started['quiz_id'], entry['id'], response)
+        result = await typed_answer(db, user, started['quiz_id'], entry['id'], response)
         assert result['correct'], (entry['id'], result)
     assert result['complete'] and [r['reason'] for r in result['rewards']] == ['earn:stage']
     summary = await quiz.summary(db, user, started['quiz_id'])
@@ -308,13 +325,13 @@ async def test_quiz_session_lifecycle_records_answers_and_pays_stage_reward(db):
     assert (await lp.progress(db, user.id, 'python'))['current_id'] == 'python:stage-02'
 
 
-async def test_wrong_and_typed_answers_reveal_weak_spots(db):
+async def test_wrong_and_typed_answers_reveal_weak_spots(db, understanding_grader):
     user = await make_user(db, 'weak@example.com')
     quiz_row = QuizSession(user_id=user.id, language='python', node_id='python:stage-04',
                            items_json=json.dumps(['py-s04-explain', 'py-s04-code']), total=2)
     db.add(quiz_row)
     await db.flush()
-    typed = await quiz.answer(db, user, quiz_row.id, 'py-s04-explain', 'It is fine, each call gets a new list.')
+    typed = await typed_answer(db, user, quiz_row.id, 'py-s04-explain', 'It is fine, each call gets a new list.')
     assert not typed['correct']
     await quiz.answer(db, user, quiz_row.id, 'py-s04-code', 0)
     weak = await quiz.weak_concepts(db, user.id, 'python')
@@ -327,7 +344,7 @@ async def test_wrong_and_typed_answers_reveal_weak_spots(db):
                         items_json=json.dumps(['py-s04-short']), total=1)
     db.add(again)
     await db.flush()
-    await quiz.answer(db, user, again.id, 'py-s04-short', '6 15 4')
+    await typed_answer(db, user, again.id, 'py-s04-short', '6 15 4')
     assert (await quiz.weak_concepts(db, user.id, 'python'))[0]['misses'] == 2
 
 
@@ -398,7 +415,7 @@ async def test_blocked_code_records_a_security_event_and_is_not_run(db):
     db.add(row)
     await db.flush()
     with pytest.raises(HTTPException) as err:
-        await quiz.answer(db, user, row.id, 'py-s01-fix', 'import socket\ndef average_minutes(t, d):\n    return 0')
+        await typed_answer(db, user, row.id, 'py-s01-fix', 'import socket\ndef average_minutes(t, d):\n    return 0')
     assert err.value.status_code in (400, 403)
     assert await db.scalar(select(func.count()).select_from(SecurityEvent).where(SecurityEvent.user_id == user.id)) == 1
     assert await db.scalar(select(func.count()).select_from(QuizAnswer).where(QuizAnswer.quiz_id == row.id)) == 0
@@ -517,7 +534,7 @@ def test_launch_ready_requires_coverage_at_every_node(monkeypatch):
 
 
 @pytest.mark.parametrize('language', ['c', 'typescript'])
-async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language, monkeypatch):
+async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language, monkeypatch, understanding_grader):
     from app.db.models import Transaction
     # Both languages now ship stage files; simulate a stage that has checks only.
     monkeypatch.setattr(lp, 'stage_exercise_id', lambda language, stage: None)
@@ -528,7 +545,7 @@ async def test_quiz_only_stage_never_masters_or_pays_stage_reward(db, language, 
     started = await quiz.start(db, user, language, node['id'], 1)
     full = quiz.items(language)[started['items'][0]['id']]
     response = full['answer'] if 'answer' in full else full['solution']
-    result = await quiz.answer(db, user, started['quiz_id'], full['id'], response)
+    result = await typed_answer(db, user, started['quiz_id'], full['id'], response)
     assert result['correct'] and result['complete']
     assert not any(reward['reason'] == 'earn:stage' for reward in result['rewards'])
     state = await lp.progress(db, user.id, language)
@@ -560,14 +577,14 @@ async def test_module_mastery_requires_a_lesson_and_passed_checks(db, monkeypatc
     assert node['coverage_ready'] is has_lesson
 
 
-async def test_evidence_is_the_learners_own_passing_code_per_concept(db, monkeypatch):
+async def test_evidence_is_the_learners_own_passing_code_per_concept(db, monkeypatch, understanding_grader):
     monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
     user = await make_user(db, 'evidence@example.com')
     node = next(n for n in lp.nodes('c') if any(i['type'] == 'fix_bug' for i in quiz.pool('c', n['id'])))
     started = await quiz.start(db, user, 'c', node['id'], len(quiz.pool('c', node['id'])))
     code_item = next(quiz.items('c')[i['id']] for i in started['items'] if i['type'] == 'fix_bug')
     fixed = code_item['solution']
-    await quiz.answer(db, user, started['quiz_id'], code_item['id'], fixed)
+    await typed_answer(db, user, started['quiz_id'], code_item['id'], fixed)
     rows = await quiz.evidence(db, user.id, 'c')
     assert len(rows) == 1 and rows[0]['code'] == fixed and rows[0]['concept'] == code_item['concept']
     assert 'answer' not in rows[0] and 'expected' not in rows[0] and 'solution' not in rows[0]
@@ -575,11 +592,11 @@ async def test_evidence_is_the_learners_own_passing_code_per_concept(db, monkeyp
     assert await quiz.evidence(db, user.id, 'python') == []
 
 
-async def test_a_wrong_code_answer_is_not_evidence(db, monkeypatch):
+async def test_a_wrong_code_answer_is_not_evidence(db, monkeypatch, understanding_grader):
     monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
     user = await make_user(db, 'wrong-evidence@example.com')
     node = next(n for n in lp.nodes('c') if any(i['type'] == 'fix_bug' for i in quiz.pool('c', n['id'])))
     started = await quiz.start(db, user, 'c', node['id'], len(quiz.pool('c', node['id'])))
     code_item = next(quiz.items('c')[i['id']] for i in started['items'] if i['type'] == 'fix_bug')
-    await quiz.answer(db, user, started['quiz_id'], code_item['id'], code_item['code'])
+    await typed_answer(db, user, started['quiz_id'], code_item['id'], code_item['code'])
     assert await quiz.evidence(db, user.id, 'c') == []

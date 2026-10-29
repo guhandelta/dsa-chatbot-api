@@ -319,6 +319,7 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
                 "item_id": a.item_id, "type": a.item_type, "concept": a.concept,
                 "response": a.response, "correct": a.correct, "score": a.score,
                 "feedback": a.feedback, "misconception": a.misconception,
+                "understanding": json.loads(a.understanding_json) if a.understanding_json else None,
                 "created_at": a.created_at.isoformat(),
             }
             for a in (await session.scalars(select(QuizAnswer).where(
