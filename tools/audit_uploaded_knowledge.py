@@ -35,16 +35,24 @@ async def audit():
                     report['failures'].append(row.id)
                 continue
             docs = project(row.id, row.filename, row.text, row.track, row.language)
-            language = row.language or infer_language(row.filename) or ALL_LANGUAGES
+            # Report the scope actually used by the learner retrieval projection,
+            # including validated front matter on older uploads with a NULL DB tag.
+            language = (docs[0].metadata['language'] if docs else
+                        row.language or infer_language(row.filename) or ALL_LANGUAGES)
+            subject = docs[0].metadata.get('subject') if docs else None
             # Expected source is known independently from the ranking result.
             question = benchmarks.get(row.filename, {}).get('question') or 'Explain ' + row.filename.rsplit('.',1)[0].replace(' — Curriculum Blueprint','')
-            retrieved = await search(session, question, row.track, language)
-            wrong = await search(session, question, row.track, 'javascript' if language=='java' else 'java')
+            # Compare within the declared subject when present. Searching the
+            # entire multi-language upload pool can bury a correct framework
+            # reference beneath unrelated lexical matches and produce false fails.
+            retrieved = await search(session, question, row.track, language, subject=subject)
+            wrong = await search(session, question, row.track, 'javascript' if language=='java' else 'java', subject=subject)
             found = any(d.metadata['document_id']==row.id for d in retrieved)
             no_cross_language = language == ALL_LANGUAGES or all(d.metadata['document_id']!=row.id for d in wrong)
             safe_meta = all(d.metadata['contains_answer'] is False and d.metadata['language'] in (language, ALL_LANGUAGES) and d.metadata['verified'] is False for d in docs)
             item = {'document_id':row.id, 'filename':row.filename, 'track':row.track,
-                'language':language, 'original_characters':len(row.text), 'original_sha256':hashlib.sha256(row.text.encode()).hexdigest(),
+                'stored_language':row.language, 'language':language,
+                'original_characters':len(row.text), 'original_sha256':hashlib.sha256(row.text.encode()).hexdigest(),
                 'reference_chunks':len(docs), 'reference_characters':sum(len(d.page_content) for d in docs),
                 'question':question, 'source_found_at_4':found, 'wrong_language_excluded':no_cross_language,
                 'approval_fingerprint':hashlib.sha256(json.dumps([row.status,row.reviewed_by,str(row.reviewed_at),row.review_note]).encode()).hexdigest(),

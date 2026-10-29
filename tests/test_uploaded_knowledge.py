@@ -29,6 +29,51 @@ def test_unclassified_uploads_use_explicit_all_language_scope():
     assert docs and all(d.metadata['language'] == uk.ALL_LANGUAGES for d in docs)
 
 
+@pytest.mark.parametrize('filename', [
+    'web-fundamentals-course-plan.pdf',
+    'web-fundamentals-course-plan-revised.pdf',
+    'Frontend REACT Developer.pdf',
+])
+def test_course_plans_are_not_learner_retrieval_sources(filename):
+    docs = uk.project('course-plan', filename,
+                      'A course plan lists goals, sequencing, and future modules.', 'custom')
+    assert not docs
+
+
+@pytest.mark.parametrize(('filename', 'language'), [
+    ('PHP 8 notes.md', 'php'), ('Dart fundamentals.md', 'dart'),
+    ('Kotlin basics.md', 'kotlin'), ('Swift foundations.md', 'swift'),
+    ('Scala 3 guide.md', 'scala'), ('Haskell guide.md', 'haskell'),
+    ('PHP8_DSA_CORPUS.md', 'php'), ('scala3-dsa-catalog.md', 'scala'),
+    ('C17 memory.md', 'c'), ('C++ vectors.md', 'cpp'), ('C# collections.md', 'csharp'),
+])
+def test_infer_language_supports_all_currently_supported_languages(filename, language):
+    assert uk.infer_language(filename) == language
+
+
+def test_unlabeled_upload_uses_valid_language_from_frontmatter():
+    text = ('---\nlanguage: kotlin\nsubject: kotlin\nverified: false\n---\n'
+            'Kotlin nullable values require explicit handling before use.')
+    docs = uk.project('kotlin-notes', 'nullable-values.md', text, 'custom')
+    assert docs and all(d.metadata['language'] == 'kotlin' for d in docs)
+    assert all(d.metadata['subject'] == 'kotlin' for d in docs)
+    assert all('language: kotlin' not in d.page_content for d in docs)
+
+
+def test_conflicting_upload_and_frontmatter_languages_are_withheld():
+    text = ('---\nlanguage: kotlin\nsubject: kotlin\n---\n'
+            'Java nullable values require explicit handling before use.')
+    docs = uk.project('java-notes', 'notes.md', text, 'custom', 'java')
+    assert not docs
+
+
+def test_unknown_frontmatter_language_does_not_become_a_supported_scope():
+    text = ('---\nlanguage: imaginary\n---\n'
+            'General language-neutral notes about algorithmic complexity and arrays.')
+    docs = uk.project('unknown-notes', 'notes.md', text, 'custom')
+    assert docs and all(d.metadata['language'] == uk.ALL_LANGUAGES for d in docs)
+
+
 def test_frontmatter_subject_is_preserved_without_exposing_frontmatter():
     text = ('---\nsubject: spring-boot\nframework: spring\nverified: false\n---\n'
             'Spring Boot configuration binds external properties to typed settings.')

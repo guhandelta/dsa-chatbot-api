@@ -22,7 +22,13 @@ _LANGUAGES = (("javascript", r"javascript|\bjs\b"), ("typescript", r"typescript|
               ("html", r"\bhtml(?:5)?\b|web apis"),
               ("css", r"\bcss(?:3)?\b|\bsass\b|\bscss\b|\bbootstrap\b|\btailwind\b|\bbulma\b|\bshadcn\b"),
               ("ruby", r"\bruby\b"), ("csharp", r"c#|\bcsharp\b"),
-              ("c", r"\bc(?:11|17|23)?\b"))
+              ("php", r"\bphp(?:\d+)?(?=$|[^a-z0-9])|\blaravel\b"),
+              ("dart", r"\bdart(?:\d+)?(?=$|[^a-z0-9])|\bflutter\b"),
+              ("kotlin", r"\bkotlin\b|\bandroid\b"), ("swift", r"\bswift\b"),
+              ("scala", r"\bscala(?:\d+)?(?=$|[^a-z0-9])"),
+              ("haskell", r"\bhaskell\b|\bghc\b"),
+              ("c", r"\bc(?:11|17|23)?\b(?!\s*(?:\+\+|#))"))
+_LANGUAGE_SCOPES = {language for language, _ in _LANGUAGES} | {"all_languages"}
 # Stop, rather than merely removing a heading: PDF tables can continue many
 # pages after the heading and extraction can interleave columns/page furniture.
 _BOUNDARY = re.compile(r"^\s*(?:#{1,6}\s*|\d+[.)]\s*)?(?:gotcha|curriculum levels|exercise|workout|quiz|solution|answer|canonical|reference implementation|ready.to.ingest|chunk schema|ingestion checklist|snippet\s+result|example_good|expected(?:_output)?\s*:|test_cases\s*:)", re.I)
@@ -78,12 +84,12 @@ def _frontmatter_scope(text: str) -> dict[str, str]:
     for line in match.group(1).splitlines():
         key, sep, raw = line.partition(":")
         key, value = key.strip().lower(), raw.strip()
-        if not sep or key not in {"subject", "framework"}:
+        if not sep or key not in {"language", "subject", "framework"}:
             continue
         if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
             value = value[1:-1]
         value = value.strip().lower()
-        if re.fullmatch(r"[a-z][a-z0-9_-]*", value):
+        if re.fullmatch(r"[a-z][a-z0-9_-]*", value) and (key != "language" or value in _LANGUAGE_SCOPES):
             scope[key] = value
     return scope
 
@@ -96,8 +102,17 @@ def project(doc_id: str, filename: str, text: str, track: str, explicit_language
         return ()
     # Undetermined uploads stay indexable for instructor management; learner
     # retrieval requires an exact language match, so "und" never reaches chat.
-    language = explicit_language or infer_language(filename) or ALL_LANGUAGES
     scope = _frontmatter_scope(text)
+    # Explicit upload metadata wins. When older uploads omitted the selector,
+    # honor a validated language declared in their own front matter before
+    # falling back to filename inference or the explicit shared scope.
+    declared_language = scope.get("language")
+    if (explicit_language and declared_language
+            and declared_language not in (explicit_language, ALL_LANGUAGES)):
+        # A stale selector must not relabel language-specific prose as another
+        # language. Withhold it until the source metadata is corrected.
+        return ()
+    language = explicit_language or scope.get("language") or infer_language(filename) or ALL_LANGUAGES
     safe = reference_text(text)
     if not safe:
         return ()  # ambiguous language requires instructor clarification
@@ -106,7 +121,7 @@ def project(doc_id: str, filename: str, text: str, track: str, explicit_language
             "source": filename, "track": track, "language": language,
             "contains_answer": False, "kind": "reference", "revision": revision,
             "projection_version": PROJECTION_VERSION, "verified": False}
-    meta.update(scope)
+    meta.update({key: value for key, value in scope.items() if key != "language"})
     return tuple(RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=120).create_documents([safe], metadatas=[meta]))
 
 

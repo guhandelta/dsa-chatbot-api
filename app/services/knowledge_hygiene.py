@@ -12,7 +12,10 @@ VERSION = 'reference-cleanup-v3'
 PUBLIC_REFERENCE_KINDS = {'concept', 'reference'}
 # 00b says it is "still BLOCKED for publication": evidence levels and operator-only checks.
 PLANNING_SOURCES = {'html-batch-00-manifest.md', 'html-batch-00b-reference-inventory.md',
-                    'html-batch-00d-ui-patterns-and-practice.md'}
+                    'html-batch-00d-ui-patterns-and-practice.md',
+                    'web-fundamentals-course-plan.pdf',
+                    'web-fundamentals-course-plan-revised.pdf',
+                    'frontend react developer.pdf'}
 QUARANTINED_IDS = {
     'ref-820a2ea30c7c8d90b644361b':
         'Undirected adjacency insertion publishes the first edge before reverse allocation succeeds; failure leaves a one-sided edge. Needs a reviewed repair.',
