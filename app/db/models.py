@@ -127,7 +127,16 @@ class QuizAnswer(Base):
     feedback: Mapped[str] = mapped_column(Text, nullable=False, default="")
     grading: Mapped[str] = mapped_column(String(20), nullable=False, default="")
     misconception: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    understanding_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, index=True)
+
+
+class UnderstandingCheckEvent(Base):
+    """Usage reservations, including retries and failed model calls; no answer text."""
+    __tablename__ = 'understanding_check_events'
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'), nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow, index=True)
 
 
 class StudyNote(Base):
@@ -420,6 +429,7 @@ class DebugChallengeAttempt(Base):
     difficulty: Mapped[str] = mapped_column(String(20), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="assigned")
     diagnosis: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    understanding_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
