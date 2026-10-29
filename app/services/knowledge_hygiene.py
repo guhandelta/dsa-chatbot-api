@@ -6,9 +6,10 @@ Keep this policy shared by the importer and the one-off maintenance command.
 from copy import deepcopy
 import hashlib
 import json
+from pathlib import Path
 import re
 
-VERSION = 'reference-cleanup-v3'
+VERSION = 'reference-cleanup-v4'
 PUBLIC_REFERENCE_KINDS = {'concept', 'reference'}
 # 00b says it is "still BLOCKED for publication": evidence levels and operator-only checks.
 PLANNING_SOURCES = {'html-batch-00-manifest.md', 'html-batch-00b-reference-inventory.md',
@@ -43,6 +44,60 @@ CHUNK_ID = re.compile(r'\n+Chunk: ([A-Za-z0-9_.:-]+)\s*$')
 # TypeScript tables use it for the reason and keep the label.
 WATCH_OUT_DOCS = ('c_', 'ec_', 'ruby_', 'py_emb_')
 LEVEL_CODE = re.compile(r'^L[0-9]$')
+# v4 (2026-10-29 verification pass): template filler that retrieves well but
+# teaches nothing. Generic lines are listed per subject in reference_boilerplate.json.
+BOILERPLATE_LINES = {subject: frozenset(lines) for subject, lines in json.loads(
+    (Path(__file__).with_name('reference_boilerplate.json')).read_text(encoding='utf-8')).items()
+    if not subject.startswith('_')}
+TAG_LIST_LINE = re.compile(r"\n\[(?:'[^'\n]*'(?:, )?)+\]\s*$")
+KEYWORD_STUB_TITLE = re.compile(r'^(?:Context: [^\n]*\n)?[^\n]* concept \d+\n')
+DATASET_SENTENCE = re.compile(r'These chunks cover [^.\n]*\.[ \t]*'
+                              r'|(?:Every row(?: below)? is backed by|Each is covered by) a tested chunk\.[ \t]*')
+# Their "Result" column was lost in PDF extraction, so calls appear without values.
+LIVE_OUTPUTS = re.compile(r'(?:^|\n)\d+\.\d+ Live outputs on sample inputs\n.*?(?=\n\d+\.\d+ [A-Z]|\Z)', re.S)
+PLACEHOLDER_LINES = re.compile(r'^(?:\d+\. Canonical Rust 2021 pattern|// Canonical Rust 2021 sketch.*'
+                               r'|Canonical skeleton|def solve\(data\):.*raise NotImplementedError.*'
+                               r'|.*\{\s*// Implement [^}]*\})$')
+VOCABULARY_LINE = re.compile(r'^(.+): learner should recognize and explain this term in a Rust implementation\.$')
+NUMBERED_HEADING = re.compile(r'^\d+\.\s+\S')
+FRAMEWORK_LENS = ('Practice at least three construction paths', 'Learning contract', 'Reusable learning lenses',
+                  'Dedicated handling track')
+# Exact repairs of statements found wrong in the 2026-10-29 fact-check sample.
+CORRECTIONS = (
+    (('python-django', 'python-flask'),
+     'CPU-bound work blocks the event loop; choose sync endpoints, thread/process offload, streaming, bounded state, and safe cache lifetimes deliberately.',
+     'CPU-bound work occupies a worker for the whole request; offload heavy work to a task queue or separate process, bound state, and choose safe cache lifetimes deliberately.'),
+    (('css',), 'svg markers or list markers', 'SVG markers'),
+    (('css',), 'SVG markers or list markers', 'SVG markers'),
+    (('cpp',), 'In C++20 a recursive lambda can take an explicit self parameter and invoke that parameter recursively',
+     'Since C++14 a generic lambda can take itself as an auto& parameter and call that parameter recursively'),
+    (('rust',), ' Default Rust rule: borrow slices/references when ownership is unnecessary; own data when the API needs to store it; prefer indices/arenas before shared mutable pointer graphs.', ''),
+    (None, 'Operation: btSplit\nMutates: yes\nTechnique: Median goes up\nTime: O(1)',
+     'Operation: btSplit\nMutates: yes\nTechnique: Median goes up\nTime: O(t) for minimum degree t'),
+)
+# Three generated CSS/HTML debug cases had their fields shifted by one column.
+DEBUG_REPAIRS = (
+    ('- Diagnostic goal: Check the boundary contract before styling around the symptom.\n### Buggy code\n```css\n'
+     'Respect the user media preference.\n```\n### Expected diagnosis\n.panel { transition: transform .4s; }\n',
+     '- Diagnostic goal: Respect the user media preference.\n### Buggy code\n```css\n.panel { transition: transform .4s; }\n```\n'
+     '### Expected diagnosis\nThe transition runs even when the user has asked for reduced motion; nothing checks prefers-reduced-motion.\n'),
+    ('- Diagnostic goal: Check the boundary contract before styling around the symptom.\n### Buggy code\n```css\n'
+     'Find fixed widths and allow content to wrap or shrink.\n```\n### Expected diagnosis\n.container { width: 1200px; }\n',
+     '- Diagnostic goal: Find fixed widths and allow content to wrap or shrink.\n### Buggy code\n```css\n.container { width: 1200px; }\n```\n'
+     '### Expected diagnosis\nA fixed 1200px width is wider than a phone viewport, so the page scrolls horizontally.\n'),
+    ('### Buggy code\n```html\n<meta name="viewport" content="width=device-width, initial-scale=1">\n```\n'
+     '### Expected diagnosis\nMobile browsers use a desktop layout viewport',
+     '### Buggy code\n```html\n<head>\n  <title>Shop</title>\n</head>\n```\n'
+     '### Expected diagnosis\nMobile browsers use a desktop layout viewport'),
+    # The same two cases when a section chunk ends right after the buggy code.
+    ('- Diagnostic goal: Check the boundary contract before styling around the symptom.\n### Buggy code\n```css\n'
+     'Respect the user media preference.\n```',
+     '- Diagnostic goal: Respect the user media preference.\n### Buggy code\n```css\n.panel { transition: transform .4s; }\n```'),
+    ('- Diagnostic goal: Check the boundary contract before styling around the symptom.\n### Buggy code\n```css\n'
+     'Find fixed widths and allow content to wrap or shrink.\n```',
+     '- Diagnostic goal: Find fixed widths and allow content to wrap or shrink.\n### Buggy code\n```css\n.container { width: 1200px; }\n```'),
+)
+DEBUG_EXERCISE_ID = re.compile(r'\b[A-Z0-9]+-[EMH]-\d+\b')
 DATA_STRUCTURE_IDS = {
     'arrays': 'array', 'dynamic arrays': 'dynamic-array', 'dynamic memory buffers': 'dynamic-array',
     'strings': 'string', 'singly linked list': 'linked-list', 'singly linked lists': 'linked-list',
@@ -100,6 +155,11 @@ def quarantine_reason(row):
         return 'Dataset manifest listing source files; not learner reference text.'
     if re.search(r'\bRAG grader\b|\bgrader should\b|Training Data for the DSA Mentor', text, re.I):
         return 'Grader rubric or dataset description, not learner reference text.'
+    if (row['metadata'].get('subject') == 'rust' and len(text) < 600
+            and KEYWORD_STUB_TITLE.match(text) and TAG_LIST_LINE.search(text)):
+        return 'Keyword stub: a title, one sentence and a tag list; no teaching content.'
+    if row['metadata'].get('subject') in FRAMEWORK_SUBJECTS and any(marker in text for marker in FRAMEWORK_LENS):
+        return 'Generic framework "learning lens" template with the topic name filled in; no topic- or framework-specific content.'
     return None
 
 
@@ -264,6 +324,7 @@ def normalize_reference(row):
         document = document[:chunk.start()]
     if str(pm.get('doc', '')).startswith(WATCH_OUT_DOCS) and pm.get('section') == 'algorithms-and-strategies':
         document = re.sub(r'^Why: ', 'Watch out for: ', document, flags=re.M)
+    document = strip_filler(document, m)
     row['document'] = document
     previous_id = None
     if m['subject'] == 'c' and (pm.get('track') == 'embedded_c' or str(pm.get('doc', '')).startswith('ec_')):
@@ -284,6 +345,46 @@ def normalize_reference(row):
     return row, previous_id
 
 
+def strip_filler(document, m):
+    """Remove v4 template filler and apply exact corrections; idempotent."""
+    tags = TAG_LIST_LINE.search(document)
+    if tags:
+        m.setdefault('tags', ', '.join(re.findall(r"'([^'\n]*)'", tags.group(0))))
+        document = document[:tags.start()]
+    document = DATASET_SENTENCE.sub('', document)
+    document = LIVE_OUTPUTS.sub('', document)
+    boiler = BOILERPLATE_LINES.get(m.get('subject'), frozenset())
+    lines, terms = [], []
+    for line in document.split('\n'):
+        stripped = line.strip()
+        vocabulary = VOCABULARY_LINE.match(stripped)
+        if vocabulary:
+            terms.append(vocabulary.group(1))
+            continue
+        if stripped in boiler or PLACEHOLDER_LINES.match(stripped):
+            continue
+        lines.append(line)
+    if terms:
+        index = next((i for i, line in enumerate(lines) if line.strip() == 'Recognition vocabulary'), None)
+        summary = 'Recognition vocabulary: ' + ', '.join(terms) + '.'
+        if index is None:
+            lines.append(summary)
+        else:
+            lines[index] = summary
+    # A numbered heading left with nothing under it goes too.
+    kept = [line for i, line in enumerate(lines)
+            if not (i and NUMBERED_HEADING.match(line.strip())
+                    and (i + 1 == len(lines) or NUMBERED_HEADING.match(lines[i + 1].strip())))]
+    document = '\n'.join(kept).rstrip()
+    for subjects, old, new in CORRECTIONS:
+        if subjects is None or m.get('subject') in subjects:
+            document = document.replace(old, new)
+    if str(m.get('origin', '')).startswith('debug-exercises/'):
+        for old, new in DEBUG_REPAIRS:
+            document = document.replace(old, new)
+    return document
+
+
 def _near_duplicate_key(row):
     text = row['document']
     lines = text.split('\n', 1)
@@ -295,6 +396,9 @@ def _near_duplicate_key(row):
         if len(topic) > 2:
             text = re.sub(re.escape(topic), ' ', text, flags=re.I)
     text = re.sub(r'\b(?:django|flask|fastapi)\b', ' ', text, flags=re.I)
+    if str(row['metadata'].get('origin', '')).startswith('debug-exercises/'):
+        # Generated debug sets repeat each scenario across Easy/Medium/Hard with new IDs only.
+        text = DEBUG_EXERCISE_ID.sub(' ', re.sub(r'Difficulty: \w+', ' ', text))
     return re.sub(r'[\W_]+', ' ', text.casefold()).strip()
 
 
@@ -316,6 +420,11 @@ def clean_reference_rows(rows):
             quarantine.append({'reason': reason, 'record': deepcopy(original)})
             continue
         row, previous_id = normalize_reference(deepcopy(original))
+        body = row['document'].split('\n', 1)[1] if '\n' in row['document'] else ''
+        if (row['document'] != original['document'] and row['metadata']['kind'] in PUBLIC_REFERENCE_KINDS
+                and len(re.sub(r'^Context: [^\n]*\n', '', body).strip()) < 40):
+            quarantine.append({'reason': 'Nothing teachable left after removing template text.', 'record': deepcopy(original)})
+            continue
         if previous_id:
             row['previous_ids'] = sorted(set(row.get('previous_ids', [])) | {previous_id})
         m = row['metadata']
