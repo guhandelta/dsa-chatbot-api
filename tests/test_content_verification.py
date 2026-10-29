@@ -10,8 +10,7 @@ def test_reference_admission_covers_every_function_test_adapter():
     from app.services.content_verification import FUNCTION_TEST_LANGUAGES
     assert FUNCTION_TEST_LANGUAGES == {
         'python', 'javascript', 'typescript', 'java', 'c', 'cpp', 'rust',
-        'ruby', 'go', 'csharp',
-        'php',
+        'ruby', 'go', 'csharp', 'php', 'dart', 'kotlin', 'swift', 'scala', 'haskell',
     }
 
 
@@ -64,6 +63,31 @@ def test_reference_extractor_handles_cpp_heading_punctuation():
         '    return price * quantity;\n'
         '}'
     )
+
+
+@pytest.mark.parametrize('language,label,fence,code,function', [
+    ('php', 'PHP', 'php', '<?php function doubleValue($x) { return $x * 2; }', 'doubleValue'),
+    ('dart', 'Dart', 'dart', 'int doubleValue(int x) => x * 2;', 'doubleValue'),
+    ('kotlin', 'Kotlin', 'kotlin', 'fun doubleValue(x: Int): Int = x * 2', 'doubleValue'),
+    ('swift', 'Swift', 'swift', 'func doubleValue(_ x: Int) -> Int { x * 2 }', 'doubleValue'),
+    ('scala', 'Scala', 'scala', 'object Solution { def doubleValue(x: Int): Int = x * 2 }', 'doubleValue'),
+    ('haskell', 'Haskell', 'haskell', 'doubleValue :: Int -> Int\ndoubleValue x = x * 2', 'doubleValue'),
+])
+def test_new_function_languages_are_discoverable_from_exercise_documents(
+        tmp_path, monkeypatch, language, label, fence, code, function):
+    root = tmp_path / 'content'
+    dsa = root / 'dsa'
+    dsa.mkdir(parents=True)
+    monkeypatch.setattr(content_catalog, 'CONTENT_DIR', root)
+    item = dsa / f'catalog-{language}.md'
+    item.write_text(
+        '---\ntrack: dsa\ntest_cases: [{"args":[2],"expected":4}]\n---\n'
+        f'# Catalog fixture\n\n### {label}\n```{fence}\n{code}\n```\n',
+        encoding='utf-8')
+    cases, expected, _names, mode = content_catalog.load_test_cases(item.stem)
+    reference = content_catalog.reference_solution(item.stem, language)
+    assert mode == 'function' and cases == [[2]] and expected == [4]
+    assert reference and reference[0].strip() == code and reference[1] == function
 
 
 def test_repeated_fixtures_are_not_sufficient_coverage():

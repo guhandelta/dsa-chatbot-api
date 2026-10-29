@@ -255,7 +255,8 @@ def known_patterns() -> list[str]:
 
 
 def known_languages() -> list[str]:
-    return ["python", "javascript", "java", "cpp", "c", "rust", "typescript", "ruby", "go", "csharp"]
+    return ["python", "javascript", "java", "cpp", "c", "rust", "typescript", "ruby",
+            "go", "csharp", "php", "dart", "kotlin", "swift", "scala", "haskell"]
 
 
 def level_summary(language: str | None = None) -> list[dict]:
@@ -345,7 +346,8 @@ def load_test_cases(content_id: str, *, text: str | None = None) -> tuple[list, 
     fns = {}
     if front.get("fn_python"):
         fns["python"] = front["fn_python"]
-    for lang in ("javascript", "java", "cpp", "c", "rust", "typescript", "ruby", "go", "csharp"):
+    for lang in ("javascript", "java", "cpp", "c", "rust", "typescript", "ruby", "go",
+                 "csharp", "php", "dart", "kotlin", "swift", "scala", "haskell"):
         if front.get(f"fn_{lang}"):
             fns[lang] = front[f"fn_{lang}"]
     # Legacy DSA documents encode the Java method in the reference snippet.
@@ -376,7 +378,9 @@ def reference_solution(content_id: str, language: str = "python", *, text: str |
     labels = {
         "python": "Python", "javascript": "JavaScript", "java": "Java",
         "typescript": "TypeScript", "c": "C", "cpp": "C++", "rust": "Rust",
-        "ruby": "Ruby", "go": "Go", "csharp": "C#",
+        "ruby": "Ruby", "go": "Go", "csharp": "C#", "php": "PHP",
+        "dart": "Dart", "kotlin": "Kotlin", "swift": "Swift",
+        "scala": "Scala", "haskell": "Haskell",
     }
     label = labels.get(language)
     if not label:
@@ -399,6 +403,12 @@ def reference_solution(content_id: str, language: str = "python", *, text: str |
             "c": r"^[\w\s*]+?\b(\w+)\s*\(",
             "cpp": r"^[\w:\s*&<>]+?\b(\w+)\s*\(",
             "rust": r"^\s*(?:pub\s+)?(?:fn)\s+(\w+)\s*\(",
+            "php": r"^\s*(?:<\?php\s*)?(?:(?:public|protected|private|static|final)\s+)*function\s+(\w+)\s*\(",
+            "dart": r"(?:^|[{};\n])\s*(?:[\w<>,?.\[\]]+\s+)?([A-Za-z_]\w*)\s*\(",
+            "kotlin": r"\bfun\s+(?:<[^>]+>\s+)?(\w+)\s*\(",
+            "swift": r"\bfunc\s+(\w+)\s*\(",
+            "scala": r"\bdef\s+(\w+)\s*(?:\[[^]]+\])?\s*\(",
+            "haskell": r"^\s*([a-z][A-Za-z0-9_']*)\s*(?:::|[^=\n]*=)",
         }
         pattern = patterns.get(language)
         if not pattern:
