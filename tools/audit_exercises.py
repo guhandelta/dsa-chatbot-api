@@ -4,6 +4,7 @@ Usage: .venv/bin/python -m tools.audit_exercises --output docs/exercise-audit.js
        .venv/bin/python -m tools.audit_exercises --language typescript --output /tmp/ts-audit.json
 Exit 1 means at least one exercise is blocked. Does not call an LLM or spend credits.
 """
+from concurrent.futures import ThreadPoolExecutor
 import argparse
 import json
 from datetime import datetime, timezone
@@ -21,11 +22,13 @@ FUNCTION_LANGUAGES = tuple(
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--language', choices=FUNCTION_LANGUAGES,
+    parser.add_argument('--language', choices=FUNCTION_LANGUAGES, action='append',
                         help='Audit one language instead of every function-test language.')
+    parser.add_argument('--publish-evidence',action='store_true',help='Record version-bound execution outcomes for the dashboard')
+    parser.add_argument('--workers',type=int,default=1,choices=range(1,5),help='At most four isolated execution jobs')
     args = parser.parse_args()
-    exercises, reference_only = [], []
-    languages = (args.language,) if args.language else FUNCTION_LANGUAGES
+    exercises, reference_only, tasks = [], [], []
+    languages = tuple(dict.fromkeys(args.language)) if args.language else FUNCTION_LANGUAGES
     for item in list_content():
         if item.track not in ('dsa', 'language', 'algorithm'):
             continue
@@ -37,8 +40,18 @@ def main():
             continue
         item_languages = (item.language,) if item.language else languages
         for language in item_languages:
-            result = verify_reference(item.id, language)
-            exercises.append({'id': item.id, 'language': language, **result})
+            tasks.append((item.id,language))
+    from app.services.code_runner import available_languages
+    from app.services.verification_evidence import verifier_fingerprint
+    initial_profile=verifier_fingerprint()
+    available_languages()  # Warm container toolchain detection before parallel work.
+    def execute(task):
+        content_id,language=task
+        return {'id':content_id,'language':language,**verify_reference(content_id,language)}
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        for result in pool.map(execute,tasks):
+            exercises.append(result)
+            print(f"{result['id']} [{result['language']}]: {'passed' if result['verified'] else 'needs attention'}",flush=True)
     blocked = [r for r in exercises if not r['verified']]
     from app.services.curriculum import records
     corpus_exercises = [r['id'] for r in records() if r['metadata']['kind'] == 'exercise']
@@ -66,6 +79,11 @@ def main():
               'exercises': exercises, 'reference_only': reference_only}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + '\n')
+    if args.publish_evidence:
+        from app.services.verification_evidence import publish_execution
+        if verifier_fingerprint()!=initial_profile:
+            raise RuntimeError('Verifier changed during the audit; rerun before publishing evidence')
+        print(f'Published {publish_execution(report)} execution checks',flush=True)
     print(f"{len(exercises)-len(blocked)} verified references; {len(blocked)} blocked; {len(reference_only)} reference-only items")
     for row in blocked:
         print(row['id'], row['language'], '; '.join(row['issues']))

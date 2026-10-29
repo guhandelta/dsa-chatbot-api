@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "reviews": [
+    {
+      "source": "reference_library/records.jsonl",
+      "record_id": "ref-gapfill-v1-java-generics-invariance-and-bounded-wildcards",
+      "content_sha256": "f53dbebe6a2c6bd6f13b266c8979d5a2e3d0c7994331f83fdf1d14f94b20f468",
+      "reviewed_at": "2026-10-29T02:20:31.568338+00:00",
+      "reviewer": "assistant_primary_document_comparison",
+      "status": "claims_source_checked",
+      "scope": "Listed claims only; other sentences and teaching quality remain unreviewed",
+      "full_record_certified": false,
+      "claims": [
+        {
+          "claim": "Upper-bounded wildcard lists expose their bound when reading, but do not allow insertion of an arbitrary non-null bound value.",
+          "sources": [
+            "https://docs.oracle.com/javase/tutorial/java/generics/wildcardGuidelines.html"
+          ]
+        },
+        {
+          "claim": "Lower-bounded wildcard lists can accept the lower-bound type.",
+          "sources": [
+            "https://docs.oracle.com/javase/tutorial/java/generics/lowerBounded.html"
+          ]
+        },
+        {
+          "claim": "Runtime type checks cannot generally distinguish List<String> from List<Integer> because of type erasure.",
+          "sources": [
+            "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.6"
+          ]
+        }
+      ]
+    },
+    {
+      "source": "reference_library/records.jsonl",
+      "record_id": "ref-gapfill-v1-java-equality-ordering-hashing-and-collection-complexity",
+      "content_sha256": "fb46a818fb74e08602892fb2ae75cc0315c850f19672d6cab0b082e81b8f4f2c",
+      "reviewed_at": "2026-10-29T02:20:31.568471+00:00",
+      "reviewer": "assistant_primary_document_comparison",
+      "status": "claims_source_checked",
+      "scope": "Listed claims only; other sentences and teaching quality remain unreviewed",
+      "full_record_certified": false,
+      "claims": [
+        {
+          "claim": "TreeMap determines key equivalence by ordering comparison; ordering inconsistent with equals does not obey the general Map equality contract.",
+          "sources": [
+            "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/TreeMap.html"
+          ]
+        }
+      ]
+    },
+    {
+      "source": "reference_library/records.jsonl",
+      "record_id": "ref-gapfill-v1-typescript-type-erasure-assertions-enums-and-external-data",
+      "content_sha256": "e236d253c931fe418ff942301d907f035a29e0e49dfe87d14fbe39b20886343d",
+      "reviewed_at": "2026-10-29T02:20:31.568475+00:00",
+      "reviewer": "assistant_primary_document_comparison",
+      "status": "claims_source_checked",
+      "scope": "Listed claims only; other sentences and teaching quality remain unreviewed",
+      "full_record_certified": false,
+      "claims": [
+        {
+          "claim": "Type assertions do not add runtime validation.",
+          "sources": [
+            "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions"
+          ]
+        },
+        {
+          "claim": "Non-null assertions do not change runtime behavior.",
+          "sources": [
+            "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#non-null-assertion-operator-postfix-"
+          ]
+        },
+        {
+          "claim": "Ordinary enums can produce runtime objects rather than being only erased type declarations.",
+          "sources": [
+            "https://www.typescriptlang.org/docs/handbook/enums.html#enums-at-runtime"
+          ]
+        }
+      ]
+    }
+  ]
+}

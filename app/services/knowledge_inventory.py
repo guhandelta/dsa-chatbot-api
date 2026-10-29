@@ -31,6 +31,7 @@ def _file_record(relative: str, *, rows: int, by_language: dict, by_subject: dic
         "publication_review": "not_applicable",
         "executable_examples": "not_recorded",
         "pedagogical_review": "not_recorded",
+        "factual_review": "not_recorded",
         "quality_status": "not_certified",
     }
 
@@ -41,12 +42,16 @@ def _jsonl_inventory(relative: str, source_summary: str) -> dict | None:
         return None
     languages, subjects, sources, versions = Counter(), Counter(), Counter(), Counter()
     count = provenance_rows = 0
+    reference_hashes = {}
     with path.open(encoding="utf-8") as stream:
         for line in stream:
             if not line.strip():
                 continue
             row = json.loads(line)
             metadata = row.get("metadata", {})
+            from app.services.reference_library import eligible
+            if eligible(row):
+                reference_hashes[row['id']] = hashlib.sha256(row['document'].encode()).hexdigest()
             languages[str(metadata.get("language") or "unknown")] += 1
             subjects[str(metadata.get("subject") or metadata.get("language") or "unknown")] += 1
             record_provenance = row.get("provenance") or metadata.get("source")
@@ -71,6 +76,12 @@ def _jsonl_inventory(relative: str, source_summary: str) -> dict | None:
     # A source row may list multiple origin files. Count rows independently of
     # label count; individual labels stay in the corpus to avoid huge payloads.
     record["by_declared_version"] = dict(versions.most_common(8))
+    from app.services.reference_review_evidence import claim_review_summary
+    record['factual_evidence'] = claim_review_summary(relative, reference_hashes)
+    if record['factual_evidence']['records_with_checked_claims']:
+        record['factual_review'] = 'partial_claim_review'
+    elif record['factual_evidence']['stale_records']:
+        record['factual_review'] = 'outdated_claim_evidence'
     return record
 
 
@@ -116,6 +127,15 @@ def _authored_inventory() -> dict:
     for path in paths:
         digest.update(path.relative_to(DATA_DIR).as_posix().encode())
         digest.update(path.read_bytes())
+    from app.services.verification_evidence import execution_summary
+    evidence = execution_summary(paths)
+    execution_status = 'fixtures_present_is_not_execution_evidence'
+    if evidence['failed'] or evidence['blocked']:
+        execution_status = 'checks_need_attention'
+    elif evidence['passed']:
+        execution_status = 'tests_passed_for_recorded_cases'
+    elif evidence['stale']:
+        execution_status = 'outdated_evidence'
     return {
         "source_id": "authored:content-catalog",
         "source_type": "authored_markdown",
@@ -130,7 +150,9 @@ def _authored_inventory() -> dict:
         "provenance": "Repository-authored curriculum and problem files; individual source metadata may identify external origins.",
         "retrieval_status": "available",
         "publication_review": "not_applicable",
-        "executable_examples": "fixtures_present_is_not_execution_evidence",
+        "executable_examples": execution_status,
+        "execution_evidence": evidence,
+        "factual_review": "not_recorded",
         "pedagogical_review": "not_recorded",
         "quality_status": "not_certified",
     }
@@ -182,6 +204,7 @@ def build_inventory() -> dict:
             "available": "Source can be considered by its corresponding retrieval/learning path.",
             "published": "Retrieval availability only; not a correctness, execution, or teaching-quality claim.",
             "not_recorded": "No version-bound evidence is stored; this does not mean verified or failed.",
+            "execution_evidence": "Recorded checks are matched to current source and verifier hashes. Changed content or verification logic makes a result stale.",
         },
         "sources": sources,
         "limitations": [
