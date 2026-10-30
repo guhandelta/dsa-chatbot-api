@@ -47,7 +47,9 @@ async def walk(db, language):
             if full['type'] in quiz.CODE_TYPES and not runnable_here(language):
                 stuck.append(f"{nid}: code check {full['id']} needs the {language} runner, which this machine lacks")
                 continue
-            result = await quiz.answer(db, user, started['quiz_id'], full['id'], correct_response(full))
+            result = await quiz.answer(db, user, started['quiz_id'], full['id'], correct_response(full),
+                                      provider='test', reasoning='A trace of the specific operation.',
+                                      transfer='A changed input and the justified expected result.')
             if not result['correct']:
                 stuck.append(f"{nid}: correct answer marked wrong for {full['id']} ({full['type']}): {result.get('feedback', '')[:120]}")
         summary = await quiz.summary(db, user, started['quiz_id'])
@@ -67,7 +69,13 @@ async def test_learner_can_finish_every_path_without_hitting_a_wall(db, language
     if not runnable_here(language) and any(i['language'] == language and i['type'] in quiz.CODE_TYPES for i in quiz.items(language).values()):
         pytest.skip(f'{language} code checks need its runner; run with EXEC_BACKEND=docker')
     from app.core.config import settings
-    monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
+    async def assess(**kwargs):
+        return dict(score=1.0, reasoning_score=1.0, transfer_score=1.0, passed=True,
+                    feedback='Clear trace. Try another case.', grading='rubric-model')
+    async def no_model(*args, **kwargs):
+        return None
+    monkeypatch.setattr('app.services.understanding.assess', assess)
+    monkeypatch.setattr(quiz, 'model_grade', no_model)
     # Hourly caps are abuse limits, tested separately; here they must not stop a full path.
     monkeypatch.setattr(settings, 'quiz_answers_per_hour', 100000)
     monkeypatch.setattr(settings, 'quiz_code_runs_per_hour', 100000)

@@ -38,7 +38,8 @@ typed quizzes and debugging checks. They contain no student answer text.
 
 1. Back up the application database.
 2. Run `.venv/bin/alembic upgrade head` from the API directory (migration
-   `0021_understanding_checks` adds nullable evidence columns and preserves old rows).
+   `0021_understanding_checks` adds nullable evidence columns and a usage-reservation
+   table, preserving old rows).
 3. Deploy/restart API and UI together. Older UI versions cannot submit typed
    quiz answers without the newly required reasoning fields; refresh open tabs.
 4. Configure an existing supported LLM provider for rubric grading. Without one,

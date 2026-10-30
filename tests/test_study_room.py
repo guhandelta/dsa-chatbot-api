@@ -291,11 +291,18 @@ async def test_what_next_follows_progress_and_weak_spots(client, db, unauthored_
 
 
 async def test_what_next_reviews_a_weak_concept_first(client, db, monkeypatch):
-    monkeypatch.setattr("app.services.quiz.judge_provider", lambda: None)
+    from app.services import quiz
+    monkeypatch.setattr(quiz, 'judge_provider', lambda: 'test')
+    monkeypatch.setattr(quiz, 'draw', lambda candidates, count, weak, seed: [next(i for i in candidates if i['type'] == 'short_answer')])
+    async def assess(**kwargs):
+        return dict(score=0, reasoning_score=0, transfer_score=0, passed=False,
+                    feedback='Trace the example.', grading='rubric-model')
+    monkeypatch.setattr('app.services.understanding.assess', assess)
     headers, uid = await register(client, db, 'weak-next@example.com')
     started = (await client.post('/study/quiz', headers=headers, json={'language': 'python', 'node_id': 'python:stage-06', 'count': 1})).json()
     await client.post(f"/study/quiz/{started['quiz_id']}/answer", headers=headers,
-                      json={'item_id': started['items'][0]['id'], 'response': '0'})
+                      json={'item_id': started['items'][0]['id'], 'response': '0',
+                            'reasoning': 'Unsure.', 'transfer': 'Unsure.'})
     nxt = (await client.get('/study/next', headers=headers, params={'language': 'python'})).json()
     assert nxt['kind'] == 'quiz' and nxt['node_id'] == 'python:stage-06' and 'missed' in nxt['reason']
     assert nxt['title'] == 'Review quiz: Arrays and lists'
@@ -360,8 +367,15 @@ def test_module_lesson_skips_rows_that_are_no_longer_eligible(monkeypatch):
 
 async def test_quiz_endpoints_grade_every_format(client, db, monkeypatch):
     from app.services import quiz
-    # Exercise the local rubric; provider grading has its own isolated tests.
-    monkeypatch.setattr(quiz, 'judge_provider', lambda: None)
+    # Exercise the full HTTP contract with deterministic understanding grading.
+    monkeypatch.setattr(quiz, 'judge_provider', lambda: 'test')
+    async def assess(**kwargs):
+        return dict(score=1.0, reasoning_score=1.0, transfer_score=1.0, passed=True,
+                    feedback='Clear trace. Try another case.', grading='rubric-model')
+    async def no_model(*args, **kwargs):
+        return None
+    monkeypatch.setattr('app.services.understanding.assess', assess)
+    monkeypatch.setattr(quiz, 'model_grade', no_model)
     headers, uid = await register(client, db, 'quiz@example.com')
     started = await client.post('/study/quiz', headers=headers, json={'language': 'python', 'node_id': 'python:stage-06', 'count': 6})
     assert started.status_code == 200, started.text
@@ -371,7 +385,9 @@ async def test_quiz_endpoints_grade_every_format(client, db, monkeypatch):
         full = quiz.items('python')[entry['id']]
         response = full.get('solution') or full.get('answer')
         r = await client.post(f"/study/quiz/{body['quiz_id']}/answer", headers=headers,
-                              json={'item_id': entry['id'], 'response': response})
+                              json={'item_id': entry['id'], 'response': response,
+                                    'reasoning': 'A trace of the specific operation.',
+                                    'transfer': 'A changed case and its expected result.'})
         assert r.status_code == 200 and r.json()['correct'], (entry['id'], r.text)
     summary = (await client.get(f"/study/quiz/{body['quiz_id']}", headers=headers)).json()
     assert summary['complete'] and summary['assessment_passed'] and summary['correct'] == 6
