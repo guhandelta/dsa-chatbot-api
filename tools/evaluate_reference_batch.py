@@ -29,6 +29,8 @@ TRUSTED_PREFIXES = (
     # Ruby
     "https://docs.ruby-lang.org/", "https://bundler.io/", "https://guides.rubygems.org/",
     "https://rspec.info/", "https://docs.seattlerb.org/",
+    # Deno runtime, its JSR standard library, and the V8 engine team's documentation
+    "https://docs.deno.com/", "https://jsr.io/@std/", "https://v8.dev/",
     # TypeScript, Java ecosystem
     "https://www.typescriptlang.org/", "https://docs.spring.io/", "https://docs.jboss.org/hibernate/",
     "https://junit.org/", "https://docs.junit.org/", "https://maven.apache.org/",
