@@ -1,0 +1,23 @@
+{
+  "id": "javascript-core",
+  "version": "1",
+  "language": "javascript",
+  "description": "Javascript fundamentals, standard-library notes and the shared 12-stage path (lesson text only; front matter and solutions stripped).",
+  "files": [
+    "data/content/language/javascript-fundamentals.md",
+    "data/content/language/javascript-library.md",
+    "data/content/language/javascript-path-01-values.md",
+    "data/content/language/javascript-path-02-conditions.md",
+    "data/content/language/javascript-path-03-loops.md",
+    "data/content/language/javascript-path-04-functions.md",
+    "data/content/language/javascript-path-05-strings.md",
+    "data/content/language/javascript-path-06-arrays.md",
+    "data/content/language/javascript-path-07-maps.md",
+    "data/content/language/javascript-path-08-sets.md",
+    "data/content/language/javascript-path-09-objects.md",
+    "data/content/language/javascript-path-10-validation.md",
+    "data/content/language/javascript-path-11-recursion.md",
+    "data/content/language/javascript-path-12-complexity.md"
+  ],
+  "sha256": "8007d197138a40c049d34410f2ee7a545ce311feef5cea73aee03ded1812e84f"
+}

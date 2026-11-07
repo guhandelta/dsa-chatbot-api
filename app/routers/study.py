@@ -215,7 +215,9 @@ async def message(request: StudyMessage, user: User = Depends(get_current_user),
             user_text = request.message
 
         async def generate(selected):
-            return await study_room.generate(get_llm(selected), system, history, user_text)
+            return await study_room.generate(get_llm(selected), system, history, user_text,
+                                             provider=selected, language=request.language,
+                                             call_site=f"study_room:{request.mode}")
 
         answer, routing = await run_routed_chat(request.message, history, provider, generate)
         node_id = focus["id"] if focus["kind"] == "node" else None
