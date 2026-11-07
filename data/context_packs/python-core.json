@@ -1,0 +1,24 @@
+{
+  "id": "python-core",
+  "version": "1",
+  "language": "python",
+  "description": "Python fundamentals, standard-library notes and the shared 12-stage path (lesson text only; front matter and solutions stripped).",
+  "files": [
+    "data/content/language/python-fundamentals.md",
+    "data/content/language/python-library.md",
+    "data/content/language/python-dicts-and-sets.md",
+    "data/content/language/python-path-01-values.md",
+    "data/content/language/python-path-02-conditions.md",
+    "data/content/language/python-path-03-loops.md",
+    "data/content/language/python-path-04-functions.md",
+    "data/content/language/python-path-05-strings.md",
+    "data/content/language/python-path-06-arrays.md",
+    "data/content/language/python-path-07-maps.md",
+    "data/content/language/python-path-08-sets.md",
+    "data/content/language/python-path-09-objects.md",
+    "data/content/language/python-path-10-validation.md",
+    "data/content/language/python-path-11-recursion.md",
+    "data/content/language/python-path-12-complexity.md"
+  ],
+  "sha256": "73444c48d4986008cd9c1f8782f8d620e0b5eff92ff63d801288ab2aa1e3d188"
+}

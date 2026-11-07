@@ -181,7 +181,8 @@ class Trace:
             self._open.pop()
 
     def record_llm_call(self, provider: str, model: str,
-                        input_tokens: int = 0, output_tokens: int = 0) -> float:
+                        input_tokens: int = 0, output_tokens: int = 0,
+                        cache_creation_tokens: int = 0, cache_read_tokens: int = 0) -> float:
         """Accumulate token usage and estimated spend.
 
         Returns the estimated cost of THIS call. Estimates use a static rate
@@ -198,6 +199,9 @@ class Trace:
                 input_tokens=input_tokens, output_tokens=output_tokens,
                 cost_usd=round(cost, 6),
             )
+            if cache_creation_tokens or cache_read_tokens:
+                self._open[-1].set(cache_creation_tokens=cache_creation_tokens,
+                                   cache_read_tokens=cache_read_tokens)
         return cost
 
     def stage_timings(self) -> dict[str, float]:

@@ -132,6 +132,21 @@ class Settings(BaseSettings):
     # Tests and throwaway databases only. Real environments run migrations.
     auto_create_tables: bool = False
 
+    # Prompt caching: mentor prompts put a stable prefix (rules, persona, CAG
+    # pack) before per-request text; for Claude that prefix carries a
+    # cache_control breakpoint. Token usage, including cache reads/writes, is
+    # logged on the "app.llm_usage" logger either way.
+    prompt_cache_enabled: bool = True
+    # Cache-augmented generation: preload a small, versioned context pack
+    # (data/context_packs/*.json) into the cached prefix. Off by default.
+    cag_enabled: bool = False
+    cag_pack_dir: str = "data/context_packs"
+    # Comma-separated pack ids to allow; empty allows any pack for the language.
+    cag_pack_ids: str = ""
+    # Providers that receive the pack. Without caching every call pays for it.
+    cag_providers: str = "claude"
+    cag_max_chars: int = Field(default=48000, ge=1000)
+
     # Private opt-in agentic retrieval pilot; ordinary RAG remains the default.
     agentic_rag_enabled: bool = False
 
