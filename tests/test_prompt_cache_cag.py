@@ -15,6 +15,10 @@ PACK_DIR = Path(context_pack.ROOT) / "data" / "context_packs"
 
 @pytest.fixture(autouse=True)
 def fresh_packs(monkeypatch):
+    # alembic/env.py runs logging.config.fileConfig(), which disables loggers
+    # that already exist; after a migration test these would capture nothing.
+    for name in ("app.llm_usage", context_pack.__name__):
+        monkeypatch.setattr(logging.getLogger(name), "disabled", False)
     monkeypatch.setattr(settings, "prompt_cache_enabled", True)
     monkeypatch.setattr(settings, "cag_enabled", False)
     monkeypatch.setattr(settings, "cag_pack_dir", "data/context_packs")
