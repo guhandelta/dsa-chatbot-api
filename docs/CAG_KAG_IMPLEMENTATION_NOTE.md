@@ -6,7 +6,7 @@ Status: six-call live pilot completed, 7 November 2026. Production CAG enablemen
 
 - Prompt assembly places stable instructions first. Claude receives an explicit cache breakpoint when `PROMPT_CACHE_ENABLED=true`; OpenAI and Gemini receive a stable-first string and depend on provider-side caching behavior.
 - CAG is implemented behind `CAG_ENABLED=false`. Compact version 2 Python and JavaScript context packs are limited to Claude by default. The loader strips protected material, enforces a size cap, and requires a pinned SHA-256 digest. Question-specific RAG remains separate.
-- `data/curriculum/prerequisite-pilot.json` defines a small, acyclic learning-dependency graph for shared stages 1–8. Focused language RAG now adds at most two linked, same-language prerequisite lessons from the local answer-safe catalog and labels them as optional guidance. It is not used for mastery or unlocking. `KAG_ENABLED=false` restores the former retrieval path.
+- `data/curriculum/prerequisite-pilot.json` defines a small, acyclic learning-dependency graph for shared stages 1–8. Focused language RAG now adds at most two linked, same-language prerequisite lessons from the local answer-safe catalog and labels them as optional guidance. It is not used for mastery or unlocking. It is off by default; `KAG_ENABLED=true` turns it on, and leaving it unset keeps the former retrieval path.
 
 Local coverage check: all ten current language paths have authored lessons for the first eight stages. Each path's seven non-root pilot nodes resolved its linked prerequisite lesson. This proves link resolution, not that every edge is the best teaching prerequisite. Focused chat traces now record graph version, linked IDs, and the linked source IDs actually used, without storing lesson text.
 

@@ -2,8 +2,13 @@
 import json
 from pathlib import Path
 
+from app.core.config import Settings
 from app.services.learning_path import SPINE
 from app.services.prerequisite_graph import guidance, linked_content_ids
+
+
+def test_kag_pilot_is_off_unless_enabled():
+    assert Settings.model_fields["kag_enabled"].default is False
 
 
 def test_pilot_graph_matches_shared_spine_and_has_only_earlier_dependencies():
