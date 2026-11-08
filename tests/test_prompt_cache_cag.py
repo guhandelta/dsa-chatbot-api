@@ -117,8 +117,8 @@ def test_cag_adds_the_pack_to_the_cached_prefix(monkeypatch):
     monkeypatch.setattr(settings, "cag_enabled", True)
     message, meta = build_system_message("RULES", "tail", "claude", "python")
     stable = message.content[0]["text"]
-    assert meta["pack"].startswith("python-core@1+")
-    assert stable.startswith("RULES\n\n<context_pack") and "## Learn" in stable
+    assert meta["pack"].startswith("python-core@2+")
+    assert stable.startswith("RULES\n\n<context_pack") and "Python" in stable
     assert message.content[1]["text"] == "tail"
 
 
@@ -157,7 +157,7 @@ def _write_manifest(tmp_path, **overrides):
 
 
 def test_loader_renders_lessons_without_front_matter(tmp_path):
-    pack = context_pack.load_pack(_write_manifest(tmp_path))
+    pack = context_pack.load_pack(_write_manifest(tmp_path), verify_hash=False)
     assert pack.text.startswith("### Source: data/content/language/python-path-01-values.md\n# Python")
     assert "fn_python" not in pack.text and len(pack.sha256) == 64
 
@@ -169,6 +169,11 @@ def test_loader_rejects_changed_content(tmp_path, monkeypatch, caplog):
     with caplog.at_level(logging.WARNING):
         assert context_pack.pack_for("python", "claude") is None
     assert "content changed" in caplog.text
+
+
+def test_loader_rejects_unpinned_content(tmp_path):
+    with pytest.raises(ValueError, match="missing pinned sha256"):
+        context_pack.load_pack(_write_manifest(tmp_path))
 
 
 def test_loader_rejects_files_outside_content(tmp_path):

@@ -20,8 +20,8 @@ the stable prefix (`app/services/context_pack.py`). Packs are JSON manifests in
 
 | Pack | Content | Size |
 |---|---|---|
-| `python-core@1` | Python fundamentals, library notes, dicts and sets, shared path stages 1-12 | ~21 K chars (~5-6 K tokens) |
-| `javascript-core@1` | JavaScript fundamentals, library notes, shared path stages 1-12 | ~21 K chars (~5-6 K tokens) |
+| `python-core@2` | Python fundamentals, library notes, dicts and sets | ~4.8 K chars |
+| `javascript-core@2` | JavaScript fundamentals, library notes, first values lesson | ~5.1 K chars |
 
 Lesson files pass through `public_text`, so front matter (hidden tests) and
 protected sections (solutions, hints) never reach a pack. Each manifest pins
@@ -48,8 +48,8 @@ Every mentor, RAG chat and Study Room call writes one line on the
 
 ```
 llm_usage {"cache": true, "cache_creation": 0, "cache_read": 5600, "call_site": "mentor",
-           "input_tokens": 5650, "model": "claude-sonnet-4-20250514", "output_tokens": 20,
-           "pack": "python-core@1+73444c48d498", "provider": "claude", "stable_chars": 21623,
+           "input_tokens": 5650, "model": "claude-sonnet-4-6", "output_tokens": 20,
+           "pack": "python-core@2+8655aa9074d2", "provider": "claude", "stable_chars": 5100,
            "uncached_input": 50}
 ```
 
@@ -66,12 +66,14 @@ python tools/measure_prompt_cache.py --language python --problem two-sum --turns
 
 ## Things to know
 
-- Claude only caches a prefix above a minimum length: 1024 tokens for the
-  configured `claude-sonnet-4-20250514`. The mentor rules alone are about 250
+- Claude only caches a prefix above a model-dependent minimum length. The
+  configured model is `claude-sonnet-4-6`. The mentor rules alone are about 250
   tokens (RAG chat's about 300), so with CAG off the breakpoint is sent but nothing is cached
   (`cache_creation: 0`, no extra cost). CAG lifts the prefix above the line.
 - The cache lives 5 minutes and every hit refreshes it. A write costs 1.25x the
-  input price; each read costs 0.1x. Two calls within 5 minutes with the same
-  language pack already break even.
+  input price; each read costs 0.1x. This can save money when the *same long
+  prompt* is reused, but adding a large CAG pack can cost more than a short
+  RAG-only prompt even when every call is a cache hit. Measure total billed
+  cost before enabling CAG.
 - Default routing sends explanations to Gemini and code questions to Claude;
   only Claude calls get the explicit breakpoint and, by default, the pack.

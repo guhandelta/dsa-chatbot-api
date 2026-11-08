@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     # Model IDs (override via .env without touching code)
     openai_model: str = "gpt-4o-mini"
-    anthropic_model: str = "claude-sonnet-4-20250514"
+    anthropic_model: str = "claude-sonnet-4-6"
     gemini_model: str = "gemini-3.8-flash"
 
     # Vector store backend: "chroma" (embedded, zero setup) or "pgvector"

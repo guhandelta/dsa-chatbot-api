@@ -20,6 +20,7 @@ import argparse
 import asyncio
 import json
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -43,14 +44,18 @@ async def run(config: str, language: str, problem: str, turns: int) -> list[dict
 
         class Recorder:
             async def ainvoke(self, messages):
+                started = time.perf_counter()
                 response = await llm.ainvoke(messages)
-                rows.append(usage_from(response) or {})
+                rows.append({**(usage_from(response) or {}),
+                             "latency_ms": round((time.perf_counter() - started) * 1000)})
                 return response
         return Recorder()
 
     for turn in range(turns):
-        await mentor_reply(problem, "I compare every pair, which feels slow.", "", language,
-                           min(turn + 1, 4), "claude", model_factory=factory)
+        reply = await mentor_reply(problem, "I compare every pair, which feels slow.", "", language,
+                                   min(turn + 1, 4), "claude", model_factory=factory)
+        rows[-1]["reply_chars"] = len(reply)
+        rows[-1]["reply_question_count"] = reply.count("?")
     return rows
 
 

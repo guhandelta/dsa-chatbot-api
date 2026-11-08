@@ -98,7 +98,9 @@ def load_pack(path: Path, *, verify_hash: bool = True) -> ContextPack:
         raise ValueError(f"{path.name}: {len(text)} chars exceeds CAG_MAX_CHARS={settings.cag_max_chars}")
     digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
     pinned = manifest.get("sha256")
-    if verify_hash and pinned and pinned != digest:
+    if verify_hash and not pinned:
+        raise ValueError(f"{path.name}: missing pinned sha256")
+    if verify_hash and pinned != digest:
         raise ValueError(f"{path.name}: content changed (sha256 {digest[:12]} != pinned {pinned[:12]}); "
                          "bump 'version' and refresh 'sha256'")
     return ContextPack(id=str(manifest["id"]), version=str(manifest["version"]),
