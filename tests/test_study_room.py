@@ -258,6 +258,22 @@ def test_compare_context_leads_with_both_lessons_for_a_shared_stage():
     assert not study_room.compare_context('python', 'javascript', 'copy a list', module)[0].startswith('#')
 
 
+def test_study_room_explain_uses_relevant_prerequisite_only(monkeypatch):
+    from app.core.config import settings
+    from app.services import learning_path
+    monkeypatch.setattr(settings, 'kag_enabled', True)
+    monkeypatch.setattr('app.services.curriculum_search.search', lambda *args, **kwargs: [])
+    focus = {'kind': 'node', 'node': learning_path.find_node('python', 'python:stage-07')}
+    relevant = study_room.focus_context('python', focus, 'How do arrays prepare me for maps?')
+    assert '<prerequisite_lesson id="python-path-06-arrays">' in relevant
+    assert 'Pilot prerequisite links' in relevant
+    unrelated = study_room.focus_context('python', focus, 'How do maps work?')
+    assert '<prerequisite_lesson' not in unrelated
+    monkeypatch.setattr(settings, 'kag_enabled', False)
+    off = study_room.focus_context('python', focus, 'How do arrays prepare me for maps?')
+    assert '<prerequisite_lesson' not in off and 'Pilot prerequisite links' not in off
+
+
 def test_compare_context_matches_the_same_concept_family():
     first, second = study_room.compare_context('java', 'javascript', 'map getOrDefault missing key default value')
     assert first.startswith('Java') and second.startswith('JavaScript')

@@ -83,7 +83,7 @@ async def test_tracks_endpoint_lists_three_paths(client, subscribe_user):
     # `dsa` because a learner sees problems and the techniques behind them as
     # one subject rather than two separate destinations.
     assert [t["track"] for t in body["tracks"]] == [
-        "language", "dsa",
+        "language", "dsa", "design-patterns",
     ]
     assert body["modes"] == ["browse", "learn", "practice"]
 

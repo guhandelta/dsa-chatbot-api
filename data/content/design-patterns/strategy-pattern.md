@@ -14,14 +14,16 @@ the caller rather than being baked into the code that runs them.
 
 ## When to reach for it
 A conditional that keeps growing — `if mode == "a" ... elif mode == "b"` —
-where each branch is self-contained. Extracting each branch behind a common
-interface turns "add a case" into "add a file" instead of "edit a switch".
+where each branch is self-contained and callers need to choose among them.
+Extracting the alternatives behind a common contract can let callers add or
+select behaviour without editing the central conditional.
 
 ## When NOT to
-With two cases that will only ever be two, a conditional is clearer than three
-new types. Strategy pays off at the third case, not the first. Applied early it
-is over-engineering, and recognising that is as much the skill as knowing the
-pattern.
+When the alternatives are few, stable, and used in one place, a conditional
+may be clearer. The number of cases alone does not decide whether Strategy is
+useful; independent variation, testing needs, and ownership of the choice
+matter more. Adding layers before those needs exist can make the code harder
+to follow.
 
 ## Language notes
 Most languages express this without the class ceremony the original form
@@ -34,8 +36,9 @@ describes:
 - **C** — a function pointer in a struct.
 
 ## Watchouts
-- Strategy and State are structurally identical. The difference is intent:
-  Strategy is chosen by the caller, State transitions itself.
+- Strategy and State can have similar interfaces. The difference is intent:
+  Strategy selects among interchangeable behaviours; State models behaviour
+  associated with an object's changing state.
 - Passing a strategy *and* a flag that selects it defeats the purpose.
 - Stateless strategies can be shared; stateful ones must not be.
 

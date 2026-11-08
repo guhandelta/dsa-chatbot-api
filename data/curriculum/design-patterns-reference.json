@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "status": "suggested-reference-order-not-graded",
+  "items": [
+    {"id": "iterator", "requires": []},
+    {"id": "shared-instance", "requires": []},
+    {"id": "shared-instance-javascript", "requires": ["shared-instance"]},
+    {"id": "factory-method", "requires": []},
+    {"id": "builder", "requires": []},
+    {"id": "adapter", "requires": []},
+    {"id": "facade", "requires": []},
+    {"id": "decorator", "requires": []},
+    {"id": "composite", "requires": []},
+    {"id": "strategy-pattern", "requires": []},
+    {"id": "state", "requires": []},
+    {"id": "observer", "requires": []},
+    {"id": "command", "requires": []}
+  ]
+}

@@ -123,6 +123,22 @@ def focus_context(language: str, focus: dict, question: str) -> str:
         blocks.append(context(language, focus['explain_unit_id'], focus.get('explain_activity_id')))
     if focus["kind"] == "node":
         blocks.append(lesson_markdown(language, focus["node"])[:5000])
+        if settings.kag_enabled and focus["node"]["kind"] == "stage":
+            from app.services.prerequisite_graph import guidance, linked_content_ids
+            from app.services.tracing import current_trace
+            selected = focus["node"].get("exercise_id")
+            linked = linked_content_ids(language, selected, question)
+            for content_id in linked:
+                blocks.append(f"<prerequisite_lesson id=\"{content_id}\">\n"
+                              + learner_document(content_id, language)[:1500]
+                              + "\n</prerequisite_lesson>")
+            hint = guidance(language, selected)
+            if hint:
+                blocks.append(hint)
+            trace = current_trace()
+            if trace is not None and hint:
+                trace.set(kag_graph_version=1, kag_prerequisite_ids=list(linked),
+                          kag_source_ids=list(linked))
     elif focus["kind"] == "problem":
         blocks.append(learner_document(focus["id"], language)[:4000])
     for doc in search(question, "language", language, k=3, **({"subject": focus["subject"]} if focus.get("subject") else {})):

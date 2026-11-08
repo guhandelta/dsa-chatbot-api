@@ -34,7 +34,7 @@ async def execution_capabilities(current_user: User = Depends(get_current_user),
 
 @router.get("/")
 async def list_tracks(current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
-    """The section-choice screen: three sections, their counts, and the
+    """The section-choice screen: available sections, their counts, and the
     learner's saved language.
 
     Counts are scoped to the learner's language for Language Fundamentals,
@@ -44,7 +44,7 @@ async def list_tracks(current_user: User = Depends(get_current_user), session: A
     language = current_user.preferred_language if current_user.preferred_language in languages else next(iter(languages), None)
     return {
         "tracks": [t for t in track_summary(language=language)
-                   if language and t["track"] in ("language", "dsa")],
+                   if language and t["track"] in ("language", "dsa", "design-patterns") and t["available"]],
         "languages": languages,
         "training_languages": available_languages() if current_user.role in ('admin', 'instructor') else [],
         "preferred_language": language,
@@ -152,10 +152,14 @@ async def track_items(
             detail=f"Unknown level '{level}'. Valid: {', '.join(LEVELS)}",
         )
     lang = await resolve_language(session, current_user, language)
-    return sorted(filter_content(
+    items = filter_content(
         track=track, language=lang, difficulty=difficulty,
         algorithm=algorithm, source=source, level=level, pattern=pattern,
-    ), key=lambda c: (c.order or 999, c.title))
+    )
+    if track == "design-patterns":
+        from app.services.pattern_reference import arrange
+        return arrange(items)
+    return sorted(items, key=lambda c: (c.order or 999, c.title))
 
 
 @router.get("/algorithms/tags")
