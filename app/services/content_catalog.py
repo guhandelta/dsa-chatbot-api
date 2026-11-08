@@ -291,8 +291,8 @@ def track_summary(language: str | None = None) -> list[dict]:
     """The three learner-facing sections for the choice screen.
 
     `dsa` aggregates the internal "dsa" and "algorithm" tracks. Language
-    Fundamentals is counted against the learner's language, since it is the
-    only language-specific section.
+    Fundamentals and language-specific pattern lessons are counted against
+    the learner's language.
     """
     items = list_content()
     labels = {
@@ -308,7 +308,7 @@ def track_summary(language: str | None = None) -> list[dict]:
     out = []
     for section, internal in SECTIONS.items():
         scoped = [c for c in items if c.track in internal]
-        if section == "language" and language:
+        if section in ("language", "design-patterns") and language:
             scoped = [c for c in scoped if c.language in (None, language)]
         out.append({
             "track": section,

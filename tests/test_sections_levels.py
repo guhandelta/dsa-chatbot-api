@@ -4,7 +4,7 @@ The design these assert:
   * three SECTIONS are shown to learners; the internal `algorithm` track is
     folded into `dsa`, because a learner sees problems and the techniques
     behind them as one subject
-  * Language Fundamentals is the only language-scoped section
+  * Language Fundamentals and language-specific pattern lessons are scoped
   * `level` orders Language Fundamentals; `difficulty` orders DSA. They are
     separate axes and must not be conflated
   * a `patterns` tag links a language idiom page to its Design Patterns page,
@@ -53,6 +53,12 @@ def test_internal_track_name_still_resolves():
 def test_sections_report_availability_honestly():
     for section in track_summary():
         assert section["available"] == (section["count"] > 0)
+
+
+def test_pattern_count_matches_language_visible_items():
+    for language in ("python", "javascript"):
+        section = next(s for s in track_summary(language=language) if s["track"] == "design-patterns")
+        assert section["count"] == len(filter_content(track="design-patterns", language=language))
 
 
 def test_unknown_section_is_empty_not_an_error():
@@ -142,9 +148,35 @@ async def test_tracks_endpoint_returns_sections(client, subscribe_user):
     assert r.status_code == 200
     payload = r.json()
     assert [t["track"] for t in payload["tracks"]] == [
-        "language", "dsa",
+        "language", "dsa", "design-patterns",
     ]
     assert "browse" in payload["modes"]
+
+
+async def test_pattern_section_lists_readable_lessons_for_selected_language(client, subscribe_user):
+    body = await _reg(client, "patternsection@x.com", subscribe_user=subscribe_user)
+    h = {"Authorization": f"Bearer {body['access_token']}"}
+    response = await client.get("/tracks/design-patterns/items", headers=h)
+    assert response.status_code == 200
+    items = response.json()
+    assert items and all(item["track"] == "design-patterns" for item in items)
+    assert all(item["language"] in (None, "javascript") for item in items)
+    assert all(not item["has_tests"] for item in items)
+    assert [item["order"] for item in items] == list(range(1, len(items) + 1))
+    shared = next(item for item in items if item["id"] == "shared-instance-javascript")
+    assert shared["prerequisites"] == ["shared-instance"]
+    lesson = await client.get(f"/tracks/items/{items[0]['id']}", headers=h)
+    assert lesson.status_code == 200
+    assert lesson.json()["markdown"].strip()
+
+
+def test_pattern_reference_sequence_covers_current_catalog_and_is_acyclic():
+    from app.services.pattern_reference import sequence
+    path = sequence()
+    catalog_ids = {item.id for item in filter_content(track="design-patterns")}
+    assert set(path) == catalog_ids
+    for content_id, (index, requires) in path.items():
+        assert all(path[prior][0] < index for prior in requires)
 
 
 async def test_language_levels_endpoint(client, subscribe_user):
