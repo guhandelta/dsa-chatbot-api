@@ -3,6 +3,7 @@
 # No network or API keys required — the LLM layer is mocked in the tests
 # that touch it.
 import os
+from pathlib import Path
 
 import pytest
 import pytest_asyncio
@@ -23,6 +24,37 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.db.database import Base, get_session  # noqa: E402
 from app.main import app  # noqa: E402
+
+# The private corpus (data/curriculum/*.jsonl and friends) is gitignored and
+# built locally from private-corpora, so GitHub's runner never has it. When it
+# is missing, skip exactly the tests listed in private_corpus_tests.txt and do
+# not collect the one module that reads it at import time. With the corpus
+# present nothing changes.
+TESTS_DIR = Path(__file__).resolve().parent
+PRIVATE_CORPUS = TESTS_DIR.parent / "data" / "curriculum" / "java-javascript.jsonl"
+CORPUS_MISSING = not PRIVATE_CORPUS.exists()
+collect_ignore = ["test_release_curriculum.py"] if CORPUS_MISSING else []
+
+
+def _private_corpus_tests():
+    lines = (TESTS_DIR / "private_corpus_tests.txt").read_text().splitlines()
+    return {line.strip() for line in lines if line.strip() and not line.startswith("#")}
+
+
+def pytest_collection_modifyitems(config, items):
+    if not CORPUS_MISSING:
+        return
+    needs_corpus = _private_corpus_tests()
+    skip = pytest.mark.skip(reason="private corpus missing (data/curriculum/*.jsonl is gitignored)")
+    for item in items:
+        if item.nodeid in needs_corpus:
+            item.add_marker(skip)
+
+
+def pytest_terminal_summary(terminalreporter):
+    if CORPUS_MISSING:
+        terminalreporter.write_line(
+            "private corpus missing: corpus-dependent tests were skipped; run the full suite locally to cover them")
 
 
 @pytest_asyncio.fixture
