@@ -83,6 +83,7 @@ _RATES: dict[str, tuple[float, float]] = {
     "gpt-4o-mini": (0.15, 0.60),
     "gpt-4o": (2.50, 10.00),
     "claude-sonnet-4-20250514": (3.00, 15.00),
+    "claude-sonnet-4-6": (3.00, 15.00),
     "claude-3-5-haiku-20241022": (0.80, 4.00),
     "gemini-2.0-flash": (0.10, 0.40),
 }
@@ -181,7 +182,8 @@ class Trace:
             self._open.pop()
 
     def record_llm_call(self, provider: str, model: str,
-                        input_tokens: int = 0, output_tokens: int = 0) -> float:
+                        input_tokens: int = 0, output_tokens: int = 0,
+                        cache_creation_tokens: int = 0, cache_read_tokens: int = 0) -> float:
         """Accumulate token usage and estimated spend.
 
         Returns the estimated cost of THIS call. Estimates use a static rate
@@ -189,7 +191,15 @@ class Trace:
         a stage that suddenly costs 10x, not for invoicing.
         """
         rate_in, rate_out = _RATES.get(model, _DEFAULT_RATE)
-        cost = (input_tokens * rate_in + output_tokens * rate_out) / 1_000_000
+        if provider == "claude":
+            ordinary = max(input_tokens - cache_creation_tokens - cache_read_tokens, 0)
+            # Claude's explicit breakpoint uses the default five-minute cache.
+            cost = (ordinary * rate_in + cache_creation_tokens * rate_in * 1.25
+                    + cache_read_tokens * rate_in * 0.1 + output_tokens * rate_out) / 1_000_000
+        else:
+            # Other providers have model-specific cache tariffs. Keep their
+            # trace estimate conservative until those rates are configured.
+            cost = (input_tokens * rate_in + output_tokens * rate_out) / 1_000_000
         self.total_tokens += input_tokens + output_tokens
         self.estimated_cost_usd += cost
         if self._open:
@@ -198,6 +208,9 @@ class Trace:
                 input_tokens=input_tokens, output_tokens=output_tokens,
                 cost_usd=round(cost, 6),
             )
+            if cache_creation_tokens or cache_read_tokens:
+                self._open[-1].set(cache_creation_tokens=cache_creation_tokens,
+                                   cache_read_tokens=cache_read_tokens)
         return cost
 
     def stage_timings(self) -> dict[str, float]:

@@ -215,8 +215,23 @@ def guard_socratic(content: str, tier: int, error: str) -> str:
     return content
 
 
-async def generate(llm, system: str, history: list, message: str) -> str:
-    response = await llm.ainvoke([SystemMessage(content=system), *history, HumanMessage(content=message)])
+async def generate(llm, system: str, history: list, message: str, *,
+                   provider: str | None = None, language: str | None = None,
+                   call_site: str = "study_room") -> str:
+    """One Study Room turn.
+
+    Study Room prompts interleave per-turn text with their rules, so the only
+    stable prefix is the CAG context pack (when enabled). Without a pack the
+    prompt is sent unchanged.
+    """
+    from app.services.prompt_cache import build_system_message, record_usage
+    if provider:
+        system_message, meta = build_system_message("", system, provider, language)
+    else:
+        system_message, meta = SystemMessage(content=system), {}
+    response = await llm.ainvoke([system_message, *history, HumanMessage(content=message)])
+    if provider:
+        record_usage(response, call_site=call_site, provider=provider, meta=meta)
     return _text(response.content)
 
 

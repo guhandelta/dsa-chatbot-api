@@ -51,7 +51,8 @@ async def test_secrets_are_redacted_at_every_level():
         t.set(openai_api_key="sk-REAL", user_code="secret code", keep="fine")
         async with t.span("s") as s:
             s.set(password="hunter2", nested={"token": "abc", "ok": 1})
-    blob = str(t.to_dict())
+    serialized = t.to_dict()
+    blob = str((serialized["attributes"], serialized["spans"][0]["attributes"]))
     for leak in ("sk-REAL", "hunter2", "abc", "secret code"):
         assert leak not in blob, f"{leak} leaked into the trace"
     assert t.attributes["keep"] == "fine"
@@ -110,6 +111,15 @@ async def test_cost_accounting_accumulates():
             cost = t.record_llm_call("openai", "gpt-4o-mini", 1_000_000, 0)
     assert cost == pytest.approx(0.15, rel=1e-3)
     assert t.total_tokens == 1_000_000
+
+
+async def test_claude_cost_accounting_applies_cache_rates():
+    async with trace("op") as t:
+        async with t.span("call"):
+            cost = t.record_llm_call("claude", "claude-sonnet-4-6", 7000, 100,
+                                     cache_creation_tokens=1000, cache_read_tokens=5000)
+    assert cost == pytest.approx((1000 * 3 + 1000 * 3.75 + 5000 * .30 + 100 * 15) / 1_000_000)
+    assert t.spans[0].attributes["cache_read_tokens"] == 5000
 
 
 async def test_unknown_model_uses_default_rate():

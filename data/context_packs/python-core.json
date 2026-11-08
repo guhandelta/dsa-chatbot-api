@@ -1,0 +1,12 @@
+{
+  "id": "python-core",
+  "version": "2",
+  "language": "python",
+  "description": "Compact Python foundations for repeated tutoring; focused stage lessons remain in RAG.",
+  "files": [
+    "data/content/language/python-fundamentals.md",
+    "data/content/language/python-library.md",
+    "data/content/language/python-dicts-and-sets.md"
+  ],
+  "sha256": "8655aa9074d22774f92390d6f82d6687e9572a108d8129e12cd84fe476213118"
+}

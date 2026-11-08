@@ -1,0 +1,12 @@
+{
+  "id": "javascript-core",
+  "version": "2",
+  "language": "javascript",
+  "description": "Compact JavaScript foundations for repeated tutoring; focused stage lessons remain in RAG.",
+  "files": [
+    "data/content/language/javascript-fundamentals.md",
+    "data/content/language/javascript-library.md",
+    "data/content/language/javascript-path-01-values.md"
+  ],
+  "sha256": "9be214658803fa91e68591c2aecb204cdb4697ecefe65e039e508a2c1c9b41a0"
+}
