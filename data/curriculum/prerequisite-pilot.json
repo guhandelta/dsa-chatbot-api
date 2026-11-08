@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "status": "pilot-learning-metadata",
+  "scope": "shared language spine, stages 1-8",
+  "nodes": [
+    {"stage": 1, "slug": "values", "requires": []},
+    {"stage": 2, "slug": "conditions", "requires": [1]},
+    {"stage": 3, "slug": "loops", "requires": [2]},
+    {"stage": 4, "slug": "functions", "requires": [1]},
+    {"stage": 5, "slug": "strings", "requires": [3]},
+    {"stage": 6, "slug": "arrays", "requires": [3]},
+    {"stage": 7, "slug": "maps", "requires": [6]},
+    {"stage": 8, "slug": "sets", "requires": [6]}
+  ]
+}

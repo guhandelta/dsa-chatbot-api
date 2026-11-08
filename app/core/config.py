@@ -146,6 +146,8 @@ class Settings(BaseSettings):
     # Providers that receive the pack. Without caching every call pays for it.
     cag_providers: str = "claude"
     cag_max_chars: int = Field(default=48000, ge=1000)
+    # Pilot prerequisite hints for a focused language lesson. No mastery gating.
+    kag_enabled: bool = True
 
     # Private opt-in agentic retrieval pilot; ordinary RAG remains the default.
     agentic_rag_enabled: bool = False

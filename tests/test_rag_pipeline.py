@@ -35,6 +35,80 @@ async def test_language_and_answer_filters(wire):
     await rp.run_rag_chat("q", "openai", [], "java", track="language", focus_id="java-path-01-values")
     assert store.filters == [{"$and": [{"track": {"$in": ["language", "custom"]}}, {"contains_answer": False}, {"language": "java"}, {"problem_id": "java-path-01-values"}]}]
 
+
+async def test_focused_language_tutoring_adds_only_graph_guidance(wire, monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "kag_enabled", True)
+    llm, store = wire(store=FakeStore(results=[]))
+    await rp.run_rag_chat("Why use a map?", "openai", [], "python", track="language",
+                          focus_id="python-path-07-maps")
+    prompt = llm.messages[0].content
+    assert "<prerequisite_guidance>" in prompt
+    assert "python:stage-06 (Arrays and lists)" in prompt
+    assert "Do not assume" in prompt
+    assert store.filters[0]["$and"][-1] == {"problem_id": "python-path-07-maps"}
+    monkeypatch.setattr(settings, "kag_enabled", False)
+    await rp.run_rag_chat("Why use a map?", "openai", [], "python", track="language",
+                          focus_id="python-path-07-maps")
+    assert "<prerequisite_guidance>" not in llm.messages[0].content
+
+
+async def test_kag_retrieves_only_reviewed_same_language_prerequisite(wire, monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "kag_enabled", True)
+    calls = []
+    def local_search(query, track, language, focus_id=None, **kwargs):
+        calls.append(focus_id)
+        return [SimpleNamespace(page_content=label, metadata={"contains_answer": False,
+                "track": "language", "language": language, "problem_id": focus_id})
+                for label in (["CURRENT"] if focus_id == "python-path-07-maps" else ["ARRAYS_PREREQUISITE"])]
+    llm, store = wire(store=FakeStore(results=[]))
+    monkeypatch.setattr("app.services.curriculum_search.search", local_search)
+    from app.services import tracing
+    active = tracing.Trace(name="chat")
+    token = tracing._current.set(active)
+    try:
+        await rp.run_rag_chat("How do arrays prepare me for maps?", "openai", [], "python", track="language",
+                              focus_id="python-path-07-maps")
+    finally:
+        tracing._current.reset(token)
+    assert calls == ["python-path-07-maps", "python-path-06-arrays"]
+    assert "CURRENT" in llm.messages[0].content
+    assert "ARRAYS_PREREQUISITE" in llm.messages[0].content
+    assert store.filters[0]["$and"][-1] == {"problem_id": "python-path-07-maps"}
+    assert active.attributes["kag_graph_version"] == 1
+    assert active.attributes["kag_source_ids"] == ["python-path-06-arrays"]
+
+
+async def test_unrelated_focused_question_keeps_prerequisite_lesson_out(wire, monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "kag_enabled", True)
+    calls = []
+    def local_search(query, track, language, focus_id=None, **kwargs):
+        calls.append(focus_id)
+        return []
+    llm, _ = wire(store=FakeStore(results=[]))
+    monkeypatch.setattr("app.services.curriculum_search.search", local_search)
+    await rp.run_rag_chat("How do maps work?", "openai", [], "python", track="language",
+                          focus_id="python-path-07-maps")
+    assert calls == ["python-path-07-maps"]
+    assert "<prerequisite_guidance>" in llm.messages[0].content
+
+
+async def test_cag_and_kag_keep_stable_pack_separate_from_focused_context(wire, monkeypatch):
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "cag_enabled", True)
+    monkeypatch.setattr(settings, "kag_enabled", True)
+    llm, _ = wire(store=FakeStore(results=[]))
+    await rp.run_rag_chat("How do maps work?", "claude", [], "python", track="language",
+                          focus_id="python-path-07-maps")
+    stable, dynamic = llm.messages[0].content
+    assert stable["cache_control"] == {"type": "ephemeral"}
+    assert 'context_pack id="python-core" version="2"' in stable["text"]
+    assert "<prerequisite_guidance>" not in stable["text"]
+    assert "<prerequisite_guidance>" in dynamic["text"]
+    assert "python:stage-06" in dynamic["text"]
+
 async def test_dsa_includes_techniques(wire):
     _, store = wire()
     await rp.run_rag_chat("q", "openai", [], "javascript")
