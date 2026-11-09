@@ -31,6 +31,12 @@ _TAKEAWAY = re.compile(r"\n*TAKEAWAY\s*\nConcept:\s*(.+?)\nExample:\s*(.+?)\nPit
 _QUESTION_WORDS = set("""the and for how does what when why which with into from that this then than are was
 can you your about work works happen happens another other between does doing use using""".split())
 _CODE_LIKE = re.compile(r"```|~~~|^\s*(?:def |function |class |public |const |let |var |return |fn |#include)", re.M)
+_UNSUPPORTED_MASTERY = re.compile(r"\byou(?:\s+have|['’]ve)?\s+(?:mastered|achieved\s+mastery)\b|\byou\s+are\s+now\s+(?:a\s+)?master\b", re.I)
+_SECTION_RULES = {
+    "language": "Teach this language's behavior and input/output contracts. Distinguish a worked example from an independent check.",
+    "dsa": "Explain the technique's precondition, invariant, boundary cases, and complexity. Ask why it applies before recommending implementation.",
+    "design-patterns": "Explain the design pressure, tradeoffs, and a simpler alternative. Do not prescribe a pattern when a conditional or direct call is clearer.",
+}
 
 
 # ---------------------------------------------------------------- allowance
@@ -88,7 +94,9 @@ async def resolve_focus(session: AsyncSession, user_id: str, language: str, focu
         if item is None:
             from fastapi import HTTPException
             raise HTTPException(404, "That focus is not part of this language's path or problem bank.")
-        return {"kind": "problem", "id": item.id, "title": item.title, "node": None, "auto": False}
+        section = "dsa" if item.track in ("dsa", "algorithm") else item.track
+        return {"kind": "problem", "id": item.id, "title": item.title,
+                "section": section, "node": None, "auto": False}
     state = await learning_path.progress(session, user_id, language)
     node = learning_path.find_node(language, state["current_id"]) if state["current_id"] else None
     if node is None:
@@ -141,7 +149,9 @@ def focus_context(language: str, focus: dict, question: str) -> str:
                           kag_source_ids=list(linked))
     elif focus["kind"] == "problem":
         blocks.append(learner_document(focus["id"], language)[:4000])
-    for doc in search(question, "language", language, k=3, **({"subject": focus["subject"]} if focus.get("subject") else {})):
+    section = focus.get("section", "language")
+    for doc in search(question, section, language, focus_id=focus["id"] if focus["kind"] == "problem" else None,
+                      k=3, **({"subject": focus["subject"]} if focus.get("subject") else {})):
         if doc.metadata.get("contains_answer") is False:
             blocks.append(public_text(doc.page_content)[:2000])
     seen, out = set(), []
@@ -252,7 +262,17 @@ async def generate(llm, system: str, history: list, message: str, *,
 
 
 def explain_prompt(language: str, focus: dict, context: str) -> str:
-    return _EXPLAIN.format(language=language, focus=focus["title"], rules=_RULES + f" Use only {language} for all code, even if asked to switch languages.", context=context)
+    section = focus.get("section", "language")
+    rules = (_RULES + f" Use only {language} for all code, even if asked to switch languages. "
+             + _SECTION_RULES[section] + " Do not claim that the learner has mastered this topic; formal assessment is separate.")
+    return _EXPLAIN.format(language=language, focus=focus["title"], rules=rules, context=context)
+
+
+def guard_explanation(answer: str) -> str:
+    """Fail closed on an unsupported mastery award in an ungraded chat turn."""
+    if _UNSUPPORTED_MASTERY.search(answer):
+        return "I can help you practice this topic, but this conversation does not establish mastery. What part would you like to test next?"
+    return answer
 
 
 def debug_prompt(language: str, focus: dict, tier: int) -> str:

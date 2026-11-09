@@ -15,6 +15,48 @@ TAKEAWAY = ("A dict maps keys to values.\n\nTAKEAWAY\nConcept: Use get for a def
             "Example: counts.get(w, 0)\nPitfall: counts[w] += 1 raises KeyError.")
 
 
+def test_section_focused_explanation_uses_its_own_retrieval(monkeypatch):
+    calls = []
+    monkeypatch.setattr('app.services.curriculum_search.search',
+                        lambda query, track, language, **kwargs: calls.append((track, language, kwargs)) or [])
+    for section, content_id, marker in [
+        ('dsa', 'binary-search-concept', 'invariant'),
+        ('design-patterns', 'strategy-pattern', 'conditional'),
+    ]:
+        focus = {'kind': 'problem', 'id': content_id, 'title': content_id, 'section': section}
+        context = study_room.focus_context('javascript', focus, marker)
+        assert context and context != '(No matching lesson material was found.)'
+        assert calls[-1][0:2] == (section, 'javascript')
+        assert calls[-1][2]['focus_id'] == content_id
+        prompt = study_room.explain_prompt('javascript', focus, context)
+        assert ('invariant' if section == 'dsa' else 'simpler alternative') in prompt
+
+
+def test_explanation_guard_rejects_unsupported_mastery_claim():
+    assert 'does not establish mastery' in study_room.guard_explanation("You've mastered binary search.")
+    assert 'does not establish mastery' in study_room.guard_explanation('You have achieved mastery of this pattern.')
+    assert study_room.guard_explanation('Here is a boundary case.') == 'Here is a boundary case.'
+
+
+async def test_catalog_focus_records_section(db):
+    for content_id, section in [('binary-search-concept', 'dsa'),
+                                ('strategy-pattern', 'design-patterns')]:
+        focus = await study_room.resolve_focus(db, 'student', 'javascript', content_id)
+        assert focus['section'] == section
+
+
+async def test_explanation_mastery_claim_is_withheld_before_saving_note(client, db, model):
+    headers, _ = await register(client, db, 'mastery-guard@example.com')
+    model.replies = ["You've mastered binary search.\n\nTAKEAWAY\nConcept: Mastered.\nExample: yes\nPitfall: none"]
+    response = await client.post('/study/message', headers=headers,
+                                 json=ask(language='python', focus_id='binary-search-concept',
+                                          message='Explain the invariant'))
+    assert response.status_code == 200, response.text
+    assert 'does not establish mastery' in response.json()['answer']
+    assert (await client.get('/study/notes', headers=headers,
+                             params={'language': 'python'})).json()['notes'] == []
+
+
 @pytest.fixture
 def unauthored_go(monkeypatch):
     """Go as it was before any stage files or quiz bank were authored."""

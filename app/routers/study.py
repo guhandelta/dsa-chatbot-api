@@ -223,6 +223,7 @@ async def message(request: StudyMessage, user: User = Depends(get_current_user),
         node_id = focus["id"] if focus["kind"] == "node" else None
         note = None
         if request.mode == "explain":
+            answer = study_room.guard_explanation(answer)
             answer, card = study_room.split_takeaway(answer)
             if card:
                 note = await study_room.save_note(session, user.id, request.language, node_id, "explain",
