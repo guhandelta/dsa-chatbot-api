@@ -4,7 +4,7 @@ import pytest
 from fastapi import HTTPException
 
 from app.db.models import SectionEntitlement, User
-from app.services.section_access import require_section
+from app.services.section_access import compare_access, require_section
 
 
 async def test_section_policy_requires_both_language_and_section(db, subscribe_user):
@@ -55,3 +55,27 @@ async def test_staff_policy_keeps_existing_language_scope(db):
     with pytest.raises(HTTPException) as error:
         await require_section(db, admin, 'design-patterns', 'javascript')
     assert error.value.status_code == 403
+
+
+async def test_report_only_comparison_does_not_change_access(db, subscribe_user):
+    user = User(email='section-compare@example.com', hashed_password='unused', role='student')
+    db.add(user)
+    await db.flush()
+    await subscribe_user(user.id, 'javascript')
+    await db.commit()
+
+    missing_grant = await compare_access(db, user, 'dsa', 'javascript')
+    assert missing_grant == {'section': 'dsa', 'language': 'javascript',
+                             'legacy_allows': True, 'candidate_allows': False, 'differs': True}
+    assert (await compare_access(db, user, 'dsa', 'python'))['differs'] is False
+
+    now = datetime.now(timezone.utc)
+    db.add(SectionEntitlement(user_id=user.id, section='dsa', status='active', source='manual',
+                              starts_at=now - timedelta(days=1), expires_at=now + timedelta(days=1)))
+    await db.commit()
+    granted = await compare_access(db, user, 'dsa', 'javascript')
+    assert granted['legacy_allows'] is True
+    assert granted['candidate_allows'] is True
+    assert granted['differs'] is False
+    with pytest.raises(ValueError):
+        await compare_access(db, user, 'unknown', 'javascript')

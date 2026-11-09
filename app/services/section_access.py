@@ -30,3 +30,26 @@ async def require_section(session, user, section: str, language: str, *, now: da
     if any(_aware(row.starts_at) <= moment < _aware(row.expires_at) for row in rows):
         return section
     raise HTTPException(403, "An active entitlement for this learning section is required.")
+
+
+async def compare_access(session, user, section: str, language: str) -> dict[str, object]:
+    """Report the legacy and candidate decisions without changing either policy.
+
+    This is for an offline migration audit. Do not expose its result to learners:
+    the candidate can be denied solely because grants have not been issued yet.
+    """
+    if section not in SECTIONS:
+        raise ValueError(f"Unknown learning section: {section}")
+    try:
+        await require_language(session, user, language)
+    except HTTPException:
+        return {"section": section, "language": language, "legacy_allows": False,
+                "candidate_allows": False, "differs": False}
+    try:
+        await require_section(session, user, section, language)
+    except HTTPException:
+        candidate_allows = False
+    else:
+        candidate_allows = True
+    return {"section": section, "language": language, "legacy_allows": True,
+            "candidate_allows": candidate_allows, "differs": not candidate_allows}

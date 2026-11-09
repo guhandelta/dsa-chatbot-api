@@ -2,7 +2,7 @@
 
 Status: design only, 9 November 2026. Current per-language subscription behavior remains in effect. This document is an implementation checklist, not an entitlement grant or a pricing decision.
 
-Implementation update: `section_entitlements` and `section_access.require_section()` now provide a separately migrated, testable candidate decision for section rights. The function checks the existing language scope first, then active section dates. It is **not wired to learner endpoints**, and no section entitlement has been inferred or backfilled from an old subscription. The live access rule is unchanged. Before activating the new policy, complete the endpoint/tool matrix below and choose an explicit grandfathering rule for existing students.
+Implementation update: `section_entitlements` and `section_access.require_section()` now provide a separately migrated, testable candidate decision for section rights. The function checks the existing language scope first, then active section dates. `compare_access()` reports the legacy and candidate decisions for an offline audit; it does not write grants or change live access. It is **not wired to learner endpoints**, and no section entitlement has been inferred or backfilled from an old subscription. The live access rule is unchanged. Before activating the new policy, complete the endpoint/tool matrix below and choose an explicit grandfathering rule for existing students.
 
 ## Policy boundary
 
