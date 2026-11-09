@@ -34,7 +34,7 @@ LEVEL_DIFFICULTIES = {
 }
 LEVEL_LABELS = {
     "L0": "Syntax and first programs", "L1": "Core constructs", "L2": "Data modelling",
-    "L3": "Recursion, complexity and depth", "L4": "Language mastery",
+    "L3": "Recursion, complexity and depth", "L4": "Advanced language topics",
 }
 RUNNABLE = ("python", "javascript", "java", "c", "cpp", "rust", "ruby", "typescript", "go", "csharp")
 LANGUAGE_LABELS = {
@@ -366,7 +366,7 @@ async def passed_exercises(session: AsyncSession, user_id: str, language: str) -
 
 
 async def progress(session: AsyncSession, user_id: str, language: str) -> dict:
-    """The learner's position: per-node mastery and the current node."""
+    """The learner's current checkpoints and recommended next node."""
     from app.services import quiz
     from app.services.learning_strikes import blocked_nodes
     passed = await passed_exercises(session, user_id, language)
@@ -401,9 +401,10 @@ async def progress(session: AsyncSession, user_id: str, language: str) -> dict:
         "coverage_ready": bool(path) and all(n["coverage_ready"] for n in path),
         "curriculum_complete": bool(path) and all(n["complete"] and n["coverage_ready"] for n in path),
         "completed_stages": [n["stage"] for n in path if n["kind"] == "stage" and n["complete"]],
-        "mastery_rule": "Stages require a stage-specific lesson, a passed graded exercise, and at least "
+        "mastery_rule": "Current checkpoints require a stage-specific lesson, a passed graded exercise, and at least "
                         "two thirds on the checks. Modules require a lesson and at least two thirds "
-                        "on the checks. Missing content prevents mastery and stage rewards.",
+                        "on the checks. Missing content prevents completion and stage rewards. "
+                        "These checkpoints do not prove independent transfer mastery.",
     }
 
 

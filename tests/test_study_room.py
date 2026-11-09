@@ -112,7 +112,7 @@ async def test_readiness_lists_every_language(client, db, monkeypatch):
     verdicts = {r['language']: r['verdict'] for r in body['languages']}
     assert verdicts['python'] == verdicts['java'] == verdicts['javascript'] == 'launch-ready'
     assert verdicts['typescript'] == verdicts['ruby'] == 'quiz-led'
-    assert body['levels']['L4'] == 'Language mastery'
+    assert body['levels']['L4'] == 'Advanced language topics'
 
 
 async def test_path_lesson_and_access(client, db):
