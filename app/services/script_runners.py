@@ -105,7 +105,9 @@ _CS_BUILD = (
     'for root in /usr/share/dotnet /usr/local/share/dotnet /opt/homebrew/opt/dotnet/libexec; do '
     '[ -d "$root/sdk" ] && break; done; '
     'csc=$(ls "$root"/sdk/*/Roslyn/bincore/csc.dll | head -n 1); '
-    'refs=""; for f in "$root"/packs/Microsoft.NETCore.App.Ref/*/ref/net*/*.dll; do refs="$refs -r:$f"; done; '
+    'refdir=$(ls -d "$root"/packs/Microsoft.NETCore.App.Ref/8.*/ref/net8.0 2>/dev/null | tail -n 1); '
+    '[ -n "$refdir" ] || exit 2; '
+    'refs=""; for f in "$refdir"/*.dll; do refs="$refs -r:$f"; done; '
     'exec env DOTNET_EnableWriteXorExecute=0 dotnet "$csc" -nologo -target:exe -out:m.dll -nullable:enable $refs Solution.cs Harness.cs'
 )
 _CS_RUNTIMECONFIG = json.dumps({"runtimeOptions": {"tfm": "net8.0", "framework": {
