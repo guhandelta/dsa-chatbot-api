@@ -31,6 +31,17 @@ def migration_columns() -> dict[str, set[str]]:
             r'op\.add_column\(\s*"(\w+)",\s*sa\.Column\(\s*"(\w+)"', text
         ):
             tables.setdefault(m.group(1), set()).add(m.group(2))
+        # A few migrations add the same column to a fixed tuple of tables.
+        # Keep this deliberately narrow; do not try to execute migration code.
+        for m in re.finditer(
+            r"for (\w+) in \(([^()]+)\):\s*\n\s+op\.add_column\(\1,\s*sa\.Column\(\s*['\"](\w+)['\"]",
+            text,
+        ):
+            table_names = re.findall(r"['\"](\w+)['\"]", m.group(2))
+            if not table_names or re.sub(r"['\"]\w+['\"]|[\s,]", "", m.group(2)):
+                continue
+            for table in table_names:
+                tables.setdefault(table, set()).add(m.group(3))
     return tables
 
 

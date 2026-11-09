@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "status": "draft-advisory",
+  "nodes": [
+    {"id": "language:javascript:conditions", "section": "language", "content_id": "javascript-path-02-conditions", "review": "pending"},
+    {"id": "language:javascript:functions", "section": "language", "content_id": "javascript-path-04-functions", "review": "pending"},
+    {"id": "language:javascript:function-values", "section": "language", "content_id": null, "review": "missing-content"},
+    {"id": "dsa:binary-search", "section": "dsa", "content_id": "binary-search-concept", "review": "pending"},
+    {"id": "design-patterns:strategy:javascript", "section": "design-patterns", "content_id": "strategy-pattern", "review": "draft-only"}
+  ],
+  "links": [
+    {"from": "language:javascript:function-values", "to": "language:javascript:functions", "type": "requires", "review": "pending"},
+    {"from": "design-patterns:strategy:javascript", "to": "language:javascript:function-values", "type": "requires", "review": "pending"},
+    {"from": "design-patterns:strategy:javascript", "to": "language:javascript:conditions", "type": "requires", "review": "pending"},
+    {"from": "dsa:binary-search", "to": "language:javascript:conditions", "type": "uses", "review": "pending"},
+    {"from": "dsa:binary-search", "to": "language:javascript:functions", "type": "uses", "review": "pending"}
+  ]
+}
