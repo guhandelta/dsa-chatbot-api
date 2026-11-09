@@ -67,7 +67,20 @@ def available_languages() -> dict[str, bool]:
         if tools[language]:
             from app.services.script_runners import PROBE_ARGS
             tools[language] = _working_tool(_TOOLCHAIN[language], tuple(PROBE_ARGS.get(language, ["--version"])))
+    if tools["scala"]:
+        tools["scala"] = _scala_runner_supports_classpath()
     return tools
+
+
+@lru_cache(maxsize=1)
+def _scala_runner_supports_classpath() -> bool:
+    """The current adapter runs compiled classes with legacy `scala -cp`."""
+    try:
+        result = subprocess.run(["scala", "-version"], capture_output=True, timeout=5, text=True)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    banner = result.stdout + result.stderr
+    return result.returncode == 0 and "Scala code runner version:" not in banner
 
 
 @lru_cache(maxsize=8)
@@ -89,7 +102,8 @@ def _container_languages(image: str) -> dict[str, bool]:
         if tools["scala"]:
             # scalac alone cannot run the program; the `scala` runner must exist too.
             try:
-                tools["scala"] = _run(["scala", "-version"], Path(scratch))[0] == 0
+                status, stdout, stderr = _run(["scala", "-version"], Path(scratch))
+                tools["scala"] = status == 0 and "Scala code runner version:" not in stdout + stderr
             except RuntimeError:
                 tools["scala"] = False
     tools["typescript"] = tools["typescript"] and tools["javascript"]
