@@ -70,7 +70,8 @@ async def create(request: RecordCreate, user: User = Depends(get_current_user),
 async def list_records(section: Section, language: str, limit: int = 50,
                        user: User = Depends(get_current_user),
                        session: AsyncSession = Depends(get_session)):
-    await require_language(session, user, language)
+    if user.status != "active":
+        raise HTTPException(403, "This account is suspended.")
     if not 1 <= limit <= 100:
         raise HTTPException(422, "Limit must be between 1 and 100.")
     rows = (await session.scalars(select(StudentPathRecord).where(

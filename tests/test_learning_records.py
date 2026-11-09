@@ -1,6 +1,10 @@
 import pytest
 
-from app.db.models import StudentPathRecord
+from datetime import datetime, timedelta, timezone
+
+from sqlalchemy import select
+
+from app.db.models import StudentPathRecord, Subscription, User
 
 
 async def register(client, email):
@@ -63,7 +67,7 @@ async def test_record_rejects_wrong_scope_and_unsupported_claims(client, subscri
         response = await client.post('/learning-records/', headers=headers, json={**base, **changes})
         assert response.status_code == status, response.text
     assert (await client.get('/learning-records/', headers=headers,
-                             params={'section': 'language', 'language': 'python'})).status_code == 403
+                             params={'section': 'language', 'language': 'python'})).json()['items'] == []
     assert (await client.get('/learning-records/', headers=headers,
                              params={'section': 'language', 'language': 'javascript', 'limit': 101})).status_code == 422
     assert (await client.get('/learning-records/', params={'section': 'language', 'language': 'javascript'})).status_code == 401
@@ -101,3 +105,26 @@ async def test_export_and_erase_include_only_owner_records(client, db, subscribe
     assert (await client.delete('/mentor/profile', headers=headers)).status_code == 200
     assert await db.get(StudentPathRecord, own['id']) is None
     assert await db.get(StudentPathRecord, theirs['id']) is not None
+
+
+@pytest.mark.asyncio
+async def test_expired_student_can_read_history_but_not_add_records(client, db, subscribe_user):
+    account = await register(client, 'records-expired@example.com')
+    user_id = account['user']['id']
+    await subscribe_user(user_id, 'javascript')
+    headers = {'Authorization': f"Bearer {account['access_token']}"}
+    entry = {'section': 'dsa', 'language': 'javascript', 'kind': 'goal', 'body': 'Review invariants'}
+    saved = await client.post('/learning-records/', headers=headers, json=entry)
+    assert saved.status_code == 201
+    subscription = await db.scalar(select(Subscription).where(Subscription.user_id == user_id))
+    subscription.expires_at = datetime.now(timezone.utc) - timedelta(days=1)
+    await db.commit()
+    history = await client.get('/learning-records/', headers=headers,
+                               params={'section': 'dsa', 'language': 'javascript'})
+    assert [item['id'] for item in history.json()['items']] == [saved.json()['id']]
+    assert (await client.post('/learning-records/', headers=headers, json=entry)).status_code == 403
+    user = await db.get(User, user_id)
+    user.status = 'suspended'
+    await db.commit()
+    assert (await client.get('/learning-records/', headers=headers,
+                             params={'section': 'dsa', 'language': 'javascript'})).status_code == 403
