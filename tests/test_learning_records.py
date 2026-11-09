@@ -83,3 +83,21 @@ async def test_concept_language_must_match_even_when_both_languages_are_entitled
             'concept_id': concept_id, 'body': 'Use a callback',
         })
         assert result.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_export_and_erase_include_only_owner_records(client, db, subscribe_user):
+    first = await register(client, 'records-export-first@example.com')
+    second = await register(client, 'records-export-second@example.com')
+    await subscribe_user(first['user']['id'], 'javascript')
+    await subscribe_user(second['user']['id'], 'javascript')
+    headers = {'Authorization': f"Bearer {first['access_token']}"}
+    other = {'Authorization': f"Bearer {second['access_token']}"}
+    entry = {'section': 'dsa', 'language': 'javascript', 'kind': 'goal', 'body': 'Review invariants'}
+    own = (await client.post('/learning-records/', headers=headers, json=entry)).json()
+    theirs = (await client.post('/learning-records/', headers=other, json=entry)).json()
+    exported = (await client.get('/mentor/profile/export', headers=headers)).json()
+    assert [record['id'] for record in exported['student_path_records']] == [own['id']]
+    assert (await client.delete('/mentor/profile', headers=headers)).status_code == 200
+    assert await db.get(StudentPathRecord, own['id']) is None
+    assert await db.get(StudentPathRecord, theirs['id']) is not None

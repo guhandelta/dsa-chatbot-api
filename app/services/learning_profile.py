@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import LearningEvent, QuizAnswer
+from app.db.models import LearningEvent, QuizAnswer, StudentPathRecord
 
 # Human-readable category -> the transferable lesson behind it.
 CATEGORY_LESSON = {
@@ -313,6 +313,15 @@ async def export_profile(session: AsyncSession, user_id: str) -> dict:
             }
             for e in events
         ],
+        "student_path_records": [
+            {"id": record.id, "section": record.section, "language": record.language,
+             "kind": record.kind, "concept_id": record.concept_id or None,
+             "body": record.body, "curriculum_version": record.curriculum_version,
+             "created_at": record.created_at.isoformat()}
+            for record in (await session.scalars(select(StudentPathRecord).where(
+                StudentPathRecord.user_id == user_id).order_by(
+                StudentPathRecord.created_at.desc(), StudentPathRecord.id.desc()))).all()
+        ],
         # Study Room quiz answers, including the learner's typed explanations.
         "quiz_answers": [
             {
@@ -350,6 +359,7 @@ async def delete_profile(session: AsyncSession, user_id: str) -> int:
     await session.execute(update(User).where(User.id == user_id).values(profile_generation=User.profile_generation + 1))
     await preserve_legacy(session, user_id)
     result = await session.execute(delete(LearningEvent).where(LearningEvent.user_id == user_id))
+    await session.execute(delete(StudentPathRecord).where(StudentPathRecord.user_id == user_id))
     from app.services.quiz import delete_for_user
     await delete_for_user(session, user_id)
     from app.services import workspace, learning_strikes
