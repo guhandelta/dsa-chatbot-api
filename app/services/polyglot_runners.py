@@ -184,7 +184,7 @@ fun main() {{
             if code != 0:
                 compile_error = err or out
                 continue
-            code, out, err = _run(["java", "-Xmx512m", "-jar", "program.jar"], cwd,
+            code, out, err = _run([exec_harness.java_tool("java"), "-Xmx512m", "-jar", "program.jar"], cwd,
                                   apply_address_space=False)
             actual = _read_results(cwd, result, len(cases)) if code == 0 else None
         if code != 0:

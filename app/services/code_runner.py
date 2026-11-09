@@ -203,6 +203,8 @@ def _run_host(cmd: list[str], cwd: Path, stdin: str = "",
     for _k in exec_harness.TOOLCHAIN_ENV_PASSTHROUGH:
         if _k in os.environ:
             env[_k] = os.environ[_k]
+    if settings.java_home:
+        env["JAVA_HOME"] = settings.java_home
     proc = None
     try:
         # File-backed capture is bounded by RLIMIT_FSIZE; slicing a PIPE only
