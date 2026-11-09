@@ -22,6 +22,7 @@ from app.routers import (
     chat,
     courses,
     learn,
+    learning_records,
     mentor,
     problems,
     practice,
@@ -81,6 +82,7 @@ app.include_router(playground.router)
 app.include_router(tracks.router)
 app.include_router(mentor.router)
 app.include_router(study.router)
+app.include_router(learning_records.router)
 app.include_router(subscriptions.router)
 app.include_router(training.router)
 app.include_router(admin.router)

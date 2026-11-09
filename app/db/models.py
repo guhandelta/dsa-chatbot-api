@@ -298,6 +298,23 @@ class LearningEvent(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
 
+class StudentPathRecord(Base):
+    """Student-authored goals and reasoning; never assessment evidence by itself."""
+
+    __tablename__ = "student_path_records"
+    __table_args__ = (Index("ix_student_path_records_owner_scope_time", "user_id", "section", "language", "created_at"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    section: Mapped[str] = mapped_column(String(32), nullable=False)
+    language: Mapped[str] = mapped_column(String(32), nullable=False)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    concept_id: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    curriculum_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+
+
 class TraceRecord(Base):
     """A finished trace, persisted for debugging and cost analysis.
 

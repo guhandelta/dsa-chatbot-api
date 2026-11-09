@@ -66,3 +66,7 @@ This is an implementation map, not a claim that the three units are ready. Revie
 Implement a small versioned concept/link schema and a section-access design against this route. First verify exact lesson coverage and audit all access entry points. Keep prerequisite edges advisory, preserve existing progress history, and leave current pricing and feature flags unchanged. Each code change then follows implementation, behavior verification, code review, targeted fixes, repeat verification, tests, final checks, commit, and push.
 
 Related sources: `docs/PRODUCT_BASELINE_AND_DEVELOPMENT_PLAN.md` (existing untracked baseline), `docs/LEARNING_PATH_DECISIONS.md`, `docs/DESIGN_PATTERNS_COURSE_AUDIT.md`, `app/services/learning_path.py`, `app/services/study_progress.py`, `app/services/language_access.py`, `app/routers/tracks.py`, and `app/core/config.py`.
+
+## Implementation note: student-authored records
+
+The `student_path_records` table and `/learning-records/` API now store bounded, append-only student-authored goals, assumptions, decisions, and requests to alter a path. Records are scoped to owner, section, and language and pin the pilot curriculum version. Assumptions and decisions must name a concept in the draft pilot map. These records do not change the current path, recommendations, assessment, rewards, or mastery. They are not verified knowledge. The API currently follows existing per-language access; the independent section policy in `SECTION_ACCESS_DESIGN.md` must be implemented before section-specific plans are offered.
