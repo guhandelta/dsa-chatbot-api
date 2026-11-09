@@ -11,12 +11,13 @@
       "evidence": {
         "trace": {"source": "quiz", "id": "js-s06-short", "family": "array-aliasing", "independent": true},
         "use": {"source": "quiz", "id": "ja-release-stage_06-4", "family": "threshold-accumulation", "independent": true},
-        "choose": {"source": "explain", "id": "arrays-09", "family": "representation-choice", "independent": false},
-        "transfer": {"source": "explain", "id": "arrays-11", "family": "distinct-reading", "independent": false}
+        "choose": {"source": "quiz", "id": "js-s06-choose-copy", "family": "mutation-contract-choice", "independent": true},
+        "transfer": {"source": "quiz", "id": "js-s06-transfer-peaks", "family": "neighbour-comparison", "independent": true}
       },
       "application": {"source": "explain", "id": "arrays-07", "requires_capabilities": ["ordered-traversal"]},
       "recovery": [
         {"when": "boundary-error", "source": "explain", "id": "arrays-05"},
+        {"when": "aliasing-error", "source": "explain", "id": "arrays-09"},
         {"when": "later-review", "source": "explain", "id": "arrays-12"}
       ]
     }

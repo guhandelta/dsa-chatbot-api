@@ -513,6 +513,160 @@
    "explanation": "Copy before sorting and pass a numeric comparator."
   },
   {
+   "id": "js-s06-choose-copy",
+   "node": "stage-06",
+   "type": "explain",
+   "role": "explain",
+   "concept": "mutation-contract-choice",
+   "prompt": "A dashboard keeps yesterday's readings array and passes it to capReadings(readings, max), which caps every reading at max. Afterwards the dashboard compares yesterday's array with the returned array to highlight which readings changed. Should capReadings change the array in place (readings[i] = Math.min(readings[i], max)) or build a new array? Justify your choice from what the caller needs, and describe one test that would catch the wrong choice.",
+   "answer": "Build and return a new array, for example with readings.map(r => Math.min(r, max)) or a loop that pushes into a fresh array. The caller still needs the original values for its comparison. Capping in place would change the very array the caller holds, because the parameter and the caller's variable refer to the same array, so the comparison would find no differences. A test: call capReadings([3, 12], 10), check the result is [3, 10], and check that the input array is still [3, 12].",
+   "keywords": [
+    [
+     "new array",
+     "copy",
+     "map",
+     "fresh array",
+     "separate array",
+     "slice",
+     "spread",
+     "[..."
+    ],
+    [
+     "original",
+     "same array",
+     "reference",
+     "alias",
+     "in place",
+     "mutat",
+     "the caller",
+     "yesterday"
+    ],
+    [
+     "test",
+     "assert",
+     "expect",
+     "check"
+    ]
+   ],
+   "explanation": "The caller's later comparison is the requirement that decides the contract: in-place updates are only safe when no one else needs the old values."
+  },
+  {
+   "id": "js-s06-transfer-peaks",
+   "node": "stage-06",
+   "type": "write_snippet",
+   "role": "implement",
+   "concept": "neighbour-comparison",
+   "prompt": "Write countPeaks(values) for an array of finite numbers. A peak is a position that has a neighbour on both sides and is strictly greater than both of them, so the first and last positions never count and equal neighbours do not form a peak. Return how many peaks there are. Arrays shorter than three return 0. Do not change the input array.",
+   "starter": "function countPeaks(values) {\n  return 0;\n}",
+   "fn": "countPeaks",
+   "solution": "function countPeaks(values) {\n  let peaks = 0;\n  for (let i = 1; i < values.length - 1; i++) {\n    if (values[i] > values[i - 1] && values[i] > values[i + 1]) peaks++;\n  }\n  return peaks;\n}",
+   "tests": [
+    {
+     "args": [
+      []
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       3
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       2
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       1,
+       3,
+       2,
+       5,
+       4
+      ]
+     ],
+     "expected": 2
+    },
+    {
+     "args": [
+      [
+       5,
+       1,
+       5
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       1,
+       2,
+       2,
+       1
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       2,
+       2,
+       2
+      ]
+     ],
+     "expected": 0
+    },
+    {
+     "args": [
+      [
+       -1,
+       -5,
+       -2,
+       -6,
+       -3
+      ]
+     ],
+     "expected": 1
+    },
+    {
+     "args": [
+      [
+       0,
+       4,
+       0,
+       4,
+       0,
+       4,
+       0
+      ]
+     ],
+     "expected": 3
+    }
+   ],
+   "explanation": "Only interior positions are compared with both neighbours, using strict comparisons, so ends, plateaus and short arrays give no peaks."
+  },
+  {
    "id": "js-s07-code",
    "node": "stage-07",
    "type": "mcq_code",
