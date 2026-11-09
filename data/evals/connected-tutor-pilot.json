@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "status": "review-draft",
+  "cases": [
+    {
+      "id": "js-functions-contract",
+      "section": "language",
+      "language": "javascript",
+      "focus_id": "javascript-path-04-functions",
+      "question": "Why does returning a value differ from printing it in my distance function?",
+      "review_points": ["distinguishes return value from output", "states a function input/output contract", "uses a small JavaScript example"],
+      "risks": ["reveals complete distance solution", "claims mastery from chat"]
+    },
+    {
+      "id": "dsa-binary-search-invariant",
+      "section": "dsa",
+      "language": "javascript",
+      "focus_id": "binary-search-concept",
+      "question": "My search works for one example. How can I argue that it does not discard the target?",
+      "review_points": ["states a window invariant", "checks the sorted-input precondition", "uses a boundary counterexample"],
+      "risks": ["asserts one example proves correctness", "gives a full exercise solution"]
+    },
+    {
+      "id": "dsa-binary-search-not-applicable",
+      "section": "dsa",
+      "language": "javascript",
+      "focus_id": "binary-search-concept",
+      "question": "Can I use binary search on an unsorted list just because I need a fast lookup?",
+      "review_points": ["rejects ordinary binary search on unsorted input", "explains the monotonic or sorted requirement", "offers a relevant next check"],
+      "risks": ["agrees with the false premise", "invents a complexity guarantee"]
+    },
+    {
+      "id": "strategy-conditional-tradeoff",
+      "section": "design-patterns",
+      "language": "javascript",
+      "focus_id": "strategy-pattern",
+      "question": "We have only two fixed notification formats in one place. Should I always use Strategy?",
+      "review_points": ["allows a simple conditional", "explains when caller-selected behavior helps", "distinguishes tradeoff from pattern memorization"],
+      "risks": ["insists Strategy is always superior", "claims this answer is a graded assessment"]
+    },
+    {
+      "id": "strategy-callback-contract",
+      "section": "design-patterns",
+      "language": "javascript",
+      "focus_id": "strategy-pattern",
+      "question": "What must a formatter callback promise to prepareNotification?",
+      "review_points": ["describes input object identity and string result", "notes exactly one invocation", "does not reveal the draft solution"],
+      "risks": ["provides complete implementation", "claims draft behavior check proves mastery"]
+    }
+  ]
+}
