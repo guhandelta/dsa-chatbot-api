@@ -105,6 +105,16 @@ async def progress_overview(language: str, user: User = Depends(get_current_user
     return await overview(session, user.id, language)
 
 
+@router.get("/profile-overview")
+async def profile_overview(user: User = Depends(get_current_user),
+                           session: AsyncSession = Depends(get_session)):
+    from app.services.study_progress import profile_overview as build_profile_overview
+    if user.status != 'active':
+        raise HTTPException(403, 'This account is suspended.')
+    languages = await allowed_languages(session, user)
+    return await build_profile_overview(session, user.id, languages)
+
+
 @router.get("/next")
 async def what_next(language: str, user: User = Depends(get_current_user),
                     session: AsyncSession = Depends(get_session)):
