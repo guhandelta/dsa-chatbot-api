@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "status": "authoring-draft",
+  "language": "javascript",
+  "units": [
+    {
+      "id": "explain:javascript:arrays",
+      "capabilities": ["ordered-traversal", "array-copy-boundary"],
+      "prerequisite_ids": [],
+      "external_prerequisite_nodes": ["javascript:stage-02", "javascript:stage-04"],
+      "evidence": {
+        "trace": {"source": "quiz", "id": "js-s06-short", "family": "array-aliasing", "independent": true},
+        "use": {"source": "quiz", "id": "ja-release-stage_06-4", "family": "threshold-accumulation", "independent": true},
+        "choose": {"source": "explain", "id": "arrays-09", "family": "representation-choice", "independent": false},
+        "transfer": {"source": "explain", "id": "arrays-11", "family": "distinct-reading", "independent": false}
+      },
+      "application": {"source": "explain", "id": "arrays-07", "requires_capabilities": ["ordered-traversal"]},
+      "recovery": [
+        {"when": "boundary-error", "source": "explain", "id": "arrays-05"},
+        {"when": "later-review", "source": "explain", "id": "arrays-12"}
+      ]
+    }
+  ]
+}

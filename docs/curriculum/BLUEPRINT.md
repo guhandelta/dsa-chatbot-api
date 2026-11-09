@@ -11,6 +11,10 @@ Use [the unit template](UNIT_TEMPLATE.md) when authoring a unit, and
 readiness thresholds below are starting product choices to evaluate with students,
 not research-backed guarantees of proficiency.
 
+The [pathway evidence pilot](PATHWAY_EVIDENCE_CHECKS.md) adds machine-checkable
+prerequisite, assessment, application, and recovery pointers for one JavaScript
+unit. It reports missing independent assessments without changing learner progress.
+
 ## 1. Organize breadth and depth separately
 
 The three tiers organize which ideas are combined. Each unit also has a practice
