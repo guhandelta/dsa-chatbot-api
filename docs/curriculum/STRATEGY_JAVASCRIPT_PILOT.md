@@ -27,7 +27,7 @@ After implementing it, answer two questions in words:
 
 ## Instructor-only behavior checks
 
-The current generic function grader accepts JSON arguments and cannot pass a callback as an argument. These checks need a dedicated, isolated JavaScript harness before the exercise can go live. They must not be placed in learner retrieval or represented as an existing app assessment.
+The generic function grader accepts JSON arguments and cannot pass a callback as an argument. `app/services/strategy_callback_check.py` now runs these behavior checks through the configured execution backend for authoring verification. It is not exposed as a learner assessment, and the host subprocess backend is only for trusted local development. The checks must not be placed in learner retrieval or represented as mastery evidence.
 
 | Case | Expected evidence |
 | --- | --- |
@@ -52,4 +52,4 @@ For a pass, require all three forms of evidence: correct behavior on the callbac
 
 ## Publication gate
 
-Before publication, add a callback-capable execution path inside the existing code sandbox, prove that it rejects known-bad implementations, and review the task, examples, and rubric with an instructor. Keep it in draft until the app can distinguish a behavior check from a reviewed design decision.
+Before publication, review the task, examples, hidden checks, and rubric with an instructor; add a fresh transfer task and an assessment record that distinguishes behavior from design reasoning. Verify the callback check in the configured production container before exposing it to learners. Keep it in draft until the app can distinguish a behavior check from a reviewed design decision. The authoring checker is not a security boundary for hidden tests against adversarial code.
