@@ -295,7 +295,7 @@ def _run_typed(language, solution, fn, cases, expected, equal, result):
                 # The baked standard-library cache is read-only, and Go's cache trimming writes
                 # to it and fails. Copy it into the run's tmpfs and build from that copy.
                 build = ["sh", "-c", "cp -r /opt/gocache /tmp/gc 2>/dev/null; GOCACHE=/tmp/gc "
-                                     "GOMAXPROCS=2 go build -p 1 -o m ."]
+                                     "GOMAXPROCS=2 go build -p 1 -o m main.go solution.go"]
                 run_cmd = ["./m"]
             else:
                 build = ["sh", "-c", _CS_BUILD]
