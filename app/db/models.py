@@ -269,6 +269,22 @@ class Subscription(Base):
     provider_event_timestamp: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
 
+class SectionEntitlement(Base):
+    """Future section rights, independent of the current language subscription."""
+
+    __tablename__ = "section_entitlements"
+    __table_args__ = (Index("ix_section_entitlements_owner_section", "user_id", "section"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    section: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
+    source: Mapped[str] = mapped_column(String(30), nullable=False, default="manual")
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
+
+
 class LearningEvent(Base):
     """One observable thing the learner did. Deliberately behavioural:
     what happened, on which problem, with which algorithm tags — never an
