@@ -65,3 +65,17 @@ def test_missing_or_invalid_graph_never_blocks_the_tutor(monkeypatch):
     monkeypatch.setattr(pilot, "graph", broken)
     assert guidance("python", "python-path-07-maps") == ""
     assert linked_content_ids("python", "python-path-07-maps") == ()
+
+
+@pytest.mark.parametrize(("language", "focus", "question", "expected"), [
+    ("python", "python-path-07-maps", "How do arrays prepare me for maps?", ("python-path-06-arrays",)),
+    ("python", "python-path-07-maps", "How do maps work?", ()),
+    ("python", "python-path-07-maps", "I'm stuck; can we review the foundation?", ("python-path-06-arrays",)),
+    ("rust", "rust-path-08-sets", "How does an array help me understand sets?", ("rust-path-06-arrays",)),
+    ("javascript", "javascript-path-04-functions", "Why is a function useful here?", ()),
+    ("python", "python-path-01-values", "What is a value?", ()),
+    ("python", "python:module-asyncio", "Why await here?", ()),
+    ("javascript", "strategy-pattern", "When should I choose Strategy?", ()),
+])
+def test_review_set_has_expected_kag_source_scope(language, focus, question, expected):
+    assert linked_content_ids(language, focus, question) == expected

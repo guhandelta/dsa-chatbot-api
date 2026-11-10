@@ -6,6 +6,8 @@ Status: instructor review packet, 7 November 2026. These are review prompts, not
 
 Use the current focused language chat and Study Room Explain mode. For each case, inspect the selected source IDs and the final answer. Rate the prerequisite as **helpful**, **unneeded**, or **misleading**. Confirm the answer stays on the selected language and does not present a pilot link as proof of mastery.
 
+The eight source-selection expectations below are now checked offline in `tests/test_prerequisite_pilot.py`. This proves only that the current graph and narrow word rule select the expected IDs. It does not evaluate a generated answer or establish that an edge is pedagogically helpful.
+
 | Focus | Learner question | Expected graph behavior |
 | --- | --- | --- |
 | Python stage 7, maps | How do arrays prepare me for maps? | Include the stage 6 arrays lesson as optional reference. |
